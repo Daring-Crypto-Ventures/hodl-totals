@@ -25,8 +25,8 @@ function newCurrencySheet_() {
       'Please provide the trading symbol in all caps' +
       ' (for example, "BTC", "ETH", "VRSC"):',
       Browser.Buttons.OK_CANCEL);
-  // TODO
-  // add configurable "# digits to the right to show' here
+
+  // could add configurable "# digits to the right to show' here
   // and then use it down below to set format on COIN columns
   
   var sheet = SpreadsheetApp.getActiveSpreadsheet().insertSheet(desiredCurrency);
@@ -37,14 +37,14 @@ function newCurrencySheet_() {
   sheet.getRange('A1:I1').setValues([header1]).setFontWeight('bold').setHorizontalAlignment('center');
   sheet.getRange('A2:I2').setValues([header2]).setFontWeight('bold').setHorizontalAlignment('center');
 
-  // merge columns for Buy, Sell and Calc
+  // merge 1st row cells for Buy, Sell and Calc
   sheet.getRange('B1:C1').merge();
   sheet.getRange('D1:E1').merge();
   sheet.getRange('F1:H1').merge();
   
   // color background and freeze the header rows
   sheet.getRange('A1:I1').setBackground('#DDDDEE');
-  sheet.getRange('A2:I2').setBackground('#DDDDEE');
+  sheet.getRange('A2:I2').setBackground('#EEEEEE');
   sheet.setFrozenRows(2);
   
   // populate with spreadsheet with sample data including instructions
@@ -64,41 +64,46 @@ function newCurrencySheet_() {
 	 [          ,            ,         ,           ,         , , , ,'trades between coins, or any other relevant information.']
     ];
   
-  // TODO
-  // comment on initialData[4]'s Date Cell -> 'split into (rows 9 and 10) amt of coin sold was 0.3, and original amt was 6000.'
-  // comment on initialData[5]'s Date Cell -> 'sale split into (rows 9 and 10) original amt of coin sold was 0.3, and original amount received was 6000.'
-
-  // TODO
-  // call the FIFO calculation function so it can fill in status columns
-  // also since it will split long-term/short-term -- need to remove that split listed in my default data above + the cell comments added by hand
-  
   for (var i = 0; i < initialData.length; i++) {
     sheet.getRange('A'+(i+3)+':I'+(i+3)).setValues([initialData[i]]);
   }
+    
+  // Add comment to initialData[4]'s Date Cell
+  sheet.getRange('A7').setNote('split into (rows 9 and 10) amt of coin sold was 0.3, and original amt was 6000.');
+  // Add comment to initialData[5]'s Date Cell
+  sheet.getRange('A8').setNote('sale split into (rows 9 and 10) original amt of coin sold was 0.3, and original amount received was 6000.');
   
+  // TODO
+  // call the FIFO calculation function so it can fill in status columns
+  // also since it will split long-term/short-term -- need to remove that split listed in my default data above + the cell comments added by hand
+
+  // set numeric formats as described here: https://developers.google.com/sheets/api/guides/formats
+  sheet.getRange('A3:A').setNumberFormat('yyyy-mm-dd');
   
-  //TODO
-  //set Date column to be of type Date MM/DD/YYYY
-  //set COIN columns C, E {COIN Purchased, COIN Sold} visible numeric persicion to have 8 satoshis showing by default
-  //set FIAT columns D, F, H and I {Fiat Cost, Fiat Received, Cost Basis, Gain(Loss)} type to be a Currency type
-  //set col G, H and I {Status, Cost Basic, Gain(Loss)} to be grayed background
-  //set col G {Status} and J {Notes} to have slightly gray text + italics
-  
-  /*  // Format the new sheet.
-  directionsSheet.setColumnWidth(1, 500);
-  directionsSheet.getRange('B2:C').setVerticalAlignment('top');
-  directionsSheet.getRange('C2:C').setNumberFormat('0.00');
-  */
-  
-  //alternate row coloring
+  // set COIN columns B, D {COIN Purchased, COIN Sold} visible numeric persicion to have 8 satoshis showing by default
+  sheet.getRange('B3:B').setNumberFormat('0.00000000');
+  sheet.getRange('D3:D').setNumberFormat('0.00000000');
+
+  // set FIAT columns C, E, G and H {Fiat Cost, Fiat Received, Cost Basis, Gain(Loss)} type to be a Currency type
+  sheet.getRange('C3:C').setNumberFormat('$#,##0.00;$(#,##0.00)');
+  sheet.getRange('E3:E').setNumberFormat('$#,##0.00;$(#,##0.00)');
+  sheet.getRange('G3:G').setNumberFormat('$#,##0.00;$(#,##0.00)');
+  sheet.getRange('H3:H').setNumberFormat('$#,##0.00;$(#,##0.00)');
+
+  // set col F {Status} centered + and I {Notes} left-aligned but with dark gray text, italics text
+  sheet.getRange('F3:F').setFontColor('#424250').setFontStyle('italic').setHorizontalAlignment('center');
+  sheet.getRange('I3:I').setFontColor('#424250').setFontStyle('italic');
+
+  // alternate row coloring
   var stepsRange = sheet.getDataRange()
       .offset(2, 0, sheet.getLastRow() - 2);
-  setAlternatingRowBackgroundColors_(stepsRange, '#FFFFFF', '#EEEEEE');
+  setAlternatingRowBackgroundColors_(stepsRange, '#FFFFFF', '#FAFAFF');
   
+  // set col F, G and H {Status, Cost Basic, Gain(Loss)} to be grayed background
+  sheet.getRange('F3:H').setBackground('#EEEEEE');
   
-  sheet.autoResizeColumns(1, 9);
-  //TODO
-  // set fixed widths rather than autosize each column width
+  // autosize the column widths to fit content
+  sheet.autoResizeColumns(1, 9);  
  
   SpreadsheetApp.flush();
 }
@@ -130,6 +135,10 @@ function setAlternatingRowBackgroundColors_(range, oddColor, evenColor) {
 /**
  * Creates a new sheet containing step-by-step directions between the two
  * addresses on the "Settings" sheet that the user selected.
+ * 
+ * TODO - figure out how to launch this as a Macro (this func doesn't show up as Importable Macro
+ * https://developers.google.com/apps-script/guides/sheets/macros
+ * as a macro, should be able to find a shirtcut key like Ctrl+Alt+Shift+Number
  */
 function calculateFIFO_() {
   var spreadsheet = SpreadsheetApp.getActive();
