@@ -36,6 +36,7 @@ function newCurrencySheet_() {
   var header2 = ['Date', desiredCurrency+' Purchased','Fiat Cost', desiredCurrency+' Sold','Fiat Received','Status','Cost Basis','Gain (Loss)','Notes'];
   sheet.getRange('A1:I1').setValues([header1]).setFontWeight('bold').setHorizontalAlignment('center');
   sheet.getRange('A2:I2').setValues([header2]).setFontWeight('bold').setHorizontalAlignment('center');
+  sheet.getRange('I2').setHorizontalAlignment('left');
 
   // merge 1st row cells for Buy, Sell and Calc
   sheet.getRange('B1:C1').merge();
