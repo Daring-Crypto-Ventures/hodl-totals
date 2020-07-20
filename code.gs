@@ -32,11 +32,13 @@ function newCurrencySheet_() {
   var sheet = SpreadsheetApp.getActiveSpreadsheet().insertSheet(desiredCurrency);
 
   // populate the two-row-tall header cells
-  var header1 = ['', 'Buy','', 'Sell','','Calculation','','',''];
+  var header1 = ['', 'Buy','', 'Sell','','Calculated','','','Use menu command \"Crypto Tools>Calculate Cost Basis (FIFO)\" to update this sheet.'];
   var header2 = ['Date', desiredCurrency+' Purchased','Fiat Cost', desiredCurrency+' Sold','Fiat Received','Status','Cost Basis','Gain (Loss)','Notes'];
   sheet.getRange('A1:I1').setValues([header1]).setFontWeight('bold').setHorizontalAlignment('center');
   sheet.getRange('A2:I2').setValues([header2]).setFontWeight('bold').setHorizontalAlignment('center');
+  sheet.getRange('I1').setFontWeight('normal');
   sheet.getRange('I2').setHorizontalAlignment('left');
+
 
   // merge 1st row cells for Buy, Sell and Calc
   sheet.getRange('B1:C1').merge();
@@ -95,6 +97,10 @@ function newCurrencySheet_() {
   sheet.getRange('F3:F').setFontColor('#424250').setFontStyle('italic').setHorizontalAlignment('center');
   sheet.getRange('I3:I').setFontColor('#424250').setFontStyle('italic');
 
+  // Prevent the user from entering bad inputs in the first place which removes
+  // the need to check data in the validate() function during a calculation
+  setValidationRules_(sheet);
+  
   // alternate row coloring
   var stepsRange = sheet.getDataRange()
       .offset(2, 0, sheet.getLastRow() - 2);
@@ -133,6 +139,132 @@ function setAlternatingRowBackgroundColors_(range, oddColor, evenColor) {
   range.setBackgrounds(backgrounds);
 }
 
+function setValidationRules_(sheet) {
+  // ensure we only accept valid date values
+  var dateRule = SpreadsheetApp.newDataValidation()
+    .requireDate()
+    .setAllowInvalid(false)
+    //.setHelpText('Must be a valid date.')
+    .build();
+  sheet.getRange('A3:A').setDataValidation(dateRule);
+  
+  // ensure we only accept positive Coin/Fiat amounts
+  var notNegativeRule = SpreadsheetApp.newDataValidation()
+    .requireNumberGreaterThanOrEqualTo(0)
+    .setAllowInvalid(false)
+    //.setHelpText('Value cannot be negative.')
+    .build();
+  sheet.getRange('B3:E').setDataValidation(notNegativeRule);
+}
+
+/**
+ * Algo described here:
+ * https://yagisanatode.com/2019/05/11/google-apps-script-get-the-last-row-of-a-data-range-
+ * when-other-columns-have-content-like-hidden-formulas-and-check-boxes/
+ *
+ * Gets the last row number based on a selected column range values
+ *
+ * @param {array} range : takes a 2d array of a single column's values
+ *
+ * @returns {number} : the last row number with a value. 
+ *
+ */ 
+function getLastRowSpecial(range){
+  var rowNum = 0;
+  var blank = false;
+  for(var row = 0; row < range.length; row++){
+ 
+    if(range[row][0] === "" && !blank){
+      rowNum = row;
+      blank = true;
+ 
+    }else if(range[row][0] !== ""){
+      blank = false;
+    }
+  }
+  return rowNum;
+}
+
+/**
+ *
+ *
+ */
+function validate(sheet) {
+  var lastDate;
+  var coinCheck;
+  lastDate = 0;
+  coinCheck = 0;
+
+  // find last row with date data present
+  lastRow = getLastRowSpecial(sheet.getRange('A:A').getValues());
+
+  // ensure dates are in chronological order sorted from past to present
+  lastDate = sheet.getRange('A3').getValue();
+  for (var row = 3; row <= lastRow; row++) {
+    if (sheet.getRange('A'+row).getValue() >= lastDate) {  
+      lastDate = sheet.getRange('A'+row).getValue();
+    } else {
+      Browser.msgBox('Data Validation Error', Utilities.formatString('Date out of order in row ' + row + '.'), Browser.Buttons.OK);
+      return false;
+    }  
+  }
+  
+  // Iterate thru the rows to ensure there are enough buys to support the purchases
+  // and that there is no extra data in the row that doesn't belong
+  for (var row = 3; row <= lastRow; row++) {
+    var bought = sheet.getRange('B'+row).getValue();
+    var boughtPrice = sheet.getRange('C'+row).getValue();
+    var sold = sheet.getRange('D'+row).getValue();
+    var soldPrice = sheet.getRange('E'+row).getValue();
+    
+    if ((bought > 0) || (sold > 0)) {
+      if ((coinCheck - sold) < 0) {
+        Browser.msgBox('Data Validation Error', Utilities.formatString(
+             'There were not enough coin buys to support your coin sale on row '+row+'.\\n' +
+             'Ensure that you have recorded all of your coin buys correctly.'), Browser.Buttons.OK);
+        return false;
+      } else {
+        coinCheck += bought - sold;
+      }
+    }
+        
+    if (((bought > 0) && (sold != 0 || soldPrice != 0)) || ((sold > 0) && (bought != 0 || boughtPrice != 0))) {
+        Browser.msgBox('Data Validation Error', Utilities.formatString(
+             'Invalid data in row '+row+'.\\n' +
+             'Cannot list coin purchase and coin sale on same line.'), Browser.Buttons.OK);
+        return false;
+    }
+  }
+   
+  return true;
+}
+
+/**
+ *
+ *
+ */
+function getLots(sheet) {
+  Browser.msgBox('Error', Utilities.formatString('Not getLots() implemented.'), Browser.Buttons.OK);
+}
+
+/**
+ *
+ *
+ */
+function getSales(sheet) {
+  Browser.msgBox('Error', Utilities.formatString('Not getSales() implemented.'), Browser.Buttons.OK);
+}
+
+/**
+ *
+ *
+ */
+function calculateFifo() {
+   Browser.msgBox('Error',
+        Utilities.formatString('Not calculateFifo() implemented.'),
+        Browser.Buttons.OK);
+}
+
 /**
  * Creates a new sheet containing step-by-step directions between the two
  * addresses on the "Settings" sheet that the user selected.
@@ -144,10 +276,24 @@ function setAlternatingRowBackgroundColors_(range, oddColor, evenColor) {
 function calculateFIFO_() {
   var spreadsheet = SpreadsheetApp.getActive();
   var activeSheet = spreadsheet.getActiveSheet();
-
-  Browser.msgBox('Error',
-        Utilities.formatString('Not implemented.'),
-        Browser.Buttons.OK);
-  //TODO
-  //implement this instead
+  
+  // sanity check the data in the sheet. only proceed if data is good
+  if (validate(activeSheet)) {
+  
+    // clear previously calculated values
+    activeSheet.getRange('F3:H').setValue("");
+    
+    getLots(activeSheet);
+    getSales(activeSheet);
+    calculateFifo(activeSheet);
+    
+    // output the current date and time as the time last completed
+    var now = Utilities.formatDate(new Date(), 'CST', 'MMMM dd, yyyy HH:mm');
+    activeSheet.getRange('I1').setValue('Last calculation succeeded '+now);
+    
+  } else {
+    // record failures too
+    var now = Utilities.formatDate(new Date(), 'CST', 'MMMM dd, yyyy HH:mm');
+    activeSheet.getRange('I1').setValue('Data validation failed '+now);
+  }
 }
