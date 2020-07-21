@@ -18,16 +18,37 @@ function onOpen() {
   spreadsheet.addMenu('Crypto Tools', menuItems);
 }
 
+function showNewCurrencyPrompt() {
+  var ui = SpreadsheetApp.getUi();
+
+  var result = ui.prompt(
+      'New Currency',
+      'Please enter the coin\'s trading symbol ("BTC", "ETH", "XRP"):',
+      ui.ButtonSet.OK_CANCEL);
+
+  // Process the user's response.
+  var button = result.getSelectedButton();
+  var text = result.getResponseText();
+  if (button == ui.Button.OK) {
+    return text;
+  } else if ((button == ui.Button.CANCEL) || (button == ui.Button.CLOSE)) {
+    return null;
+  }
+}
+
 /**
  * A function that adds headers and some initial data to the spreadsheet.
  * 
  * Assumption: Not configurable to pick Fiat Currency to use for all sheets, assuming USD since this is related to US Tax calc
  */
 function newCurrencySheet_() {
-  var desiredCurrency = Browser.inputBox('Enter the cryptocurrency you want to track.',
-      'Please provide the trading symbol in all caps' +
-      ' (for example, "BTC", "ETH", "VRSC"):',
-      Browser.Buttons.OK_CANCEL);
+  
+  // ask user what the name of the new currency will be
+  var desiredCurrency = showNewCurrencyPrompt();
+  
+  // indicates that the user canceled, so abort without making a new sheet
+  if (desiredCurrency === null)
+    return;
 
   // could add configurable "# digits to the right to show' here
   // and then use it down below to set format on COIN columns
@@ -55,34 +76,28 @@ function newCurrencySheet_() {
   
   // populate with spreadsheet with sample data including instructions
   var initialData = [
-     ['01/01/2017','0.20000000','2000.00',           ,         , , , ,'Enter coin buys in the left-hand columns. Include fees in the cost.'],
-     ['02/01/2018','0.60000000','6000.00',           ,         , , , ,'Enter everything in chronological order.'],
-     ['02/01/2018',            ,         ,'.05000000','1000.00', , , ,'Enter coin sales in the right-hand columns, again, including fees.'],
-     ['03/01/2018',            ,         ,'.05000000','1000.00', , , ,'The status column provides useful information for each transaction.'],
-     ['03/01/2018',            ,         ,'.10000000','2000.00', , , ,'If a sale includes short and long-term components, it is split.'], 
-     ['03/01/2018',            ,         ,'.20000000','4000.00', , , ,''],
-     ['03/02/2018','0.40000000','4000.00',           ,         , , , ,''],
-     ['03/03/2018','0.80000000','8000.00',           ,         , , , ,'If you would like to sort or filter to analyze your results, it is'],
-     ['03/04/2018','0.60000000','6000.00',           ,         , , , ,'recommended that you copy the results to a blank spreadsheet.'],
-     ['03/05/2018','0.10000000', '500.00',           ,         , , , ,''],
-     ['03/06/2018','0.10000000','1000.00',           ,         , , , ,'Create a copy of the blank spreadsheet for each coin you trade'],
-     ['03/07/2018','0.10000000','2000.00',           ,         , , , ,'The notes column is a great place to keep track of fees,'],
-	 [          ,            ,         ,           ,         , , , ,'trades between coins, or any other relevant information.']
+     ['01/01/2017','0.20000000','2000.00',            ,         , , , ,'Enter coin buys in the left-hand columns. Include fees in the cost.'],
+     ['02/01/2018','0.60000000','6000.00',            ,         , , , ,'Enter everything in chronological order.'],
+     ['02/01/2018',            ,         ,'0.05000000','1000.00', , , ,'Enter coin sales in the right-hand columns, again, including fees.'],
+     ['03/01/2018',            ,         ,'0.05000000','1000.00', , , ,'The status column provides useful information for each transaction.'],
+     ['03/01/2018',            ,         ,'0.30000000','6000.00', , , ,'If a sale includes short and long-term components, it is split.'], 
+     ['03/02/2018','0.40000000','4000.00',            ,         , , , ,''],
+     ['03/03/2018','0.80000000','8000.00',            ,         , , , ,'If you would like to sort or filter to analyze your results, it is'],
+     ['03/04/2018','0.60000000','6000.00',            ,         , , , ,'recommended that you copy the results to a blank spreadsheet.'],
+     ['03/05/2018',            ,         ,'0.10000000', '500.00', , , ,''],
+     ['03/06/2018',            ,         ,'0.10000000','1000.00', , , ,'Create a copy of the blank spreadsheet for each coin you trade'],
+     ['03/07/2018',            ,         ,'0.10000000','2000.00', , , ,'The notes column is a great place to keep track of fees,'],
+	 [            ,            ,         ,            ,         , , , ,'trades between coins, or any other relevant information.']
     ];
   
   for (var i = 0; i < initialData.length; i++) {
     sheet.getRange('A'+(i+3)+':I'+(i+3)).setValues([initialData[i]]);
   }
     
-  // Add comment to initialData[4]'s Date Cell
-  sheet.getRange('A7').setNote('split into (rows 9 and 10) amt of coin sold was 0.3, and original amt was 6000.');
-  // Add comment to initialData[5]'s Date Cell
-  sheet.getRange('A8').setNote('sale split into (rows 9 and 10) original amt of coin sold was 0.3, and original amount received was 6000.');
-  
-  // TODO
-  // call the FIFO calculation function so it can fill in status columns
-  // also since it will split long-term/short-term -- need to remove that split listed in my default data above + the cell comments added by hand
-
+  // expected comments after successful FIFO calculation
+  //sheet.getRange('A7').setNote('split into (rows 9 and 10) amt of coin sold was 0.3, and original amt was 6000.');
+  //sheet.getRange('A8').setNote('sale split into (rows 9 and 10) original amt of coin sold was 0.3, and original amount received was 6000.');
+ 
   // set numeric formats as described here: https://developers.google.com/sheets/api/guides/formats
   sheet.getRange('A3:A').setNumberFormat('yyyy-mm-dd');
   
@@ -116,6 +131,9 @@ function newCurrencySheet_() {
   sheet.autoResizeColumns(1, 9);  
  
   SpreadsheetApp.flush();
+  
+  // call the FIFO calculation function to fill in status columns
+  calculateFIFO_();
 }
 
 /**
