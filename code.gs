@@ -279,7 +279,7 @@ function getLots(sheet) {
   
   // return just the purchases data as a 2D array
   for (var row = 3; row <= lastRow; row++) {
-    var purchaseDate = sheet.getRange('A'+row).getValue();
+    var purchaseDate = sheet.getRange('A'+row).getDisplayValue();
     var bought = sheet.getRange('B'+row).getValue();
     var boughtPrice = sheet.getRange('C'+row).getValue();
     
@@ -314,7 +314,7 @@ function getSales(sheet) {
   lastRow = getLastRowSpecial(sheet.getRange('A:A').getValues());
   
   for (var row = 3; row <= lastRow; row++) {   
-    var saleDate = sheet.getRange('A'+row).getValue();
+    var saleDate = sheet.getRange('A'+row).getDisplayValue();
     var sold = sheet.getRange('D'+row).getValue();
     var soldPrice = sheet.getRange('E'+row).getValue();
     
@@ -329,6 +329,22 @@ function getSales(sheet) {
   }
   
   return sales;
+}
+
+/**
+ * Parse the date string to return a Date object
+ * 
+ * @param dateStr is a yyyy-mm-dd formatted string
+ * @param incYear will increment the year value by specified amount
+ *
+ * @return Date object corresponding to that string input.
+ */
+function dateFromString(dateStr, incYear) {
+ var year = Number(dateStr.substring(0, 4));
+ var month = Number(dateStr.substring(5, 7));
+ var day = Number(dateStr.substring(8, 10));
+
+ return new Date(year + incYear, month - 1, day);
 }
 
 /**
@@ -363,7 +379,7 @@ function calculateFifo(sheet, lots, sales) {
     splitFactor = 0; // ratio of totalCoin to sellCoin
     totalCoin = 0; // running total of coins for basis
     totalCost = 0; // running total of dollar cost for basis
-    sellDate = sales[sale][0];
+    sellDate = dateFromString(sales[sale][0],0);
     sellCoinRemain = sellCoin = sales[sale][1];
     sellRecd = sales[sale][2];
     sellRow = sales[sale][3];
@@ -378,18 +394,25 @@ function calculateFifo(sheet, lots, sales) {
       var lotCoin; // Double
       var lotCost; // Double
       var lotRow; // Integer
-      lotDate = lots[lot][0];
+      lotDate = dateFromString(lots[lot][0],0);
+      
+      /*var year = lotDate.substring(0, 4);
+      var month = lotDate.substring(5, 7);
+      var day = lotDate.substring(8, 10);
+      Logger.log('Lot '+lot+' with lotDate '+lotDate+' which is parsed as year:'+year+', month:'+month+', day:'+day+'.');*/
+      
       lotCoin = lots[lot][1];
       lotCost = lots[lot][2];
       lotRow = lots[lot][3];
       
       // mark 1 year from the lotDate, to use in gains calculations later
-      thisTerm = lots[lot][0];
-      thisTerm.setYear(thisTerm.getYear()+1);
+      thisTerm = dateFromString(lots[lot][0], 1);
       
       // mark 1 year from the look-ahead lotDate
-      nextTerm = lots[lot+1][0];
-      nextTerm.setYear(nextTerm.getYear()+1);        
+      nextTerm = dateFromString(lots[lot+1][0], 1);
+      
+      Logger.log('Lot '+lot+' with lotDate '+lotDate+
+        'while thisTerm calcs as '+thisTerm+' and nextTerm calcs as '+nextTerm+'.');
 
       // if the remaining coin to sell is less than what is in the lot,
       // calculate and post the cost basis and the gain or loss
@@ -453,7 +476,7 @@ function calculateFifo(sheet, lots, sales) {
           costBasis = sellCoin * (totalCost / totalCoin) * splitFactor; // average price
           gainLoss = (sellRecd * splitFactor) - costBasis;
 
-          originalDate = sheet.getRange('A'+(sellRow+shift)).getValue();
+          originalDate = dateFromString(sheet.getRange('A'+(sellRow+shift)).getDisplayValue(), 0);
           originalCoin = sheet.getRange('D'+(sellRow+shift)).getValue();
           originalCost = sheet.getRange('E'+(sellRow+shift)).getValue();
           
@@ -522,9 +545,9 @@ function calculateFIFO_() {
     
     // add freshly calculated values
     var lots = getLots(activeSheet);
-    Logger.log('Detected ' + lots.length + ' buys.');
+    Logger.log('Detected ' + lots.length + ' purchases of '+activeSheet.getName()+'.');
     var sales = getSales(activeSheet);
-    Logger.log('Detected ' + sales.length + ' sales.');
+    Logger.log('Detected ' + sales.length + ' sales of '+activeSheet.getName()+'.');
     
     calculateFifo(activeSheet, lots, sales);
     
