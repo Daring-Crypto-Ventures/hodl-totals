@@ -76,17 +76,17 @@ function newCurrencySheet_() {
   
   // populate with spreadsheet with sample data including instructions
   var initialData = [
-     ['01/01/2017','0.20000000','2000.00',            ,         , , , ,'Enter coin buys in the left-hand columns. Include fees in the cost.'],
-     ['02/01/2018','0.60000000','6000.00',            ,         , , , ,'Enter everything in chronological order.'],
-     ['02/01/2018',            ,         ,'0.05000000','1000.00', , , ,'Enter coin sales in the right-hand columns, again, including fees.'],
-     ['03/01/2018',            ,         ,'0.05000000','1000.00', , , ,'The status column provides useful information for each transaction.'],
-     ['03/01/2018',            ,         ,'0.30000000','6000.00', , , ,'If a sale includes short and long-term components, it is split.'], 
-     ['03/02/2018','0.40000000','4000.00',            ,         , , , ,''],
-     ['03/03/2018','0.80000000','8000.00',            ,         , , , ,'If you would like to sort or filter to analyze your results, it is'],
-     ['03/04/2018','0.60000000','6000.00',            ,         , , , ,'recommended that you copy the results to a blank spreadsheet.'],
-     ['03/05/2018',            ,         ,'0.10000000', '500.00', , , ,''],
-     ['03/06/2018',            ,         ,'0.10000000','1000.00', , , ,'Create a copy of the blank spreadsheet for each coin you trade'],
-     ['03/07/2018',            ,         ,'0.10000000','2000.00', , , ,'The notes column is a great place to keep track of fees,'],
+     ['2017/01/01','0.20000000','2000.00',            ,         , , , ,'Enter coin buys in the left-hand columns. Include fees in the cost.'],
+     ['2018/02/01','0.60000000','6000.00',            ,         , , , ,'Enter everything in chronological order.'],
+     ['2018/02/01',            ,         ,'0.05000000','1000.00', , , ,'Enter coin sales in the right-hand columns, again, including fees.'],
+     ['2018/03/01',            ,         ,'0.05000000','1000.00', , , ,'The status column provides useful information for each transaction.'],
+     ['2018/03/01',            ,         ,'0.30000000','6000.00', , , ,'If a sale includes short and long-term components, it is split.'], 
+     ['2018/03/02','0.40000000','4000.00',            ,         , , , ,''],
+     ['2018/03/03','0.80000000','8000.00',            ,         , , , ,'If you would like to sort or filter to analyze your results, it is'],
+     ['2018/03/04','0.60000000','6000.00',            ,         , , , ,'recommended that you copy the results to a blank spreadsheet.'],
+     ['2018/03/05',            ,         ,'0.10000000', '500.00', , , ,''],
+     ['2018/03/06',            ,         ,'0.10000000','1000.00', , , ,'Create a copy of the blank spreadsheet for each coin you trade'],
+     ['2018/03/07',            ,         ,'0.10000000','2000.00', , , ,'The notes column is a great place to keep track of fees,'],
 	 [            ,            ,         ,            ,         , , , ,'trades between coins, or any other relevant information.']
     ];
   
@@ -204,6 +204,22 @@ function getLastRowSpecial(range){
     }
   }
   return rowNum;
+}
+
+/**
+ * Parse the date string to return a Date object
+ * 
+ * @param dateStr is a yyyy-mm-dd formatted string
+ * @param incYear will increment the year value by specified amount
+ *
+ * @return Date object corresponding to that string input.
+ */
+function dateFromString(dateStr, incYear) {
+ var year = Number(dateStr.substring(0, 4));
+ var month = Number(dateStr.substring(5, 7));
+ var day = Number(dateStr.substring(8, 10));
+
+ return new Date(year + incYear, month - 1, day);
 }
 
 /**
@@ -332,22 +348,6 @@ function getSales(sheet) {
 }
 
 /**
- * Parse the date string to return a Date object
- * 
- * @param dateStr is a yyyy-mm-dd formatted string
- * @param incYear will increment the year value by specified amount
- *
- * @return Date object corresponding to that string input.
- */
-function dateFromString(dateStr, incYear) {
- var year = Number(dateStr.substring(0, 4));
- var month = Number(dateStr.substring(5, 7));
- var day = Number(dateStr.substring(8, 10));
-
- return new Date(year + incYear, month - 1, day);
-}
-
-/**
  * Using the FIFO method calculate short and long term gains from the data in this sheet.
  * 
  * @param sheet the google sheet with the crypto data
@@ -363,6 +363,7 @@ function calculateFifo(sheet, lots, sales) {
   var sellCoin; // Double
   var sellRecd; // Double
   var sellRow; // Integer
+  const MILLIS_PER_DAY = 1000 * 60 * 60 * 24;
 
   shift = 0;
   lotCount = 0;
@@ -395,12 +396,6 @@ function calculateFifo(sheet, lots, sales) {
       var lotCost; // Double
       var lotRow; // Integer
       lotDate = dateFromString(lots[lot][0],0);
-      
-      /*var year = lotDate.substring(0, 4);
-      var month = lotDate.substring(5, 7);
-      var day = lotDate.substring(8, 10);
-      Logger.log('Lot '+lot+' with lotDate '+lotDate+' which is parsed as year:'+year+', month:'+month+', day:'+day+'.');*/
-      
       lotCoin = lots[lot][1];
       lotCost = lots[lot][2];
       lotRow = lots[lot][3];
@@ -439,7 +434,7 @@ function calculateFifo(sheet, lots, sales) {
 
         // if sale more than 1 year and 1 day from purchase date mark as long-term gains        
         if (!termSplit) {
-          if (Math.floor((thisTerm - sellDate) / (1000*60*60*24)) >= 0) {
+          if ((sellDate.getTime() - thisTerm.getTime()) / MILLIS_PER_DAY > 0) {
             sheet.getRange('F'+(sellRow+shift)).setValue('Long-term');
           } else {
             sheet.getRange('F'+(sellRow+shift)).setValue('Short-term');
@@ -462,7 +457,8 @@ function calculateFifo(sheet, lots, sales) {
         // look ahead for a term split, and if a split exists,
         // set the split factor (% to allocate to either side of the split),
         // and calculate and post the first half of the split
-        if ((Math.floor((thisTerm - sellDate) / (1000*60*60*24)) >= 0) && (Math.floor((nextTerm - sellDate) / (1000*60*60*24)) < 0)) {
+        if (((sellDate.getTime() - thisTerm.getTime()) / MILLIS_PER_DAY > 0) 
+          && ((sellDate.getTime() - nextTerm.getTime()) / MILLIS_PER_DAY < 0)) {
          
           termSplit = true;
 
