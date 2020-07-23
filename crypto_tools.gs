@@ -402,12 +402,6 @@ function calculateFifo(sheet, lots, sales) {
       
       // mark 1 year from the lotDate, to use in gains calculations later
       thisTerm = dateFromString(lots[lot][0], 1);
-      
-      // mark 1 year from the look-ahead lotDate
-      nextTerm = dateFromString(lots[lot+1][0], 1);
-      
-      Logger.log('Lot '+lot+' with lotDate '+lotDate+
-        'while thisTerm calcs as '+thisTerm+' and nextTerm calcs as '+nextTerm+'.');
 
       // if the remaining coin to sell is less than what is in the lot,
       // calculate and post the cost basis and the gain or loss
@@ -418,7 +412,7 @@ function calculateFifo(sheet, lots, sales) {
           sheet.getRange('F'+lotRow).setValue('100% Sold');
 
           // if there are more lots to process, advance the lotCount before breaking out
-          if (lotCount < lots.length) {
+          if ((lotCount+1) < lots.length) {
             lotCount++;  
             lotCoinRemain = lots[lotCount][1];
           }
@@ -454,6 +448,9 @@ function calculateFifo(sheet, lots, sales) {
       // if the remaining coin to sell is greater than what is in the lot,
       // determine if there is a term split, and calculate running totals
       else {
+        // mark 1 year from the look-ahead lotDate
+        nextTerm = dateFromString(lots[lot+1][0], 1);
+        
         // look ahead for a term split, and if a split exists,
         // set the split factor (% to allocate to either side of the split),
         // and calculate and post the first half of the split
