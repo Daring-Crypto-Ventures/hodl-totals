@@ -405,9 +405,9 @@ function calculateFifo(sheet, lots, sales) {
 
       // if the remaining coin to sell is less than what is in the lot,
       // calculate and post the cost basis and the gain or loss
-      if (sellCoinRemain.toFixed(8) <= lotCoinRemain.toFixed(8)) {
-        
-        if (sellCoinRemain === lotCoinRemain) {
+      if (sellCoinRemain <= lotCoinRemain) {
+
+        if (Math.abs(sellCoinRemain - lotCoinRemain) <= .00000001) {
           // all of this lot was sold
           sheet.getRange('F'+lotRow).setValue('100% Sold');
 
