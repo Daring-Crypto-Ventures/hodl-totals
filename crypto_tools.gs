@@ -1,7 +1,7 @@
 /**
  * @NotOnlyCurrentDoc Limits the script to only accessing the current sheet.
  *
- * FIFO calculation rules ported from VBScript in project "Coin Cost Basis" by Alan Hettinger v0.6 (Beta)
+ * FIFO calculation rules ported from VBScript in project "Coin Cost Basis" by Alan Hettinger
  *
  */
 
@@ -10,12 +10,14 @@
  * custom menu to the spreadsheet.
  */
 function onOpen() {
-  var spreadsheet = SpreadsheetApp.getActive();
-  var menuItems = [
-    {name: 'New Currency...', functionName: 'newCurrencySheet_'},
-    {name: 'Calculate Cost Basis (FIFO)', functionName: 'calculateFIFO_'}
-  ];
-  spreadsheet.addMenu('Crypto Tools', menuItems);
+  var ui = SpreadsheetApp.getUi();
+  ui.createMenu('Crypto Tools')
+      .addItem('New Currency...', 'newCurrencySheet_')
+      .addItem('Calculate Cost Basis (FIFO)', 'calculateFIFO_')
+      .addSeparator()
+      .addSubMenu(ui.createMenu('Examples')
+          .addItem('Fake Data with Instuctions', 'call_test0_'))
+      .addToUi();
 }
 
 function showNewCurrencyPrompt() {
@@ -40,6 +42,8 @@ function showNewCurrencyPrompt() {
  * A function that adds headers and some initial data to the spreadsheet.
  * 
  * Assumption: Not configurable to pick Fiat Currency to use for all sheets, assuming USD since this is related to US Tax calc
+ * 
+ * @return the newly created sheet, for function chaining purposes.
  */
 function newCurrencySheet_() {
   
@@ -48,11 +52,10 @@ function newCurrencySheet_() {
   
   // indicates that the user canceled, so abort without making a new sheet
   if (desiredCurrency === null)
-    return;
+    return null;
 
   // could add configurable "# digits to the right to show' here
   // and then use it down below to set format on COIN columns
-  
   var sheet = SpreadsheetApp.getActiveSpreadsheet().insertSheet(desiredCurrency);
 
   // populate the two-row-tall header cells
@@ -73,31 +76,7 @@ function newCurrencySheet_() {
   sheet.getRange('A1:I1').setBackground('#DDDDEE');
   sheet.getRange('A2:I2').setBackground('#EEEEEE');
   sheet.setFrozenRows(2);
-  
-  // populate with spreadsheet with sample data including instructions
-  var initialData = [
-     ['2017/01/01','0.20000000','2000.00',            ,         , , , ,'Enter coin buys in the left-hand columns. Include fees in the cost.'],
-     ['2018/02/01','0.60000000','6000.00',            ,         , , , ,'Enter everything in chronological order.'],
-     ['2018/02/01',            ,         ,'0.05000000','1000.00', , , ,'Enter coin sales in the right-hand columns, again, including fees.'],
-     ['2018/03/01',            ,         ,'0.05000000','1000.00', , , ,'The status column provides useful information for each transaction.'],
-     ['2018/03/01',            ,         ,'0.30000000','6000.00', , , ,'If a sale includes short and long-term components, it is split.'], 
-     ['2018/03/02','0.40000000','4000.00',            ,         , , , ,''],
-     ['2018/03/03','0.80000000','8000.00',            ,         , , , ,'If you would like to sort or filter to analyze your results, it is'],
-     ['2018/03/04','0.60000000','6000.00',            ,         , , , ,'recommended that you copy the results to a blank spreadsheet.'],
-     ['2018/03/05',            ,         ,'0.10000000', '500.00', , , ,''],
-     ['2018/03/06',            ,         ,'0.10000000','1000.00', , , ,'Create a copy of the blank spreadsheet for each coin you trade'],
-     ['2018/03/07',            ,         ,'0.10000000','2000.00', , , ,'The notes column is a great place to keep track of fees,'],
-	 [            ,            ,         ,            ,         , , , ,'trades between coins, or any other relevant information.']
-    ];
-  
-  for (var i = 0; i < initialData.length; i++) {
-    sheet.getRange('A'+(i+3)+':I'+(i+3)).setValues([initialData[i]]);
-  }
-    
-  // expected comments after successful FIFO calculation
-  //sheet.getRange('A7').setNote('split into (rows 9 and 10) amt of coin sold was 0.3, and original amt was 6000.');
-  //sheet.getRange('A8').setNote('sale split into (rows 9 and 10) original amt of coin sold was 0.3, and original amount received was 6000.');
- 
+     
   // set numeric formats as described here: https://developers.google.com/sheets/api/guides/formats
   sheet.getRange('A3:A').setNumberFormat('yyyy-mm-dd');
   
@@ -119,45 +98,15 @@ function newCurrencySheet_() {
   // the need to check data in the validate() function during a calculation
   setValidationRules_(sheet);
   
-  // alternate row coloring
-  var stepsRange = sheet.getDataRange()
-      .offset(2, 0, sheet.getLastRow() - 2);
-  setAlternatingRowBackgroundColors_(stepsRange, '#FFFFFF', '#FAFAFF');
-  
   // set col F, G and H {Status, Cost Basis, Gain(Loss)} to be grayed background
   sheet.getRange('F3:H').setBackground('#EEEEEE');
-  
+   
   // autosize the column widths to fit content
   sheet.autoResizeColumns(1, 9);  
- 
+  
   SpreadsheetApp.flush();
   
-  // call the FIFO calculation function to fill in status columns
-  calculateFIFO_();
-}
-
-/**
- * Sets the background colors for alternating rows within the range.
- * @param {Range} range The range to change the background colors of.
- * @param {string} oddColor The color to apply to odd rows (relative to the
- *     start of the range).
- * @param {string} evenColor The color to apply to even rows (relative to the
- *     start of the range).
-*/
-function setAlternatingRowBackgroundColors_(range, oddColor, evenColor) {
-  var backgrounds = [];
-  for (var row = 1; row <= range.getNumRows(); row++) {
-    var rowBackgrounds = [];
-    for (var column = 1; column <= range.getNumColumns(); column++) {
-      if (row % 2 == 0) {
-        rowBackgrounds.push(evenColor);
-      } else {
-        rowBackgrounds.push(oddColor);
-      }
-    }
-    backgrounds.push(rowBackgrounds);
-  }
-  range.setBackgrounds(backgrounds);
+  return sheet;
 }
 
 function setValidationRules_(sheet) {
@@ -370,6 +319,11 @@ function calculateFifo(sheet, lots, sales) {
 
   // start with num coins that were necessarily bought in "lot 0'
   lotCoinRemain = lots[0][1];
+  
+  // if no sales yet, mark the status of the first lot as 0% sold
+  if (sales.length === 0) {
+    sheet.getRange('F3').setValue('0% Sold');
+  }
 
   for (var sale = 0; sale < sales.length; sale++) {
     var termSplit; // Boolean
@@ -384,7 +338,7 @@ function calculateFifo(sheet, lots, sales) {
     sellCoinRemain = sellCoin = sales[sale][1];
     sellRecd = sales[sale][2];
     sellRow = sales[sale][3];
-
+    
     for (var lot = lotCount; lot < lots.length; lot++) {
       var thisTerm; // Date
       var nextTerm; // Date
@@ -527,8 +481,7 @@ function calculateFifo(sheet, lots, sales) {
  * as a macro, should be able to find a shirtcut key like Ctrl+Alt+Shift+Number
  */
 function calculateFIFO_() {
-  var spreadsheet = SpreadsheetApp.getActive();
-  var activeSheet = spreadsheet.getActiveSheet();
+  var activeSheet = SpreadsheetApp.getActive().getActiveSheet();
   
   // sanity check the data in the sheet. only proceed if data is good
   if (validate(activeSheet)) {
@@ -555,4 +508,7 @@ function calculateFIFO_() {
     activeSheet.getRange('I1').setValue('Data validation failed '+now);
     Logger.log('Data validation failed '+now);
   }
+  
+  // autosize the column widths to fit content
+  activeSheet.autoResizeColumns(1, 9);  
 }
