@@ -16,7 +16,7 @@ function onOpen() {
       .addItem('Calculate Cost Basis (FIFO)', 'calculateFIFO_')
       .addSeparator()
       .addSubMenu(ui.createMenu('Examples')
-          .addItem('Fake Data with Instuctions', 'call_test0_'))
+          .addItem('Fake Data with Instuctions', 'loadExample0_'))
       .addToUi();
 }
 
