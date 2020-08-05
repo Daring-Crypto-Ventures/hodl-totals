@@ -37,7 +37,7 @@ function doGet( e ) {
 /** 
  * test4 for function calculateFifo(sheet, lots, sales)
  */
-function test4_CostBasis(){
+function test4_CostBasis() {
   QUnit.test( "Cost Basis Calculation (FIFO) - test4", function() {
     // create temp sheet
     var currentdate = new Date(); 

@@ -17,6 +17,8 @@ function onOpen() {
       .addSeparator()
       .addSubMenu(ui.createMenu('Examples')
           .addItem('Fake Data with Instuctions', 'loadExample0_'))
+      .addSeparator()
+      .addItem('About', 'showAboutDialog_') 
       .addToUi();
 }
 
