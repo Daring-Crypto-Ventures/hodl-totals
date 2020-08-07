@@ -1,11 +1,11 @@
-# Contributing to crypto_tools
+# Contributing to HODL Totals
 
-Contributions to crypto_tools are welcome from all!
+Contributions to HODL Totals are welcome from all!
 
-crypto_tools is managed via [git](https://git-scm.com), with the canonical upstream
-repository hosted on [GitHub](https://github.com/dogracer/crypto_tools/).
+HODL Totals is managed via [git](https://git-scm.com), with the canonical upstream
+repository hosted on [GitHub](https://github.com/dogracer/hodl-totals/).
 
-crypto_tools follows a pull-request model for development.  If you wish to
+HODL Totals follows a pull-request model for development.  If you wish to
 contribute, you will need to create a GitHub account, fork this project, push a
 branch with your changes to your project, and then submit a pull request.
 
@@ -41,5 +41,5 @@ See [GitHub's official documentation](https://help.github.com/articles/using-pul
 
 (taken from [developercertificate.org](https://developercertificate.org/))
 
-See [LICENSE](https://github.com/dogracer/crypto_tools/blob/master/LICENSE)
-for details about how crypto_tools is licensed.
+See [LICENSE](https://github.com/dogracer/hodl-totals/blob/master/LICENSE)
+for details about how HODL Totals is licensed.

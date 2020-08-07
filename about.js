@@ -9,5 +9,5 @@ function showAboutDialog_() {
   var html = HtmlService.createHtmlOutputFromFile('About')
      .setWidth(540)
      .setHeight(300);
-     SpreadsheetApp.getUi().showModalDialog(html, 'About crypto_tools');
+     SpreadsheetApp.getUi().showModalDialog(html, 'About HODL Totals');
 }

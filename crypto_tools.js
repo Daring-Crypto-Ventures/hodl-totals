@@ -11,7 +11,7 @@
  */
 function onOpen() {
   var ui = SpreadsheetApp.getUi();
-  ui.createMenu('Crypto Tools')
+  ui.createMenu('HODL Totals')
       .addItem('New Currency...', 'newCurrencySheet_')
       .addItem('Calculate Cost Basis (FIFO)', 'calculateFIFO_')
       .addSeparator()
@@ -61,7 +61,7 @@ function newCurrencySheet_() {
   var sheet = SpreadsheetApp.getActiveSpreadsheet().insertSheet(desiredCurrency);
 
   // populate the two-row-tall header cells
-  var header1 = ['', 'Buy','', 'Sell','','Calculated','','','Use menu command \"Crypto Tools>Calculate Cost Basis (FIFO)\" to update this sheet.'];
+  var header1 = ['', 'Buy','', 'Sell','','Calculated','','','Use menu command \"HODL Totals > Calculate Cost Basis (FIFO)\" to update this sheet.'];
   var header2 = ['Date', desiredCurrency+' Purchased','Fiat Cost', desiredCurrency+' Sold','Fiat Received','Status','Cost Basis','Gain (Loss)','Notes'];
   sheet.getRange('A1:I1').setValues([header1]).setFontWeight('bold').setHorizontalAlignment('center');
   sheet.getRange('A2:I2').setValues([header2]).setFontWeight('bold').setHorizontalAlignment('center');
