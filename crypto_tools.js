@@ -365,7 +365,7 @@ function calculateFifo(sheet, lots, sales) {
 
         if (Math.abs(sellCoinRemain - lotCoinRemain) <= .00000001) {
           // all of this lot was sold
-          sheet.getRange('F'+lotRow).setValue('100% Sold');
+          sheet.getRange('F'+lotRow).setValue('100% Sold'); // BUG: lotRow not cannot be used to index sheet, as sheet row might have changed due to a shift
 
           // if there are more lots to process, advance the lotCount before breaking out
           if ((lotCount+1) < lots.length) {
@@ -379,7 +379,7 @@ function calculateFifo(sheet, lots, sales) {
           lotCoinRemain = lotCoinRemain - sellCoinRemain;
           percentSold = 1 - (lotCoinRemain / lotCoin);
 
-          sheet.getRange('F'+lotRow).setValue((percentSold * 100).toFixed(0) + '% Sold');
+          sheet.getRange('F'+lotRow).setValue((percentSold * 100).toFixed(0) + '% Sold'); // BUG: lotRow not cannot be used to index sheet, as sheet row might have changed due to a shift
         }    
 
         // if sale more than 1 year and 1 day from purchase date mark as long-term gains        
@@ -466,7 +466,7 @@ function calculateFifo(sheet, lots, sales) {
         // subtract the lot amount from the remaining coin to be sold,
         // and set up variables for the next lot, since this lot is completely used up
         sellCoinRemain = sellCoinRemain - lotCoinRemain;
-        sheet.getRange('F'+lotRow).setValue('100% Sold');
+        sheet.getRange('F'+lotRow).setValue('100% Sold'); // BUG: lotRow not cannot be used to index sheet, as sheet row might have changed due to a shift
         lotCount++;
         lotCoinRemain = lots[lotCount][1];
       }

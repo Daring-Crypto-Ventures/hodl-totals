@@ -22,6 +22,7 @@ QUnit.helpers( this );
 function testFunctions() {
   test0_CostBasis();  
   test4_CostBasis();
+  test6_CostBasis();
 }
  
 function doGet( e ) {
@@ -98,9 +99,9 @@ function test0_CostBasis() {
     // also check the NOTE content...
     // "Split into (rows 6 and 7). Amount of coin sold was 0.40000000, and original amount was $8000.00."
 
-    equal( sheet.getRange('F7').getValue(), "Short-term", "Test for Split into Short-Term Sale : Row 7 Status : expected long-term 1000 cost basis" );
-    equal( sheet.getRange('G7').getValue(), 3000, "Test for Split into Short-Term Sale : Row 7 Cost Basis : expected long-term 3000 cost basis" );
-    equal( sheet.getRange('H7').getValue(), 3000, "Test for Split into Short-Term Sale : Row 7 Gain(Loss) : expected long-term 3000 gain" );
+    equal( sheet.getRange('F7').getValue(), "Short-term", "Test for Split into Short-Term Sale : Row 7 Status : expected short-term 1000 cost basis" );
+    equal( sheet.getRange('G7').getValue(), 3000, "Test for Split into Short-Term Sale : Row 7 Cost Basis : expected short-term 3000 cost basis" );
+    equal( sheet.getRange('H7').getValue(), 3000, "Test for Split into Short-Term Sale : Row 7 Gain(Loss) : expected short-term 3000 gain" );
     // also check the NOTE content...
     // "Sale split into (rows 6 and 7). Original amount of coin sold was 0.40000000, and original amount was $8000.00."
 
@@ -157,6 +158,76 @@ function test4_CostBasis() {
     equal( sheet.getRange('F4').getValue(), "Short-term", "Test for Partial Short-Term Sale : Row 4 Status : expected short-term 500 cost basis" );
     equal( sheet.getRange('G4').getValue(), 500, "Test for Partial Short-Term Sale : Row 4 Cost Basis : expected short-term 500 cost basis" );
     equal( sheet.getRange('H4').getValue(), 500, "Test for Partial Short-Term Sale : Row 4 Gain(Loss) : expected short-term 500 gain" );
+    
+    // clean up temp sheet
+    SpreadsheetApp.getActiveSpreadsheet().deleteSheet(sheet);
+  });
+}
+
+/*
+2017-01-01	1.00000000	$1,000.00		
+2018-01-01	1.00000000	$1,000.00		
+2018-07-01			2.00000000	$4,000.00
+*/
+
+/** 
+ * test6 for function calculateFifo(sheet, lots, sales)
+ */
+function test6_CostBasis() {
+  QUnit.test( "Cost Basis Calculation (FIFO) - test6", function() {
+    // create temp sheet
+    var currentdate = new Date(); 
+    var uniqueSheetName = "test6:" + (currentdate.getMonth()+1) + "/"
+                + currentdate.getDate() + "/" 
+                + currentdate.getFullYear() + " @ "  
+                + currentdate.getHours() + ":"  
+                + currentdate.getMinutes() + ":" 
+                + currentdate.getSeconds();
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().insertSheet(uniqueSheetName);
+    
+    // test data for this test case
+    var initialData = [['2017-01-01','1.0','1000','',''],
+                       ['2018-01-01','1.0','1000','',''],
+                       ['2018-07-01','','','2.0','4000']];
+    
+    for (var i = 0; i < initialData.length; i++) {
+      sheet.getRange('A'+(i+3)+':E'+(i+3)).setValues([initialData[i]]);
+    }
+    
+    // mimic calculateFIFO_() 
+    if (validate(sheet)) {
+    
+      var lots = getLots(sheet);
+      var sales = getSales(sheet);
+    
+      calculateFifo(sheet, lots, sales);
+      
+      // output the current date and time as the time last completed
+      var now = Utilities.formatDate(new Date(), 'CST', 'MMMM dd, yyyy HH:mm');
+      sheet.getRange('I1').setValue('Last calculation succeeded '+now);
+          
+    } else {
+      
+      var now = Utilities.formatDate(new Date(), 'CST', 'MMMM dd, yyyy HH:mm');
+      sheet.getRange('I1').setValue('Data validation failed '+now);
+    }
+    
+    // check if test passed or failed
+    expect(8);
+    equal( sheet.getRange('F3').getValue(), "100% Sold", "Test for Lot Sold In Full Later : Row 3 Status : expected 100% sold" );
+    equal( sheet.getRange('F4').getValue(), "100% Sold", "Test for Lot Sold In Full Later : Row 4 Status : expected 100% sold" );
+
+    equal( sheet.getRange('F5').getValue(), "Long-term", "Test for Split into Long-Term Sale : Row 6 Status : expected long-term 1000 cost basis" );
+    equal( sheet.getRange('G5').getValue(), 1000, "Test for Split into Long-Term Sale : Row 6 Cost Basis : expected long-term 1000 cost basis" );
+    equal( sheet.getRange('H5').getValue(), 1000, "Test for Split into Long-Term Sale : Row 6 Gain(Loss) : expected long-term 1000 gain" );
+    // also check the NOTE content...
+    // "Split into (rows 5 and 6). Amount of coin sold was 2.00000000, and original amount was $4000.00."
+
+    equal( sheet.getRange('F6').getValue(), "Short-term", "Test for Split into Short-Term Sale : Row 7 Status : expected short-term 1000 cost basis" );
+    equal( sheet.getRange('G6').getValue(), 1000, "Test for Split into Short-Term Sale : Row 7 Cost Basis : expected short-term 1000 cost basis" );
+    equal( sheet.getRange('H6').getValue(), 1000, "Test for Split into Short-Term Sale : Row 7 Gain(Loss) : expected short-term 1000 gain" );
+    // also check the NOTE content...
+    // "Sale split into (rows 5 and 6). Original amount of coin sold was 2.00000000, and original amount was $4000.00."
     
     // clean up temp sheet
     SpreadsheetApp.getActiveSpreadsheet().deleteSheet(sheet);
