@@ -68,7 +68,6 @@ function newCurrencySheet_() {
   sheet.getRange('I1').setFontWeight('normal');
   sheet.getRange('I2').setHorizontalAlignment('left');
 
-
   // merge 1st row cells for Buy, Sell and Calc
   sheet.getRange('B1:C1').merge();
   sheet.getRange('D1:E1').merge();
@@ -315,6 +314,7 @@ function calculateFifo(sheet, lots, sales) {
   var sellRecd; // Double
   var sellRow; // Integer
   const MILLIS_PER_DAY = 1000 * 60 * 60 * 24;
+  const ONE_SATOSHI = .00000001;
 
   shift = 0;
   lotCount = 0;
@@ -329,10 +329,12 @@ function calculateFifo(sheet, lots, sales) {
 
   for (var sale = 0; sale < sales.length; sale++) {
     var termSplit; // Boolean
+    var prevSplitRow; // Boolean
     var splitFactor; // Double
     var totalCoin; // Double
     var totalCost; // Double
     termSplit = false; // flag if sale involved both short-term and long-term holdings
+    prevSplitRow = false; // flag to avoid creating extra rows when running calc repeatedly on same sheet
     splitFactor = 0; // ratio of totalCoin to sellCoin
     totalCoin = 0; // running total of coins for basis
     totalCost = 0; // running total of dollar cost for basis
@@ -361,9 +363,9 @@ function calculateFifo(sheet, lots, sales) {
       // calculate and post the cost basis and the gain or loss
       if (sellCoinRemain <= lotCoinRemain) {
 
-        if (Math.abs(sellCoinRemain - lotCoinRemain) <= .00000001) {
+        if (Math.abs(sellCoinRemain - lotCoinRemain) <= ONE_SATOSHI) {
           // all of this lot was sold
-          sheet.getRange('F'+lotRow).setValue('100% Sold'); // BUG: lotRow not cannot be used to index sheet, as sheet row might have changed due to a shift
+          sheet.getRange('F'+lotRow).setValue('100% Sold');
 
           // if there are more lots to process, advance the lotCount before breaking out
           if ((lotCount+1) < lots.length) {
@@ -377,7 +379,7 @@ function calculateFifo(sheet, lots, sales) {
           lotCoinRemain = lotCoinRemain - sellCoinRemain;
           percentSold = 1 - (lotCoinRemain / lotCoin);
 
-          sheet.getRange('F'+lotRow).setValue((percentSold * 100).toFixed(0) + '% Sold'); // BUG: lotRow not cannot be used to index sheet, as sheet row might have changed due to a shift
+          sheet.getRange('F'+lotRow).setValue((percentSold * 100).toFixed(0) + '% Sold');
         }    
 
         // if sale more than 1 year and 1 day from purchase date mark as long-term gains        
@@ -389,13 +391,20 @@ function calculateFifo(sheet, lots, sales) {
           }
         }
 
-        // calculate and post results 
-        totalCoin = totalCoin + sellCoinRemain;
-        totalCost = totalCost + (lotCost * (sellCoinRemain / lotCoin));
-        costBasis = sellCoin * (totalCost / totalCoin) * (1 - splitFactor);
-        gainLoss = (sellRecd * (1 - splitFactor)) - costBasis;       
-        sheet.getRange('G'+(sellRow+shift)).setValue(costBasis);
-        sheet.getRange('H'+(sellRow+shift)).setValue(gainLoss);
+        if (!prevSplitRow) {
+          // calculate and post results 
+          totalCoin = totalCoin + sellCoinRemain;
+          totalCost = totalCost + (lotCost * (sellCoinRemain / lotCoin));
+          costBasis = sellCoin * (totalCost / totalCoin) * (1 - splitFactor);
+          gainLoss = (sellRecd * (1 - splitFactor)) - costBasis;       
+
+          sheet.getRange('G'+(sellRow+shift)).setValue(costBasis);
+          sheet.getRange('H'+(sellRow+shift)).setValue(gainLoss);     
+
+          // take note note of which lots were sold and when
+          sheet.getRange('D'+(sellRow+shift)).setNote('Sold lots from row '+
+          '??? on ????-??-??'+' to row '+lots[lot][3]+' on '+lots[lot][0]+'.');  
+        }
         
         break; // Exit the inner for loop
       }
@@ -405,61 +414,68 @@ function calculateFifo(sheet, lots, sales) {
         // mark 1 year from the look-ahead lotDate
         nextTerm = dateFromString(lots[lot+1][0], 1);
         
-        // look ahead for a term split, and if a split exists,
-        // set the split factor (% to allocate to either side of the split),
-        // and calculate and post the first half of the split
+        // look ahead for a term split, do additional calculations, and
+        // split both sides of the split on two different rows
         if (((sellDate.getTime() - thisTerm.getTime()) / MILLIS_PER_DAY > 0) 
           && ((sellDate.getTime() - nextTerm.getTime()) / MILLIS_PER_DAY < 0)) {
-         
-          termSplit = true;
 
+          termSplit = true;
+          
+          // calculate the split factor
           totalCoin = totalCoin + lotCoinRemain;
           totalCost = totalCost + (lotCost * (lotCoinRemain / lotCoin));
-
-          // calculate the split factor
           splitFactor = totalCoin / sellCoin;
 
-          // post the long-term split and continue
           costBasis = sellCoin * (totalCost / totalCoin) * splitFactor; // average price
           gainLoss = (sellRecd * splitFactor) - costBasis;
 
           originalDate = dateFromString(sheet.getRange('A'+(sellRow+shift)).getDisplayValue(), 0);
           originalCoin = sheet.getRange('D'+(sellRow+shift)).getValue();
           originalCost = sheet.getRange('E'+(sellRow+shift)).getValue();
-          
-          sheet.getRange('G'+(sellRow+shift)).setValue(costBasis);
-          sheet.getRange('H'+(sellRow+shift)).setValue(gainLoss);
-          
-          sheet.getRange('A'+(sellRow+shift)).setNote('Split into (rows '+(sellRow+shift)+
-              ' and '+(sellRow+shift+1)+'). Amount of coin sold was '+originalCoin.toFixed(8)+
-              ', and original amount was $'+originalCost.toFixed(2)+'.');
-          
+
+          // post the long-term split       
           sheet.getRange('D'+(sellRow+shift)).setValue(originalCoin * splitFactor);
           sheet.getRange('E'+(sellRow+shift)).setValue(originalCost * splitFactor);
           sheet.getRange('F'+(sellRow+shift)).setValue('Long-term');
+          sheet.getRange('G'+(sellRow+shift)).setValue(costBasis);
+          sheet.getRange('H'+(sellRow+shift)).setValue(gainLoss);       
           
-          // create the new row to handle second part of the term split
-          sheet.insertRowAfter(sellRow+shift);
-          shift++;
+          // take note note of which lots were sold and when
+          sheet.getRange('D'+(sellRow+shift)).setNote('Sold lots from row '+
+            '??? on ????-??-??'+' to row '+lots[lot][3]+' on '+lots[lot][0]+'.');  
 
-          // update lots after the split transaction to account for the inserted row
-          for (var lotAfterSplit = 0; lotAfterSplit < lots.length; lotAfterSplit++) {
-            if (lots[lotAfterSplit][3] >= (sellRow+shift)) {
-              lots[lotAfterSplit][3]++;
+          // Don't create note/new row if there is negligable value left in the short-term part
+          // likely caused by rounding errors repeating the cost basis calc on the same sheet
+          if (originalCoin * (1 - splitFactor) >= ONE_SATOSHI) {
+            
+            var splitNoteText = 'Originally '+originalCoin.toFixed(8)+' '+
+            sheet.getName()+' was sold for $'+originalCost.toFixed(2)+
+               ' and split into rows '+(sellRow+shift)+' and '+(sellRow+shift+1)+'.';
+            sheet.getRange('A'+(sellRow+shift)).setNote(splitNoteText);
+          
+            // create the new row for the short-term part of the term split
+            sheet.insertRowAfter(sellRow+shift);
+
+            // shift to the next row to post the short-term split
+            shift++;
+            sheet.getRange('A'+(sellRow+shift)).setValue(originalDate).setNote(splitNoteText);
+            sheet.getRange('D'+(sellRow+shift)).setValue(originalCoin * (1 - splitFactor));
+            sheet.getRange('E'+(sellRow+shift)).setValue(originalCost * (1 - splitFactor));
+            sheet.getRange('F'+(sellRow+shift)).setValue('Short-term');
+
+            // update lots after the split transaction to account for the inserted row
+            for (var lotAfterSplit = 0; lotAfterSplit < lots.length; lotAfterSplit++) {
+              if (lots[lotAfterSplit][3] >= (sellRow+shift)) {
+                lots[lotAfterSplit][3]++;
+              }
             }
           }
-          
-          sheet.getRange('A'+(sellRow+shift)).setValue(originalDate).setNote(
-             'Sale split into (rows '+(sellRow+shift-1)+' and '+(sellRow+shift)+
-             '). Original amount of coin sold was '+originalCoin.toFixed(8)+
-             ', and original amount was $'+originalCost.toFixed(2)+'.');
-            
-          sheet.getRange('D'+(sellRow+shift)).setValue(originalCoin * (1 - splitFactor));
-          sheet.getRange('E'+(sellRow+shift)).setValue(originalCost * (1 - splitFactor));
-          sheet.getRange('F'+(sellRow+shift)).setValue('Short-term');
+          else {
+            prevSplitRow = true;
+          }
           
           totalCoin = 0;
-          totalCost = 0;       
+          totalCost = 0;
         } 
         // if there isn't a term split, add to the running totals
         // and continue on to the next lot
@@ -471,7 +487,7 @@ function calculateFifo(sheet, lots, sales) {
         // subtract the lot amount from the remaining coin to be sold,
         // and set up variables for the next lot, since this lot is completely used up
         sellCoinRemain = sellCoinRemain - lotCoinRemain;
-        sheet.getRange('F'+lotRow).setValue('100% Sold'); // BUG: lotRow not cannot be used to index sheet, as sheet row might have changed due to a shift
+        sheet.getRange('F'+lotRow).setValue('100% Sold');
         lotCount++;
         lotCoinRemain = lots[lotCount][1];
       }
