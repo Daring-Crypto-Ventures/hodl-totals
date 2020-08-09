@@ -347,11 +347,9 @@ function calculateFifo(sheet, lots, sales) {
       var originalDate; // Date
       var originalCoin; // Double
       var originalCost; // Double
-      var lotDate; // Date
       var lotCoin; // Double
       var lotCost; // Double
       var lotRow; // Integer
-      lotDate = dateFromString(lots[lot][0],0);
       lotCoin = lots[lot][1];
       lotCost = lots[lot][2];
       lotRow = lots[lot][3];
@@ -443,6 +441,13 @@ function calculateFifo(sheet, lots, sales) {
           // create the new row to handle second part of the term split
           sheet.insertRowAfter(sellRow+shift);
           shift++;
+
+          // update lots after the split transaction to account for the inserted row
+          for (var lotAfterSplit = 0; lotAfterSplit < lots.length; lotAfterSplit++) {
+            if (lots[lotAfterSplit][3] >= (sellRow+shift)) {
+              lots[lotAfterSplit][3]++;
+            }
+          }
           
           sheet.getRange('A'+(sellRow+shift)).setValue(originalDate).setNote(
              'Sale split into (rows '+(sellRow+shift-1)+' and '+(sellRow+shift)+
