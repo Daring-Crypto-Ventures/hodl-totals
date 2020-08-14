@@ -3,3 +3,8 @@
 .gitignore export-ignore
 CONTRIBUTING.md export-ignore
 /tests export-ignore
+
+# Prevent Windows-WSL2 line ending issues
+* text=auto eol=lf
+*.{cmd,[cC][mM][dD]} text eol=crlf
+*.{bat,[bB][aA][tT]} text eol=crlf
