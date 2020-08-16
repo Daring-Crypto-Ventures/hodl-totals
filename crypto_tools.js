@@ -12,11 +12,13 @@
 function onOpen() {
   var ui = SpreadsheetApp.getUi();
   ui.createMenu('HODL Totals')
-      .addItem('New Currency...', 'newCurrencySheet_')
-      .addItem('Calculate Cost Basis (FIFO)', 'calculateFIFO_')
+      .addItem('New currency...', 'newCurrencySheet_')
+      .addSeparator()
+      .addItem('Apply formatting', 'formatSheet_')
+      .addItem('Calculate cost basis (FIFO)', 'calculateFIFO_')
       .addSeparator()
       .addSubMenu(ui.createMenu('Examples')
-          .addItem('Fake Data with Instuctions', 'loadExample0_'))
+          .addItem('Simple data with Instuctions', 'loadExample0_'))
       .addSeparator()
       .addItem('About', 'showAboutDialog_') 
       .addToUi();
@@ -41,9 +43,7 @@ function showNewCurrencyPrompt() {
 }
 
 /**
- * A function that adds headers and some initial data to the spreadsheet.
- * 
- * Assumption: Not configurable to pick Fiat Currency to use for all sheets, assuming USD since this is related to US Tax calc
+ * A function that adds columns and headers to the spreadsheet.
  * 
  * @return the newly created sheet, for function chaining purposes.
  */
@@ -56,9 +56,25 @@ function newCurrencySheet_() {
   if (desiredCurrency === null)
     return null;
 
-  // could add configurable "# digits to the right to show' here
-  // and then use it down below to set format on COIN columns
   var sheet = SpreadsheetApp.getActiveSpreadsheet().insertSheet(desiredCurrency);
+
+  return formatSheet_();
+}
+
+  /**
+ * A function that formats the columns and headers of the active spreadsheet.
+ * 
+ * Assumption: Not configurable to pick Fiat Currency to use for all sheets, assuming USD since this is related to US Tax calc
+ * 
+ * @return the newly created sheet, for function chaining purposes.
+ */
+function formatSheet_() {
+
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  var desiredCurrency = sheet.getName().replace(/ *\([^)]*\) */g, "");
+
+  // TODO add configurable "# digits to the right to show' here
+  // and then use it down below to set format on COIN columns
 
   // populate the two-row-tall header cells
   var header1 = ['', 'Buy','', 'Sell','','Calculated','','','Use menu command \"HODL Totals > Calculate Cost Basis (FIFO)\" to update this sheet.'];
@@ -66,7 +82,7 @@ function newCurrencySheet_() {
   sheet.getRange('A1:I1').setValues([header1]).setFontWeight('bold').setHorizontalAlignment('center');
   sheet.getRange('A2:I2').setValues([header2]).setFontWeight('bold').setHorizontalAlignment('center');
   sheet.getRange('I1').setFontWeight('normal');
-  sheet.getRange('I2').setHorizontalAlignment('left');
+  sheet.getRange('I2').setHorizontalAlignment('center');
 
   // merge 1st row cells for Buy, Sell and Calc
   sheet.getRange('B1:C1').merge();
@@ -449,7 +465,7 @@ function calculateFifo(sheet, lots, sales) {
           if (originalCoin * (1 - splitFactor) >= ONE_SATOSHI) {
             
             var splitNoteText = 'Originally '+originalCoin.toFixed(8)+' '+
-            sheet.getName()+' was sold for $'+originalCost.toFixed(2)+
+            sheet.getName().replace(/ *\([^)]*\) */g, "")+' was sold for $'+originalCost.toFixed(2)+
                ' and split into rows '+(sellRow+shift)+' and '+(sellRow+shift+1)+'.';
             sheet.getRange('A'+(sellRow+shift)).setNote(splitNoteText);
           
@@ -514,9 +530,9 @@ function calculateFIFO_() {
     
     // add freshly calculated values
     var lots = getLots(activeSheet);
-    Logger.log('Detected ' + lots.length + ' purchases of '+activeSheet.getName()+'.');
+    Logger.log('Detected ' + lots.length + ' purchases of '+activeSheet.getName().replace(/ *\([^)]*\) */g, "")+'.');
     var sales = getSales(activeSheet);
-    Logger.log('Detected ' + sales.length + ' sales of '+activeSheet.getName()+'.');
+    Logger.log('Detected ' + sales.length + ' sales of '+activeSheet.getName().replace(/ *\([^)]*\) */g, "")+'.');
     
     calculateFifo(activeSheet, lots, sales);
     
