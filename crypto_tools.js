@@ -77,22 +77,24 @@ function formatSheet_() {
   // and then use it down below to set format on COIN columns
 
   // populate the two-row-tall header cells
-  var header1 = ['', 'Buy','', 'Sell','','Calculated','','','Use menu command \"HODL Totals > Calculate Cost Basis (FIFO)\" to update this sheet.'];
-  var header2 = ['Date', desiredCurrency+' Purchased','Fiat Cost', desiredCurrency+' Sold','Fiat Received','Status','Cost Basis','Gain (Loss)','Notes'];
-  sheet.getRange('A1:I1').setValues([header1]).setFontWeight('bold').setHorizontalAlignment('center');
-  sheet.getRange('A2:I2').setValues([header2]).setFontWeight('bold').setHorizontalAlignment('center');
+  var header1 = ['', 'Buy','', 'Sell','','Calculated','','','Use menu command \"HODL Totals > Calculate Cost Basis (FIFO)\" to update this sheet.','Fair Market Value (USD)','',''];
+  var header2 = ['Date', desiredCurrency+' Purchased','Fiat Cost', desiredCurrency+' Sold','Fiat Received','Status','Cost Basis','Gain (Loss)','Notes', desiredCurrency+' High',desiredCurrency+' Low',desiredCurrency+' Price'];
+  sheet.getRange('A1:L1').setValues([header1]).setFontWeight('bold').setHorizontalAlignment('center');
+  sheet.getRange('A2:L2').setValues([header2]).setFontWeight('bold').setHorizontalAlignment('center');
   sheet.getRange('I1').setFontWeight('normal');
-  sheet.getRange('I2').setHorizontalAlignment('center');
 
-  // merge 1st row cells for Buy, Sell and Calc
+  // merge 1st row cell headers
   sheet.getRange('B1:C1').merge();
   sheet.getRange('D1:E1').merge();
   sheet.getRange('F1:H1').merge();
+  sheet.getRange('J1:L1').merge();
   
   // color background and freeze the header rows
-  sheet.getRange('A1:I1').setBackground('#DDDDEE');
-  sheet.getRange('A2:I2').setBackground('#EEEEEE');
+  sheet.getRange('A1:L1').setBackground('#DDDDEE');
+  sheet.getRange('A2:L2').setBackground('#EEEEEE');
   sheet.setFrozenRows(2);
+
+  // should freeze the Date column also?
      
   // set numeric formats as described here: https://developers.google.com/sheets/api/guides/formats
   sheet.getRange('A3:A').setNumberFormat('yyyy-mm-dd');
@@ -107,9 +109,14 @@ function formatSheet_() {
   sheet.getRange('G3:G').setNumberFormat('$#,##0.00;$(#,##0.00)');
   sheet.getRange('H3:H').setNumberFormat('$#,##0.00;$(#,##0.00)');
 
-  // set col F {Status} centered + and I {Notes} left-aligned but with dark gray text, italics text
+  // set col F {Status} centered + and I {Notes} centered with dark gray text, italics text
   sheet.getRange('F3:F').setFontColor('#424250').setFontStyle('italic').setHorizontalAlignment('center');
-  sheet.getRange('I3:I').setFontColor('#424250').setFontStyle('italic');
+  sheet.getRange('I3:I').setFontColor('#424250').setFontStyle('italic').setHorizontalAlignment('center');
+
+  // set col J, K and L {COIN High, Low, Price} to be foramtted into USD value but to 6 decimal places
+  sheet.getRange('J3:J').setNumberFormat('$#,######0.000000;$(#,######0.000000)');
+  sheet.getRange('K3:K').setNumberFormat('$#,######0.000000;$(#,######0.000000)');
+  sheet.getRange('L3:L').setNumberFormat('$#,######0.000000;$(#,######0.000000)');
 
   // Prevent the user from entering bad inputs in the first place which removes
   // the need to check data in the validate() function during a calculation
