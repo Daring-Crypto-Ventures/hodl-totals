@@ -77,7 +77,7 @@ function formatSheet_() {
   // and then use it down below to set format on COIN columns
 
   // populate the two-row-tall header cells
-  var header1 = ['', 'Buy','', 'Sell','','Calculated','','','Use menu command \"HODL Totals > Calculate Cost Basis (FIFO)\" to update this sheet.','Fair Market Value (USD)','',''];
+  var header1 = ['', 'Buy','', 'Sell','','Calculated','','','Use \"HODL Totals > Calculate Cost Basis (FIFO)\" to update this sheet.','Fair Market Value (USD)','',''];
   var header2 = ['Date', desiredCurrency+' Purchased','Fiat Cost', desiredCurrency+' Sold','Fiat Received','Status','Cost Basis','Gain (Loss)','Notes', desiredCurrency+' High',desiredCurrency+' Low',desiredCurrency+' Price'];
   sheet.getRange('A1:L1').setValues([header1]).setFontWeight('bold').setHorizontalAlignment('center');
   sheet.getRange('A2:L2').setValues([header2]).setFontWeight('bold').setHorizontalAlignment('center');
@@ -109,14 +109,42 @@ function formatSheet_() {
   sheet.getRange('G3:G').setNumberFormat('$#,##0.00;$(#,##0.00)');
   sheet.getRange('H3:H').setNumberFormat('$#,##0.00;$(#,##0.00)');
 
+  // set col C {Fiat Cost} to be calculated based on other cells in the sheet
+  var lastRow = getLastRowSpecial(sheet.getRange('A:A').getValues());
+  for (var row = 3; row <= lastRow; row++) {
+    var highValue = sheet.getRange('J'+row).getValue();
+
+    // if value known don't include formulas to calculate the price from FMV columns
+    if (highValue !== 'value known') {
+
+      // calculate fiat price based on other columns
+      if (sheet.getRange('B'+row).getValue()) {  
+        sheet.getRange('C'+row).setValue('=B'+row+'*L'+row);
+      } else {
+        if (sheet.getRange('D'+row).getValue()) {  
+          sheet.getRange('E'+row).setValue('=D'+row+'*L'+row);
+        }
+      }
+
+      // unless the price is known, calculate via averaging high/low price for that date
+      if (highValue !== 'price known') {
+        sheet.getRange('L'+row).setValue('=AVERAGE(J'+row+',K'+row+')');
+      }
+
+    } else {
+        sheet.getRange('L'+row).setValue(highValue);
+        sheet.getRange('C'+row).setFontWeight('bold');
+    } 
+  }  
+
   // set col F {Status} centered + and I {Notes} centered with dark gray text, italics text
   sheet.getRange('F3:F').setFontColor('#424250').setFontStyle('italic').setHorizontalAlignment('center');
   sheet.getRange('I3:I').setFontColor('#424250').setFontStyle('italic').setHorizontalAlignment('center');
 
   // set col J, K and L {COIN High, Low, Price} to be foramtted into USD value but to 6 decimal places
-  sheet.getRange('J3:J').setNumberFormat('$#,######0.000000;$(#,######0.000000)');
-  sheet.getRange('K3:K').setNumberFormat('$#,######0.000000;$(#,######0.000000)');
-  sheet.getRange('L3:L').setNumberFormat('$#,######0.000000;$(#,######0.000000)');
+  sheet.getRange('J3:J').setNumberFormat('$#,######0.000000;$(#,######0.000000)').setHorizontalAlignment('right');
+  sheet.getRange('K3:K').setNumberFormat('$#,######0.000000;$(#,######0.000000)').setHorizontalAlignment('right');
+  sheet.getRange('L3:L').setNumberFormat('$#,######0.000000;$(#,######0.000000)').setHorizontalAlignment('right');
 
   // Prevent the user from entering bad inputs in the first place which removes
   // the need to check data in the validate() function during a calculation
