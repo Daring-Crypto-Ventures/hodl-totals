@@ -18,7 +18,8 @@ function onOpen() {
       .addItem('Calculate cost basis (FIFO)', 'calculateFIFO_')
       .addSeparator()
       .addSubMenu(ui.createMenu('Examples')
-          .addItem('Simple data with Instuctions', 'loadExample0_'))
+          .addItem('Cost Basis Only', 'loadExample0_')
+          .addItem('Cost Basis and Fair Market Value', 'loadExample1_'))
       .addSeparator()
       .addItem('About', 'showAboutDialog_') 
       .addToUi();
@@ -132,15 +133,19 @@ function formatSheet_() {
       }
 
     } else {
+        // when marked 'value known', bold the hard-coded value entered in C (for buy) or E (for sale)
+        sheet.getRange('K'+row).setValue(highValue);
         sheet.getRange('L'+row).setValue(highValue);
         sheet.getRange('C'+row).setFontWeight('bold');
+        sheet.getRange('E'+row).setFontWeight('bold');
     } 
   }  
 
   // set col F {Status} centered + and I {Notes} centered with dark gray text, italics text
   sheet.getRange('F3:F').setFontColor('#424250').setFontStyle('italic').setHorizontalAlignment('center');
-  sheet.getRange('I3:I').setFontColor('#424250').setFontStyle('italic').setHorizontalAlignment('center');
+  sheet.getRange('I3:I').setFontColor('#424250').setFontStyle('italic').setHorizontalAlignment('left');
 
+  // TODO - special case formatting if coin price is > $100?  Annoying to list BTC-USD price to 6 decimal places.
   // set col J, K and L {COIN High, Low, Price} to be foramtted into USD value but to 6 decimal places
   sheet.getRange('J3:J').setNumberFormat('$#,######0.000000;$(#,######0.000000)').setHorizontalAlignment('right');
   sheet.getRange('K3:K').setNumberFormat('$#,######0.000000;$(#,######0.000000)').setHorizontalAlignment('right');
@@ -153,7 +158,7 @@ function formatSheet_() {
   // set col F, G and H {Status, Cost Basis, Gain(Loss)} to be grayed background
   sheet.getRange('F3:H').setBackground('#EEEEEE');
    
-  // autosize the column widths to fit content
+  // autosize the first 9 columns' widths to fit content
   sheet.autoResizeColumns(1, 9);  
   
   SpreadsheetApp.flush();
