@@ -62,7 +62,7 @@ function newCurrencySheet_() {
   return formatSheet_();
 }
 
-  /**
+/**
  * A function that formats the columns and headers of the active spreadsheet.
  * 
  * Assumption: Not configurable to pick Fiat Currency to use for all sheets, assuming USD since this is related to US Tax calc
@@ -110,36 +110,8 @@ function formatSheet_() {
   sheet.getRange('G3:G').setNumberFormat('$#,##0.00;$(#,##0.00)');
   sheet.getRange('H3:H').setNumberFormat('$#,##0.00;$(#,##0.00)');
 
-  // set col C {Fiat Cost} to be calculated based on other cells in the sheet
-  var lastRow = getLastRowSpecial(sheet.getRange('A:A').getValues());
-  for (var row = 3; row <= lastRow; row++) {
-    var highValue = sheet.getRange('J'+row).getValue();
-
-    // if value known don't include formulas to calculate the price from FMV columns
-    if (highValue !== 'value known') {
-
-      // calculate fiat price based on other columns
-      if (sheet.getRange('B'+row).getValue()) {  
-        sheet.getRange('C'+row).setValue('=B'+row+'*L'+row);
-      } else {
-        if (sheet.getRange('D'+row).getValue()) {  
-          sheet.getRange('E'+row).setValue('=D'+row+'*L'+row);
-        }
-      }
-
-      // unless the price is known, calculate via averaging high/low price for that date
-      if (highValue !== 'price known') {
-        sheet.getRange('L'+row).setValue('=AVERAGE(J'+row+',K'+row+')');
-      }
-
-    } else {
-        // when marked 'value known', bold the hard-coded value entered in C (for buy) or E (for sale)
-        sheet.getRange('K'+row).setValue(highValue);
-        sheet.getRange('L'+row).setValue(highValue);
-        sheet.getRange('C'+row).setFontWeight('bold');
-        sheet.getRange('E'+row).setFontWeight('bold');
-    } 
-  }  
+  // set col C {Fiat Cost} and col E {Fiat Received} to be calculated based on other cells in the sheet
+  calcFiatValuesFromFMV(sheet);
 
   // set col F {Status} centered + and I {Notes} centered with dark gray text, italics text
   sheet.getRange('F3:F').setFontColor('#424250').setFontStyle('italic').setHorizontalAlignment('center');
@@ -164,6 +136,43 @@ function formatSheet_() {
   SpreadsheetApp.flush();
   
   return sheet;
+}
+
+function calcFiatValuesFromFMV(sheet) {
+  var lastRow = getLastRowSpecial(sheet.getRange('A:A').getValues());
+  for (var row = 3; row <= lastRow; row++) {
+    var highValue = sheet.getRange('J'+row).getValue();
+
+    // if value known don't include formulas to calculate the price from FMV columns
+    if (highValue !== 'value known') {
+
+      // calculate fiat price based on other columns
+      if (sheet.getRange('B'+row).getValue()) {  
+        sheet.getRange('C'+row).setValue('=B'+row+'*L'+row);
+      } else {
+        if (sheet.getRange('D'+row).getValue()) {  
+          sheet.getRange('E'+row).setValue('=D'+row+'*L'+row);
+        }
+      }
+
+      // unless the price is known, calculate via averaging high/low price for that date
+      if (highValue !== 'price known') {
+        sheet.getRange('L'+row).setValue('=AVERAGE(J'+row+',K'+row+')');
+      } else {
+        // copy the price known sentinel value to any cells to the right
+        sheet.getRange('K'+row).setValue('price known');
+      }
+
+    } else {
+        // copy the price known sentinel value to any cells to the right
+        sheet.getRange('K'+row).setValue('value known');
+        sheet.getRange('L'+row).setValue('value known');
+
+        // when marked 'value known', bold the hard-coded value entered in C (for buy) or E (for sale)
+        sheet.getRange('C'+row).setFontWeight('bold');
+        sheet.getRange('E'+row).setFontWeight('bold');
+    } 
+  }  
 }
 
 function setValidationRules_(sheet) {

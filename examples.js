@@ -50,20 +50,19 @@ function example1(sheet) {
 
   // sample data set
   var initialData = [
-    ['2015-12-01', '1.00000000','=B3*L3',             ,        , , , ,                      'Grab High/Lows from historical values tab on https://coinmarketcap.com',             '1.111100',            '0.992222','=AVERAGE(J3,K3)'],
-    ['2016-02-29', '1.00000000',     '1',             ,        , , , ,'If USD amount paid to receive the coin is known, enter in col C and \'value known\' in col J',          'value known',         'value known',    'value known'],
-    ['2016-03-01',             ,        , '1.00000000',     '5', , , ,   'If USD amount received for the coin is known, enter in col E and \'value known\' in col J',          'value known',         'value known',    'value known'],
-    ['2018-02-28','23.00000000','=B6*L6',		 	        ,        , , , ,   'If USD purchase/sale price per coin is known, enter in col L and \'price known\' in col J',          'price known',         'price known',             '34'],
-    ['2020-04-01',             ,		    , '2.00000000','=D7*L7', , , ,            'High/Low cells can contain formulas that translate sales of coin to BTC, to USD.',             '2.312002',              '1.8222','=AVERAGE(J7,K7)'],
-    ['2020-04-02',             ,		    ,'20.00000000','=D8*L8', , , ,                        'i.e. Sale Outcome Known: binance.us traded 20 TEST for 0.0003561 BTC',   '=0.0003561*7088.25',  '=0.0003561*6595.92','=AVERAGE(J8,K8)'],
-    ['2020-05-31','26.92000000','=B9*L9',             ,		 	 	 , , , ,               'i.e. Purchase Price Known: coinbase.com traded BTC for 26.92 TEST @ 0.0069319','=0.0069319*9700.34/B9','=0.0069319*9432.3/B9','=AVERAGE(J9,K9)']
+    ['2015-12-01', '1.00000000',    ,             ,    , , , ,                      'Grab High/Lows from historical values tab on https://coinmarketcap.com',             '1.111100',            '0.992222',            ''],
+    ['2016-02-29', '1.00000000', '1',             ,    , , , ,'If USD amount paid to receive the coin is known, enter in col C and \'value known\' in col J',          'value known',         'value known', 'value known'],
+    ['2016-03-01',             ,    , '1.00000000', '5', , , ,   'If USD amount received for the coin is known, enter in col E and \'value known\' in col J',          'value known',         'value known', 'value known'],
+    ['2018-02-28','23.00000000',    ,		 	        ,    , , , ,   'If USD purchase/sale price per coin is known, enter in col L and \'price known\' in col J',          'price known',         'price known',          '34'],
+    ['2020-04-01',             ,    , '2.00000000',    , , , ,            'High/Low cells can contain formulas that translate sales of coin to BTC, to USD.',             '2.312002',              '1.8222',            ''],
+    ['2020-04-02',             ,    ,'20.00000000',    , , , ,                        'i.e. Sale Outcome Known: binance.us traded 20 TEST for 0.0003561 BTC',   '=0.0003561*7088.25',  '=0.0003561*6595.92',            ''],
+    ['2020-05-31','26.92000000',    ,             ,		 , , , ,               'i.e. Purchase Price Known: coinbase.com traded BTC for 26.92 TEST @ 0.0069319','=0.0069319*9700.34/B9','=0.0069319*9432.3/B9',            '']
     ];
   
   for (var i = 0; i < initialData.length; i++) {
     sheet.getRange('A'+(i+3)+':L'+(i+3)).setValues([initialData[i]]);
   }
   
-  // trigger a Cost Basis calculation and sheet reformat
-  calculateFIFO_();
   formatSheet_();
+  calculateFIFO_();
 }
