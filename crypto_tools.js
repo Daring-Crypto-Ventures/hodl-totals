@@ -77,11 +77,17 @@ function formatSheet_() {
   // TODO add configurable "# digits to the right to show' here
   // and then use it down below to set format on COIN columns
 
+  // TODO instead of 2 row tall header, explore using Groups: an association between an interval of contiguous 
+  // rows or columns that can be expanded or collapsed as a unit to hide/show the rows or columns
+  // https://developers.google.com/apps-script/reference/spreadsheet/group
+
   // populate the two-row-tall header cells
-  var header1 = ['', 'Buy','', 'Sell','','Calculated','','','Use \"HODL Totals > Calculate Cost Basis (FIFO)\" to update this sheet.','Fair Market Value (USD)','',''];
-  var header2 = ['Date', desiredCurrency+' Purchased','Fiat Cost', desiredCurrency+' Sold','Fiat Received','Status','Cost Basis','Gain (Loss)','Notes', desiredCurrency+' High',desiredCurrency+' Low',desiredCurrency+' Price'];
-  sheet.getRange('A1:L1').setValues([header1]).setFontWeight('bold').setHorizontalAlignment('center');
-  sheet.getRange('A2:L2').setValues([header2]).setFontWeight('bold').setHorizontalAlignment('center');
+  var header1 = ['', 'Buy','', 'Sell','','Calculated','','','Use \"HODL Totals > Calculate Cost Basis (FIFO)\" to update this sheet.',
+     'Fair Market Value (USD)','','', 'Transaction Details','','Final Destination',''];
+  var header2 = ['Date', desiredCurrency+' Purchased','Fiat Cost', desiredCurrency+' Sold','Fiat Received','Status','Cost Basis','Gain (Loss)','Notes', 
+      desiredCurrency+' High',desiredCurrency+' Low',desiredCurrency+' Price','Category','Tx Info','Where to Find Wallet','Address'];
+  sheet.getRange('A1:P1').setValues([header1]).setFontWeight('bold').setHorizontalAlignment('center');
+  sheet.getRange('A2:P2').setValues([header2]).setFontWeight('bold').setHorizontalAlignment('center');
   sheet.getRange('I1').setFontWeight('normal');
 
   // merge 1st row cell headers
@@ -89,10 +95,12 @@ function formatSheet_() {
   sheet.getRange('D1:E1').merge();
   sheet.getRange('F1:H1').merge();
   sheet.getRange('J1:L1').merge();
+  sheet.getRange('M1:N1').merge();
+  sheet.getRange('O1:P1').merge();
   
   // color background and freeze the header rows
-  sheet.getRange('A1:L1').setBackground('#DDDDEE');
-  sheet.getRange('A2:L2').setBackground('#EEEEEE');
+  sheet.getRange('A1:P1').setBackground('#DDDDEE');
+  sheet.getRange('A2:P2').setBackground('#EEEEEE');
   sheet.setFrozenRows(2);
 
   // should freeze the Date column also?
@@ -113,9 +121,10 @@ function formatSheet_() {
   // set col C {Fiat Cost} and col E {Fiat Received} to be calculated based on other cells in the sheet
   calcFiatValuesFromFMV(sheet);
 
-  // set col F {Status} centered + and I {Notes} centered with dark gray text, italics text
+  // set col F {Status} and col M {Category} centered + and I {Notes} centered with dark gray text, italics text
   sheet.getRange('F3:F').setFontColor('#424250').setFontStyle('italic').setHorizontalAlignment('center');
   sheet.getRange('I3:I').setFontColor('#424250').setFontStyle('italic').setHorizontalAlignment('left');
+  sheet.getRange('M3:M').setFontColor('#424250').setFontStyle('italic').setHorizontalAlignment('center');
 
   // TODO - special case formatting if coin price is > $100?  Annoying to list BTC-USD price to 6 decimal places.
   // set col J, K and L {COIN High, Low, Price} to be foramtted into USD value but to 6 decimal places
@@ -125,10 +134,11 @@ function formatSheet_() {
 
   // Prevent the user from entering bad inputs in the first place which removes
   // the need to check data in the validate() function during a calculation
-  setValidationRules_(sheet);
+  setValidationRules_(sheet, desiredCurrency);
   
   // set col F, G and H {Status, Cost Basis, Gain(Loss)} to be grayed background
   sheet.getRange('F3:H').setBackground('#EEEEEE');
+  // TODO explore using ProtectionType to prevent user edits to these cells
    
   // autosize the first 9 columns' widths to fit content
   sheet.autoResizeColumns(1, 9);  
@@ -175,7 +185,7 @@ function calcFiatValuesFromFMV(sheet) {
   }  
 }
 
-function setValidationRules_(sheet) {
+function setValidationRules_(sheet, desiredCurrency) {
   // ensure we only accept valid date values
   var dateRule = SpreadsheetApp.newDataValidation()
     .requireDate()
@@ -191,6 +201,19 @@ function setValidationRules_(sheet) {
     //.setHelpText('Value cannot be negative.')
     .build();
   sheet.getRange('B3:E').setDataValidation(notNegativeRule);
+
+  // limit Category entries to loosely adhere to known categories
+  var categoriesRule = SpreadsheetApp.newDataValidation()
+    .requireValueInList(
+          /* coin inflow categories */
+          ['USD Deposit', 'Interest', 'Bounty Fulfilled', 'Mining', 'Staking', 'Promotion', 'Gift', 'Prize', 'Tip Income',
+          /* coin outflow categories */
+           'Sold '+desiredCurrency, 'Bought '+desiredCurrency, 'Spent', 'Sold for Goods', 'Tx Fee', 'Given Away']
+           , true)
+    .setAllowInvalid(true)
+    .build();
+  sheet.getRange('M3:M').setDataValidation(categoriesRule);
+
 }
 
 /**
