@@ -19,5 +19,5 @@ These Google Apps Scripts will add menu commands to Google Sheets that will help
 
 Did this save you a tax prep headache?
 
-Support development with a BTC donation: 38Ehpz3XutgoVEUZWtrXvrWTLJetkDZF5s
+Support development with a BTC donation: [38Ehpz3XutgoVEUZWtrXvrWTLJetkDZF5s](https://www.blockchain.com/btc/address/38Ehpz3XutgoVEUZWtrXvrWTLJetkDZF5s)
 or a VRSC donation to dogracer.vrsc@
