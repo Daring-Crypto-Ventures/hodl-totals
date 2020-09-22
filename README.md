@@ -1,3 +1,5 @@
+![HODL Totals Google Sheets Add-On](hodl-totals.png)
+
 # HODL Totals
 These Google Apps Scripts will add menu commands to Google Sheets that will help you track cost basis and long-term or short-term treatment for your cryptocurrency trades. It uses the first-in, first-out (FIFO) cost method, which is commonly used for tax compliance.
 
