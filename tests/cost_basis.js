@@ -1,25 +1,9 @@
 /**
- * From https://www.tothenew.com/blog/how-to-test-google-apps-script-using-qunit/
- *
- * Steps for adding ‘Qunit‘ in project
- * 
- * Go to script editor.
- * Select “Resources” > “Libraries…” in the Google Apps Script editor.
- * Enter this project key (MxL38OxqIK-B73jyDTvCe-OBao7QLBR4j) in the “Find a Library” field, and choose “Select”.
- * Select version number 4, and choose QUnit as the identifier. (Do not turn on Development Mode)
- * Press Save.
- *
- * Steps to Run Qunit Test Case
- * 
- * Click on Publish> Deploy as web app.
- * Deploy as web app
- * Click on Deploy.
- * Click on latest code. It redirects to Qunit page where all test case report is displayed.
+ * Tests for Cost Basis columns, cacluations, term-splitting and formatting.
  *
  */
 
-QUnit.helpers( this );
-function testFunctions() {
+function testCostBasisFunctions() {
   test1_DataValidation();
   test2_DataValidation();
   test3_DataValidation();
@@ -30,23 +14,12 @@ function testFunctions() {
   test8_CostBasis();  
   test9_CostBasis();
 }
- 
-function doGet( e ) {
-  QUnit.urlParams( e.parameter );
-  QUnit.config({
-    title: "QUnit Test Suite for HODL Totals" // Sets the title of the test page.
-  });
-  QUnit.load( testFunctions );
- 
-  return QUnit.getHtml();
-};
-
 
 /** 
  * test1 for function validate(sheet)
  */
 function test1_DataValidation() {
-  QUnit.test( "test1 - Data Validation - Date Out of Order", function() {
+  QUnit.test( "Cost Basis test1 - Data Validation - Date Out of Order", function() {
     // test data for this test case
     var initialData = [['2017-01-01','1.0','1000','',''],
                        ['2017-01-02','1.0','1000','',''],
@@ -55,7 +28,7 @@ function test1_DataValidation() {
 
     // create temp sheet
     var currentdate = new Date(); 
-    var uniqueSheetName = "TEST1(" + (currentdate.getMonth()+1) + "/"
+    var uniqueSheetName = "CB_TEST1(" + (currentdate.getMonth()+1) + "/"
                 + currentdate.getDate() + "/" 
                 + currentdate.getFullYear() + "@"  
                 + currentdate.getHours() + ":"  
@@ -86,7 +59,7 @@ function test1_DataValidation() {
  * test2 for function validate(sheet)
  */
 function test2_DataValidation() {
-  QUnit.test( "test2 - Data Validation - Coin Oversold", function() {
+  QUnit.test( "Cost Basis test2 - Data Validation - Coin Oversold", function() {
     // test data for this test case
     var initialData = [['2017-01-01','1.0','1000','',''],
                        ['2017-01-02','1.0','1000','',''],
@@ -95,7 +68,7 @@ function test2_DataValidation() {
 
     // create temp sheet
     var currentdate = new Date(); 
-    var uniqueSheetName = "TEST2(" + (currentdate.getMonth()+1) + "/"
+    var uniqueSheetName = "CB_TEST2(" + (currentdate.getMonth()+1) + "/"
                 + currentdate.getDate() + "/" 
                 + currentdate.getFullYear() + "@"  
                 + currentdate.getHours() + ":"  
@@ -126,7 +99,7 @@ function test2_DataValidation() {
  * test3 for function validate(sheet)
  */
 function test3_DataValidation() {
-  QUnit.test( "test3 - Data Validation - Buy and Sell on Same Line", function() {
+  QUnit.test( "Cost Basis test3 - Data Validation - Buy and Sell on Same Line", function() {
     // test data for this test case
     var initialData = [['2017-01-01','1.0','1000','',''],
                        ['2017-01-02','1.0','1000','0.5',''],
@@ -134,7 +107,7 @@ function test3_DataValidation() {
 
     // create temp sheet
     var currentdate = new Date(); 
-    var uniqueSheetName = "TEST3(" + (currentdate.getMonth()+1) + "/"
+    var uniqueSheetName = "CB_TEST3(" + (currentdate.getMonth()+1) + "/"
                 + currentdate.getDate() + "/" 
                 + currentdate.getFullYear() + "@"  
                 + currentdate.getHours() + ":"  
@@ -165,14 +138,14 @@ function test3_DataValidation() {
  * test4 for function calculateFifo(sheet, lots, sales)
  */
 function test4_CostBasis() {
-  QUnit.test( "test4 - Simple Partial Short-Term Sale - Two Rounds", function() {
+  QUnit.test( "Cost Basis test4 - Simple Partial Short-Term Sale - Two Rounds", function() {
     // test data for this test case
     var initialData = [['2017-01-01','1.0','1000','',''],
                        ['2017-01-03','','','0.5','1000']];
 
     // create temp sheet
     var currentdate = new Date(); 
-    var uniqueSheetName = "TEST4(" + (currentdate.getMonth()+1) + "/"
+    var uniqueSheetName = "CB_TEST4(" + (currentdate.getMonth()+1) + "/"
                 + currentdate.getDate() + "/" 
                 + currentdate.getFullYear() + "@"  
                 + currentdate.getHours() + ":"  
@@ -228,14 +201,14 @@ function test4_CostBasis() {
  * test5 for function calculateFifo(sheet, lots, sales)
  */
 function test5_CostBasis() {
-  QUnit.test( "test5 - Simple Whole Long-Term Sale - Two Rounds", function() {
+  QUnit.test( "Cost Basis test5 - Simple Whole Long-Term Sale - Two Rounds", function() {
     // test data for this test case
     var initialData = [['2017-01-01','1.0','1000','',''],
                        ['2018-01-02','','','1.0','2000']];
 
     // create temp sheet
     var currentdate = new Date(); 
-    var uniqueSheetName = "TEST5(" + (currentdate.getMonth()+1) + "/"
+    var uniqueSheetName = "CB_TEST5(" + (currentdate.getMonth()+1) + "/"
                 + currentdate.getDate() + "/" 
                 + currentdate.getFullYear() + "@"  
                 + currentdate.getHours() + ":"  
@@ -292,7 +265,7 @@ function test5_CostBasis() {
  * test6 for function calculateFifo(sheet, lots, sales)
  */
 function test6_CostBasis() {
-  QUnit.test( "test6 - Simple Term Split - Two Rounds", function() {
+  QUnit.test( "Cost Basis test6 - Simple Term Split - Two Rounds", function() {
 
     // test data for this test case
     var initialData = [['2017-01-01','1.0','1000','',''],
@@ -301,7 +274,7 @@ function test6_CostBasis() {
 
     // create temp sheet
     var currentdate = new Date(); 
-    var uniqueSheetName = "TEST6(" + (currentdate.getMonth()+1) + "/"
+    var uniqueSheetName = "CB_TEST6(" + (currentdate.getMonth()+1) + "/"
                 + currentdate.getDate() + "/" 
                 + currentdate.getFullYear() + "@"  
                 + currentdate.getHours() + ":"  
@@ -336,13 +309,13 @@ function test6_CostBasis() {
       equal( sheet.getRange('G4').getValue(), "", "Round "+round+" Test for Lot Sold In Full Later : Row 4 Cost Basis : expected no cost basis" );
       equal( sheet.getRange('H4').getValue(), "", "Round "+round+" Test for Lot Sold In Full Later : Row 4 Gain(Loss) : expected no gain" );
 
-      equal( sheet.getRange('A5').getNote().replace(/ *\([^)]*\) */g, " "), "Originally 2.00000000 TEST6 was sold for $4000.00 and split into rows 5 and 6.", "Round "+round+" Test for Term Split Note : Row 5 Date : expected split into rows 5 and 6" );
+      equal( sheet.getRange('A5').getNote().replace(/ *\([^)]*\) */g, " "), "Originally 2.00000000 CB_TEST6 was sold for $4000.00 and split into rows 5 and 6.", "Round "+round+" Test for Term Split Note : Row 5 Date : expected split into rows 5 and 6" );
       equal( sheet.getRange('D5').getNote(), "Sold lots from row ??? on ????-??-?? to row 3 on 2017-01-01.", "Round "+round+" Test for Lot Sold Hint : Row 5 Sold : expected sold from row ? to 3" );
       equal( sheet.getRange('F5').getValue(), "Long-term", "Round "+round+" Test for Split into Long-Term Sale : Row 5 Status : expected long-term cost basis" );
       equal( sheet.getRange('G5').getValue().toFixed(2), 1000.00, "Round "+round+" Test for Split into Long-Term Sale : Row 5 Cost Basis : expected 1000 cost basis" );
       equal( sheet.getRange('H5').getValue().toFixed(2), 1000.00, "Round "+round+" Test for Split into Long-Term Sale : Row 5 Gain(Loss) : expected 1000 gain" );
 
-      equal( sheet.getRange('A6').getNote().replace(/ *\([^)]*\) */g, " "), "Originally 2.00000000 TEST6 was sold for $4000.00 and split into rows 5 and 6.", "Round "+round+" Test for Term Split Note : Row 6 Date : expected split into rows 5 and 6" );
+      equal( sheet.getRange('A6').getNote().replace(/ *\([^)]*\) */g, " "), "Originally 2.00000000 CB_TEST6 was sold for $4000.00 and split into rows 5 and 6.", "Round "+round+" Test for Term Split Note : Row 6 Date : expected split into rows 5 and 6" );
       equal( sheet.getRange('D6').getNote(), "Sold lots from row ??? on ????-??-?? to row 4 on 2018-01-01.", "Round "+round+" Test for Lot Sold Hint : Row 6 Sold : expected sold from row ? to 3" );
       equal( sheet.getRange('F6').getValue(), "Short-term", "Round "+round+" Test for Split into Short-Term Sale : Row 6 Status : expected short-term cost basis" );
       equal( sheet.getRange('G6').getValue().toFixed(2), 1000.00, "Round "+round+" Test for Split into Short-Term Sale : Row 6 Cost Basis : expected 1000 cost basis" );
@@ -369,13 +342,13 @@ function test6_CostBasis() {
  * test7 for function calculateFifo(sheet, lots, sales)
  */
 function test7_CostBasis() {
-  QUnit.test( "test7 - No Sale - Two Rounds", function() {
+  QUnit.test( "Cost Basis test7 - No Sale - Two Rounds", function() {
     // test data for this test case
     var initialData = [['2017-01-01','1.0','1000','','']];
 
     // create temp sheet
     var currentdate = new Date(); 
-    var uniqueSheetName = "TEST7(" + (currentdate.getMonth()+1) + "/"
+    var uniqueSheetName = "CB_TEST7(" + (currentdate.getMonth()+1) + "/"
                 + currentdate.getDate() + "/" 
                 + currentdate.getFullYear() + "@"  
                 + currentdate.getHours() + ":"  
@@ -427,7 +400,7 @@ function test7_CostBasis() {
  * test8 for function calculateFifo(sheet, lots, sales)
  */
 function test8_CostBasis() {
-  QUnit.test( "test8 - Example Dataset - Two Rounds", function(initialData) {
+  QUnit.test( "Cost Basis test8 - Example Dataset - Two Rounds", function(initialData) {
 
     // test data for this test case
     var initialData = [['2017-01-01','0.2','2000','',''],
@@ -443,7 +416,7 @@ function test8_CostBasis() {
     
     // create temp sheet
     var currentdate = new Date(); 
-    var uniqueSheetName = "TEST8(" + (currentdate.getMonth()+1) + "/"
+    var uniqueSheetName = "CB_TEST8(" + (currentdate.getMonth()+1) + "/"
                 + currentdate.getDate() + "/" 
                 + currentdate.getFullYear() + "@"  
                 + currentdate.getHours() + ":"  
@@ -483,13 +456,13 @@ function test8_CostBasis() {
       equal( sheet.getRange('G5').getValue().toFixed(2), 1000.00, "Round "+round+" Test for Long-Term Sale : Row 5 Cost Basis : expected 1000 cost basis" );
       equal( sheet.getRange('H5').getValue().toFixed(2), 1000.00, "Round "+round+" Test for Long-Term Sale : Row 5 Gain(Loss) : expected 1000 gain" );
 
-      equal( sheet.getRange('A6').getNote().replace(/ *\([^)]*\) */g, " "), "Originally 0.40000000 TEST8 was sold for $8000.00 and split into rows 6 and 7.", "Round "+round+" Test for Term Split Note : Row 6 Date : expected split into rows 6 and 7" );
+      equal( sheet.getRange('A6').getNote().replace(/ *\([^)]*\) */g, " "), "Originally 0.40000000 CB_TEST8 was sold for $8000.00 and split into rows 6 and 7.", "Round "+round+" Test for Term Split Note : Row 6 Date : expected split into rows 6 and 7" );
       equal( sheet.getRange('D6').getNote(), "Sold lots from row ??? on ????-??-?? to row 3 on 2017-01-01.", "Round "+round+" Test for Lot Sold Hint : Row 6 Sold : expected sold from row ? to 3" );
       equal( sheet.getRange('F6').getValue(), "Long-term", "Round "+round+" Test for Split into Long-Term Sale : Row 6 Status : expected long-term cost basis" );
       equal( sheet.getRange('G6').getValue().toFixed(2), 1000.00, "Round "+round+" Test for Split into Long-Term Sale : Row 6 Cost Basis : expected 1000 cost basis" );
       equal( sheet.getRange('H6').getValue().toFixed(2), 1000.00, "Round "+round+" Test for Split into Long-Term Sale : Row 6 Gain(Loss) : expected 1000 gain" );
 
-      equal( sheet.getRange('A7').getNote().replace(/ *\([^)]*\) */g, " "), "Originally 0.40000000 TEST8 was sold for $8000.00 and split into rows 6 and 7.", "Round "+round+" Test for Term Split Note : Row 7 Date : expected split into rows 6 and 7" );
+      equal( sheet.getRange('A7').getNote().replace(/ *\([^)]*\) */g, " "), "Originally 0.40000000 CB_TEST8 was sold for $8000.00 and split into rows 6 and 7.", "Round "+round+" Test for Term Split Note : Row 7 Date : expected split into rows 6 and 7" );
       equal( sheet.getRange('D7').getNote(), "Sold lots from row ??? on ????-??-?? to row 4 on 2018-02-01.", "Round "+round+" Test for Lot Sold Hint : Row 7 Sold : expected sold from row ? to 4" );
       equal( sheet.getRange('F7').getValue(), "Short-term", "Round "+round+" Test for Split into Short-Term Sale : Row 7 Status : expected short-term cost basis" );
       equal( sheet.getRange('G7').getValue().toFixed(2), 3000.00, "Round "+round+" Test for Split into Short-Term Sale : Row 7 Cost Basis : expected 3000 cost basis" );
@@ -540,7 +513,7 @@ function test8_CostBasis() {
  * test9 for function calculateFifo(sheet, lots, sales)
  */
 function test9_CostBasis() {
-  QUnit.test( "test9 - Real Data with Term Split - Two Rounds", function() {
+  QUnit.test( "Cost Basis test9 - Real Data with Term Split - Two Rounds", function() {
    
     // test data for this test case
     var initialData = [['2019-02-14','201.89592700','25.30','',''],
@@ -577,7 +550,7 @@ function test9_CostBasis() {
 
     // create temp sheet
     var currentdate = new Date(); 
-    var uniqueSheetName = "TEST9(" + (currentdate.getMonth()+1) + "/"
+    var uniqueSheetName = "CB_TEST9(" + (currentdate.getMonth()+1) + "/"
                 + currentdate.getDate() + "/" 
                 + currentdate.getFullYear() + "@"  
                 + currentdate.getHours() + ":"  
@@ -611,13 +584,13 @@ function test9_CostBasis() {
         equal( sheet.getRange('H'+j).getValue(), "", "Round "+round+" Test for Lot Sold In Full Later : Row "+j+" Gain(Loss) : expected no gain" );
       }
 
-      equal( sheet.getRange('A28').getNote().replace(/ *\([^)]*\) */g, " "), "Originally 829.14000000 TEST9 was sold for $151.26 and split into rows 28 and 29.", "Round "+round+" Test for Term Split Note : Row 28 Date : expected split into rows 28 and 29" );
+      equal( sheet.getRange('A28').getNote().replace(/ *\([^)]*\) */g, " "), "Originally 829.14000000 CB_TEST9 was sold for $151.26 and split into rows 28 and 29.", "Round "+round+" Test for Term Split Note : Row 28 Date : expected split into rows 28 and 29" );
       equal( sheet.getRange('D28').getNote(), "Sold lots from row ??? on ????-??-?? to row 13 on 2019-04-09.", "Round "+round+" Test for Lot Sold Hint : Row 28 Sold : expected sold from row ? to 13" );
       equal( sheet.getRange('F28').getValue(), "Long-term", "Round "+round+" Test for Split into Long-Term Sale : Row 28 Status : expected long-term cost basis" );
       equal( sheet.getRange('G28').getValue().toFixed(2), 69.67, "Round "+round+" Test for Split into Long-Term Sale : Row 28 Cost Basis : expected $69.67 cost basis" );
       equal( sheet.getRange('H28').getValue().toFixed(2), 5.46, "Round "+round+" Test for Split into Long-Term Sale : Row 28 Gain(Loss) : expected $5.46 gain" );
 
-      equal( sheet.getRange('A29').getNote().replace(/ *\([^)]*\) */g, " "), "Originally 829.14000000 TEST9 was sold for $151.26 and split into rows 28 and 29.", "Round "+round+" Test for Term Split Note : Row 29 Date : expected split into rows 28 and 29" );
+      equal( sheet.getRange('A29').getNote().replace(/ *\([^)]*\) */g, " "), "Originally 829.14000000 CB_TEST9 was sold for $151.26 and split into rows 28 and 29.", "Round "+round+" Test for Term Split Note : Row 29 Date : expected split into rows 28 and 29" );
       equal( sheet.getRange('D29').getNote(), "Sold lots from row ??? on ????-??-?? to row 27 on 2020-04-08.", "Round "+round+" Test for Lot Sold Hint : Row 29 Sold : expected sold from row ? to 27" );
       equal( sheet.getRange('F29').getValue(), "Short-term", "Round "+round+" Test for Split into Short-Term Sale : Row 29 Status : expected short-term cost basis" );
       equal( sheet.getRange('G29').getValue().toFixed(2), 90.54, "Round "+round+" Test for Split into Short-Term Sale : Row 29 Cost Basis : expected $90.54 cost basis" );

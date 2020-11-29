@@ -18,7 +18,8 @@ function onOpen() {
       .addItem('Calculate cost basis (FIFO)', 'calculateFIFO_')
       .addSeparator()
       .addSubMenu(ui.createMenu('Examples')
-          .addItem('Simple data with Instuctions', 'loadExample0_'))
+          .addItem('Cost Basis Only', 'loadExample0_')
+          .addItem('Cost Basis and Fair Market Value', 'loadExample1_'))
       .addSeparator()
       .addItem('About', 'showAboutDialog_') 
       .addToUi();
@@ -61,7 +62,7 @@ function newCurrencySheet_() {
   return formatSheet_();
 }
 
-  /**
+/**
  * A function that formats the columns and headers of the active spreadsheet.
  * 
  * Assumption: Not configurable to pick Fiat Currency to use for all sheets, assuming USD since this is related to US Tax calc
@@ -77,22 +78,24 @@ function formatSheet_() {
   // and then use it down below to set format on COIN columns
 
   // populate the two-row-tall header cells
-  var header1 = ['', 'Buy','', 'Sell','','Calculated','','','Use menu command \"HODL Totals > Calculate Cost Basis (FIFO)\" to update this sheet.'];
-  var header2 = ['Date', desiredCurrency+' Purchased','Fiat Cost', desiredCurrency+' Sold','Fiat Received','Status','Cost Basis','Gain (Loss)','Notes'];
-  sheet.getRange('A1:I1').setValues([header1]).setFontWeight('bold').setHorizontalAlignment('center');
-  sheet.getRange('A2:I2').setValues([header2]).setFontWeight('bold').setHorizontalAlignment('center');
+  var header1 = ['', 'Buy','', 'Sell','','Calculated','','','Use \"HODL Totals > Calculate Cost Basis (FIFO)\" to update this sheet.','Fair Market Value (USD)','',''];
+  var header2 = ['Date', desiredCurrency+' Purchased','Fiat Cost', desiredCurrency+' Sold','Fiat Received','Status','Cost Basis','Gain (Loss)','Notes', desiredCurrency+' High',desiredCurrency+' Low',desiredCurrency+' Price'];
+  sheet.getRange('A1:L1').setValues([header1]).setFontWeight('bold').setHorizontalAlignment('center');
+  sheet.getRange('A2:L2').setValues([header2]).setFontWeight('bold').setHorizontalAlignment('center');
   sheet.getRange('I1').setFontWeight('normal');
-  sheet.getRange('I2').setHorizontalAlignment('center');
 
-  // merge 1st row cells for Buy, Sell and Calc
+  // merge 1st row cell headers
   sheet.getRange('B1:C1').merge();
   sheet.getRange('D1:E1').merge();
   sheet.getRange('F1:H1').merge();
+  sheet.getRange('J1:L1').merge();
   
   // color background and freeze the header rows
-  sheet.getRange('A1:I1').setBackground('#DDDDEE');
-  sheet.getRange('A2:I2').setBackground('#EEEEEE');
+  sheet.getRange('A1:L1').setBackground('#DDDDEE');
+  sheet.getRange('A2:L2').setBackground('#EEEEEE');
   sheet.setFrozenRows(2);
+
+  // should freeze the Date column also?
      
   // set numeric formats as described here: https://developers.google.com/sheets/api/guides/formats
   sheet.getRange('A3:A').setNumberFormat('yyyy-mm-dd');
@@ -107,9 +110,18 @@ function formatSheet_() {
   sheet.getRange('G3:G').setNumberFormat('$#,##0.00;$(#,##0.00)');
   sheet.getRange('H3:H').setNumberFormat('$#,##0.00;$(#,##0.00)');
 
-  // set col F {Status} centered + and I {Notes} left-aligned but with dark gray text, italics text
+  // set col C {Fiat Cost} and col E {Fiat Received} to be calculated based on other cells in the sheet
+  calcFiatValuesFromFMV(sheet);
+
+  // set col F {Status} centered + and I {Notes} centered with dark gray text, italics text
   sheet.getRange('F3:F').setFontColor('#424250').setFontStyle('italic').setHorizontalAlignment('center');
-  sheet.getRange('I3:I').setFontColor('#424250').setFontStyle('italic');
+  sheet.getRange('I3:I').setFontColor('#424250').setFontStyle('italic').setHorizontalAlignment('left');
+
+  // TODO - special case formatting if coin price is > $100?  Annoying to list BTC-USD price to 6 decimal places.
+  // set col J, K and L {COIN High, Low, Price} to be foramtted into USD value but to 6 decimal places
+  sheet.getRange('J3:J').setNumberFormat('$#,######0.000000;$(#,######0.000000)').setHorizontalAlignment('right');
+  sheet.getRange('K3:K').setNumberFormat('$#,######0.000000;$(#,######0.000000)').setHorizontalAlignment('right');
+  sheet.getRange('L3:L').setNumberFormat('$#,######0.000000;$(#,######0.000000)').setHorizontalAlignment('right');
 
   // Prevent the user from entering bad inputs in the first place which removes
   // the need to check data in the validate() function during a calculation
@@ -118,12 +130,49 @@ function formatSheet_() {
   // set col F, G and H {Status, Cost Basis, Gain(Loss)} to be grayed background
   sheet.getRange('F3:H').setBackground('#EEEEEE');
    
-  // autosize the column widths to fit content
+  // autosize the first 9 columns' widths to fit content
   sheet.autoResizeColumns(1, 9);  
   
   SpreadsheetApp.flush();
   
   return sheet;
+}
+
+function calcFiatValuesFromFMV(sheet) {
+  var lastRow = getLastRowSpecial(sheet.getRange('A:A').getValues());
+  for (var row = 3; row <= lastRow; row++) {
+    var highValue = sheet.getRange('J'+row).getValue();
+
+    // if value known don't include formulas to calculate the price from FMV columns
+    if (highValue !== 'value known') {
+
+      // calculate fiat price based on other columns
+      if (sheet.getRange('B'+row).getValue()) {  
+        sheet.getRange('C'+row).setValue('=B'+row+'*L'+row);
+      } else {
+        if (sheet.getRange('D'+row).getValue()) {  
+          sheet.getRange('E'+row).setValue('=D'+row+'*L'+row);
+        }
+      }
+
+      // unless the price is known, calculate via averaging high/low price for that date
+      if (highValue !== 'price known') {
+        sheet.getRange('L'+row).setValue('=AVERAGE(J'+row+',K'+row+')');
+      } else {
+        // copy the price known sentinel value to any cells to the right
+        sheet.getRange('K'+row).setValue('price known');
+      }
+
+    } else {
+        // copy the price known sentinel value to any cells to the right
+        sheet.getRange('K'+row).setValue('value known');
+        sheet.getRange('L'+row).setValue('value known');
+
+        // when marked 'value known', bold the hard-coded value entered in C (for buy) or E (for sale)
+        sheet.getRange('C'+row).setFontWeight('bold');
+        sheet.getRange('E'+row).setFontWeight('bold');
+    } 
+  }  
 }
 
 function setValidationRules_(sheet) {

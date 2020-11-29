@@ -1,7 +1,8 @@
 /**
  * @NotOnlyCurrentDoc Limits the script to only accessing the current sheet.
  *
- * test0: Populates with spreadsheet with sample data including instructions
+ * example0: Populates spreadsheet with Bitcoin data, no complex FMV calcs
+ * example1: Populates spreadsheet with Altcoin data, more complex FMV calcs
  *
  */
 
@@ -14,7 +15,7 @@ function loadExample0_() {
 
 function example0(sheet) {
 
-  // sample data set for test0
+  // sample data set
   var initialData = [
      ['2017/01/01','0.20000000','2000.00',            ,         , , , ,'Enter coin buys in the left-hand columns. Include fees in the cost.'],
      ['2018/02/01','0.60000000','6000.00',            ,         , , , ,'Enter everything in chronological order.'],
@@ -35,5 +36,33 @@ function example0(sheet) {
   }
   
   // trigger a Cost Basis calculation
+  calculateFIFO_();
+}
+
+function loadExample1_() {
+  var newSheet = newCurrencySheet_();
+  if (newSheet !== null) { 
+    example1(newSheet);
+  }
+}
+
+function example1(sheet) {
+
+  // sample data set
+  var initialData = [
+    ['2015-12-01', '1.00000000',    ,             ,    , , , ,                      'Grab High/Lows from historical values tab on https://coinmarketcap.com',             '1.111100',            '0.992222',            ''],
+    ['2016-02-29', '1.00000000', '1',             ,    , , , ,'If USD amount paid to receive the coin is known, enter in col C and \'value known\' in col J',          'value known',         'value known', 'value known'],
+    ['2016-03-01',             ,    , '1.00000000', '5', , , ,   'If USD amount received for the coin is known, enter in col E and \'value known\' in col J',          'value known',         'value known', 'value known'],
+    ['2018-02-28','23.00000000',    ,		 	        ,    , , , ,   'If USD purchase/sale price per coin is known, enter in col L and \'price known\' in col J',          'price known',         'price known',          '34'],
+    ['2020-04-01',             ,    , '2.00000000',    , , , ,            'High/Low cells can contain formulas that translate sales of coin to BTC, to USD.',             '2.312002',              '1.8222',            ''],
+    ['2020-04-02',             ,    ,'20.00000000',    , , , ,                        'i.e. Sale Outcome Known: binance.us traded 20 TEST for 0.0003561 BTC',   '=0.0003561*7088.25',  '=0.0003561*6595.92',            ''],
+    ['2020-05-31','26.92000000',    ,             ,		 , , , ,               'i.e. Purchase Price Known: coinbase.com traded BTC for 26.92 TEST @ 0.0069319','=0.0069319*9700.34/B9','=0.0069319*9432.3/B9',            '']
+    ];
+  
+  for (var i = 0; i < initialData.length; i++) {
+    sheet.getRange('A'+(i+3)+':L'+(i+3)).setValues([initialData[i]]);
+  }
+  
+  formatSheet_();
   calculateFIFO_();
 }
