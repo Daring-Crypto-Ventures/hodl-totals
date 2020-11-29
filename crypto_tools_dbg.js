@@ -78,18 +78,31 @@ function test_dateFromString(dateStr, incYear) {
  * @return true = passm, false = fail .
  */
 function test_FIFOCalc(data) {
-  
+  var dateArray;
+  var lotsArray;
+  var salesArray;
+  dateArray = new Array(data.length);
+  lotsArray = new Array(data.length);
+  salesArray = new Array(data.length);
+
   for (var i = 0; i < data.length; i++) {
-    data[i][5] = ''; //status
-    data[i][6] = ''; //costBasis
-    data[i][7] = ''; //gain(Loss)
+    dateArray[i] = data[i][0];              //order date
+    lotsArray[i] = new Array(2);
+    lotsArray[i][0] = Number(data[i][1]);   //amount purchased
+    lotsArray[i][1] = Number(data[i][2]);   //purchase price
+    salesArray[i] = new Array(2);
+    salesArray[i][0] = Number(data[i][3]);  //amount sold
+    salesArray[i][1] = Number(data[i][4]);  //sale price
+    data[i][5] = '';                        //status
+    data[i][6] = '';                        //costBasis
+    data[i][7] = '';                        //gain(Loss)
   }
     
     // add freshly calculated values
-  var lots = test_getLots(data);
+  var lots = getOrderList(dateArray, data.length, lotsArray);
   Logger.log('Detected ' + lots.length + ' purchases of TESTCOIN.');
   
-  var sales = test_getSales(data);
+  var sales = getOrderList(dateArray, data.length, salesArray);
   Logger.log('Detected ' + sales.length + ' sales of TESTCOIN.');
     
   test_calculateFIFO(data, lots, sales);
@@ -105,78 +118,6 @@ function test_FIFOCalc(data) {
   return true; // pass 
 }
     
-    
-/**
- * Extract just the coin purchase data from the sheet.
- * 
- * @param sheet the google sheet with the crypto data
- *
- * @return lots 2D array of {date, amt coin purchased, purchase price}
- */
-function test_getLots(data) {
-  var lastRow;
-  var lots;
-  var lot;
-  lots = new Array();
-  lot = 0;
-  
-  // find last row with date data present
-  lastRow = data.length;
-  
-  // return just the purchases data as a 2D array
-  for (var row = 0; row < lastRow; row++) {
-    var purchaseDate = data[row][0];
-    var bought = Number(data[row][1]);
-    var boughtPrice = Number(data[row][2]);
-    
-    if (bought > 0) {
-      lots[lot] = new Array(4);
-      lots[lot][0] = purchaseDate;
-      lots[lot][1] = bought;
-      lots[lot][2] = boughtPrice;
-      lots[lot][3] = row;
-      lot++;
-    }
-  }
-
-  return lots;
-}
-
-/**
- * Extract just the coin sale data from the sheet.
- * 
- * @param sheet the google sheet with the crypto data
- *
- * @return sales 2D array of {date, amt coin sold, sale price}
- */
-function test_getSales(data) {
-  var lastRow;
-  var sales;
-  var sale;
-  sales = new Array();
-  sale = 0;
-  
-  // find last row with date data present
-  lastRow = data.length;
-  
-  for (var row = 0; row < lastRow; row++) {   
-    var saleDate = data[row][0];
-    var sold = Number(data[row][3]);
-    var soldPrice = Number(data[row][4]);
-    
-    if (sold > 0) {
-      sales[sale] = new Array(4);
-      sales[sale][0] = saleDate;
-      sales[sale][1] = sold;
-      sales[sale][2] = soldPrice;
-      sales[sale][3] = row;
-      sale++;
-    }
-  }
-  
-  return sales;
-}
-
 /**
  * Using the FIFO method calculate short and long term gains from the data in this sheet.
  * 
@@ -279,7 +220,11 @@ function test_calculateFIFO(data, lots, sales) {
       // determine if there is a term split, and calculate running totals
       else {
         // mark 1 year from the look-ahead lotDate
-        nextTerm = dateFromString(lots[lot+1][0], 1);
+        if ((lot+1) < lots.length) {
+          nextTerm = dateFromString(lots[lot+1][0], 1);
+        } else {
+          nextTerm = sellDate; //no look-ahead date, so no term-split, fall thru the next case
+        }
         
         // look ahead for a term split, and if a split exists,
         // set the split factor (% to allocate to either side of the split),
@@ -342,7 +287,9 @@ function test_calculateFIFO(data, lots, sales) {
         
         data[lotRow][5] = '100% Sold';
         lotCount++;
-        lotCoinRemain = lots[lotCount][1];
+        if (lotCount < lots.length) {
+          lotCoinRemain = lots[lotCount][1];
+        }
       }
     }
   }

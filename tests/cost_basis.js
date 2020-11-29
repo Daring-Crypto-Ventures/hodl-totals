@@ -157,9 +157,11 @@ function test4_CostBasis() {
       // mimic calculateFIFO_() 
       if (validate(sheet)) {
       
-        var lots = getLots(sheet);
-        var sales = getSales(sheet);
-      
+        var dateDisplayValues = sheet.getRange('A:A').getDisplayValues();
+        var lastRow = getLastRowWithDataPresent(sheet.getRange('A:A').getValues());
+        var lots = getOrderList(dateDisplayValues, lastRow, sheet.getRange('B:C').getValues());
+        var sales = getOrderList(dateDisplayValues, lastRow, sheet.getRange('D:E').getValues());
+
         calculateFifo(sheet, lots, sales);
         
         // output the current date and time as the time last completed
@@ -220,8 +222,10 @@ function test5_CostBasis() {
       // mimic calculateFIFO_() 
       if (validate(sheet)) {
       
-        var lots = getLots(sheet);
-        var sales = getSales(sheet);
+        var dateDisplayValues = sheet.getRange('A:A').getDisplayValues();
+        var lastRow = getLastRowWithDataPresent(sheet.getRange('A:A').getValues());
+        var lots = getOrderList(dateDisplayValues, lastRow, sheet.getRange('B:C').getValues());
+        var sales = getOrderList(dateDisplayValues, lastRow, sheet.getRange('D:E').getValues());
       
         calculateFifo(sheet, lots, sales);
         
@@ -286,8 +290,10 @@ function test6_CostBasis() {
       // mimic calculateFIFO_() 
       if (validate(sheet)) {
       
-        var lots = getLots(sheet);
-        var sales = getSales(sheet);
+        var dateDisplayValues = sheet.getRange('A:A').getDisplayValues();
+        var lastRow = getLastRowWithDataPresent(sheet.getRange('A:A').getValues());
+        var lots = getOrderList(dateDisplayValues, lastRow, sheet.getRange('B:C').getValues());
+        var sales = getOrderList(dateDisplayValues, lastRow, sheet.getRange('D:E').getValues());
       
         calculateFifo(sheet, lots, sales);
         
@@ -360,8 +366,10 @@ function test7_CostBasis() {
       // mimic calculateFIFO_() 
       if (validate(sheet)) {
       
-        var lots = getLots(sheet);
-        var sales = getSales(sheet);
+        var dateDisplayValues = sheet.getRange('A:A').getDisplayValues();
+        var lastRow = getLastRowWithDataPresent(sheet.getRange('A:A').getValues());
+        var lots = getOrderList(dateDisplayValues, lastRow, sheet.getRange('B:C').getValues());
+        var sales = getOrderList(dateDisplayValues, lastRow, sheet.getRange('D:E').getValues());
       
         calculateFifo(sheet, lots, sales);
         
@@ -428,8 +436,10 @@ function test8_CostBasis() {
       // mimic calculateFIFO_() 
       if (validate(sheet)) {
           
-        var lots = getLots(sheet);
-        var sales = getSales(sheet);
+        var dateDisplayValues = sheet.getRange('A:A').getDisplayValues();
+        var lastRow = getLastRowWithDataPresent(sheet.getRange('A:A').getValues());
+        var lots = getOrderList(dateDisplayValues, lastRow, sheet.getRange('B:C').getValues());
+        var sales = getOrderList(dateDisplayValues, lastRow, sheet.getRange('D:E').getValues());
 
         calculateFifo(sheet, lots, sales);
         
@@ -562,8 +572,10 @@ function test9_CostBasis() {
       // mimic calculateFIFO_() 
       if (validate(sheet)) {
           
-        var lots = getLots(sheet);
-        var sales = getSales(sheet);
+        var dateDisplayValues = sheet.getRange('A:A').getDisplayValues();
+        var lastRow = getLastRowWithDataPresent(sheet.getRange('A:A').getValues());
+        var lots = getOrderList(dateDisplayValues, lastRow, sheet.getRange('B:C').getValues());
+        var sales = getOrderList(dateDisplayValues, lastRow, sheet.getRange('D:E').getValues());
 
         calculateFifo(sheet, lots, sales);
         
