@@ -7,6 +7,13 @@ These Google Apps Scripts will add menu commands to Google Sheets that will help
 
 - TODO - add details on how to add to new Google Sheets
 
+## Development Environment
+
+- Windows 10 PC with WSL2 (Ubuntu 20.04.1 LTS)
+- Visual Studio Code on Windows 10, and its WSL2 integration for editing code stored in WSL
+- GitHub CLI commands via the WSL2 Linux terminal
+- Publish changes to your live google sheet(s) using clasp from the command line - https://developers.google.com/apps-script/guides/clasp
+
 ## Changelog
 
 ### PRE-RELEASE STATE
