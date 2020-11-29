@@ -156,7 +156,8 @@ function setValidationRules_(sheet) {
  * @returns {number} : the last row number with a value. 
  *
  */ 
-function getLastRowSpecial(range){
+function getLastRowWithDataPresent(range){
+
   var rowNum = 0;
   var blank = false;
   for(var row = 0; row < range.length; row++){
@@ -169,6 +170,7 @@ function getLastRowSpecial(range){
       blank = false;
     }
   }
+
   return rowNum;
 }
 
@@ -194,36 +196,39 @@ function dateFromString(dateStr, incYear) {
  */
 function validate(sheet) {
   var lastDate;
+  var dateLotAndSaleValues;
   var coinCheck;
   lastDate = 0;
   coinCheck = 0;
 
+  dateLotAndSaleValues = sheet.getRange('A:E').getValues();
+
   // find last row with date data present
-  lastRow = getLastRowSpecial(sheet.getRange('A:A').getValues());
+  lastRow = getLastRowWithDataPresent(dateLotAndSaleValues);
 
   // ensure dates are in chronological order sorted from past to present
-  lastDate = sheet.getRange('A3').getValue();
-  for (var row = 3; row <= lastRow; row++) {
-    if (sheet.getRange('A'+row).getValue() >= lastDate) {  
-      lastDate = sheet.getRange('A'+row).getValue();
+  lastDate = dateLotAndSaleValues[2][0];
+  for (var row = 2; row < lastRow; row++) {
+    if (dateLotAndSaleValues[row][0] >= lastDate) {  
+      lastDate = dateLotAndSaleValues[row][0];
     } else {
-      Browser.msgBox('Data Validation Error', Utilities.formatString('Date out of order in row ' + row + '.'), Browser.Buttons.OK);
+      Browser.msgBox('Data Validation Error', Utilities.formatString('Date out of order in row '+(row+1)+ '.'), Browser.Buttons.OK);
       return false;
     }  
   }
-  
+ 
   // Iterate thru the rows to ensure there are enough buys to support the purchases
   // and that there is no extra data in the row that doesn't belong
-  for (var row = 3; row <= lastRow; row++) {
-    var bought = sheet.getRange('B'+row).getValue();
-    var boughtPrice = sheet.getRange('C'+row).getValue();
-    var sold = sheet.getRange('D'+row).getValue();
-    var soldPrice = sheet.getRange('E'+row).getValue();
+  for (var row = 2; row < lastRow; row++) {
+    var bought = dateLotAndSaleValues[row][1];      // sheet.getRange('B'+row).getValue();
+    var boughtPrice = dateLotAndSaleValues[row][2]; // sheet.getRange('C'+row).getValue();
+    var sold = dateLotAndSaleValues[row][3];        // sheet.getRange('D'+row).getValue();
+    var soldPrice = dateLotAndSaleValues[row][4];   // sheet.getRange('E'+row).getValue();
     
     if ((bought > 0) || (sold > 0)) {
       if ((coinCheck - sold) < 0) {
         Browser.msgBox('Data Validation Error', Utilities.formatString(
-             'There were not enough coin buys to support your coin sale on row '+row+'.\\n' +
+             'There were not enough coin buys to support your coin sale on row '+(row+1)+'.\\n' +
              'Ensure that you have recorded all of your coin buys correctly.'), Browser.Buttons.OK);
         return false;
       } else {
@@ -233,7 +238,7 @@ function validate(sheet) {
         
     if (((bought > 0) && (sold != 0 || soldPrice != 0)) || ((sold > 0) && (bought != 0 || boughtPrice != 0))) {
         Browser.msgBox('Data Validation Error', Utilities.formatString(
-             'Invalid data in row '+row+'.\\n' +
+             'Invalid data in row '+(row+1)+'.\\n' +
              'Cannot list coin purchase and coin sale on same line.'), Browser.Buttons.OK);
         return false;
     }
@@ -250,27 +255,29 @@ function validate(sheet) {
  * @return lots 2D array of {date, amt coin purchased, purchase price}
  */
 function getLots(sheet) {
+  var dateDisplayValues;
   var lastRow;
+  var lotValues;
   var lots;
   var lot;
+  dateDisplayValues = sheet.getRange('A:A').getDisplayValues();
+  lastRow = getLastRowWithDataPresent(sheet.getRange('A:A').getValues());
+  lotValues = sheet.getRange('B:C').getValues();
   lots = new Array();
   lot = 0;
   
-  // find last row with date data present
-  lastRow = getLastRowSpecial(sheet.getRange('A:A').getValues());
-  
   // return just the purchases data as a 2D array
-  for (var row = 3; row <= lastRow; row++) {
-    var purchaseDate = sheet.getRange('A'+row).getDisplayValue();
-    var bought = sheet.getRange('B'+row).getValue();
-    var boughtPrice = sheet.getRange('C'+row).getValue();
+  for (var row = 2; row < lastRow; row++) {
+    var purchaseDate = dateDisplayValues[row][0]; // sheet.getRange('A'+row).getDisplayValue();
+    var bought = lotValues[row][0];               // sheet.getRange('B'+row).getValue();
+    var boughtPrice = lotValues[row][1];          // sheet.getRange('C'+row).getValue();
     
     if (bought > 0) {
       lots[lot] = new Array(4);
       lots[lot][0] = purchaseDate;
       lots[lot][1] = bought;
       lots[lot][2] = boughtPrice;
-      lots[lot][3] = row;
+      lots[lot][3] = row+1;
       lot++;
     }
   }
@@ -286,26 +293,28 @@ function getLots(sheet) {
  * @return sales 2D array of {date, amt coin sold, sale price}
  */
 function getSales(sheet) {
+  var dateDisplayValues;
   var lastRow;
+  var saleValues;
   var sales;
   var sale;
+  dateDisplayValues = sheet.getRange('A:A').getDisplayValues();
+  lastRow = getLastRowWithDataPresent(sheet.getRange('A:A').getValues());
+  saleValues = sheet.getRange('D:E').getValues();
   sales = new Array();
   sale = 0;
   
-  // find last row with date data present
-  lastRow = getLastRowSpecial(sheet.getRange('A:A').getValues());
-  
-  for (var row = 3; row <= lastRow; row++) {   
-    var saleDate = sheet.getRange('A'+row).getDisplayValue();
-    var sold = sheet.getRange('D'+row).getValue();
-    var soldPrice = sheet.getRange('E'+row).getValue();
+  for (var row = 2; row < lastRow; row++) {   
+    var saleDate = dateDisplayValues[row][0]; // sheet.getRange('A'+row).getDisplayValue();
+    var sold = saleValues[row][0];            // sheet.getRange('D'+row).getValue();
+    var soldPrice = saleValues[row][1];       // sheet.getRange('E'+row).getValue();
     
     if (sold > 0) {
       sales[sale] = new Array(4);
       sales[sale][0] = saleDate;
       sales[sale][1] = sold;
       sales[sale][2] = soldPrice;
-      sales[sale][3] = row;
+      sales[sale][3] = row+1;
       sale++;
     }
   }
@@ -523,10 +532,13 @@ function calculateFIFO_() {
   var activeSheet = SpreadsheetApp.getActive().getActiveSheet();
   
   // sanity check the data in the sheet. only proceed if data is good
+  Logger.log('Validating the data before starting calculations.');
   if (validate(activeSheet)) {
   
     // clear previously calculated values
-    activeSheet.getRange('F3:H').setValue("");
+    Logger.log('Clearing previously calculated values and notes.');
+    activeSheet.getRange('F3:H').setValue('');
+    activeSheet.getRange('D3:D').setNote('');
     
     // add freshly calculated values
     var lots = getLots(activeSheet);
