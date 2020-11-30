@@ -2,3 +2,5 @@
 node_modules
 .gradle
 .clasp.json
+.push.sh
+
