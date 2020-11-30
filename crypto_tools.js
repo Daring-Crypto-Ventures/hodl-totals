@@ -132,9 +132,13 @@ function formatSheet_() {
   sheet.getRange('K3:K').setNumberFormat('$#,######0.000000;$(#,######0.000000)').setHorizontalAlignment('right');
   sheet.getRange('L3:L').setNumberFormat('$#,######0.000000;$(#,######0.000000)').setHorizontalAlignment('right');
 
+  // lookup allowed categories from the "Categories sheet" to avoid hard-coding them
+  var categoriesList = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Categories').getRange('A2:A35').getValues();
+  // TODO - also add 'Sold '+desiredCurrency, 'Bought '+desiredCurrency to the list?
+
   // Prevent the user from entering bad inputs in the first place which removes
-  // the need to check data in the validate() function during a calculation
-  setValidationRules_(sheet, desiredCurrency);
+  // the need to check data in the validate() function during a calculation 
+  setValidationRules_(sheet, categoriesList);
   
   // set col F, G and H {Status, Cost Basis, Gain(Loss)} to be grayed background
   sheet.getRange('F3:H').setBackground('#EEEEEE');
@@ -185,7 +189,7 @@ function calcFiatValuesFromFMV(sheet) {
   }  
 }
 
-function setValidationRules_(sheet, desiredCurrency) {
+function setValidationRules_(sheet, categoriesList) {
   // ensure we only accept valid date values
   var dateRule = SpreadsheetApp.newDataValidation()
     .requireDate()
@@ -204,12 +208,7 @@ function setValidationRules_(sheet, desiredCurrency) {
 
   // limit Category entries to loosely adhere to known categories
   var categoriesRule = SpreadsheetApp.newDataValidation()
-    .requireValueInList(
-          /* coin inflow categories */
-          ['USD Deposit', 'Interest', 'Bounty Fulfilled', 'Mining', 'Staking', 'Promotion', 'Gift', 'Prize', 'Tip Income',
-          /* coin outflow categories */
-           'Sold '+desiredCurrency, 'Bought '+desiredCurrency, 'Spent', 'Sold for Goods', 'Tx Fee', 'Given Away']
-           , true)
+    .requireValueInList(categoriesList)
     .setAllowInvalid(true)
     .build();
   sheet.getRange('M3:M').setDataValidation(categoriesRule);
