@@ -15,11 +15,11 @@ function onOpen() {
       .addItem('New currency...', 'newCurrencySheet_')
       .addSeparator()
       .addItem('Apply formatting', 'formatSheet_')
-      .addItem('Calculate cost basis (FIFO)', 'calculateFIFO_')
+      .addItem('Calculate (FIFO method)', 'calculateFIFO_')
       .addSeparator()
       .addSubMenu(ui.createMenu('Examples')
-          .addItem('Cost Basis Only', 'loadExample0_')
-          .addItem('Cost Basis and Fair Market Value', 'loadExample1_'))
+          .addItem('Cost basis', 'loadExample0_')
+          .addItem('Fair market value', 'loadExample1_'))
       .addSeparator()
       .addItem('About', 'showAboutDialog_') 
       .addToUi();
@@ -86,54 +86,53 @@ function formatSheet_() {
   // https://developers.google.com/apps-script/reference/spreadsheet/group
 
   // populate the two-row-tall header cells
-  var header1 = ['', 'Buy','', 'Sell','','Calculated','','','Use \"HODL Totals > Calculate Cost Basis (FIFO)\" to update this sheet.',
-     'Fair Market Value (USD)','','', 'Transaction Details','','',''];
-  var header2 = ['Date', desiredCurrency+' Purchased','Fiat Cost', desiredCurrency+' Sold','Fiat Received','Status','Cost Basis','Gain (Loss)','Notes', 
-      desiredCurrency+' High',desiredCurrency+' Low',desiredCurrency+' Price','Category','Transaction ID','Wallet/Account','Address'];
+  var header1 = ['', '', 'Inflow','', 'Outflow','','Calculated','','','Use \"HODL Totals > Calculate (FIFO Method)\" to update calculated cells.',
+     'Fair Market Value (USD)','', '', 'Transaction Details','',''];
+  var header2 = ['Date', 'Category',desiredCurrency+' Purchased','Fiat Cost', desiredCurrency+' Sold','Fiat Received','Status','Cost Basis','Gain (Loss)','Notes', 
+      desiredCurrency+' High',desiredCurrency+' Low',desiredCurrency+' Price','Transaction ID','Wallet/Account','Address'];
   sheet.getRange('A1:P1').setValues([header1]).setFontWeight('bold').setHorizontalAlignment('center');
   sheet.getRange('A2:P2').setValues([header2]).setFontWeight('bold').setHorizontalAlignment('center');
-  sheet.getRange('I1').setFontWeight('normal');
+  sheet.getRange('J1').setFontWeight('normal');
 
   // merge 1st row cell headers
-  sheet.getRange('B1:C1').merge();
-  sheet.getRange('D1:E1').merge();
-  sheet.getRange('F1:H1').merge();
-  sheet.getRange('J1:L1').merge();
-  sheet.getRange('M1:P1').merge();
+  sheet.getRange('C1:D1').merge();
+  sheet.getRange('E1:F1').merge();
+  sheet.getRange('G1:I1').merge();
+  sheet.getRange('K1:M1').merge();
+  sheet.getRange('N1:P1').merge();
   
   // color background and freeze the header rows
   sheet.getRange('A1:P1').setBackground('#DDDDEE');
   sheet.getRange('A2:P2').setBackground('#EEEEEE');
   sheet.setFrozenRows(2);
-
-  // should freeze the Date column also?
+  sheet.setFrozenColumns(1);
      
   // set numeric formats as described here: https://developers.google.com/sheets/api/guides/formats
   sheet.getRange('A3:A').setNumberFormat('yyyy-mm-dd');
   
-  // set COIN columns B, D {COIN Purchased, COIN Sold} visible numeric persicion to have 8 satoshis showing by default
-  sheet.getRange('B3:B').setNumberFormat('0.00000000');
-  sheet.getRange('D3:D').setNumberFormat('0.00000000');
+  // set COIN cols {COIN Purchased, COIN Sold} visible numeric persicion to have 8 satoshis showing by default
+  sheet.getRange('C3:C').setNumberFormat('0.00000000');
+  sheet.getRange('E3:E').setNumberFormat('0.00000000');
 
-  // set FIAT columns C, E, G and H {Fiat Cost, Fiat Received, Cost Basis, Gain(Loss)} type to be a Currency type
-  sheet.getRange('C3:C').setNumberFormat('$#,##0.00;$(#,##0.00)');
-  sheet.getRange('E3:E').setNumberFormat('$#,##0.00;$(#,##0.00)');
-  sheet.getRange('G3:G').setNumberFormat('$#,##0.00;$(#,##0.00)');
+  // set FIAT cols {Fiat Cost, Fiat Received, Cost Basis, Gain(Loss)} type to be a Currency type
+  sheet.getRange('D3:D').setNumberFormat('$#,##0.00;$(#,##0.00)');
+  sheet.getRange('F3:F').setNumberFormat('$#,##0.00;$(#,##0.00)');
   sheet.getRange('H3:H').setNumberFormat('$#,##0.00;$(#,##0.00)');
+  sheet.getRange('I3:I').setNumberFormat('$#,##0.00;$(#,##0.00)');
 
-  // set col C {Fiat Cost} and col E {Fiat Received} to be calculated based on other cells in the sheet
+  // set col {Fiat Cost} and col {Fiat Received} to be calculated based on other cells in the sheet
   calcFiatValuesFromFMV(sheet);
 
-  // set col F {Status} and col M {Category} centered + and I {Notes} centered with dark gray text, italics text
-  sheet.getRange('F3:F').setFontColor('#424250').setFontStyle('italic').setHorizontalAlignment('center');
-  sheet.getRange('I3:I').setFontColor('#424250').setFontStyle('italic').setHorizontalAlignment('left');
-  sheet.getRange('M3:M').setFontColor('#424250').setFontStyle('italic').setHorizontalAlignment('center');
+  // set col {Status} and col {Category} centered + and {Notes} centered with dark gray text, italics text
+  sheet.getRange('G3:G').setFontColor('#424250').setFontStyle('italic').setHorizontalAlignment('center');
+  sheet.getRange('J3:J').setFontColor('#424250').setFontStyle('italic').setHorizontalAlignment('left');
+  sheet.getRange('N3:N').setFontColor('#424250').setFontStyle('italic').setHorizontalAlignment('center');
 
   // TODO - special case formatting if coin price is > $100?  Annoying to list BTC-USD price to 6 decimal places.
-  // set col J, K and L {COIN High, Low, Price} to be foramtted into USD value but to 6 decimal places
-  sheet.getRange('J3:J').setNumberFormat('$#,######0.000000;$(#,######0.000000)').setHorizontalAlignment('right');
+  // set cols {COIN High, Low, Price} to be foramtted into USD value but to 6 decimal places
   sheet.getRange('K3:K').setNumberFormat('$#,######0.000000;$(#,######0.000000)').setHorizontalAlignment('right');
   sheet.getRange('L3:L').setNumberFormat('$#,######0.000000;$(#,######0.000000)').setHorizontalAlignment('right');
+  sheet.getRange('M3:M').setNumberFormat('$#,######0.000000;$(#,######0.000000)').setHorizontalAlignment('right');
 
   // lookup allowed categories from the "Categories sheet" to avoid hard-coding them
   var categoriesList = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Categories').getRange('A2:A35').getValues();
@@ -142,12 +141,12 @@ function formatSheet_() {
   // the need to check data in the validate() function during a calculation 
   setValidationRules_(sheet, categoriesList);
   
-  // set col F, G and H {Status, Cost Basis, Gain(Loss)} to be grayed background
-  sheet.getRange('F3:H').setBackground('#EEEEEE');
+  // set cols {Status, Cost Basis, Gain(Loss)} to be grayed background
+  sheet.getRange('G3:I').setBackground('#EEEEEE');
   // TODO explore using ProtectionType to prevent user edits to these cells
    
-  // autosize the first 9 columns' widths to fit content
-  sheet.autoResizeColumns(1, 9);  
+  // autosize several columns' widths to fit content
+  sheet.autoResizeColumns(3, 10);  
   
   SpreadsheetApp.flush();
   
@@ -157,36 +156,36 @@ function formatSheet_() {
 function calcFiatValuesFromFMV(sheet) {
   var lastRow = getLastRowWithDataPresent(sheet.getRange('A:A').getValues());
   for (var row = 3; row <= lastRow; row++) {
-    var highValue = sheet.getRange('J'+row).getValue();
+    var highValue = sheet.getRange('K'+row).getValue();
 
     // if value known don't include formulas to calculate the price from FMV columns
     if (highValue !== 'value known') {
 
       // calculate fiat price based on other columns
-      if (sheet.getRange('B'+row).getValue()) {  
-        sheet.getRange('C'+row).setValue('=B'+row+'*L'+row);
+      if (sheet.getRange('C'+row).getValue()) {  
+        sheet.getRange('D'+row).setValue('=C'+row+'*M'+row);
       } else {
-        if (sheet.getRange('D'+row).getValue()) {  
-          sheet.getRange('E'+row).setValue('=D'+row+'*L'+row);
+        if (sheet.getRange('E'+row).getValue()) {  
+          sheet.getRange('F'+row).setValue('=E'+row+'*M'+row);
         }
       }
 
       // unless the price is known, calculate via averaging high/low price for that date
       if (highValue !== 'price known') {
-        sheet.getRange('L'+row).setValue('=AVERAGE(J'+row+',K'+row+')');
+        sheet.getRange('M'+row).setValue('=AVERAGE(K'+row+',L'+row+')');
       } else {
         // copy the price known sentinel value to any cells to the right
-        sheet.getRange('K'+row).setValue('price known');
+        sheet.getRange('L'+row).setValue('price known');
       }
 
     } else {
         // copy the price known sentinel value to any cells to the right
-        sheet.getRange('K'+row).setValue('value known');
         sheet.getRange('L'+row).setValue('value known');
+        sheet.getRange('M'+row).setValue('value known');
 
-        // when marked 'value known', bold the hard-coded value entered in C (for buy) or E (for sale)
-        sheet.getRange('C'+row).setFontWeight('bold');
-        sheet.getRange('E'+row).setFontWeight('bold');
+        // when marked 'value known', bold the hard-coded FIAT value entered for buy or for sale
+        sheet.getRange('D'+row).setFontWeight('bold');
+        sheet.getRange('F'+row).setFontWeight('bold');
     } 
   }  
 }
@@ -199,6 +198,13 @@ function setValidationRules_(sheet, categoriesList) {
     //.setHelpText('Must be a valid date.')
     .build();
   sheet.getRange('A3:A').setDataValidation(dateRule);
+
+    // limit Category entries to loosely adhere to known categories
+    var categoriesRule = SpreadsheetApp.newDataValidation()
+    .requireValueInList(categoriesList)
+    .setAllowInvalid(true)
+    .build();
+  sheet.getRange('B3:B').setDataValidation(categoriesRule);
   
   // ensure we only accept positive Coin/Fiat amounts
   var notNegativeRule = SpreadsheetApp.newDataValidation()
@@ -206,15 +212,7 @@ function setValidationRules_(sheet, categoriesList) {
     .setAllowInvalid(false)
     //.setHelpText('Value cannot be negative.')
     .build();
-  sheet.getRange('B3:E').setDataValidation(notNegativeRule);
-
-  // limit Category entries to loosely adhere to known categories
-  var categoriesRule = SpreadsheetApp.newDataValidation()
-    .requireValueInList(categoriesList)
-    .setAllowInvalid(true)
-    .build();
-  sheet.getRange('M3:M').setDataValidation(categoriesRule);
-
+  sheet.getRange('C3:F').setDataValidation(notNegativeRule);
 }
 
 /**
@@ -274,7 +272,7 @@ function validate(sheet) {
   lastDate = 0;
   coinCheck = 0;
 
-  dateLotAndSaleValues = sheet.getRange('A:E').getValues();
+  dateLotAndSaleValues = sheet.getRange('A:F').getValues();
 
   // find last row with date data present
   lastRow = getLastRowWithDataPresent(dateLotAndSaleValues);
@@ -290,19 +288,19 @@ function validate(sheet) {
     }  
   }
  
-  // Iterate thru the rows to ensure there are enough buys to support the purchases
+  // Iterate thru the rows to ensure there are enough inflows to support the outflows
   // and that there is no extra data in the row that doesn't belong
   for (var row = 2; row < lastRow; row++) {
-    var bought = dateLotAndSaleValues[row][1];      // sheet.getRange('B'+row).getValue();
-    var boughtPrice = dateLotAndSaleValues[row][2]; // sheet.getRange('C'+row).getValue();
-    var sold = dateLotAndSaleValues[row][3];        // sheet.getRange('D'+row).getValue();
-    var soldPrice = dateLotAndSaleValues[row][4];   // sheet.getRange('E'+row).getValue();
+    var bought = dateLotAndSaleValues[row][2];
+    var boughtPrice = dateLotAndSaleValues[row][3];
+    var sold = dateLotAndSaleValues[row][4];
+    var soldPrice = dateLotAndSaleValues[row][5];
     
     if ((bought > 0) || (sold > 0)) {
       if ((coinCheck - sold) < 0) {
         Browser.msgBox('Data Validation Error', Utilities.formatString(
-             'There were not enough coin buys to support your coin sale on row '+(row+1)+'.\\n' +
-             'Ensure that you have recorded all of your coin buys correctly.'), Browser.Buttons.OK);
+             'There were not enough coin inflows to support your coin outflow on row '+(row+1)+'.\\n' +
+             'Ensure that you have recorded all of your coin inflows correctly.'), Browser.Buttons.OK);
         return false;
       } else {
         coinCheck += bought - sold;
@@ -375,7 +373,7 @@ function calculateFifo(sheet, lots, sales) {
   
   // if no sales yet, mark the status of the first lot as 0% sold
   if (sales.length === 0) {
-    sheet.getRange('F3').setValue('0% Sold');
+    sheet.getRange('G3').setValue('0% Sold');
   }
 
   for (var sale = 0; sale < sales.length; sale++) {
@@ -416,7 +414,7 @@ function calculateFifo(sheet, lots, sales) {
 
         if (Math.abs(sellCoinRemain - lotCoinRemain) <= ONE_SATOSHI) {
           // all of this lot was sold
-          sheet.getRange('F'+lotRow).setValue('100% Sold');
+          sheet.getRange('G'+lotRow).setValue('100% Sold');
 
           // if there are more lots to process, advance the lotCount before breaking out
           if ((lotCount+1) < lots.length) {
@@ -430,15 +428,15 @@ function calculateFifo(sheet, lots, sales) {
           lotCoinRemain = lotCoinRemain - sellCoinRemain;
           percentSold = 1 - (lotCoinRemain / lotCoin);
 
-          sheet.getRange('F'+lotRow).setValue((percentSold * 100).toFixed(0) + '% Sold');
+          sheet.getRange('G'+lotRow).setValue((percentSold * 100).toFixed(0) + '% Sold');
         }    
 
         // if sale more than 1 year and 1 day from purchase date mark as long-term gains        
         if (!termSplit) {
           if ((sellDate.getTime() - thisTerm.getTime()) / MILLIS_PER_DAY > 0) {
-            sheet.getRange('F'+(sellRow+shift)).setValue('Long-term');
+            sheet.getRange('G'+(sellRow+shift)).setValue('Long-term');
           } else {
-            sheet.getRange('F'+(sellRow+shift)).setValue('Short-term');
+            sheet.getRange('G'+(sellRow+shift)).setValue('Short-term');
           }
         }
 
@@ -449,11 +447,11 @@ function calculateFifo(sheet, lots, sales) {
           costBasis = sellCoin * (totalCost / totalCoin) * (1 - splitFactor);
           gainLoss = (sellRecd * (1 - splitFactor)) - costBasis;       
 
-          sheet.getRange('G'+(sellRow+shift)).setValue(costBasis);
-          sheet.getRange('H'+(sellRow+shift)).setValue(gainLoss);     
+          sheet.getRange('H'+(sellRow+shift)).setValue(costBasis);
+          sheet.getRange('I'+(sellRow+shift)).setValue(gainLoss);     
 
           // take note note of which lots were sold and when
-          sheet.getRange('D'+(sellRow+shift)).setNote('Sold lots from row '+
+          sheet.getRange('E'+(sellRow+shift)).setNote('Sold lots from row '+
           '??? on ????-??-??'+' to row '+lots[lot][3]+' on '+lots[lot][0]+'.');  
         }
         
@@ -485,18 +483,18 @@ function calculateFifo(sheet, lots, sales) {
           gainLoss = (sellRecd * splitFactor) - costBasis;
 
           originalDate = dateFromString(sheet.getRange('A'+(sellRow+shift)).getDisplayValue(), 0);
-          originalCoin = sheet.getRange('D'+(sellRow+shift)).getValue();
-          originalCost = sheet.getRange('E'+(sellRow+shift)).getValue();
+          originalCoin = sheet.getRange('E'+(sellRow+shift)).getValue();
+          originalCost = sheet.getRange('F'+(sellRow+shift)).getValue();
 
           // post the long-term split       
-          sheet.getRange('D'+(sellRow+shift)).setValue(originalCoin * splitFactor);
-          sheet.getRange('E'+(sellRow+shift)).setValue(originalCost * splitFactor);
-          sheet.getRange('F'+(sellRow+shift)).setValue('Long-term');
-          sheet.getRange('G'+(sellRow+shift)).setValue(costBasis);
-          sheet.getRange('H'+(sellRow+shift)).setValue(gainLoss);       
+          sheet.getRange('E'+(sellRow+shift)).setValue(originalCoin * splitFactor);
+          sheet.getRange('F'+(sellRow+shift)).setValue(originalCost * splitFactor);
+          sheet.getRange('G'+(sellRow+shift)).setValue('Long-term');
+          sheet.getRange('H'+(sellRow+shift)).setValue(costBasis);
+          sheet.getRange('I'+(sellRow+shift)).setValue(gainLoss);       
           
           // take note note of which lots were sold and when
-          sheet.getRange('D'+(sellRow+shift)).setNote('Sold lots from row '+
+          sheet.getRange('E'+(sellRow+shift)).setNote('Sold lots from row '+
             '??? on ????-??-??'+' to row '+lots[lot][3]+' on '+lots[lot][0]+'.');  
 
           // Don't create note/new row if there is negligable value left in the short-term part
@@ -514,9 +512,9 @@ function calculateFifo(sheet, lots, sales) {
             // shift to the next row to post the short-term split
             shift++;
             sheet.getRange('A'+(sellRow+shift)).setValue(originalDate).setNote(splitNoteText);
-            sheet.getRange('D'+(sellRow+shift)).setValue(originalCoin * (1 - splitFactor));
-            sheet.getRange('E'+(sellRow+shift)).setValue(originalCost * (1 - splitFactor));
-            sheet.getRange('F'+(sellRow+shift)).setValue('Short-term');
+            sheet.getRange('E'+(sellRow+shift)).setValue(originalCoin * (1 - splitFactor));
+            sheet.getRange('F'+(sellRow+shift)).setValue(originalCost * (1 - splitFactor));
+            sheet.getRange('G'+(sellRow+shift)).setValue('Short-term');
 
             // update lots after the split transaction to account for the inserted row
             for (var lotAfterSplit = 0; lotAfterSplit < lots.length; lotAfterSplit++) {
@@ -542,7 +540,7 @@ function calculateFifo(sheet, lots, sales) {
         // subtract the lot amount from the remaining coin to be sold,
         // and set up variables for the next lot, since this lot is completely used up
         sellCoinRemain = sellCoinRemain - lotCoinRemain;
-        sheet.getRange('F'+lotRow).setValue('100% Sold');
+        sheet.getRange('G'+lotRow).setValue('100% Sold');
         lotCount++;
         if (lotCount < lots.length) {
           lotCoinRemain = lots[lotCount][1];
@@ -574,29 +572,29 @@ function calculateFIFO_() {
 
     // clear previously calculated values
     Logger.log('Clearing previously calculated values and notes.');
-    activeSheet.getRange('F3:H').setValue('');
-    activeSheet.getRange('D3:D').setNote('');
+    activeSheet.getRange('G3:I').setValue('');
+    activeSheet.getRange('E3:E').setNote('');
     
     // add freshly calculated values
-    lots = getOrderList(dateDisplayValues, lastRow, activeSheet.getRange('B:C').getValues());
+    lots = getOrderList(dateDisplayValues, lastRow, activeSheet.getRange('C:D').getValues());
     Logger.log('Detected ' + lots.length + ' purchases of '+activeSheet.getName().replace(/ *\([^)]*\) */g, "")+'.');
-    sales = getOrderList(dateDisplayValues, lastRow, activeSheet.getRange('D:E').getValues());
+    sales = getOrderList(dateDisplayValues, lastRow, activeSheet.getRange('E:F').getValues());
     Logger.log('Detected ' + sales.length + ' sales of '+activeSheet.getName().replace(/ *\([^)]*\) */g, "")+'.');
     
     calculateFifo(activeSheet, lots, sales);
     
     // output the current date and time as the time last completed
     var now = Utilities.formatDate(new Date(), 'CST', 'MMMM dd, yyyy HH:mm');
-    activeSheet.getRange('I1').setValue('Last calculation succeeded '+now);
+    activeSheet.getRange('J1').setValue('Last calculation succeeded '+now);
     Logger.log('Last calculation succeeded '+now);
     
   } else {
     // record failures too
     var now = Utilities.formatDate(new Date(), 'CST', 'MMMM dd, yyyy HH:mm');
-    activeSheet.getRange('I1').setValue('Data validation failed '+now);
+    activeSheet.getRange('J1').setValue('Data validation failed '+now);
     Logger.log('Data validation failed '+now);
   }
   
   // autosize the column widths to fit content
-  activeSheet.autoResizeColumns(1, 9);  
+  activeSheet.autoResizeColumns(1, 16);  
 }
