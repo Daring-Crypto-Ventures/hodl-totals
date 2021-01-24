@@ -48,7 +48,7 @@ function showNewCurrencyPrompt() {
  * 
  * @return the newly created sheet, for function chaining purposes.
  */
-function newCurrencySheet_() {
+function newCurrencySheet_(noFooter) {
   
   // ask user what the name of the new currency will be
   var desiredCurrency = showNewCurrencyPrompt();
@@ -63,7 +63,7 @@ function newCurrencySheet_() {
   }
   SpreadsheetApp.getActiveSpreadsheet().insertSheet(desiredCurrency);
 
-  return formatSheet_();
+  return formatSheet_(noFooter);
 }
 
 /**
@@ -73,11 +73,10 @@ function newCurrencySheet_() {
  * 
  * @return the newly created sheet, for function chaining purposes.
  */
-function formatSheet_() {
+function formatSheet_(noFooter) {
 
   var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
   var desiredCurrency = sheet.getName().replace(/ *\([^)]*\) */g, "");
-  var lastRow = getLastRowWithDataPresent(sheet.getRange('A:A').getValues());
 
   // TODO add configurable "# digits to the right to show' here
   // and then use it down below to set format on COIN columns
@@ -93,6 +92,10 @@ function formatSheet_() {
       desiredCurrency+' High',desiredCurrency+' Low',desiredCurrency+' Price','Transaction ID','Wallet/Account','Address'];
   sheet.getRange('A1:P1').setValues([header1]).setFontWeight('bold').setHorizontalAlignment('center');
   sheet.getRange('A2:P2').setValues([header2]).setFontWeight('bold').setHorizontalAlignment('center');
+  
+  // see if any row data exists beyond the header we just added
+  var lastRow = getLastRowWithDataPresent(sheet.getRange('A:A').getValues());
+
   // At-a-glance total added to upper left corner
   sheet.getRange('A1').setValue('=C'+(lastRow+3));
   sheet.getRange('B1').setValue(desiredCurrency).setHorizontalAlignment('left');
@@ -127,7 +130,7 @@ function formatSheet_() {
 
   // iterate through the rows in the sheet to
   // set col {Fiat Cost} and col {Fiat Received} to be calculated based on other cells in the sheet
-  calcFiatValuesFromFMV(sheet);
+  calcFiatValuesFromFMV(sheet, lastRow);
 
   // set col {Status} and col {Category} centered + and {Notes} centered with dark gray text, italics text
   sheet.getRange('G3:G').setFontColor('#424250').setFontStyle('italic').setHorizontalAlignment('center');
@@ -151,14 +154,16 @@ function formatSheet_() {
   sheet.getRange('G3:I').setBackground('#EEEEEE');
   // TODO explore using ProtectionType to prevent user edits to these cells
      
-  // add the HODL Total summary footer
-  sheet.getRange('C'+(lastRow+2)+':F'+(lastRow+2)).setBorder(true,false,false,false,false,false,'black', SpreadsheetApp.BorderStyle.DOUBLE);
-  sheet.getRange('C'+(lastRow+2)).setValue('=SUM(INDIRECT(ADDRESS(3,COLUMN())&\":\"&ADDRESS(ROW()-2,COLUMN())))');
-  sheet.getRange('E'+(lastRow+2)).setValue('=SUM(INDIRECT(ADDRESS(3,COLUMN())&\":\"&ADDRESS(ROW()-2,COLUMN())))');
-  sheet.getRange('C'+(lastRow+3)).setBorder(true,true,true,true,false,false).setFontWeight('bold').setValue('=C'+(lastRow+2)+'-E'+(lastRow+2));
-  sheet.getRange('J'+(lastRow+2)).setBorder(true,false,false,false,false,false,'black', SpreadsheetApp.BorderStyle.DOUBLE);
-  sheet.getRange('J'+(lastRow+2)).setFontColor('#424250').setFontStyle('italic').setValue('Total Purchased, Total Sold');
-  sheet.getRange('J'+(lastRow+3)).setFontColor('#424250').setFontStyle('italic').setValue('HODL Total');
+  if (!noFooter) {
+    // add the HODL Total summary footer
+    sheet.getRange('C'+(lastRow+2)+':F'+(lastRow+2)).setBorder(true,false,false,false,false,false,'black', SpreadsheetApp.BorderStyle.DOUBLE);
+    sheet.getRange('C'+(lastRow+2)).setValue('=SUM(INDIRECT(ADDRESS(3,COLUMN())&\":\"&ADDRESS(ROW()-2,COLUMN())))');
+    sheet.getRange('E'+(lastRow+2)).setValue('=SUM(INDIRECT(ADDRESS(3,COLUMN())&\":\"&ADDRESS(ROW()-2,COLUMN())))');
+    sheet.getRange('C'+(lastRow+3)).setBorder(true,true,true,true,false,false).setFontWeight('bold').setValue('=C'+(lastRow+2)+'-E'+(lastRow+2));
+    sheet.getRange('J'+(lastRow+2)).setBorder(true,false,false,false,false,false,'black', SpreadsheetApp.BorderStyle.DOUBLE);
+    sheet.getRange('J'+(lastRow+2)).setFontColor('#424250').setFontStyle('italic').setValue('Total Purchased, Total Sold');
+    sheet.getRange('J'+(lastRow+3)).setFontColor('#424250').setFontStyle('italic').setValue('HODL Total');
+  }
 
   // autosize several columns' widths to fit content
   sheet.autoResizeColumns(3, 8); 
@@ -401,6 +406,7 @@ function calculateFifo(sheet, lots, sales) {
     var splitFactor; // Double
     var totalCoin; // Double
     var totalCost; // Double
+    var startingLotCount;
     termSplit = false; // flag if sale involved both short-term and long-term holdings
     prevSplitRow = false; // flag to avoid creating extra rows when running calc repeatedly on same sheet
     splitFactor = 0; // ratio of totalCoin to sellCoin
@@ -410,7 +416,8 @@ function calculateFifo(sheet, lots, sales) {
     sellCoinRemain = sellCoin = sales[sale][1];
     sellRecd = sales[sale][2];
     sellRow = sales[sale][3];
-    
+    startingLotCount = lotCount;
+
     for (var lot = lotCount; lot < lots.length; lot++) {
       var thisTerm; // Date
       var nextTerm; // Date
@@ -470,8 +477,12 @@ function calculateFifo(sheet, lots, sales) {
           sheet.getRange('I'+(sellRow+shift)).setValue(gainLoss);     
 
           // take note note of which lots were sold and when
-          sheet.getRange('E'+(sellRow+shift)).setNote('Sold lots from row '+
-          '??? on ????-??-??'+' to row '+lots[lot][3]+' on '+lots[lot][0]+'.');  
+          if (startingLotCount === lot) {
+            sheet.getRange('E'+(sellRow+shift)).setNote('Sold lot from row '+lots[lot][3]+' on '+lots[lot][0]+'.');
+          } else {
+            sheet.getRange('E'+(sellRow+shift)).setNote('Sold lots from row '+
+              lots[startingLotCount][3]+' on '+lots[startingLotCount][0]+' to row '+lots[lot][3]+' on '+lots[lot][0]+'.');  
+          }
         }
         
         break; // Exit the inner for loop
@@ -513,8 +524,12 @@ function calculateFifo(sheet, lots, sales) {
           sheet.getRange('I'+(sellRow+shift)).setValue(gainLoss);       
           
           // take note note of which lots were sold and when
-          sheet.getRange('E'+(sellRow+shift)).setNote('Sold lots from row '+
-            '??? on ????-??-??'+' to row '+lots[lot][3]+' on '+lots[lot][0]+'.');  
+          if (startingLotCount === lot) {
+            sheet.getRange('E'+(sellRow+shift)).setNote('Sold lot from row '+lots[lot][3]+' on '+lots[lot][0]+'.');
+          } else {
+            sheet.getRange('E'+(sellRow+shift)).setNote('Sold lots from row '+
+              lots[startingLotCount][3]+' on '+lots[startingLotCount][0]+' to row '+lots[lot][3]+' on '+lots[lot][0]+'.');  
+          }
 
           // Don't create note/new row if there is negligable value left in the short-term part
           // likely caused by rounding errors repeating the cost basis calc on the same sheet
@@ -541,6 +556,10 @@ function calculateFifo(sheet, lots, sales) {
                 lots[lotAfterSplit][3]++;
               }
             }
+
+            // reset the startingLot to point at the lot after the lot sold via long-term split
+            // so that short-term part of split will get an accurate note attached
+            startingLotCount = lot+1;
           }
           else {
             prevSplitRow = true;

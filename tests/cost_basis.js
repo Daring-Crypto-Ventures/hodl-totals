@@ -178,7 +178,7 @@ function test4_CostBasis() {
       equal( sheet.getRange('G3').getValue(), "50% Sold", "Round "+round+" Test for Partial Short-Term Sale : Row 3 Status : expected half sold" );
       equal( sheet.getRange('H3').getValue(), "", "Round "+round+" Test for Partial Short-Term Sale : Row 3 Cost Basis : expected no cost basis" );
       equal( sheet.getRange('I3').getValue(), "", "Round "+round+" Test for Partial Short-Term Sale : Row 3 Gain(Loss) : expected no gain" );
-      equal( sheet.getRange('E4').getNote(), "Sold lots from row ??? on ????-??-?? to row 3 on 2017-01-01.", "Round "+round+" Test for Lot Sold Hint : Row 4 Sold : expected sold from row ? to 3" );
+      equal( sheet.getRange('E4').getNote(), "Sold lot from row 3 on 2017-01-01.", "Round "+round+" Test for Lot Sold Hint : Row 4 Sold : expected sold from row 3" );
       equal( sheet.getRange('G4').getValue(), "Short-term", "Round "+round+" Test for Partial Short-Term Sale : Row 4 Status : expected short-term cost basis" );
       equal( sheet.getRange('H4').getValue().toFixed(2), 500.00, "Round "+round+" Test for Partial Short-Term Sale : Row 4 Cost Basis : expected 500 cost basis" );
       equal( sheet.getRange('I4').getValue().toFixed(2), 500.00, "Round "+round+" Test for Partial Short-Term Sale : Row 4 Gain(Loss) : expected 500 gain" );
@@ -243,7 +243,7 @@ function test5_CostBasis() {
       equal( sheet.getRange('G3').getValue(), "100% Sold", "Round "+round+" Test for Whole Long-Term Sale : Row 3 Status : expected all coin sold" );
       equal( sheet.getRange('H3').getValue(), "", "Round "+round+" Test for Whole Long-Term Sale : Row 3 Cost Basis : expected no cost basis" );
       equal( sheet.getRange('I3').getValue(), "", "Round "+round+" Test for Whole Long-Term Sale : Row 3 Gain(Loss) : expected no gain" );
-      equal( sheet.getRange('E4').getNote(), "Sold lots from row ??? on ????-??-?? to row 3 on 2017-01-01.", "Round "+round+" Test for Lot Sold Hint : Row 4 Sold : expected sold from row ? to 3" );
+      equal( sheet.getRange('E4').getNote(), "Sold lot from row 3 on 2017-01-01.", "Round "+round+" Test for Lot Sold Hint : Row 4 Sold : expected sold from row 3" );
       equal( sheet.getRange('G4').getValue(), "Long-term", "Round "+round+" Test for Whole Long-Term Sale : Row 4 Status : expected long-term cost basis" );
       equal( sheet.getRange('H4').getValue().toFixed(2), 1000.00, "Round "+round+" Test for Whole Long-Term Sale : Row 4 Cost Basis : expected 1000 cost basis" );
       equal( sheet.getRange('I4').getValue().toFixed(2), 1000.00, "Round "+round+" Test for Whole Long-Term Sale : Row 4 Gain(Loss) : expected 1000 gain" );
@@ -316,13 +316,13 @@ function test6_CostBasis() {
       equal( sheet.getRange('I4').getValue(), "", "Round "+round+" Test for Lot Sold In Full Later : Row 4 Gain(Loss) : expected no gain" );
 
       equal( sheet.getRange('A5').getNote().replace(/ *\([^)]*\) */g, " "), "Originally 2.00000000 CB_TEST6 was sold for $4000.00 and split into rows 5 and 6.", "Round "+round+" Test for Term Split Note : Row 5 Date : expected split into rows 5 and 6" );
-      equal( sheet.getRange('E5').getNote(), "Sold lots from row ??? on ????-??-?? to row 3 on 2017-01-01.", "Round "+round+" Test for Lot Sold Hint : Row 5 Sold : expected sold from row ? to 3" );
+      equal( sheet.getRange('E5').getNote(), "Sold lot from row 3 on 2017-01-01.", "Round "+round+" Test for Lot Sold Hint : Row 5 Sold : expected sold from row 3" );
       equal( sheet.getRange('G5').getValue(), "Long-term", "Round "+round+" Test for Split into Long-Term Sale : Row 5 Status : expected long-term cost basis" );
       equal( sheet.getRange('H5').getValue().toFixed(2), 1000.00, "Round "+round+" Test for Split into Long-Term Sale : Row 5 Cost Basis : expected 1000 cost basis" );
       equal( sheet.getRange('I5').getValue().toFixed(2), 1000.00, "Round "+round+" Test for Split into Long-Term Sale : Row 5 Gain(Loss) : expected 1000 gain" );
 
       equal( sheet.getRange('A6').getNote().replace(/ *\([^)]*\) */g, " "), "Originally 2.00000000 CB_TEST6 was sold for $4000.00 and split into rows 5 and 6.", "Round "+round+" Test for Term Split Note : Row 6 Date : expected split into rows 5 and 6" );
-      equal( sheet.getRange('E6').getNote(), "Sold lots from row ??? on ????-??-?? to row 4 on 2018-01-01.", "Round "+round+" Test for Lot Sold Hint : Row 6 Sold : expected sold from row ? to 3" );
+      equal( sheet.getRange('E6').getNote(), "Sold lot from row 4 on 2018-01-01.", "Round "+round+" Test for Lot Sold Hint : Row 6 Sold : expected sold from row 4" );
       equal( sheet.getRange('G6').getValue(), "Short-term", "Round "+round+" Test for Split into Short-Term Sale : Row 6 Status : expected short-term cost basis" );
       equal( sheet.getRange('H6').getValue().toFixed(2), 1000.00, "Round "+round+" Test for Split into Short-Term Sale : Row 6 Cost Basis : expected 1000 cost basis" );
       equal( sheet.getRange('I6').getValue().toFixed(2), 1000.00, "Round "+round+" Test for Split into Short-Term Sale : Row 6 Gain(Loss) : expected 1000 gain" );
@@ -461,19 +461,19 @@ function test8_CostBasis() {
       equal( sheet.getRange('H4').getValue(), "", "Round "+round+" Test for Lot Sold In Full Later : Row 4 Cost Basis : expected no cost basis" );
       equal( sheet.getRange('I4').getValue(), "", "Round "+round+" Test for Lot Sold In Full Later : Row 4 Gain(Loss) : expected no gain" );
 
-      equal( sheet.getRange('E5').getNote(), "Sold lots from row ??? on ????-??-?? to row 3 on 2017-01-01.", "Round "+round+" Test for Lot Sold Hint : Row 5 Sold : expected sold from row ? to 3" );
+      equal( sheet.getRange('E5').getNote(), "Sold lot from row 3 on 2017-01-01.", "Round "+round+" Test for Lot Sold Hint : Row 5 Sold : expected sold from row 3" );
       equal( sheet.getRange('G5').getValue(), "Long-term", "Round "+round+" Test for Long-Term Sale : Row 5 Status : expected long-term cost basis" );
       equal( sheet.getRange('H5').getValue().toFixed(2), 1000.00, "Round "+round+" Test for Long-Term Sale : Row 5 Cost Basis : expected 1000 cost basis" );
       equal( sheet.getRange('I5').getValue().toFixed(2), 1000.00, "Round "+round+" Test for Long-Term Sale : Row 5 Gain(Loss) : expected 1000 gain" );
 
       equal( sheet.getRange('A6').getNote().replace(/ *\([^)]*\) */g, " "), "Originally 0.40000000 CB_TEST8 was sold for $8000.00 and split into rows 6 and 7.", "Round "+round+" Test for Term Split Note : Row 6 Date : expected split into rows 6 and 7" );
-      equal( sheet.getRange('E6').getNote(), "Sold lots from row ??? on ????-??-?? to row 3 on 2017-01-01.", "Round "+round+" Test for Lot Sold Hint : Row 6 Sold : expected sold from row ? to 3" );
+      equal( sheet.getRange('E6').getNote(), "Sold lot from row 3 on 2017-01-01.", "Round "+round+" Test for Lot Sold Hint : Row 6 Sold : expected sold from row 3" );
       equal( sheet.getRange('G6').getValue(), "Long-term", "Round "+round+" Test for Split into Long-Term Sale : Row 6 Status : expected long-term cost basis" );
       equal( sheet.getRange('H6').getValue().toFixed(2), 1000.00, "Round "+round+" Test for Split into Long-Term Sale : Row 6 Cost Basis : expected 1000 cost basis" );
       equal( sheet.getRange('I6').getValue().toFixed(2), 1000.00, "Round "+round+" Test for Split into Long-Term Sale : Row 6 Gain(Loss) : expected 1000 gain" );
 
       equal( sheet.getRange('A7').getNote().replace(/ *\([^)]*\) */g, " "), "Originally 0.40000000 CB_TEST8 was sold for $8000.00 and split into rows 6 and 7.", "Round "+round+" Test for Term Split Note : Row 7 Date : expected split into rows 6 and 7" );
-      equal( sheet.getRange('E7').getNote(), "Sold lots from row ??? on ????-??-?? to row 4 on 2018-02-01.", "Round "+round+" Test for Lot Sold Hint : Row 7 Sold : expected sold from row ? to 4" );
+      equal( sheet.getRange('E7').getNote(), "Sold lot from row 4 on 2018-02-01.", "Round "+round+" Test for Lot Sold Hint : Row 7 Sold : expected sold from row 4" );
       equal( sheet.getRange('G7').getValue(), "Short-term", "Round "+round+" Test for Split into Short-Term Sale : Row 7 Status : expected short-term cost basis" );
       equal( sheet.getRange('H7').getValue().toFixed(2), 3000.00, "Round "+round+" Test for Split into Short-Term Sale : Row 7 Cost Basis : expected 3000 cost basis" );
       equal( sheet.getRange('I7').getValue().toFixed(2), 3000.00, "Round "+round+" Test for Split into Short-Term Sale : Row 7 Gain(Loss) : expected 3000 gain" );
@@ -488,17 +488,17 @@ function test8_CostBasis() {
       equal( sheet.getRange('H10').getValue(), "", "Round "+round+" Test for Second...Nth Unsold Lot : Row 10 Cost Basis : expected no cost basis" );
       equal( sheet.getRange('I10').getValue(), "", "Round "+round+" Test for Second...Nth Unsold Lot : Row 10 Gain(Loss) : expected no gain" );
 
-      equal( sheet.getRange('E11').getNote(), "Sold lots from row ??? on ????-??-?? to row 4 on 2018-02-01.", "Round "+round+" Test for Lot Sold Hint : Row 11 Sold : expected sold from row ? to 4" );
+      equal( sheet.getRange('E11').getNote(), "Sold lot from row 4 on 2018-02-01.", "Round "+round+" Test for Lot Sold Hint : Row 11 Sold : expected sold from row 4" );
       equal( sheet.getRange('G11').getValue(), "Short-term", "Round "+round+" Test for Short-Term Sale : Row 11 Status : expected short-term cost basis" );
       equal( sheet.getRange('H11').getValue().toFixed(2), 1000.00, "Round "+round+" Test for Short-Term Sale : Row 11 Cost Basis : expected 1000 cost basis" );
       equal( sheet.getRange('I11').getValue().toFixed(2), -500.00, "Round "+round+" Test for Short-Term Sale : Row 11 Gain(Loss) : expected 500 loss" );
 
-      equal( sheet.getRange('E12').getNote(), "Sold lots from row ??? on ????-??-?? to row 4 on 2018-02-01.", "Round "+round+" Test for Lot Sold Hint : Row 12 Sold : expected sold from row ? to 4" );
+      equal( sheet.getRange('E12').getNote(), "Sold lot from row 4 on 2018-02-01.", "Round "+round+" Test for Lot Sold Hint : Row 12 Sold : expected sold from row 4" );
       equal( sheet.getRange('G12').getValue(), "Short-term", "Round "+round+" Test for Short-Term Sale : Row 12 Status : expected short-term cost basis" );
       equal( sheet.getRange('H12').getValue().toFixed(2), 1000.00, "Round "+round+" Test for Short-Term Sale : Row 12 Cost Basis : expected 1000 cost basis" );
       equal( sheet.getRange('I12').getValue().toFixed(2), 0.00, "Round "+round+" Test for Short-Term Sale : Row 12 Gain(Loss) : expected 0 gain" );
 
-      equal( sheet.getRange('E13').getNote(), "Sold lots from row ??? on ????-??-?? to row 8 on 2018-03-02.", "Round "+round+" Test for Lot Sold Hint : Row 13 Sold : expected sold from row ? to 8" );
+      equal( sheet.getRange('E13').getNote(), "Sold lots from row 4 on 2018-02-01 to row 8 on 2018-03-02.", "Round "+round+" Test for Lot Sold Hint : Row 13 Sold : expected sold from row 4 to 8" );
       equal( sheet.getRange('G13').getValue(), "Short-term", "Round "+round+" Test for Short-Term Sale : Row 13 Status : expected short-term cost basis" );
       equal( sheet.getRange('H13').getValue().toFixed(2), 1000.00, "Round "+round+" Test for Short-Term Sale : Row 13 Cost Basis : expected 1000 cost basis" );
       equal( sheet.getRange('I13').getValue().toFixed(2), 1000.00, "Round "+round+" Test for Short-Term Sale : Row 13 Gain(Loss) : expected 1000 gain" );
@@ -597,13 +597,13 @@ function test9_CostBasis() {
       }
 
       equal( sheet.getRange('A28').getNote().replace(/ *\([^)]*\) */g, " "), "Originally 829.14000000 CB_TEST9 was sold for $151.26 and split into rows 28 and 29.", "Round "+round+" Test for Term Split Note : Row 28 Date : expected split into rows 28 and 29" );
-      equal( sheet.getRange('E28').getNote(), "Sold lots from row ??? on ????-??-?? to row 13 on 2019-04-09.", "Round "+round+" Test for Lot Sold Hint : Row 28 Sold : expected sold from row ? to 13" );
+      equal( sheet.getRange('E28').getNote(), "Sold lots from row 3 on 2019-02-14 to row 13 on 2019-04-09.", "Round "+round+" Test for Lot Sold Hint : Row 28 Sold : expected sold from row 3 to 13" );
       equal( sheet.getRange('G28').getValue(), "Long-term", "Round "+round+" Test for Split into Long-Term Sale : Row 28 Status : expected long-term cost basis" );
       equal( sheet.getRange('H28').getValue().toFixed(2), 69.67, "Round "+round+" Test for Split into Long-Term Sale : Row 28 Cost Basis : expected $69.67 cost basis" );
       equal( sheet.getRange('I28').getValue().toFixed(2), 5.46, "Round "+round+" Test for Split into Long-Term Sale : Row 28 Gain(Loss) : expected $5.46 gain" );
 
       equal( sheet.getRange('A29').getNote().replace(/ *\([^)]*\) */g, " "), "Originally 829.14000000 CB_TEST9 was sold for $151.26 and split into rows 28 and 29.", "Round "+round+" Test for Term Split Note : Row 29 Date : expected split into rows 28 and 29" );
-      equal( sheet.getRange('E29').getNote(), "Sold lots from row ??? on ????-??-?? to row 27 on 2020-04-08.", "Round "+round+" Test for Lot Sold Hint : Row 29 Sold : expected sold from row ? to 27" );
+      equal( sheet.getRange('E29').getNote(), "Sold lots from row 14 on 2019-05-09 to row 27 on 2020-04-08.", "Round "+round+" Test for Lot Sold Hint : Row 29 Sold : expected sold from row 14 to 27" );
       equal( sheet.getRange('G29').getValue(), "Short-term", "Round "+round+" Test for Split into Short-Term Sale : Row 29 Status : expected short-term cost basis" );
       equal( sheet.getRange('H29').getValue().toFixed(2), 90.54, "Round "+round+" Test for Split into Short-Term Sale : Row 29 Cost Basis : expected $90.54 cost basis" );
       equal( sheet.getRange('I29').getValue().toFixed(2), -14.41, "Round "+round+" Test for Split into Short-Term Sale : Row 29 Gain(Loss) : expected $(14.41) gain" );

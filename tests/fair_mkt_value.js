@@ -36,7 +36,7 @@ function test1_FMV() {
 
       if (validate(sheet)) {
           
-        calcFiatValuesFromFMV(sheet);
+        calcFiatValuesFromFMV(sheet, initialData.length + 2);
         
         // output the current date and time as the time last completed
         var now = Utilities.formatDate(new Date(), 'CST', 'MMMM dd, yyyy HH:mm');
