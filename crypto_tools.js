@@ -120,6 +120,7 @@ function formatSheet_() {
   sheet.getRange('H3:H').setNumberFormat('$#,##0.00;$(#,##0.00)');
   sheet.getRange('I3:I').setNumberFormat('$#,##0.00;$(#,##0.00)');
 
+  // iterate through the rows in the sheet to
   // set col {Fiat Cost} and col {Fiat Received} to be calculated based on other cells in the sheet
   calcFiatValuesFromFMV(sheet);
 
@@ -146,7 +147,7 @@ function formatSheet_() {
   // TODO explore using ProtectionType to prevent user edits to these cells
    
   // autosize several columns' widths to fit content
-  sheet.autoResizeColumns(3, 10);  
+  sheet.autoResizeColumns(3, 9);  
   
   SpreadsheetApp.flush();
   
@@ -154,38 +155,43 @@ function formatSheet_() {
 }
 
 function calcFiatValuesFromFMV(sheet) {
+
   var lastRow = getLastRowWithDataPresent(sheet.getRange('A:A').getValues());
-  for (var row = 3; row <= lastRow; row++) {
-    var highValue = sheet.getRange('K'+row).getValue();
+  var purchasedCol = sheet.getRange('C:C').getValues();
+  var soldCol = sheet.getRange('E:E').getValues();
+  var firstFMVcol = sheet.getRange('K:K').getValues();
+
+  for (var row = 2; row < lastRow; row++) {
+    var highValue = firstFMVcol[row][0];
 
     // if value known don't include formulas to calculate the price from FMV columns
     if (highValue !== 'value known') {
 
       // calculate fiat price based on other columns
-      if (sheet.getRange('C'+row).getValue()) {  
-        sheet.getRange('D'+row).setValue('=C'+row+'*M'+row);
+      if (purchasedCol[row][0]) {  
+        sheet.getRange('D'+(row+1)).setValue('=C'+(row+1)+'*M'+(row+1));
       } else {
-        if (sheet.getRange('E'+row).getValue()) {  
-          sheet.getRange('F'+row).setValue('=E'+row+'*M'+row);
+        if (soldCol[row][0]) {  
+          sheet.getRange('F'+(row+1)).setValue('=E'+(row+1)+'*M'+(row+1));
         }
       }
 
       // unless the price is known, calculate via averaging high/low price for that date
       if (highValue !== 'price known') {
-        sheet.getRange('M'+row).setValue('=AVERAGE(K'+row+',L'+row+')');
+        sheet.getRange('M'+(row+1)).setValue('=AVERAGE(K'+(row+1)+',L'+(row+1)+')');
       } else {
         // copy the price known sentinel value to any cells to the right
-        sheet.getRange('L'+row).setValue('price known');
+        sheet.getRange('L'+(row+1)).setValue('price known');
       }
 
     } else {
         // copy the price known sentinel value to any cells to the right
-        sheet.getRange('L'+row).setValue('value known');
-        sheet.getRange('M'+row).setValue('value known');
+        sheet.getRange('L'+(row+1)).setValue('value known');
+        sheet.getRange('M'+(row+1)).setValue('value known');
 
         // when marked 'value known', bold the hard-coded FIAT value entered for buy or for sale
-        sheet.getRange('D'+row).setFontWeight('bold');
-        sheet.getRange('F'+row).setFontWeight('bold');
+        sheet.getRange('D'+(row+1)).setFontWeight('bold');
+        sheet.getRange('F'+(row+1)).setFontWeight('bold');
     } 
   }  
 }
