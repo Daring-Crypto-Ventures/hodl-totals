@@ -83,9 +83,9 @@ function formatSheet_() {
 
   // populate the two-row-tall header cells
   var header1 = ['', 'Buy','', 'Sell','','Calculated','','','Use \"HODL Totals > Calculate Cost Basis (FIFO)\" to update this sheet.',
-     'Fair Market Value (USD)','','', 'Transaction Details','','Final Destination',''];
+     'Fair Market Value (USD)','','', 'Transaction Details','','',''];
   var header2 = ['Date', desiredCurrency+' Purchased','Fiat Cost', desiredCurrency+' Sold','Fiat Received','Status','Cost Basis','Gain (Loss)','Notes', 
-      desiredCurrency+' High',desiredCurrency+' Low',desiredCurrency+' Price','Category','Tx Info','Where to Find Wallet','Address'];
+      desiredCurrency+' High',desiredCurrency+' Low',desiredCurrency+' Price','Category','Transaction ID','Wallet/Account','Address'];
   sheet.getRange('A1:P1').setValues([header1]).setFontWeight('bold').setHorizontalAlignment('center');
   sheet.getRange('A2:P2').setValues([header2]).setFontWeight('bold').setHorizontalAlignment('center');
   sheet.getRange('I1').setFontWeight('normal');
@@ -95,8 +95,7 @@ function formatSheet_() {
   sheet.getRange('D1:E1').merge();
   sheet.getRange('F1:H1').merge();
   sheet.getRange('J1:L1').merge();
-  sheet.getRange('M1:N1').merge();
-  sheet.getRange('O1:P1').merge();
+  sheet.getRange('M1:P1').merge();
   
   // color background and freeze the header rows
   sheet.getRange('A1:P1').setBackground('#DDDDEE');
@@ -134,7 +133,6 @@ function formatSheet_() {
 
   // lookup allowed categories from the "Categories sheet" to avoid hard-coding them
   var categoriesList = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Categories').getRange('A2:A35').getValues();
-  // TODO - also add 'Sold '+desiredCurrency, 'Bought '+desiredCurrency to the list?
 
   // Prevent the user from entering bad inputs in the first place which removes
   // the need to check data in the validate() function during a calculation 
