@@ -147,7 +147,7 @@ function formatSheet_() {
   // TODO explore using ProtectionType to prevent user edits to these cells
    
   // autosize several columns' widths to fit content
-  sheet.autoResizeColumns(3, 9);  
+  sheet.autoResizeColumns(3, 8);  
   
   SpreadsheetApp.flush();
   
