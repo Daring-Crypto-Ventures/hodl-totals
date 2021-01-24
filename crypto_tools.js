@@ -57,7 +57,11 @@ function newCurrencySheet_() {
   if (desiredCurrency === null)
     return null;
 
-  var sheet = SpreadsheetApp.getActiveSpreadsheet().insertSheet(desiredCurrency);
+  // if no Categories sheet previously exists, create one
+  if (SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Categories") == null) {
+    newCategorySheet(); 
+  }
+  SpreadsheetApp.getActiveSpreadsheet().insertSheet(desiredCurrency);
 
   return formatSheet_();
 }
