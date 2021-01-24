@@ -77,6 +77,7 @@ function formatSheet_() {
 
   var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
   var desiredCurrency = sheet.getName().replace(/ *\([^)]*\) */g, "");
+  var lastRow = getLastRowWithDataPresent(sheet.getRange('A:A').getValues());
 
   // TODO add configurable "# digits to the right to show' here
   // and then use it down below to set format on COIN columns
@@ -92,6 +93,10 @@ function formatSheet_() {
       desiredCurrency+' High',desiredCurrency+' Low',desiredCurrency+' Price','Transaction ID','Wallet/Account','Address'];
   sheet.getRange('A1:P1').setValues([header1]).setFontWeight('bold').setHorizontalAlignment('center');
   sheet.getRange('A2:P2').setValues([header2]).setFontWeight('bold').setHorizontalAlignment('center');
+  // At-a-glance total added to upper left corner
+  sheet.getRange('A1').setValue('=C'+(lastRow+3));
+  sheet.getRange('B1').setValue(desiredCurrency).setHorizontalAlignment('left');
+  sheet.getRange('A1:B1').setBorder(false,false,true,true,false,false);
   sheet.getRange('J1').setFontWeight('normal');
 
   // merge 1st row cell headers
@@ -145,18 +150,26 @@ function formatSheet_() {
   // set cols {Status, Cost Basis, Gain(Loss)} to be grayed background
   sheet.getRange('G3:I').setBackground('#EEEEEE');
   // TODO explore using ProtectionType to prevent user edits to these cells
-   
+     
+  // add the HODL Total summary footer
+  sheet.getRange('C'+(lastRow+2)+':F'+(lastRow+2)).setBorder(true,false,false,false,false,false,'black', SpreadsheetApp.BorderStyle.DOUBLE);
+  sheet.getRange('C'+(lastRow+2)).setValue('=SUM(INDIRECT(ADDRESS(3,COLUMN())&\":\"&ADDRESS(ROW()-2,COLUMN())))');
+  sheet.getRange('E'+(lastRow+2)).setValue('=SUM(INDIRECT(ADDRESS(3,COLUMN())&\":\"&ADDRESS(ROW()-2,COLUMN())))');
+  sheet.getRange('C'+(lastRow+3)).setBorder(true,true,true,true,false,false).setFontWeight('bold').setValue('=C'+(lastRow+2)+'-E'+(lastRow+2));
+  sheet.getRange('J'+(lastRow+2)).setBorder(true,false,false,false,false,false,'black', SpreadsheetApp.BorderStyle.DOUBLE);
+  sheet.getRange('J'+(lastRow+2)).setFontColor('#424250').setFontStyle('italic').setValue('Total Purchased, Total Sold');
+  sheet.getRange('J'+(lastRow+3)).setFontColor('#424250').setFontStyle('italic').setValue('HODL Total');
+
   // autosize several columns' widths to fit content
-  sheet.autoResizeColumns(3, 8);  
-  
+  sheet.autoResizeColumns(3, 8); 
+
   SpreadsheetApp.flush();
   
   return sheet;
 }
 
-function calcFiatValuesFromFMV(sheet) {
+function calcFiatValuesFromFMV(sheet, lastRow) {
 
-  var lastRow = getLastRowWithDataPresent(sheet.getRange('A:A').getValues());
   var purchasedCol = sheet.getRange('C:C').getValues();
   var soldCol = sheet.getRange('E:E').getValues();
   var firstFMVcol = sheet.getRange('K:K').getValues();
