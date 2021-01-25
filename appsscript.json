@@ -1,20 +1,15 @@
 {
   "timeZone": "America/Mexico_City",
   "dependencies": {
-    "libraries": [
-      {
-        "userSymbol": "QUnit",
-        "libraryId": "13agWuzcPH32W4JJvOqOEYqeNHGihS63P2V-a-Vxz-c9WPIzZYBvIhs3m",
-        "version": "4"
-      }
-    ]
+    "libraries": [{
+      "userSymbol": "QUnit",
+      "libraryId": "13agWuzcPH32W4JJvOqOEYqeNHGihS63P2V-a-Vxz-c9WPIzZYBvIhs3m",
+      "version": "4"
+    }]
   },
-  "oauthScopes": [
-      "https://www.googleapis.com/auth/spreadsheets"
-    ],
   "webapp": {
-    "executeAs": "USER_ACCESSING",
-    "access": "DOMAIN"
+    "access": "MYSELF",
+    "executeAs": "USER_DEPLOYING"
   },
   "exceptionLogging": "STACKDRIVER",
   "runtimeVersion": "V8"
