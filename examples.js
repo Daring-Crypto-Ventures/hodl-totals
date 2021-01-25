@@ -7,6 +7,12 @@
  */
 
 function loadExample0_() {
+
+  // if no Categories sheet previously exists, create one
+  if (SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Categories") == null) {
+      newCategorySheet(); 
+  }
+
   var newSheet = newCurrencySheet_(true);
   if (newSheet !== null) { 
     example0(newSheet);
@@ -39,6 +45,12 @@ function example0(sheet) {
 }
 
 function loadExample1_() {
+
+  // if no Categories sheet previously exists, create one
+    if (SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Categories") == null) {
+      newCategorySheet(); 
+  }
+  
   var newSheet = newCurrencySheet_(true);
   if (newSheet !== null) { 
     example1(newSheet);
