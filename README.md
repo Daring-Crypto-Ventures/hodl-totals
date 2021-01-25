@@ -1,11 +1,24 @@
 ![HODL Totals Google Sheets Add-On](hodl-totals.png)
 
 # HODL Totals
-These Google Apps Scripts will add menu commands to Google Sheets that will help you track cost basis and long-term or short-term treatment for your cryptocurrency trades. It uses the first-in, first-out (FIFO) cost method, which is commonly used for tax compliance.
+
+Your crypto data is yours to keep; I built this so that you could own your data and manage the data in a convienent way without a need to send your coin data to anyone else.
+
+These Google Apps Scripts will add menu commands to Google Sheets that will help you track cost basis and long-term or short-term treatment for your cryptocurrency trades. 
+It uses the first-in, first-out (FIFO) cost method, which is commonly used for tax compliance.
 
 ## Usage
 
-- TODO - add details on how to these scripts to new Google Sheets
+Two options for getting started:
+
+OPTION 1 - Wait until the Google Workspace Marketplace approves this as an Add-on, and then download it from within your Google Sheets
+
+OPTION 2 - Start now by coping this google sheet into your account.  I wrote some quick instructions on the first tab and generated a few examples. 
+You will need to granting the scripts permission to execute before any Formatting or Cost Basis calculations take place.
+
+## Getting Started
+
+COMING SOON - Free Training Videos!
 
 ## Development Environment
 
@@ -15,6 +28,7 @@ These Google Apps Scripts will add menu commands to Google Sheets that will help
 - Publish changes to your live google sheet(s) using clasp from the command line - https://developers.google.com/apps-script/guides/clasp
 
 ## Changelog
+- 01-23-21 - Addressed a laundry list of cleanup issues, in preparation for inital submission to the Google Marketplace.
 - 11-29-20 - Addressed Signficant performance issues for > 1000 purchase transactions (long running script may not finish executing before Google times out the job)
 - 08-31-20 - Ported logic from alanhett's VBScript Macros to Google Apps Script for FIFO cost basis calc.
 
