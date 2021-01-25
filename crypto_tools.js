@@ -5,24 +5,39 @@
  *
  */
 
+ /**
+ * A special function that runs when the this is installed as an addon
+ */
+function onInstall(e) {
+  onOpen(e);
+}
+
 /**
  * A special function that runs when the spreadsheet is open, used to add a
  * custom menu to the spreadsheet.
  */
-function onOpen() {
+function onOpen(e) {
   var ui = SpreadsheetApp.getUi();
-  ui.createMenu('HODL Totals')
-      .addItem('New currency...', 'newCurrencySheet_')
-      .addSeparator()
-      .addItem('Apply formatting', 'formatSheet_')
-      .addItem('Calculate (FIFO method)', 'calculateFIFO_')
-      .addSeparator()
-      .addSubMenu(ui.createMenu('Examples')
-          .addItem('Cost basis', 'loadExample0_')
-          .addItem('Fair market value', 'loadExample1_'))
-      .addSeparator()
-      .addItem('About', 'showAboutDialog_') 
-      .addToUi();
+  var menu = ui.createAddonMenu(); // createsMenu('HODL Totals')
+
+  menu.addItem('New currency...', 'newCurrencySheet_')
+  .addSeparator()
+  .addItem('Apply formatting', 'formatSheet_')
+  .addItem('Calculate (FIFO method)', 'calculateFIFO_')
+  .addSeparator()
+  .addSubMenu(ui.createMenu('Examples')
+    .addItem('Cost basis', 'loadExample0_')
+    .addItem('Fair market value', 'loadExample1_'))
+  .addSeparator()
+  .addItem('About', 'showAboutDialog_');
+
+  //if (e && e.authMode != ScriptApp.AuthMode.NONE)
+  // https://ctrlq.org/google.apps.script/docs/add-ons/lifecycle.html 
+  // Add a menu item based on properties (doesn't work in AuthMode.NONE).
+  // i.e. analytics UrlFetchApp.fetch('http://www.example.com/analytics?event=open');
+  // or add dynamic menu items based on stored *properties* [i.e. FIFO vs LIFO etc]
+
+  menu.addToUi();
 }
 
 function showNewCurrencyPrompt() {
