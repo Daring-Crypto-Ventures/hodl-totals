@@ -13,8 +13,7 @@ Two options for getting started:
 
 OPTION 1 - Wait until the Google Workspace Marketplace approves this as an Add-on, and then download it from within your Google Sheets
 
-OPTION 2 - Start now by coping this google sheet into your account.  I wrote some quick instructions on the first tab and generated a few examples. 
-You will need to granting the scripts permission to execute before any Formatting or Cost Basis calculations take place.
+OPTION 2 - Start now by using the Container-bound Scripts edition and copying the google sheet linked in the release tag into your Google account.
 
 ## Getting Started
 
