@@ -647,7 +647,5 @@ function calculateFIFO_() {
     activeSheet.getRange('J1').setValue('Data validation failed '+now);
     Logger.log('Data validation failed '+now);
   }
-  
-  // autosize the column widths to fit content
-  activeSheet.autoResizeColumns(1, 16);  
+   
 }
