@@ -101,7 +101,7 @@ function formatSheet_(noFooter) {
   // https://developers.google.com/apps-script/reference/spreadsheet/group
 
   // populate the two-row-tall header cells
-  var header1 = ['', '', 'Inflow','', 'Outflow','','Calculated','','','Use \"HODL Totals > Calculate (FIFO Method)\" to update calculated cells.',
+  var header1 = ['', '', 'Inflow','', 'Outflow','','Calculated','','','\"Add-ons > HODL Totals > Calculate\" to update calculated cells.',
      'Fair Market Value (USD)','', '', 'Transaction Details','',''];
   var header2 = ['Date', 'Category',desiredCurrency+' Purchased','Fiat Cost', desiredCurrency+' Sold','Fiat Received','Status','Cost Basis','Gain (Loss)','Notes', 
       desiredCurrency+' High',desiredCurrency+' Low',desiredCurrency+' Price','Transaction ID','Wallet/Account','Address'];
