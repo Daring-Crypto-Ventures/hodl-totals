@@ -1,4 +1,6 @@
-## Welcome to GitHub Pages
+## Welcome to the HODL Totals GitHub Pages Site
+
+CONTENT TODO
 
 You can use the [editor on GitHub](https://github.com/dogracer/hodl-totals/edit/main/docs/index.md) to maintain and preview the content for your website in Markdown files.
 
