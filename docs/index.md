@@ -26,7 +26,7 @@ We calculate:
 - Overall coin totals
 
 The initial prerelease version of our tool is working and has assisted people with their 2020 US income taxes.
-If you use TurboTax, you should use [this link](https://turbo.tax/pxd9zgp8).
+If you use TurboTax, you should use [this link](Https://turbo.tax/x3sdq3xh).
 We get a $25 gift card. You get 20% paid online federal. [Offer](https://turbotax.intuit.com/referral/terms) good through Oct 15, 2021.
 
 Our roadmap:
