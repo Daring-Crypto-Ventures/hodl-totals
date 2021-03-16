@@ -1,39 +1,45 @@
-## Welcome to the HODL Totals GitHub Pages Site
+## HODL Totals
 
-CONTENT TODO
+Crypto taxes are a pain. It is stressful and complicated. It is a barrier to crypto adoption.
 
-You can use the [editor on GitHub](https://github.com/dogracer/hodl-totals/edit/main/docs/index.md) to maintain and preview the content for your website in Markdown files.
+We are here to help crypto go mainstream, by providing HODL Totals: free and open-source Google Sheet tools that aim remove the FUD around crypto taxation.
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+Our approach is not to give people another service to hire, bur rather to teach people to instead to count on themselves to come into compliance with tax laws and regulations. Anything is possible if you have the right tools and a strong community to help.
 
-### Markdown
+We believe in solutions grounded in the open internet, with code that is open source and available under the General Public License (“GPL”). Unlike the software used by many other crypto service companies, our source code is public so you can actually download and take a look at the code to see how it works.
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+The HODL Totals Google Sheet Add-On helps the user capture:
+- Transaction Dates
+- Transaction IDs
+- Coin amount inflows
+- Coin amount outflows
+- Pricing data
+- Wallet information
+- Cryptocurrency Addresses
 
-```markdown
-Syntax highlighted code block
+After capturing this data in a HODL Totals sheet, our JavaScript scripts execute upon your data in order to provide you with useful computations. Our Google Apps Scripts will add menu commands to the Google Sheet that will help you track cost basis and long-term or short-term treatment for your cryptocurrency trades. It uses the first-in, first-out (FIFO) cost method, which is commonly used for tax compliance. 
 
-# Header 1
-## Header 2
-### Header 3
+We calculate:
+- Profit and loss
+- Short-term capital gains
+- Long-term capital gains
+- Overall coin totals
 
-- Bulleted
-- List
+The initial prerelease version of our tool is working and has assisted people with their 2020 US income taxes. However, there are plenty of rough edges and additional functionality to add if this tool is going to reach the audience we want to reach.
 
-1. Numbered
-2. List
+Our roadmap:
 
-**Bold** and _Italic_ and `Code` text
+1. Complete the dev tasks required for entry to the Google App Marketplace
+2. Get v1.0 deployed 
+3. Work through the backlog
 
-[Link](url) and ![Image](src)
-```
+Backlog snapshot:
+  - Automated CSV export for TurboTax
+  -	Automated 8949 form generation
+  -	Portfolio tracking page
+  -	Pricing information import
+  -	What if… scenario calculations
+  -	Mobile app frontend for adding transactions
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/dogracer/hodl-totals/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://support.github.com/contact) and we’ll help you sort it out.
+Curious to learn more? 
+Stop by our discord for a chat: https://discord.com/invite/TWuA9DzZth
