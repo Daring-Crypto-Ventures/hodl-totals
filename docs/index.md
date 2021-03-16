@@ -25,7 +25,7 @@ We calculate:
 - Long-term capital gains
 - Overall coin totals
 
-The initial prerelease version of our tool is working and has assisted people with their 2020 US income taxes. However, there are plenty of rough edges and additional functionality to add if this tool is going to reach the audience we want to reach.
+The initial prerelease version of our tool is working and has assisted people with their 2020 US income taxes.
 
 Our roadmap:
 
