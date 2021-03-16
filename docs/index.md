@@ -40,7 +40,7 @@ Backlog snapshot:
   -	Automated 8949 form generation
   -	Portfolio tracking page
   -	Pricing information import
-  -	What if… scenario calculations
+  -	"What if" scenario calculations
   -	Mobile app frontend for adding transactions
 
 Curious to learn more?
