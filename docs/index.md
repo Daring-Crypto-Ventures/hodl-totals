@@ -43,5 +43,6 @@ Backlog snapshot:
   -	What if… scenario calculations
   -	Mobile app frontend for adding transactions
 
-Curious to learn more? 
+Curious to learn more?
+
 Stop by our discord for a chat: [Join the HODL Totals discord](https://discord.com/invite/TWuA9DzZth)
