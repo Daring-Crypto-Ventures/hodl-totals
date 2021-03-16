@@ -26,6 +26,8 @@ We calculate:
 - Overall coin totals
 
 The initial prerelease version of our tool is working and has assisted people with their 2020 US income taxes.
+If you use TurboTax, you should use [this link](https://turbo.tax/pxd9zgp8).
+We get a $25 gift card. You get 20% paid online federal. [Offer](https://turbotax.intuit.com/referral/terms) good through Oct 15, 2021.
 
 Our roadmap:
 
@@ -42,4 +44,4 @@ Backlog snapshot:
   -	Mobile app frontend for adding transactions
 
 Curious to learn more? 
-Stop by our discord for a chat: https://discord.com/invite/TWuA9DzZth
+Stop by our discord for a chat: [Join the HODL Totals discord](https://discord.com/invite/TWuA9DzZth)
