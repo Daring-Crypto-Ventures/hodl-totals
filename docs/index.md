@@ -4,13 +4,13 @@ It is stressful and complicated. It is a barrier to crypto adoption.
 
 We are here to help crypto go mainstream, by providing HODL Totals: free and open-source Google Sheet tools that aim remove the FUD around crypto taxation.
 
-Our approach is not to give people another service to hire, bur rather to teach people to instead to count on themselves to come into compliance with tax laws and regulations. Anything is possible if you have the right tools and a strong community to help.
+Our approach is not to give people another service to hire, but rather to teach people to instead count on themselves to comply with tax laws and regulations. Anything is possible if you have the right tools and a strong community to help.
 
 ```
-   "Just finished calculating all my crypto taxes with your extension...
-          worked like a charm :)
-                   And thanks again, would have been hell without this!"
-                                          - cryptoman, 04/06/2021
+"Just finished calculating all my crypto taxes with your extension...
+       worked like a charm :)
+                And thanks again, would have been hell without this!"
+                                       - cryptoman, 04/06/2021
 ```                                              
 
 We believe in solutions grounded in the open internet, with code that is open source and available under the [MIT License](https://github.com/dogracer/hodl-totals/blob/main/LICENSE). Unlike the software used by many other crypto service companies, our source code is public so you can actually download and take a look at the code to see how it works.
