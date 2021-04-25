@@ -6,7 +6,7 @@ We are here to help crypto go mainstream, by providing HODL Totals: free and ope
 
 Our approach is not to give people another service to hire, bur rather to teach people to instead to count on themselves to come into compliance with tax laws and regulations. Anything is possible if you have the right tools and a strong community to help.
 
-We believe in solutions grounded in the open internet, with code that is open source and available under the General Public License (“GPL”). Unlike the software used by many other crypto service companies, our source code is public so you can actually download and take a look at the code to see how it works.
+We believe in solutions grounded in the open internet, with code that is open source and available under the [MIT License](https://github.com/dogracer/hodl-totals/blob/main/LICENSE). Unlike the software used by many other crypto service companies, our source code is public so you can actually download and take a look at the code to see how it works.
 
 Your transaction data is… well yours. You should have a say in what happens to it. Acknowledging that you need to pay taxes should not force you to surrender that data to a crypto tax service. I prefer my crypto data not sitting in a honeypot that could be hacked, like [this service in August 2020](https://www.tokenpost.com/More-than-1000-users-affected-in-a-cryptocurrency-tax-reporting-service-hack-5712). That doesn’t mean you have to live off the grid in a cabin in the woods. With HODL Totals you can choose to put your trust in Google Drive’s secure data centers with encrypted storage and in exchange you get a cloud-based user experience that makes crypto tax preparation less painful.
 
