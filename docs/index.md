@@ -7,7 +7,7 @@ We are here to help crypto go mainstream, by providing HODL Totals: free and ope
 Our approach is not to give people another service to hire, but rather to teach people to instead count on themselves to comply with tax laws and regulations. Anything is possible if you have the right tools and a strong community to help.
 
 ```
-"Just finished calculating all my crypto taxes with your extension...
+"Finished calculating all my crypto taxes with your extension...
        worked like a charm :)
                 And thanks again, would have been hell without this!"
                                        - cryptoman, 04/06/2021
