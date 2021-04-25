@@ -17,7 +17,8 @@ We believe in solutions grounded in the open internet, with code that is open so
 
 Your transaction data is… well yours. You should have a say in what happens to it. Acknowledging that you need to pay taxes should not force you to surrender that data to a crypto tax service. I prefer my crypto data not sitting in a honeypot that could be hacked, like [this service in August 2020](https://www.tokenpost.com/More-than-1000-users-affected-in-a-cryptocurrency-tax-reporting-service-hack-5712). That doesn’t mean you have to live off the grid in a cabin in the woods. With HODL Totals you can choose to put your trust in Google Drive’s secure data centers with encrypted storage and in exchange you get a cloud-based user experience that makes crypto tax preparation less painful.
 
-## This tool captures
+## How HODL Totals helps
+It provides a formatted spreadsheet structure you can use to record:
 - Transaction Dates
 - Transaction IDs
 - Coin amount inflows
