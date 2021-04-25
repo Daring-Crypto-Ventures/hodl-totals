@@ -1,4 +1,4 @@
-## Crypto taxes are a pain.
+## Crypto taxes are a pain
 
 It is stressful and complicated. It is a barrier to crypto adoption.
 
