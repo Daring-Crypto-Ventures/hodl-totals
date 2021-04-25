@@ -1,6 +1,6 @@
-## HODL Totals
+## Crypto taxes are a pain.
 
-Crypto taxes are a pain. It is stressful and complicated. It is a barrier to crypto adoption.
+It is stressful and complicated. It is a barrier to crypto adoption.
 
 We are here to help crypto go mainstream, by providing HODL Totals: free and open-source Google Sheet tools that aim remove the FUD around crypto taxation.
 
@@ -17,7 +17,7 @@ We believe in solutions grounded in the open internet, with code that is open so
 
 Your transaction data is… well yours. You should have a say in what happens to it. Acknowledging that you need to pay taxes should not force you to surrender that data to a crypto tax service. I prefer my crypto data not sitting in a honeypot that could be hacked, like [this service in August 2020](https://www.tokenpost.com/More-than-1000-users-affected-in-a-cryptocurrency-tax-reporting-service-hack-5712). That doesn’t mean you have to live off the grid in a cabin in the woods. With HODL Totals you can choose to put your trust in Google Drive’s secure data centers with encrypted storage and in exchange you get a cloud-based user experience that makes crypto tax preparation less painful.
 
-The HODL Totals Google Sheet Add-On helps the user capture:
+## This tool captures
 - Transaction Dates
 - Transaction IDs
 - Coin amount inflows
@@ -26,32 +26,22 @@ The HODL Totals Google Sheet Add-On helps the user capture:
 - Wallet information
 - Cryptocurrency Addresses
 
-After capturing this data in a HODL Totals sheet, our JavaScript scripts execute upon your data in order to provide you with useful computations. Our Google Apps Scripts will add menu commands to the Google Sheet that will help you track cost basis and long-term or short-term treatment for your cryptocurrency trades. It uses the first-in, first-out (FIFO) cost method, which is commonly used for tax compliance. 
+After capturing this data in a HODL Totals sheet, our JavaScript scripts execute upon your data in order to provide you with useful computations. Our Google Apps Scripts will add menu commands to the Google Sheet that will help you track cost basis and long-term or short-term treatment for your cryptocurrency trades. It uses the first-in, first-out (FIFO) cost method, which is commonly used for tax compliance, to calculate:
 
-We calculate:
 - Profit and loss
 - Short-term capital gains
 - Long-term capital gains
 - Overall coin totals
 
 The initial prerelease version of our tool is working and has assisted people with their 2020 US income taxes.
+
 If you use TurboTax, you should use [this link](Https://turbo.tax/x3sdq3xh).
 We get a $25 gift card. You get 20% paid online federal. [Offer](https://turbotax.intuit.com/referral/terms) good through Oct 15, 2021.
 
-Our roadmap:
-
+## Roadmap
 1. Complete the dev tasks required for entry to the Google App Marketplace
 2. Get v1.0 deployed 
-3. Work through the backlog
+3. Work through the [backlog](https://trello.com/b/5E0bbIr2/hodl-totals)
 
-Backlog snapshot:
-  - Automated CSV export for TurboTax
-  -	Automated 8949 form generation
-  -	Portfolio tracking page
-  -	Pricing information import
-  -	"What if" scenario calculations
-  -	Mobile app frontend for adding transactions
-
-Curious to learn more?
-
+## Support
 Stop by our discord for a chat: [Join the HODL Totals discord](https://discord.com/invite/TWuA9DzZth)
