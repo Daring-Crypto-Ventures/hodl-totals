@@ -13,7 +13,7 @@ function loadExample0_() {
       newCategorySheet(); 
   }
 
-  var newSheet = newCurrencySheet_(true);
+  var newSheet = newCurrencySheet_();
   if (newSheet !== null) { 
     example0(newSheet);
   }
@@ -51,7 +51,7 @@ function loadExample1_() {
       newCategorySheet(); 
   }
   
-  var newSheet = newCurrencySheet_(true);
+  var newSheet = newCurrencySheet_();
   if (newSheet !== null) { 
     example1(newSheet);
   }

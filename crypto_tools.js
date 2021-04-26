@@ -20,7 +20,7 @@ function onOpen(e) {
   var ui = SpreadsheetApp.getUi();
   var menu = ui.createAddonMenu(); // createsMenu('HODL Totals')
 
-  menu.addItem('New currency...', 'newCurrencySheet_')
+  menu.addItem('Track new coin...', 'newCurrencySheet_')
   .addSeparator()
   .addItem('Apply formatting', 'formatSheet_')
   .addItem('Calculate (FIFO method)', 'calculateFIFO_')
@@ -64,7 +64,7 @@ function showNewCurrencyPrompt() {
  * 
  * @return the newly created sheet, for function chaining purposes.
  */
-function newCurrencySheet_(noFooter) {
+function newCurrencySheet_() {
   
   // ask user what the name of the new currency will be
   var desiredCurrency = showNewCurrencyPrompt();
@@ -79,7 +79,7 @@ function newCurrencySheet_(noFooter) {
   }
   SpreadsheetApp.getActiveSpreadsheet().insertSheet(desiredCurrency);
 
-  return formatSheet_(noFooter);
+  return formatSheet_();
 }
 
 /**
@@ -89,8 +89,8 @@ function newCurrencySheet_(noFooter) {
  * 
  * @return the newly created sheet, for function chaining purposes.
  */
-function formatSheet_(noFooter) {
-
+function formatSheet_() {
+  
   var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
   var desiredCurrency = sheet.getName().replace(/ *\([^)]*\) */g, "");
 
@@ -102,18 +102,24 @@ function formatSheet_(noFooter) {
   // https://developers.google.com/apps-script/reference/spreadsheet/group
 
   // populate the two-row-tall header cells
-  var header1 = ['', '', 'Inflow','', 'Outflow','','Calculated','','','\"Add-ons > HODL Totals > Calculate\" to update calculated cells.',
-     'Fair Market Value (USD)','', '', 'Transaction Details','',''];
-  var header2 = ['Date', 'Category',desiredCurrency+' Purchased','Fiat Cost', desiredCurrency+' Sold','Fiat Received','Status','Cost Basis','Gain (Loss)','Notes', 
-      desiredCurrency+' High',desiredCurrency+' Low',desiredCurrency+' Price','Transaction ID','Wallet/Account','Address'];
-  sheet.getRange('A1:P1').setValues([header1]).setFontWeight('bold').setHorizontalAlignment('center');
+  var header1part1 = ['', '', 'Inflow','', 'Outflow','','Calculated','',''];
+  var header1part2 = ['Fair Mkt Value','', '', 'Transaction Details','',''];
+
+  // NOTE: spaces are hard coded around header text that help autosizecolumns behave correctly
+  var header2 = ['       Date       ', '       Category       ','   '+desiredCurrency+' Acquired   ','   Fiat Value   ', '   '+desiredCurrency+' Disposed   ','   Fiat Value   ','   Status   ','   Cost Basis   ','   Gain (Loss)   ','   Notes   ', 
+      '   '+desiredCurrency+' High   ','   '+desiredCurrency+' Low   ','   '+desiredCurrency+' Price   ','   Transaction ID   ','   Wallet/Account   ','   Address   '];
+  sheet.getRange('A1:I1').setValues([header1part1]).setFontWeight('bold').setHorizontalAlignment('center');
+  if(!(sheet.getRange('J1').getValue().startsWith("Last calculation succeeded"))) {
+    sheet.getRange('J1').setValue('\"Add-ons > HODL Totals > Calculate\" to update calculated cells.');
+  }
+  sheet.getRange('K1:P1').setValues([header1part2]).setFontWeight('bold').setHorizontalAlignment('center');
   sheet.getRange('A2:P2').setValues([header2]).setFontWeight('bold').setHorizontalAlignment('center');
   
   // see if any row data exists beyond the header we just added
   var lastRow = getLastRowWithDataPresent(sheet.getRange('A:A').getValues());
 
   // At-a-glance total added to upper left corner
-  sheet.getRange('A1').setValue('=C'+(lastRow+3));
+  sheet.getRange('A1').setValue('=SUM(C:C)-SUM(E:E)');
   sheet.getRange('B1').setValue(desiredCurrency).setHorizontalAlignment('left');
   sheet.getRange('A1:B1').setBorder(false,false,true,true,false,false);
   sheet.getRange('J1').setFontWeight('normal');
@@ -132,32 +138,38 @@ function formatSheet_(noFooter) {
   sheet.setFrozenColumns(1);
      
   // set numeric formats as described here: https://developers.google.com/sheets/api/guides/formats
-  sheet.getRange('A3:A').setNumberFormat('yyyy-mm-dd');
-  
-  // set COIN cols {COIN Purchased, COIN Sold} visible numeric persicion to have 8 satoshis showing by default
-  sheet.getRange('C3:C').setNumberFormat('0.00000000');
-  sheet.getRange('E3:E').setNumberFormat('0.00000000');
+  sheet.getRange('A3:A').setNumberFormat('yyyy-mm-dd').setFontColor(null).setFontStyle(null).setFontFamily('Calibri').setFontSize(11).setHorizontalAlignment('center');
+  sheet.getRange('B3:B').setFontColor('#424250').setFontStyle('italic').setHorizontalAlignment('center');
 
-  // set FIAT cols {Fiat Cost, Fiat Received, Cost Basis, Gain(Loss)} type to be a Currency type
-  sheet.getRange('D3:D').setNumberFormat('$#,##0.00;$(#,##0.00)');
-  sheet.getRange('F3:F').setNumberFormat('$#,##0.00;$(#,##0.00)');
-  sheet.getRange('H3:H').setNumberFormat('$#,##0.00;$(#,##0.00)');
-  sheet.getRange('I3:I').setNumberFormat('$#,##0.00;$(#,##0.00)');
+  // set COIN cols {COIN Acquired, COIN Disposed} visible numeric persicion to have 8 satoshis showing by default
+  sheet.getRange('C3:C').setNumberFormat('0.00000000').setFontColor(null).setFontStyle(null).setFontFamily('Calibri').setFontSize(11);
+  sheet.getRange('E3:E').setNumberFormat('0.00000000').setFontColor(null).setFontStyle(null).setFontFamily('Calibri').setFontSize(11);
+
+  // set FIAT cols {Fiat Value Inflow, Fiat Value Outflow, Cost Basis, Gain(Loss)} type to be a Currency type
+  sheet.getRange('D3:D').setNumberFormat('$#,##0.00;$(#,##0.00)').setFontColor(null).setFontStyle(null).setFontFamily('Calibri').setFontSize(11);
+  sheet.getRange('F3:F').setNumberFormat('$#,##0.00;$(#,##0.00)').setFontColor(null).setFontStyle(null).setFontFamily('Calibri').setFontSize(11);
+  sheet.getRange('H3:H').setNumberFormat('$#,##0.00;$(#,##0.00)').setFontColor(null).setFontStyle(null).setFontFamily('Calibri').setFontSize(11);
+  sheet.getRange('I3:I').setNumberFormat('$#,##0.00;$(#,##0.00)').setFontColor(null).setFontStyle(null).setFontFamily('Calibri').setFontSize(11);
+
+  // create filter around all transactions, only if no filter previously exists
+  if (sheet.getFilter() === null) {
+    sheet.getRange('A2:P'+lastRow).createFilter();
+  }
 
   // iterate through the rows in the sheet to
   // set col {Fiat Cost} and col {Fiat Received} to be calculated based on other cells in the sheet
   calcFiatValuesFromFMV(sheet, lastRow);
-
-  // set col {Status} and col {Category} centered + and {Notes} centered with dark gray text, italics text
+  
+  // set col styles for {Status}, {Notes} and {transaction ID}
   sheet.getRange('G3:G').setFontColor('#424250').setFontStyle('italic').setHorizontalAlignment('center');
   sheet.getRange('J3:J').setFontColor('#424250').setFontStyle('italic').setHorizontalAlignment('left');
-  sheet.getRange('N3:N').setFontColor('#424250').setFontStyle('italic').setHorizontalAlignment('center');
+  sheet.getRange('N3:N').setFontColor(null).setFontStyle(null).setHorizontalAlignment('left');
 
   // TODO - special case formatting if coin price is > $100?  Annoying to list BTC-USD price to 6 decimal places.
   // set cols {COIN High, Low, Price} to be foramtted into USD value but to 6 decimal places
-  sheet.getRange('K3:K').setNumberFormat('$#,######0.000000;$(#,######0.000000)').setHorizontalAlignment('right');
-  sheet.getRange('L3:L').setNumberFormat('$#,######0.000000;$(#,######0.000000)').setHorizontalAlignment('right');
-  sheet.getRange('M3:M').setNumberFormat('$#,######0.000000;$(#,######0.000000)').setHorizontalAlignment('right');
+  sheet.getRange('K3:K').setNumberFormat('$#,######0.000000;$(#,######0.000000)').setFontColor(null).setFontStyle(null).setHorizontalAlignment('right').setFontFamily('Calibri').setFontSize(11);
+  sheet.getRange('L3:L').setNumberFormat('$#,######0.000000;$(#,######0.000000)').setFontColor(null).setFontStyle(null).setHorizontalAlignment('right').setFontFamily('Calibri').setFontSize(11);
+  sheet.getRange('M3:M').setNumberFormat('$#,######0.000000;$(#,######0.000000)').setFontColor(null).setFontStyle(null).setHorizontalAlignment('right').setFontFamily('Calibri').setFontSize(11);
 
   // lookup allowed categories from the "Categories sheet" to avoid hard-coding them
   var categoriesList = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Categories').getRange('A2:A35').getValues();
@@ -170,22 +182,19 @@ function formatSheet_(noFooter) {
   sheet.getRange('G3:I').setBackground('#EEEEEE');
   // TODO explore using ProtectionType to prevent user edits to these cells
      
-  if (!noFooter) {
-    // add the HODL Total summary footer
-    sheet.getRange('C'+(lastRow+2)+':F'+(lastRow+2)).setBorder(true,false,false,false,false,false,'black', SpreadsheetApp.BorderStyle.DOUBLE);
-    sheet.getRange('C'+(lastRow+2)).setValue('=SUM(INDIRECT(ADDRESS(3,COLUMN())&\":\"&ADDRESS(ROW()-2,COLUMN())))');
-    sheet.getRange('E'+(lastRow+2)).setValue('=SUM(INDIRECT(ADDRESS(3,COLUMN())&\":\"&ADDRESS(ROW()-2,COLUMN())))');
-    sheet.getRange('C'+(lastRow+3)).setBorder(true,true,true,true,false,false).setFontWeight('bold').setValue('=C'+(lastRow+2)+'-E'+(lastRow+2));
-    sheet.getRange('J'+(lastRow+2)).setBorder(true,false,false,false,false,false,'black', SpreadsheetApp.BorderStyle.DOUBLE);
-    sheet.getRange('J'+(lastRow+2)).setFontColor('#424250').setFontStyle('italic').setValue('Total Purchased, Total Sold');
-    sheet.getRange('J'+(lastRow+3)).setFontColor('#424250').setFontStyle('italic').setValue('HODL Total');
-  }
+  // add the HODL Total summary footer
+  //sheet.getRange('C'+(lastRow+2)+':F'+(lastRow+2)).setBorder(true,false,false,false,false,false,'black', SpreadsheetApp.BorderStyle.DOUBLE);
+  //sheet.getRange('C'+(lastRow+2)).setValue('=SUM(INDIRECT(ADDRESS(3,COLUMN())&\":\"&ADDRESS(ROW()-2,COLUMN())))');
+  //sheet.getRange('E'+(lastRow+2)).setValue('=SUM(INDIRECT(ADDRESS(3,COLUMN())&\":\"&ADDRESS(ROW()-2,COLUMN())))');
+  //sheet.getRange('C'+(lastRow+3)).setBorder(true,true,true,true,false,false).setFontWeight('bold').setValue('=C'+(lastRow+2)+'-E'+(lastRow+2));
+  //sheet.getRange('J'+(lastRow+2)).setBorder(true,false,false,false,false,false,'black', SpreadsheetApp.BorderStyle.DOUBLE);
+  //sheet.getRange('J'+(lastRow+2)).setFontColor('#424250').setFontStyle('italic').setValue('Total Purchased, Total Sold');
+  //sheet.getRange('J'+(lastRow+3)).setFontColor('#424250').setFontStyle('italic').setValue('HODL Total');
 
-  // autosize several columns' widths to fit content
-  sheet.autoResizeColumns(3, 8); 
-
+  // autosize columns' widths to fit content
+  sheet.autoResizeColumns(1,16); 
   SpreadsheetApp.flush();
-  
+
   return sheet;
 }
 
@@ -196,7 +205,7 @@ function calcFiatValuesFromFMV(sheet, lastRow) {
   var firstFMVcol = sheet.getRange('K:K').getValues();
 
   for (var row = 2; row < lastRow; row++) {
-    var highValue = firstFMVcol[row][0];
+    var highValue = firstFMVcol[row][0] || 'value known';
 
     // if value known don't include formulas to calculate the price from FMV columns
     if (highValue !== 'value known') {
@@ -220,6 +229,7 @@ function calcFiatValuesFromFMV(sheet, lastRow) {
 
     } else {
         // copy the price known sentinel value to any cells to the right
+        sheet.getRange('K'+(row+1)).setValue('value known'); // if was empty, need to fill it in here
         sheet.getRange('L'+(row+1)).setValue('value known');
         sheet.getRange('M'+(row+1)).setValue('value known');
 
