@@ -29,7 +29,7 @@ function onOpen(e) {
     .addItem('Cost basis', 'loadExample0_')
     .addItem('Fair market value', 'loadExample1_'))
   .addSeparator()
-  .addItem('Get Help on Discord', 'openDiscordLink_');
+  .addItem('Get Help on Discord', 'openDiscordLink_')
   .addItem('About HODL Totals', 'showAboutDialog_');
 
   //if (e && e.authMode != ScriptApp.AuthMode.NONE)
