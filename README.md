@@ -27,6 +27,7 @@ COMING SOON - Free Training Videos!
 - Publish changes to your live google sheet(s) using clasp from the command line - https://developers.google.com/apps-script/guides/clasp
 
 ## Changelog
+- 04-25-21 - Links out to Policies + Discord. Fixed a wave of Apply Formatting bugs, halfway through my Blocker list for submission to the Google Marketplace.
 - 01-23-21 - Addressed a laundry list of cleanup issues, in preparation for inital submission to the Google Marketplace.
 - 11-29-20 - Addressed Signficant performance issues for > 1000 purchase transactions (long running script may not finish executing before Google times out the job)
 - 08-31-20 - Ported logic from alanhett's VBScript Macros to Google Apps Script for FIFO cost basis calc.
