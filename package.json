@@ -13,7 +13,8 @@
     "test": "npm run test:unit && npm run test:e2e",
     "deploy": "clasp push",
     "build": "npm run lint && npm run compile",
-    "start": "npm run build && node dist/index.mjs"
+    "start": "npm run build && node dist/index.mjs",
+    "debug": "npm run compile && node --nolazy --inspect-brk=5858 dist/index.mjs"
   },
   "keywords": [],
   "author": "",

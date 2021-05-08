@@ -1,5 +1,5 @@
 /**
- * Debuggable testbed for Crypto Tools that can execute outside of a sheet
+ * Crypto Tools that can execute outside of a Google Sheet
  *
  */
 export default function runTests() {
@@ -16,7 +16,7 @@ export default function runTests() {
     ["2018/03/05",            ,         , "0.10000000",  "500.00", , , , ""],
     ["2018/03/06",            ,         , "0.10000000", "1000.00", , , , ""],
     ["2018/03/07",            ,         , "0.10000000", "2000.00", , , , ""],
-    ["", , , , , , , , , ]];
+    ["", , , , , , , , , ""]];
 
   // bug p0 data
   const initialDataTest1 = [
@@ -46,7 +46,7 @@ export default function runTests() {
     ["2020-04-06",  "24.21220000",  "3.73",         ,         , , , , ""],
     ["2020-04-08",    "25.650000",  "4.23",         ,         , , , , ""],
     ["2020-05-04",               ,        , "829.14", "151.26", , , , ""],
-    ["", , , , , , , , , ]];
+    ["", , , , , , , , , ""]];
 
   // execute the tests based on the test dataset
   const result0 = FIFOCalc(initialDataTest0);
@@ -58,7 +58,7 @@ export default function runTests() {
 }
 
 /**
- * Parse the date string to return a Date object
+ * Helper function to parse the date string to return a Date object
  *
  * @param dateStr is a yyyy-mm-dd formatted string
  * @param incYear will increment the year value by specified amount
@@ -72,6 +72,18 @@ function dateFromString(dateStr, incYear) {
   const day = Number(+dateStr.substring(8, 10));
 
   return new Date(year + incYear, month - 1, day);
+}
+
+/**
+ * Helper function to create the text telling the user which lots were sold
+ *
+ * @return string
+ */
+function soldNoteString(rowStart, rowStartDate, rowEnd, rowEndDate) {
+
+  // denote which lots were sold on the date they were sold
+  const fromStr = (rowStart === rowEnd) ? " from" : "s from row " + rowStart + " on " + rowStartDate + " to";
+  return "Sold lot" + fromStr + " row " + rowEnd + " on " + rowEndDate + ".";
 }
 
 /**
@@ -89,7 +101,7 @@ function getOrderList(dateDisplayValues, lastRow, coinAndPriceData) {
   for (let row = 2; row < lastRow; row++) {
     if (coinAndPriceData[row][0] > 0) {
       orderList[order] = new Array(4);
-      orderList[order][0] = dateDisplayValues[row][0]; // date of order
+      orderList[order][0] = dateDisplayValues[row]; // date of order
       orderList[order][1] = coinAndPriceData[row][0];  // amount of coin bought or sold
       orderList[order][2] = coinAndPriceData[row][1];  // purchase price or sale price
       orderList[order][3] = row + 1;
@@ -154,7 +166,7 @@ function FIFOCalc(data) {
  */
 function calculateFIFO(data, lots, sales) {
   let shift; // Integer
-  let lotCount; // Integer
+  let lotCnt; // Integer
   let lotCoinRemain; // Double
   let costBasis; // Double
   let gainLoss; // Double
@@ -167,7 +179,7 @@ function calculateFIFO(data, lots, sales) {
   const ONE_SATOSHI = .00000001;
 
   shift = 0;
-  lotCount = 0;
+  lotCnt = 0;
 
   // start with num coins that were necessarily bought in "lot 0'
   lotCoinRemain = lots[0][1];
@@ -177,25 +189,25 @@ function calculateFIFO(data, lots, sales) {
     data[0][5] = "0% Sold";
   }
 
-  for (let sale = 0; sale < sales.length; sale++) {
+  for (const sale of sales) {
     let termSplit; // Boolean
     let prevSplitRow; // Boolean
     let splitFactor; // Double
     let totalCoin; // Double
     let totalCost; // Double
-    let startingLotCount;
+    let stLotCnt;
     termSplit = false; // flag if sale involved both short-term and long-term holdings
     prevSplitRow = false; // flag to avoid creating extra rows when running calc repeatedly on same sheet
     splitFactor = 0; // ratio of totalCoin to sellCoin
     totalCoin = 0; // running total of coins for basis
     totalCost = 0; // running total of dollar cost for basis
-    sellDate = dateFromString(sales[sale][0], 0);
-    sellCoinRemain = sellCoin = sales[sale][1];
-    sellRecd = sales[sale][2];
-    sellRow = sales[sale][3];
-    startingLotCount = lotCount;
+    sellDate = dateFromString(sale[0], 0);
+    sellCoinRemain = sellCoin = sale[1];
+    sellRecd = sale[2];
+    sellRow = sale[3];
+    stLotCnt = lotCnt;
 
-    for (let lot = lotCount; lot < lots.length; lot++) {
+    for (let lot = lotCnt; lot < lots.length; lot++) {
       let thisTerm; // Date
       let nextTerm; // Date
       let originalDate; // Date
@@ -219,10 +231,10 @@ function calculateFIFO(data, lots, sales) {
           // all of this lot was sold
           data[lotRow][5] = "100% Sold";
 
-          // if there are more lots to process, advance the lotCount before breaking out
-          if ((lotCount + 1) < lots.length) {
-            lotCount++;
-            lotCoinRemain = lots[lotCount][1];
+          // if there are more lots to process, advance the lot count before breaking out
+          if ((lotCnt + 1) < lots.length) {
+            lotCnt++;
+            lotCoinRemain = lots[lotCnt][1];
           }
         } else {
           let percentSold; // Double
@@ -252,14 +264,7 @@ function calculateFIFO(data, lots, sales) {
 
           data[sellRow + shift][6] = costBasis;
           data[sellRow + shift][7] = gainLoss;
-
-          // take note note of which lots were sold and when
-          if (startingLotCount === lot) {
-            data[sellRow + shift][8] = "Sold lot from row " + lots[lot][3] + " on " + lots[lot][0] + ".";
-          } else {
-            data[sellRow + shift][8] = "Sold lots from row " +
-              lots[startingLotCount][3] + " on " + lots[startingLotCount][0] + " to row " + lots[lot][3] + " on " + lots[lot][0] + ".";
-          }
+          data[sellRow + shift][8] = soldNoteString(lots[stLotCnt][3], lots[stLotCnt][0], lots[lot][3], lots[lot][0]);
         }
 
         break; // Exit the inner for loop
@@ -299,14 +304,7 @@ function calculateFIFO(data, lots, sales) {
           data[sellRow + shift][5] = "Long-term";
           data[sellRow + shift][6] = costBasis;
           data[sellRow + shift][7] = gainLoss;
-
-          // take note note of which lots were sold and when
-          if (startingLotCount === lot) {
-            data[sellRow + shift][8] = "Sold lot from row " + lots[lot][3] + " on " + lots[lot][0] + ".";
-          } else {
-            data[sellRow + shift][8] = "Sold lots from row " +
-            lots[startingLotCount][3] + " on " + lots[startingLotCount][0] + " to row " + lots[lot][3] + " on " + lots[lot][0] + ".";
-          }
+          data[sellRow + shift][8] = soldNoteString(lots[stLotCnt][3], lots[stLotCnt][0], lots[lot][3], lots[lot][0]);
 
           // Don't create note/new row if there is negligable value left in the short-term part
           // likely caused by rounding errors repeating the cost basis calc on the same sheet
@@ -326,15 +324,15 @@ function calculateFIFO(data, lots, sales) {
             data[sellRow + shift][5] = "Short-term";
 
             // update lots after the split transaction to account for the inserted row
-            for (let lotAfterSplit = 0; lotAfterSplit < lots.length; lotAfterSplit++) {
-              if (lots[lotAfterSplit][3] >= (sellRow + shift)) {
-                lots[lotAfterSplit][3]++;
+            for (const lotAfterSplit of lots) {
+              if (lotAfterSplit[3] >= (sellRow + shift)) {
+                lotAfterSplit[3]++;
               }
             }
 
-            // reset the startingLot to point at the lot after the lot sold via long-term split
+            // reset the starting lot count to point at the lot after the lot sold via long-term split
             // so that short-term part of split will get an accurate note attached
-            startingLotCount = lot + 1;
+            stLotCnt = lot + 1;
           } else {
             prevSplitRow = true;
           }
@@ -351,9 +349,9 @@ function calculateFIFO(data, lots, sales) {
         // and set up variables for the next lot, since this lot is completely used up
         sellCoinRemain = sellCoinRemain - lotCoinRemain;
         data[lotRow][5] = "100% Sold";
-        lotCount++;
-        if (lotCount < lots.length) {
-          lotCoinRemain = lots[lotCount][1];
+        lotCnt++;
+        if (lotCnt < lots.length) {
+          lotCoinRemain = lots[lotCnt][1];
         }
       }
     }
