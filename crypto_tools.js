@@ -385,7 +385,7 @@ function getOrderList(dateDisplayValues, lastRow, coinAndPriceData) {
   for (var row = 2; row < lastRow; row++) {   
     if (coinAndPriceData[row][0] > 0) {
       orderList[order] = new Array(4);
-      orderList[order][0] = dateDisplayValues[row][0]; // date of order
+      orderList[order][0] = dateDisplayValues[row][0]; // date of order   TODO - investigate Bug - is this [0] needed?  running locally this causes bad date!!
       orderList[order][1] = coinAndPriceData[row][0];  // amount of coin bought or sold
       orderList[order][2] = coinAndPriceData[row][1];  // purchase price or sale price
       orderList[order][3] = row+1;
