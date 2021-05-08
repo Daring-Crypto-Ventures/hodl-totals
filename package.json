@@ -6,7 +6,7 @@
   "scripts": {
     "compile": "tsc",
     "lint": "tslint --project tsconfig.json --config tslint.json",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest --watchAll",
     "minify": "uglifyjs --some --options",
     "build": "npm run lint && npm run compile",
     "start": "tsc-watch --onsuccess \"node dist/index.js\""
@@ -15,6 +15,9 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/jest": "^26.0.23",
+    "jest": "^24.7.1",
+    "ts-jest": "^24.0.2",
     "tsc-watch": "^2.1.2",
     "tslint": "^5.16.0",
     "typescript": "^3.5.1"
