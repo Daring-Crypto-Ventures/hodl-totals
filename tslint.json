@@ -1,0 +1,9 @@
+{
+    "extends":["tslint:recommended"],
+    "linterOptions": {
+        "format": "verbose"
+    },
+    "rules": {
+        "no-console": false
+    }
+}

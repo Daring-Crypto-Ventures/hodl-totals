@@ -5,9 +5,10 @@
   "main": "index.js",
   "scripts": {
     "compile": "tsc",
+    "lint": "tslint --project tsconfig.json --config tslint.json",
     "test": "echo \"Error: no test specified\" && exit 1",
     "minify": "uglifyjs --some --options",
-    "build": "npm run compile && npm run minify",
+    "build": "npm run lint && npm run compile",
     "start": "tsc-watch --onsuccess \"node dist/index.js\""
   },
   "keywords": [],
@@ -15,6 +16,7 @@
   "license": "ISC",
   "devDependencies": {
     "tsc-watch": "^2.1.2",
+    "tslint": "^5.16.0",
     "typescript": "^3.5.1"
   }
 }
