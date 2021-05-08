@@ -2,5 +2,5 @@
 node_modules
 dist/
 .gradle
-.clasp.json
+*.clasp.json
 .push.sh

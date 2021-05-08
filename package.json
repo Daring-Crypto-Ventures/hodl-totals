@@ -10,7 +10,7 @@
     "test:unit": "jest",
     "test:unit-watch": "jest --watchAll",
     "test": "npm run test:unit && npm run test:e2e",
-    "minify": "uglifyjs --some --options",
+    "deploy": "clasp push",
     "build": "npm run lint && npm run compile",
     "compile-watch": "tsc-watch --onsuccess \"node dist/index.js\""
   },
