@@ -6,10 +6,13 @@
   "scripts": {
     "compile": "tsc",
     "lint": "tslint --project tsconfig.json --config tslint.json",
-    "test": "jest --watchAll",
+    "test:e2e": "echo \"Error: no e2e test specified, i.e. run with cmd node e2e \" && exit 1",
+    "test:unit": "jest",
+    "test:unit-watch": "jest --watchAll",
+    "test": "npm run test:unit && npm run test:e2e",
     "minify": "uglifyjs --some --options",
     "build": "npm run lint && npm run compile",
-    "start": "tsc-watch --onsuccess \"node dist/index.js\""
+    "compile-watch": "tsc-watch --onsuccess \"node dist/index.js\""
   },
   "keywords": [],
   "author": "",

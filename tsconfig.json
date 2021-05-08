@@ -3,6 +3,7 @@
         "target": "es2018",
         "outDir": "./dist",
         "rootDir": "./src",
+        "moduleResolution": "node",
         "noEmitOnError": true
     }
 }
