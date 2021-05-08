@@ -1,5 +1,9 @@
-**/**
+*.html
+*.js
+dist/**
+docs/**
+e2e/**
+node_modules/**
+tests/**
+src/*.test.ts
 !appsscript.json
-!src/index.ts
-!src/calc.ts
-!crypto_tools_dbg.js

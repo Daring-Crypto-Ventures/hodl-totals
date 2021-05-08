@@ -51,9 +51,9 @@ function runTests() {
   
   // execute the tests based on the test dataset
   var result0 = FIFOCalc(initialDataTest0);
-  Logger.log('FIFOCalc() Test0 result '+ result0);
+  console.log('FIFOCalc() Test0 result '+ result0);
   var result1 = FIFOCalc(initialDataTest1);
-  Logger.log('FIFOCalc() Test1 result '+ result1);
+  console.log('FIFOCalc() Test1 result '+ result1);
   
   return result0 || result1;
 }
@@ -131,10 +131,10 @@ function FIFOCalc(data) {
     
     // add freshly calculated values
   var lots = getOrderList(dateArray, data.length, lotsArray);
-  Logger.log('Detected ' + lots.length + ' purchases of TESTCOIN.');
+  console.log('Detected ' + lots.length + ' purchases of TESTCOIN.');
   
   var sales = getOrderList(dateArray, data.length, salesArray);
-  Logger.log('Detected ' + sales.length + ' sales of TESTCOIN.');
+  console.log('Detected ' + sales.length + ' sales of TESTCOIN.');
     
   calculateFIFO(data, lots, sales);
     
@@ -143,8 +143,10 @@ function FIFOCalc(data) {
   // else continue on
   
   // output the current date and time as the time last completed
-  var now = Utilities.formatDate(new Date(), 'CST', 'MMMM dd, yyyy HH:mm');
-  Logger.log('Last calculation succeeded '+now);
+  // Google Apps Script API can do this with Utilities.formatDate(new Date(), 'CST', 'MMMM dd, yyyy HH:mm');
+  const date = new Date(Date.now());
+  var now = date.toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" });
+  console.log('Last calculation succeeded '+now);
     
   return true; // pass 
 }
@@ -315,14 +317,14 @@ function calculateFIFO(data, lots, sales) {
           if (originalCoin * (1 - splitFactor) >= ONE_SATOSHI) {
             
             var splitNoteText = 'Originally '+originalCoin.toFixed(8)+' '+
-            sheet.getName().replace(/ *\([^)]*\) */g, "")+' was sold for $'+originalCost.toFixed(2)+
+               ' TESTCOIN was sold for $'+originalCost.toFixed(2)+
                ' and split into rows '+(sellRow+shift)+' and '+(sellRow+shift+1)+'.';
-            Logger.log("Row "+(sellRow+shift)+": "+splitNoteText);
+               console.log("Row "+(sellRow+shift)+": "+splitNoteText);
             // create the new row for the short-term part of the term split
             data.splice(sellRow+shift, 0, new Array(9));
 		    // shift to the next row to post the short-term split
             shift++;
-            Logger.log("Row "+(sellRow+shift)+": "+splitNoteText);
+            console.log("Row "+(sellRow+shift)+": "+splitNoteText);
             data[sellRow+shift][3] = originalCoin * (1 - splitFactor);
             data[sellRow+shift][4] = originalCost * (1 - splitFactor);
             data[sellRow+shift][5] = 'Short-term';
@@ -364,5 +366,5 @@ function calculateFIFO(data, lots, sales) {
     }
   }
   
-  Logger.log(data);
+  console.log(data);
 }
