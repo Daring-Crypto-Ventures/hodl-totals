@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "compile": "tsc",
+    "compile-watch": "tsc-watch --onsuccess \"node dist/index.js\"",
     "lint": "tslint --project tsconfig.json --config tslint.json",
     "test:e2e": "echo \"Error: no e2e test specified, i.e. run with cmd node e2e \" && exit 1",
     "test:unit": "jest",
@@ -12,7 +13,7 @@
     "test": "npm run test:unit && npm run test:e2e",
     "deploy": "clasp push",
     "build": "npm run lint && npm run compile",
-    "compile-watch": "tsc-watch --onsuccess \"node dist/index.js\""
+    "start": "npm run build && node dist/index.js"
   },
   "keywords": [],
   "author": "",

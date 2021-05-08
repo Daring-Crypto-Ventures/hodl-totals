@@ -2,7 +2,7 @@
  * Debuggable testbed for Crypto Tools that can execute outside of a sheet.
  *
  */
-function runTests() {
+export function runTests() {
   // original example data
   var initialDataTest0 = [
     ['2017/01/01','0.20000000','2000.00',            ,         , , , ,''],
