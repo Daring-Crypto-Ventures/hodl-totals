@@ -2,3 +2,4 @@
 !appsscript.json
 !src/index.ts
 !src/calc.ts
+!crypto_tools_dbg.js
