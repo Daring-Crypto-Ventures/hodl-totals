@@ -4,6 +4,7 @@
         "outDir": "./dist",
         "rootDir": "./src",
         "moduleResolution": "node",
-        "noEmitOnError": true
+        "noEmitOnError": true,
+        "sourceMap": true
     }
 }

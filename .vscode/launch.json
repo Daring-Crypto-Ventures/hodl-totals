@@ -7,8 +7,7 @@
             "request": "launch",
             "cwd": "${workspaceFolder}",
             "runtimeExecutable": "npm",
-            "runtimeArgs": ["run-script", "debug"],
-            "port": 5858
+            "runtimeArgs": ["run-script", "debug"]
         }
     ]
 }

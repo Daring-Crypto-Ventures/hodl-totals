@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "compile": "tsc && for file in $(find dist -name '*.js'); do NEWFILENAME=`echo \"$file\" | sed 's/.js$/.mjs/g'`; mv \"$file\" $NEWFILENAME; sed -i 's/.js/.mjs/g' $NEWFILENAME; done",
+    "compile": "tsc && for file in $(find dist -name '*.js' -o -name '*.map'); do NEWFILENAME=`echo \"$file\" | sed 's/.js$/.mjs/g; s/.js.map$/.mjs.map/g'`; mv \"$file\" $NEWFILENAME; sed -i 's/.js/.mjs/g' $NEWFILENAME; done",
     "compile-watch": "tsc-watch --onsuccess \"node dist/index.js\"",
     "lint": "tslint --project tsconfig.json --config tslint.json",
     "test:e2e": "echo \"Error: no e2e test specified, i.e. run with cmd node e2e \" && exit 1",
@@ -14,7 +14,7 @@
     "deploy": "clasp push",
     "build": "npm run lint && npm run compile",
     "start": "npm run build && node dist/index.mjs",
-    "debug": "npm run compile && node --nolazy --inspect-brk=5858 dist/index.mjs"
+    "debug": "npm run compile && node --inspect dist/index.mjs"
   },
   "keywords": [],
   "author": "",
