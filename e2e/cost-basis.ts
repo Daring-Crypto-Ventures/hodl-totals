@@ -193,13 +193,11 @@ function test4CostBasis() {
             // mimic calculateFIFO_()
             // if (validate(sheet)) {
             const data = initialData;
-            const dateDisplayValues = sheet.getRange('A:A').getDisplayValues();
-            // transpose the 2D array returned from getRange
-            dateDisplayValues[0].map((_, colIndex) => dateDisplayValues.map(row => row[colIndex]));
+            const dateDisplayValues = sheet.getRange('A:A').getDisplayValues().slice(2);
 
-            const lastRow = getLastRowWithDataPresent(sheet.getRange('A:A').getValues());
-            const lots = getOrderList(dateDisplayValues[0], lastRow, sheet.getRange('C3:D').getValues() as [number, number][]);
-            const sales = getOrderList(dateDisplayValues[0], lastRow, sheet.getRange('E3:F').getValues() as [number, number][]);
+            const lastRow = getLastRowWithDataPresent(dateDisplayValues);
+            const lots = getOrderList(dateDisplayValues, lastRow, sheet.getRange('C3:D').getValues() as [number, number][]);
+            const sales = getOrderList(dateDisplayValues, lastRow, sheet.getRange('E3:F').getValues() as [number, number][]);
 
             // TODO - lots[i][3] and sales[i][3] need to be incremented by 1 to match up to
             // google sheet cell rows which start numbering at 1, unlike the array which
@@ -228,7 +226,7 @@ function test4CostBasis() {
 
         // fill the in the test data
         for (let i = 0; i < initialData.length; i++) {
-            sheet.getRange(`A${i + 3}:F${i + 3}`).setValues([initialData[i]]);
+            sheet.getRange(`A${i + 3}:I${i + 3}`).setValues([initialData[i]]);
         }
 
         // run the 7 assumption checks twice, to make sure we get same result each time

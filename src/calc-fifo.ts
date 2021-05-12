@@ -204,9 +204,9 @@ export default function calculateFIFO(
  * @return Date object corresponding to that string input.
  */
 function dateFromString(dateStr, incYear): Date {
-    const year = Number(+dateStr.substring(0, 4));
-    const month = Number(+dateStr.substring(5, 7));
-    const day = Number(+dateStr.substring(8, 10));
+    const year = Number(dateStr.substring(0, 4));
+    const month = Number(dateStr.substring(5, 7));
+    const day = Number(dateStr.substring(8, 10));
 
     return new Date(year + incYear, month - 1, day);
 }
