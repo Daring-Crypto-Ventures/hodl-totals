@@ -2,8 +2,8 @@
 *.js
 dist/**
 docs/**
-e2e/**
 node_modules/**
 tests/**
 src/*.test.ts
+src/index.ts
 !appsscript.json

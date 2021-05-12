@@ -1,4 +1,4 @@
-import runTests from './calc-fifo';
+import runTests from './index';
 
 test('Check result value', () => {
     const result = runTests();
