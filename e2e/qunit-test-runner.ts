@@ -15,6 +15,8 @@
  * Click the Web app URL.
  * It redirects to Qunit page where all test case report is displayed.
  *
+ * requires npm install @types/qunit": "^1.16.31"
+ *
  * TODO - explore more integrated QUnit tests using this project: https://github.com/artofthesmart/QUnitGS2
  *
  */
@@ -32,7 +34,7 @@ function doGet(e) {
     });
     Logger.log(`Running ${suiteTitle}...`);
     QUnit.load(() => {
-        // testCostBasisFunctions();
+        testCostBasisFunctions();
         // testFairMktValueFunctions();
 
         // log test results to the stackdriver logs

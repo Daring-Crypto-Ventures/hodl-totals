@@ -16,14 +16,24 @@
     "start": "npm run build && node --experimental-specifier-resolution=node dist/index.mjs",
     "debug": "npm run compile && node --experimental-specifier-resolution=node --inspect dist/index.mjs"
   },
-  "keywords": ["crypto", "google-sheets", "tax", "cryptotax", "cryptocurrency", "cryptocurrencies", "taxes", "gains", "cost-basis", "hodl-totals"],
+  "keywords": [
+    "crypto",
+    "google-sheets",
+    "tax",
+    "cryptotax",
+    "cryptocurrency",
+    "cryptocurrencies",
+    "taxes",
+    "gains",
+    "cost-basis",
+    "hodl-totals"
+  ],
   "author": "dogracer <dogracer@tutanota.com>, Daring Crypto Ventures LLC",
   "homepage": "https://github.com/dogracer/hodl-totals#readme",
   "license": "MIT",
   "devDependencies": {
     "@ni/eslint-config": "*",
     "@types/jest": "^26.0.23",
-    "@types/qunit": "^2.11.1",
     "@typescript-eslint/eslint-plugin": "^4.17.0",
     "eslint": "^7.21.0",
     "eslint-plugin-import": "^2.22.1",

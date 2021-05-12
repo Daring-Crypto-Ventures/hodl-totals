@@ -6,5 +6,8 @@
         "moduleResolution": "node",
         "noEmitOnError": true,
         "sourceMap": true
-    }
+    },
+    "include": [
+      "src/**/*"
+    ]
 }
