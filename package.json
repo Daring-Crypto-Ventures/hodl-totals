@@ -6,7 +6,7 @@
   "scripts": {
     "compile": "tsc && for file in $(find dist -name '*.js' -o -name '*.map'); do NEWFILENAME=`echo \"$file\" | sed 's/.js$/.mjs/g; s/.js.map$/.mjs.map/g'`; mv \"$file\" $NEWFILENAME; sed -i 's/.js/.mjs/g' $NEWFILENAME; done",
     "compile-watch": "tsc-watch --onsuccess \"node dist/index.js\"",
-    "lint": "eslint --c .eslintrc.js  src",
+    "lint": "eslint -c .eslintrc.js  src",
     "test:e2e": "echo \"Error: no e2e test specified, i.e. run with cmd node e2e \" && exit 1",
     "test:unit": "jest",
     "test:unit-watch": "jest --watchAll",

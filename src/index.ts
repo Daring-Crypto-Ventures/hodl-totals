@@ -1,3 +1,3 @@
-import runTests from "./calc-fifo.js";
+import runTests from './calc-fifo.js';
 
 runTests();
