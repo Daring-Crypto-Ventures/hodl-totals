@@ -1,10 +1,10 @@
 {
   "name": "hodl-totals",
   "version": "1.0.0",
-  "description": "",
+  "description": "Collection of various cryptocurrency tracking tools and scripts for Google Sheets.",
   "main": "index.js",
   "scripts": {
-    "compile": "tsc && for file in $(find dist -name '*.js' -o -name '*.map'); do NEWFILENAME=`echo \"$file\" | sed 's/.js$/.mjs/g; s/.js.map$/.mjs.map/g'`; mv \"$file\" $NEWFILENAME; done",
+    "compile": "tsc && for file in $(find dist -name '*.js' -o -name '*.js.map'); do NEWFILENAME=`echo \"$file\" | sed 's/.js$/.mjs/g; s/.js.map$/.mjs.map/g'`; mv \"$file\" $NEWFILENAME; done",
     "compile-watch": "tsc-watch --onsuccess \"node dist/index.js\"",
     "lint": "eslint -c .eslintrc.js .",
     "test:e2e": "echo \"Error: no e2e test specified, i.e. run with cmd node e2e \" && exit 1",
@@ -16,12 +16,14 @@
     "start": "npm run build && node --experimental-specifier-resolution=node dist/index.mjs",
     "debug": "npm run compile && node --experimental-specifier-resolution=node --inspect dist/index.mjs"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": ["crypto", "google-sheets", "tax", "cryptotax", "cryptocurrency", "cryptocurrencies", "taxes", "gains", "cost-basis", "hodl-totals"],
+  "author": "dogracer <dogracer@tutanota.com>, Daring Crypto Ventures LLC",
+  "homepage": "https://github.com/dogracer/hodl-totals#readme",
+  "license": "MIT",
   "devDependencies": {
     "@ni/eslint-config": "*",
     "@types/jest": "^26.0.23",
+    "@types/qunit": "^2.11.1",
     "@typescript-eslint/eslint-plugin": "^4.17.0",
     "eslint": "^7.21.0",
     "eslint-plugin-import": "^2.22.1",
