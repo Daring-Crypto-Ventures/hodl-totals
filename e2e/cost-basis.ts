@@ -175,9 +175,9 @@ function getLastRowWithDataPresent(range) {
 function test4CostBasis() {
     QUnit.test('Cost Basis test4 - Simple Partial Short-Term Sale - Two Rounds', () => {
     // test data for this test case
-        const initialData: [string, string, string, number, number, string, number, number, string ][] = [
-            ['2017-01-01', '1.0', '1000', 0, 0, '', 0, 0, ''],
-            ['2017-01-03', '', '', 0.5, 1000, '', 0, 0, '']];
+        const initialData: [string, number, number, number, number, string, number, number, string ][] = [
+            ['2017-01-01', 1.0, 1000, 0, 0, '', 0, 0, ''],
+            ['2017-01-03', 0, 0, 0.5, 1000, '', 0, 0, '']];
 
         // create temp sheet
         const currentdate = new Date();
@@ -193,35 +193,39 @@ function test4CostBasis() {
             // mimic calculateFIFO_()
             // if (validate(sheet)) {
             const data = initialData;
-            const dateDisplayValues = sheet.getRange('A:A').getDisplayValues().slice(2);
+            const now = Utilities.formatDate(new Date(), 'CST', 'MMMM dd, yyyy HH:mm');
+            const dateDisplayValues = sheet.getRange('A3:A').getDisplayValues();
 
             const lastRow = getLastRowWithDataPresent(dateDisplayValues);
-            const lots = getOrderList(dateDisplayValues, lastRow, sheet.getRange('C3:D').getValues() as [number, number][]);
-            const sales = getOrderList(dateDisplayValues, lastRow, sheet.getRange('E3:F').getValues() as [number, number][]);
+            // NOTE - addition of categories row to column B was never included in these unit tests
+            const lots = getOrderList(dateDisplayValues, lastRow, sheet.getRange('B3:C').getValues() as [number, number][]);
+            const sales = getOrderList(dateDisplayValues, lastRow, sheet.getRange('D3:E').getValues() as [number, number][]);
 
-            // TODO - lots[i][3] and sales[i][3] need to be incremented by 1 to match up to
-            // google sheet cell rows which start numbering at 1, unlike the array which
-            // is zero index based
             calculateFIFO(data, lots, sales);
-            Logger.log(data);
-            // TODO - write a function that flushes data values back to the Sheet
+
+            // copy updated data values, notes back to the Sheet
+            for (let i = 0; i < data.length; i++) {
+                sheet.getRange(`A${i + 3}:I${i + 3}`).setValues([data[i]]);
+                if (data[i][8] !== '') {
+                    sheet.getRange(`D${i + 3}`).setNote(data[i][8]);
+                }
+            }
 
             // output the current date and time as the time last completed
-            // var now = Utilities.formatDate(new Date(), 'CST', 'MMMM dd, yyyy HH:mm');
-            // sheet.getRange('J1').setValue(`Last calculation succeeded ${now}`);
+            sheet.getRange('J1').setValue(`Last calculation succeeded ${now}`);
             // } else {
-            //     var now = Utilities.formatDate(new Date(), 'CST', 'MMMM dd, yyyy HH:mm');
-            //     sheet.getRange('J1').setValue(`Data validation failed ${now}`);
+            //    var now = Utilities.formatDate(new Date(), 'CST', 'MMMM dd, yyyy HH:mm');
+            //    sheet.getRange('J1').setValue(`Data validation failed ${now}`);
             // }
 
             // check if test passed or failed
-            equal(sheet.getRange('G3').getValue(), '50% Sold', `Round ${round} Test for Partial Short-Term Sale : Row 3 Status : expected half sold`);
-            equal(sheet.getRange('H3').getValue(), '', `Round ${round} Test for Partial Short-Term Sale : Row 3 Cost Basis : expected no cost basis`);
-            equal(sheet.getRange('I3').getValue(), '', `Round ${round} Test for Partial Short-Term Sale : Row 3 Gain(Loss) : expected no gain`);
-            equal(sheet.getRange('E4').getNote(), 'Sold lot from row 3 on 2017-01-01.', `Round ${round} Test for Lot Sold Hint : Row 4 Sold : expected sold from row 3`);
-            equal(sheet.getRange('G4').getValue(), 'Short-term', `Round ${round} Test for Partial Short-Term Sale : Row 4 Status : expected short-term cost basis`);
-            equal(sheet.getRange('H4').getValue().toFixed(2), 500.00, `Round ${round} Test for Partial Short-Term Sale : Row 4 Cost Basis : expected 500 cost basis`);
-            equal(sheet.getRange('I4').getValue().toFixed(2), 500.00, `Round ${round} Test for Partial Short-Term Sale : Row 4 Gain(Loss) : expected 500 gain`);
+            equal(sheet.getRange('F3').getValue(), '50% Sold', `Round ${round} Test for Partial Short-Term Sale : Row 3 Status : expected half sold`);
+            equal(sheet.getRange('G3').getValue(), '', `Round ${round} Test for Partial Short-Term Sale : Row 3 Cost Basis : expected no cost basis`);
+            equal(sheet.getRange('H3').getValue(), '', `Round ${round} Test for Partial Short-Term Sale : Row 3 Gain(Loss) : expected no gain`);
+            equal(sheet.getRange('D4').getNote(), 'Sold lot from row 3 on 2017-01-01.', `Round ${round} Test for Lot Sold Hint : Row 4 Sold : expected sold from row 3`);
+            equal(sheet.getRange('F4').getValue(), 'Short-term', `Round ${round} Test for Partial Short-Term Sale : Row 4 Status : expected short-term cost basis`);
+            equal(sheet.getRange('G4').getValue().toFixed(2), 500.00, `Round ${round} Test for Partial Short-Term Sale : Row 4 Cost Basis : expected 500 cost basis`);
+            equal(sheet.getRange('H4').getValue().toFixed(2), 500.00, `Round ${round} Test for Partial Short-Term Sale : Row 4 Gain(Loss) : expected 500 gain`);
         };
 
         // fill the in the test data

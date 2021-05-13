@@ -213,11 +213,14 @@ function dateFromString(dateStr, incYear): Date {
 
 /**
 * Helper function to create the text telling the user which lots were sold
+* Row numbers are based on the Google Sheet row which includes a +3 offset
+*    because Sheets are not zero index based, like the data array
+*    and Sheets have two rows reserved as column headers
 *
 * @return string
 */
 function soldNoteString(rowStart, rowStartDate, rowEnd, rowEndDate): string {
     // denote which lots were sold on the date they were sold
     const fromStr = (rowStart === rowEnd) ? ' from' : `s from row ${rowStart} on ${rowStartDate} to`;
-    return `Sold lot${fromStr} row ${rowEnd} on ${rowEndDate}.`;
+    return `Sold lot${fromStr} row ${rowEnd + 3} on ${rowEndDate}.`;
 }
