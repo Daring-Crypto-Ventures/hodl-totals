@@ -4,6 +4,7 @@
         "outDir": "./dist",
         "rootDir": "./src",
         "moduleResolution": "node",
+        "allowSyntheticDefaultImports": true,
         "noEmitOnError": true,
         "sourceMap": true
     },

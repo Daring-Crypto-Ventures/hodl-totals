@@ -3,7 +3,7 @@
  *
  */
 export default function calculateFIFO(
-    data: [string, string, string, number, number, string, number, number, string ][],
+    data: [string, number, number, number, number, string, number, number, string ][],
     lots: [string, number, number, number][],
     sales: [string, number, number, number][]
 ): void {
@@ -98,8 +98,8 @@ export default function calculateFIFO(
                     costBasis = sellCoin * (totalCost / totalCoin) * (1 - splitFactor);
                     gainLoss = (sellRecd * (1 - splitFactor)) - costBasis;
 
-                    data[sellRow + shift][1] = '';
-                    data[sellRow + shift][2] = '';
+                    data[sellRow + shift][1] = 0;
+                    data[sellRow + shift][2] = 0;
                     data[sellRow + shift][6] = costBasis;
                     data[sellRow + shift][7] = gainLoss;
                     data[sellRow + shift][8] = soldNoteString(lots[stLotCnt][3], lots[stLotCnt][0], lots[lot][3], lots[lot][0]);
@@ -153,7 +153,7 @@ export default function calculateFIFO(
                         // shift to the next row to post the short-term split
                         shift += 1;
                         // create the new row for the short-term part of the term split
-                        data.splice(sellRow + shift, 0, ['', '', '', 0, 0, '', 0, 0, '']);
+                        data.splice(sellRow + shift, 0, ['', 0, 0, 0, 0, '', 0, 0, '']);
                         console.log(`Row ${sellRow + shift}: ${splitNoteText}`);
                         data[sellRow + shift][0] = originalDate;
                         data[sellRow + shift][3] = originalCoin * (1 - splitFactor);
