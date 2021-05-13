@@ -382,13 +382,13 @@ function getOrderList(dateDisplayValues, lastRow, coinAndPriceData) {
   order = 0;
   
   // compact the data into a contiguous array
-  for (var row = 2; row < lastRow; row++) {   
+  for (var row = 2; row < lastRow; row++) {
     if (coinAndPriceData[row][0] > 0) {
       orderList[order] = new Array(4);
-      orderList[order][0] = dateDisplayValues[row][0]; // date of order   TODO - investigate Bug - is this [0] needed?  running locally this causes bad date!!
+      orderList[order][0] = dateDisplayValues[row][0];
       orderList[order][1] = coinAndPriceData[row][0];  // amount of coin bought or sold
       orderList[order][2] = coinAndPriceData[row][1];  // purchase price or sale price
-      orderList[order][3] = row+1;  // TODO - investigate Bug - is this +1 needed?  running locally this causes me to be off by one in terms of rows!!
+      orderList[order][3] = row+1;
       order++;
     }
   }

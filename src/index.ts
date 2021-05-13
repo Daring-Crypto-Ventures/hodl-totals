@@ -69,7 +69,7 @@ function FIFOCalc(data): boolean {
     const salesArray = new Array(data.length);
 
     for (let i = 0; i < data.length; i++) {
-        dateArray[i] = data[i][0]; // order date
+        dateArray[i] = data[i]; // order date
         lotsArray[i] = new Array(2);
         lotsArray[i][0] = Number(data[i][1]); // amount purchased
         lotsArray[i][1] = Number(data[i][2]); // purchase price
