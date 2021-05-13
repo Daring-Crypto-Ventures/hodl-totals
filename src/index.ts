@@ -61,6 +61,9 @@ export default function runTests(): boolean {
 /**
  * Test the FIFO Calculation function outside of the spreadsheet context
  *
+ * TODO - reimplement to avoid array copies
+ * https://stackoverflow.com/questions/51383031/slice-section-of-two-dimensional-array-in-javascript
+ *
  * @return true = passm, false = fail
  */
 function FIFOCalc(data): boolean {
