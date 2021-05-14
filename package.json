@@ -4,10 +4,11 @@
   "description": "Collection of various cryptocurrency tracking tools and scripts for Google Sheets.",
   "main": "index.js",
   "scripts": {
-    "compile": "tsc && for file in $(find dist -name '*.js' -o -name '*.js.map'); do NEWFILENAME=`echo \"$file\" | sed 's/.js$/.mjs/g; s/.js.map$/.mjs.map/g'`; mv \"$file\" $NEWFILENAME; done",
+    "compile": "tsc && for file in $(find dist -name '*.js' -o -name '*.js.map'); do NEWFILENAME=`echo \"$file\" | sed 's/.js$/.mjs/g; s/.js.map$/.mjs.map/g'`; mv \"$file\" $NEWFILENAME; sed -i 's/.js/.mjs/g' $NEWFILENAME; done",
     "compile-watch": "tsc-watch --onsuccess \"node dist/index.js\"",
     "lint": "eslint -c .eslintrc.js .",
     "test:e2e": "npm run deploy && clasp open --webapp --deploymentId AKfycbwB39XB368iOkeCDgE9L8RFgbfu73V5X0-C5PiH2JTH",
+    "test:debug": "node --experimental-specifier-resolution=node --inspect node_modules/.bin/jest --runInBand",
     "test:unit": "jest",
     "test:unit-watch": "jest --watchAll",
     "test": "npm run test:unit && npm run test:e2e",
