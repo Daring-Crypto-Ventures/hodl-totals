@@ -7,7 +7,7 @@
     "compile": "tsc && for file in $(find dist -name '*.js' -o -name '*.js.map'); do NEWFILENAME=`echo \"$file\" | sed 's/.js$/.mjs/g; s/.js.map$/.mjs.map/g'`; mv \"$file\" $NEWFILENAME; done",
     "compile-watch": "tsc-watch --onsuccess \"node dist/index.js\"",
     "lint": "eslint -c .eslintrc.js .",
-    "test:e2e": "echo \"Error: no e2e test specified, i.e. run with cmd node e2e \" && exit 1",
+    "test:e2e": "npm run deploy && clasp open --webapp --deploymentId AKfycbwB39XB368iOkeCDgE9L8RFgbfu73V5X0-C5PiH2JTH",
     "test:unit": "jest",
     "test:unit-watch": "jest --watchAll",
     "test": "npm run test:unit && npm run test:e2e",
@@ -32,6 +32,7 @@
   "homepage": "https://github.com/dogracer/hodl-totals#readme",
   "license": "MIT",
   "devDependencies": {
+    "@google/clasp": "^2.3.1",
     "@ni/eslint-config": "*",
     "@types/inquirer": "^7.3.1",
     "@types/jest": "^26.0.23",
