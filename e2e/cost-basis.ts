@@ -1,8 +1,8 @@
 import calculateFIFO from '../src/calc-fifo';
 import getOrderList from '../src/orders';
 
-// requires npm install "@types/google-apps-script": "^1.0.32",
-// but cannot leave it installed due to https://github.com/DefinitelyTyped/DefinitelyTyped/issues/32585
+// TODO - explore using other Qunit features as seen in GAS testing
+// https://script.google.com/home/projects/1cmwYQ6H7k6v3xNoFhhcASR8K2_JBJcgJ2W0WFNE8Sy3fAJzfE2Kpbh_M/edit
 
 /* eslint-disable no-undef */
 /* eslint-disable @typescript-eslint/no-unused-vars */
@@ -12,8 +12,7 @@ import getOrderList from '../src/orders';
  * Tests for Cost Basis columns, cacluations, term-splitting and formatting.
  *
  */
-
-function testCostBasisFunctions() {
+export default function testCostBasisFunctions(): void {
     // test1DataValidation();
     // test2DataValidation();
     // test3DataValidation();
@@ -170,11 +169,65 @@ function getLastRowWithDataPresent(range) {
 }
 
 /**
+ *
+ *
+ */
+function validate(sheet) {
+    let lastDate;
+    let coinCheck;
+    lastDate = 0;
+    coinCheck = 0;
+    const dateLotAndSaleValues = sheet.getRange('A:E').getValues();
+    const lastRow = getLastRowWithDataPresent(dateLotAndSaleValues);
+
+    // ensure dates are in chronological order sorted from past to present
+    lastDate = dateLotAndSaleValues[2][0];
+    for (let row = 2; row < lastRow; row++) {
+        if (dateLotAndSaleValues[row][0] >= lastDate) {
+            lastDate = dateLotAndSaleValues[row][0];
+        } else {
+            Browser.msgBox('Data Validation Error', Utilities.formatString(`Date out of order in row ${row + 1}.`), Browser.Buttons.OK);
+            return false;
+        }
+    }
+
+    // Iterate thru the rows to ensure there are enough inflows to support the outflows
+    // and that there is no extra data in the row that doesn't belong
+    for (let row = 2; row < lastRow; row++) {
+        const bought = dateLotAndSaleValues[row][1];
+        const boughtPrice = dateLotAndSaleValues[row][2];
+        const sold = dateLotAndSaleValues[row][3];
+        const soldPrice = dateLotAndSaleValues[row][4];
+
+        if ((bought > 0) || (sold > 0)) {
+            if ((coinCheck - sold) < 0) {
+                const msg = Utilities.formatString(
+                    `There were not enough coin inflows to support your coin outflow on row ${row + 1}.\\n`
+                    + 'Ensure that you have recorded all of your coin inflows correctly.'
+                );
+                Browser.msgBox('Data Validation Error', msg, Browser.Buttons.OK);
+                return false;
+            }
+            coinCheck += bought - sold;
+        }
+
+        if (((bought > 0) && (sold !== 0 || soldPrice !== 0)) || ((sold > 0) && (bought !== 0 || boughtPrice !== 0))) {
+            const msg = Utilities.formatString(`Invalid data in row ${row + 1}.\\n`
+                + 'Cannot list coin purchase and coin sale on same line.');
+            Browser.msgBox('Data Validation Error', msg, Browser.Buttons.OK);
+            return false;
+        }
+    }
+
+    return true;
+}
+
+/**
  * test4 for function calculateFIFO(sheet, lots, sales)
  */
 function test4CostBasis() {
-    QUnit.test('Cost Basis test4 - Simple Partial Short-Term Sale - Two Rounds', () => {
-    // test data for this test case
+    QUnitGS2.QUnit.test('Cost Basis test4 - Simple Partial Short-Term Sale - Two Rounds', assert => {
+        // test data for this test case
         const initialData: [string, number, number, number, number, string, number, number, string ][] = [
             ['2017-01-01', 1.0, 1000, 0, 0, '', 0, 0, ''],
             ['2017-01-03', 0, 0, 0.5, 1000, '', 0, 0, '']];
@@ -191,41 +244,40 @@ function test4CostBasis() {
 
         const TestRun = function (round) {
             // mimic calculateFIFO_()
-            // if (validate(sheet)) {
-            const data = initialData;
-            const now = Utilities.formatDate(new Date(), 'CST', 'MMMM dd, yyyy HH:mm');
-            const dateDisplayValues = sheet.getRange('A3:A').getDisplayValues();
+            if (validate(sheet)) {
+                const data = initialData;
+                const now = Utilities.formatDate(new Date(), 'CST', 'MMMM dd, yyyy HH:mm');
+                const dateDisplayValues = sheet.getRange('A3:A').getDisplayValues();
 
-            const lastRow = getLastRowWithDataPresent(dateDisplayValues);
-            // NOTE - addition of categories row to column B was never included in these unit tests
-            const lots = getOrderList(dateDisplayValues, lastRow, sheet.getRange('B3:C').getValues() as [number, number][]);
-            const sales = getOrderList(dateDisplayValues, lastRow, sheet.getRange('D3:E').getValues() as [number, number][]);
+                const lastRow = getLastRowWithDataPresent(dateDisplayValues);
+                // NOTE - addition of categories row to column B was never included in these unit tests
+                const lots = getOrderList(dateDisplayValues as [string][], lastRow, sheet.getRange('B3:C').getValues() as [number, number][]);
+                const sales = getOrderList(dateDisplayValues as [string][], lastRow, sheet.getRange('D3:E').getValues() as [number, number][]);
 
-            calculateFIFO(data, lots, sales);
+                calculateFIFO(data, lots, sales);
 
-            // copy updated data values, notes back to the Sheet
-            for (let i = 0; i < data.length; i++) {
-                sheet.getRange(`A${i + 3}:I${i + 3}`).setValues([data[i]]);
-                if (data[i][8] !== '') {
-                    sheet.getRange(`D${i + 3}`).setNote(data[i][8]);
+                // copy updated data values, notes back to the Sheet
+                for (let i = 0; i < data.length; i++) {
+                    sheet.getRange(`A${i + 3}:I${i + 3}`).setValues([data[i]]);
+                    if (data[i][8] !== '') {
+                        sheet.getRange(`D${i + 3}`).setNote(data[i][8]);
+                    }
                 }
+
+                // output the current date and time as the time last completed
+                sheet.getRange('J1').setValue(`Last calculation succeeded ${now}`);
+            } else {
+                const now = Utilities.formatDate(new Date(), 'CST', 'MMMM dd, yyyy HH:mm');
+                sheet.getRange('J1').setValue(`Data validation failed ${now}`);
             }
-
-            // output the current date and time as the time last completed
-            sheet.getRange('J1').setValue(`Last calculation succeeded ${now}`);
-            // } else {
-            //    var now = Utilities.formatDate(new Date(), 'CST', 'MMMM dd, yyyy HH:mm');
-            //    sheet.getRange('J1').setValue(`Data validation failed ${now}`);
-            // }
-
             // check if test passed or failed
-            equal(sheet.getRange('F3').getValue(), '50% Sold', `Round ${round} Test for Partial Short-Term Sale : Row 3 Status : expected half sold`);
-            equal(sheet.getRange('G3').getValue(), '', `Round ${round} Test for Partial Short-Term Sale : Row 3 Cost Basis : expected no cost basis`);
-            equal(sheet.getRange('H3').getValue(), '', `Round ${round} Test for Partial Short-Term Sale : Row 3 Gain(Loss) : expected no gain`);
-            equal(sheet.getRange('D4').getNote(), 'Sold lot from row 3 on 2017-01-01.', `Round ${round} Test for Lot Sold Hint : Row 4 Sold : expected sold from row 3`);
-            equal(sheet.getRange('F4').getValue(), 'Short-term', `Round ${round} Test for Partial Short-Term Sale : Row 4 Status : expected short-term cost basis`);
-            equal(sheet.getRange('G4').getValue().toFixed(2), 500.00, `Round ${round} Test for Partial Short-Term Sale : Row 4 Cost Basis : expected 500 cost basis`);
-            equal(sheet.getRange('H4').getValue().toFixed(2), 500.00, `Round ${round} Test for Partial Short-Term Sale : Row 4 Gain(Loss) : expected 500 gain`);
+            assert.strictEqual(sheet.getRange('F3').getValue(), '50% Sold', `Round ${round} Test for Partial Short-Term Sale : Row 3 lot half sold`);
+            assert.strictEqual(sheet.getRange('G3').getValue(), 0, `Round ${round} Test for Partial Short-Term Sale : Row 3 Cost Basis has no cost basis`);
+            assert.strictEqual(sheet.getRange('H3').getValue(), 0, `Round ${round} Test for Partial Short-Term Sale : Row 3 Gain(Loss) has no gain`);
+            assert.strictEqual(sheet.getRange('D4').getNote(), 'Sold lot from row 3 on 2017-01-01.', `Round ${round} Test for Lot Sold Hint : Row 4 Sold from row 3 lot`);
+            assert.strictEqual(sheet.getRange('F4').getValue(), 'Short-term', `Round ${round} Test for Partial Short-Term Sale : Row 4 Status short-term cost basis`);
+            assert.strictEqual(sheet.getRange('G4').getValue().toFixed(2), '500.00', `Round ${round} Test for Partial Short-Term Sale : Row 4 Cost Basis is 500.00`);
+            assert.strictEqual(sheet.getRange('H4').getValue().toFixed(2), '500.00', `Round ${round} Test for Partial Short-Term Sale : Row 4 Gain(Loss) is 500.00`);
         };
 
         // fill the in the test data
@@ -234,7 +286,7 @@ function test4CostBasis() {
         }
 
         // run the 7 assumption checks twice, to make sure we get same result each time
-        expect(14);
+        assert.expect(14);
         TestRun(1);
         TestRun(2);
 
