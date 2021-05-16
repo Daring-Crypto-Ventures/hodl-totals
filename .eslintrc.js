@@ -5,7 +5,7 @@ module.exports = {
     },
     plugins: ['@typescript-eslint'],
     parserOptions: {
-        ecmaVersion: 2018
+        ecmaVersion: 2019
     },
     ignorePatterns: ['tests/**', 'examples.js', 'discord.js', 'crypto_tools.js', 'crypto_tools_dbg.js', 'categories.js', 'about.js'],
     rules: {

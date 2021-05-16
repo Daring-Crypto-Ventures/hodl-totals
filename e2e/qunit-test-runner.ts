@@ -1,3 +1,4 @@
+import testValidationFunctions from './column-validation';
 import testCostBasisFunctions from './cost-basis';
 
 /**
@@ -19,23 +20,42 @@ import testCostBasisFunctions from './cost-basis';
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 
-function doGet(e) {
+// Listing of all test suites to run
+const TESTS_ = [
+    // testValidationFunctions, // E2E test of spreadsheet data validation rules (PREREQs for FIFO calculation)
+    testCostBasisFunctions, // E2E test of cost basis functions in spreadsheet context
+    // testFairMktValueFunctions, // E2E test of FMV functions in spreadsheet context.
+];
+
+function doGet(request) {
     // @ts-expect-error Cannot find name QUnitGS2 as no type declarations exist for this library, name is present when loaded in GAS
     QUnitGS2.init();
 
     const suiteTitle = 'E2E Test Suite for HODL Totals';
     // @ts-expect-error Cannot find name QUnitGS2 as no type declarations exist for this library, name is present when loaded in GAS
-    QUnitGS2.QUnit.module('E2E Test Suite for HODL Totals');
+    QUnitGS2.QUnit.config.title = suiteTitle;
     Logger.log(`Running ${suiteTitle}...`);
 
-    testCostBasisFunctions();
-    // testFairMktValueFunctions();
+    TESTS_.forEach(testFunction => {
+        try {
+            const lock = LockService.getUserLock();
+            if (lock.tryLock(600000)) { // currently using 60 sec to be safe
+                testFunction();
+                // done important spreadsheet stuff, release the lock
+                lock.releaseLock();
+            } else {
+                Logger.log('FAILED - No Lock, Lock timed out');
+            }
+        } catch (exc) {
+            Logger.log(`Exception! FAILED ${exc.message}`);
+        }
+    });
 
     // @ts-expect-error Cannot find name QUnitGS2 as no type declarations exist for this library, name is present when loaded in GAS
     QUnitGS2.QUnit.start();
 
     // @ts-expect-error Cannot find name QUnitGS2 as no type declarations exist for this library, name is present when loaded in GAS
-    return QUnitGS2.getHtml();
+    return QUnitGS2.getHtml().setTitle(suiteTitle);
 }
 
 /**

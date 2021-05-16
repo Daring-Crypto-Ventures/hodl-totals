@@ -85,6 +85,7 @@ function FIFOCalc(data: [string, number, number, number, number, string, number,
         data[i][5] = ''; // status
         data[i][6] = 0; // costBasis
         data[i][7] = 0; // gain(Loss)
+        data[i][8] = ''; // note
     }
 
     // add freshly calculated values
@@ -94,8 +95,11 @@ function FIFOCalc(data: [string, number, number, number, number, string, number,
     const sales = getOrderList(dateArray, data.length, salesArray);
     console.log(`Detected ${sales.length} sales of TESTCOIN.`);
 
-    calculateFIFO(data, lots, sales);
+    const annotations = calculateFIFO('TESTCOIN', data, lots, sales);
     console.table(data);
+    console.log('Annotations to make at each (Row, Col) location:');
+    console.table(annotations);
+
     // TODO - check calculated columns in data to see if they matched expected
     // if didn't match, return false
     // else continue on
