@@ -819,7 +819,3 @@ function test9CostBasis() {
         SpreadsheetApp.getActiveSpreadsheet().deleteSheet(sheet);
     });
 }
-
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}

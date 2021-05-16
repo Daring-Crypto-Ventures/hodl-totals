@@ -15,14 +15,14 @@ import testCostBasisFunctions from './cost-basis';
  * It redirects to Qunit page where all test case report is displayed.
  *
  */
-/* global QUnitGS2, Logger */
+/* global QUnitGS2, Logger, LockService */
 /* eslint no-undef: 1 */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 
 // Listing of all test suites to run
 const TESTS_ = [
-    // testValidationFunctions, // E2E test of spreadsheet data validation rules (PREREQs for FIFO calculation)
+    testValidationFunctions, // E2E test of spreadsheet data validation rules (PREREQs for FIFO calculation)
     testCostBasisFunctions, // E2E test of cost basis functions in spreadsheet context
     // testFairMktValueFunctions, // E2E test of FMV functions in spreadsheet context.
 ];
