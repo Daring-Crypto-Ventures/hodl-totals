@@ -1,10 +1,9 @@
-![HODL Totals Google Sheets Add-On](hodl-totals.png)
-
-# HODL Totals
+# HODL Totals [![clasp](https://img.shields.io/badge/built%20with-clasp-4285f4.svg)](https://github.com/google/clasp)
 
 Your crypto data is yours to keep; I built this so that you could own your data and manage the data in a convienent way without a need to send your coin data to anyone else.
 
 These Google Apps Scripts will add menu commands to Google Sheets that will help you track cost basis and long-term or short-term treatment for your cryptocurrency trades. 
+
 It uses the first-in, first-out (FIFO) cost method, which is commonly used for tax compliance.
 
 ## Usage
