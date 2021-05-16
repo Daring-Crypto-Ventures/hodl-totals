@@ -46,9 +46,6 @@ function getResultsFromServer() {
     const resultStr = QUnitGS2.getResultsFromServer();
     const result = (resultStr === null) ? [] : JSON.parse(resultStr);
     const search = what => result.find(element => element.type === what);
-    // TODO - once full test suite is enabled
-    // revisit this to see if TESTS_RESULTS_ONE.value.results.name, ...results.failed, ...results.passed, ...results.total
-    // returns results for at least for the Tests that didn't contain a failed assertion
     const results = search('TESTS_RESULTS_ALL');
 
     if (results) {
