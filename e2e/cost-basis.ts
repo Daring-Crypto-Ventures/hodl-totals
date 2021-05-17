@@ -1,5 +1,7 @@
 import calculateFIFO from '../src/calc-fifo';
 import getOrderList from '../src/orders';
+import validate from '../src/validate';
+import getLastRowWithDataPresent from '../src/last-row';
 
 // TODO - explore using other Qunit features as seen in GAS testing
 // https://script.google.com/home/projects/1cmwYQ6H7k6v3xNoFhhcASR8K2_JBJcgJ2W0WFNE8Sy3fAJzfE2Kpbh_M/edit
@@ -19,86 +21,6 @@ export default function testCostBasisFunctions(): void {
     test7CostBasis();
     test8CostBasis();
     test9CostBasis();
-}
-
-// TODO - remove duplicated code for getLastRowWithDataPresent() and valdiate()
-/**
- * Algo described here:
- * https://yagisanatode.com/2019/05/11/google-apps-script-get-the-last-row-of-a-data-range-
- * when-other-columns-have-content-like-hidden-formulas-and-check-boxes/
- *
- * Gets the last row number based on a selected column range values
- *
- * @param {array} range : takes a 2d array of a single column's values
- * @returns {number} : the last row number with a value.
- *
- */
-function getLastRowWithDataPresent(range) {
-    let rowNum = 0;
-    let blank = false;
-    for (let row = 0; row < range.length; row++) {
-        if (range[row][0] === '' && !blank) {
-            rowNum = row;
-            blank = true;
-        } else if (range[row][0] !== '') {
-            blank = false;
-        }
-    }
-    return rowNum;
-}
-
-/**
- *
- *
- */
-function validate(sheet) {
-    let lastDate;
-    let coinCheck;
-    lastDate = 0;
-    coinCheck = 0;
-    const dateLotAndSaleValues = sheet.getRange('A:E').getValues();
-    const lastRow = getLastRowWithDataPresent(dateLotAndSaleValues);
-
-    // ensure dates are in chronological order sorted from past to present
-    lastDate = dateLotAndSaleValues[2][0];
-    for (let row = 2; row < lastRow; row++) {
-        if (dateLotAndSaleValues[row][0] >= lastDate) {
-            lastDate = dateLotAndSaleValues[row][0];
-        } else {
-            Browser.msgBox('Data Validation Error', Utilities.formatString(`Date out of order in row ${row + 1}.`), Browser.Buttons.OK);
-            return false;
-        }
-    }
-
-    // Iterate thru the rows to ensure there are enough inflows to support the outflows
-    // and that there is no extra data in the row that doesn't belong
-    for (let row = 2; row < lastRow; row++) {
-        const bought = dateLotAndSaleValues[row][1];
-        const boughtPrice = dateLotAndSaleValues[row][2];
-        const sold = dateLotAndSaleValues[row][3];
-        const soldPrice = dateLotAndSaleValues[row][4];
-
-        if ((bought > 0) || (sold > 0)) {
-            if ((coinCheck - sold) < 0) {
-                const msg = Utilities.formatString(
-                    `There were not enough coin inflows to support your coin outflow on row ${row + 1}.\\n`
-                    + 'Ensure that you have recorded all of your coin inflows correctly.'
-                );
-                Browser.msgBox('Data Validation Error', msg, Browser.Buttons.OK);
-                return false;
-            }
-            coinCheck += bought - sold;
-        }
-
-        if (((bought > 0) && (sold !== 0 || soldPrice !== 0)) || ((sold > 0) && (bought !== 0 || boughtPrice !== 0))) {
-            const msg = Utilities.formatString(`Invalid data in row ${row + 1}.\\n`
-                + 'Cannot list coin purchase and coin sale on same line.');
-            Browser.msgBox('Data Validation Error', msg, Browser.Buttons.OK);
-            return false;
-        }
-    }
-
-    return true;
 }
 
 /**
