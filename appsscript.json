@@ -2,9 +2,9 @@
   "timeZone": "America/Mexico_City",
   "dependencies": {
     "libraries": [{
-      "userSymbol": "QUnitGS2",
-      "version": "23",
-      "libraryId": "1tXPhZmIyYiA_EMpTRJw0QpVGT5Pdb02PpOHCi9A9FFidblOc9CY_VLgG"
+      "userSymbol": "QUnit",
+      "libraryId": "13agWuzcPH32W4JJvOqOEYqeNHGihS63P2V-a-Vxz-c9WPIzZYBvIhs3m",
+      "version": "4"
     }]
   },
   "webapp": {

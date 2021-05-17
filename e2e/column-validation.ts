@@ -1,6 +1,7 @@
 // TODO - explore using other Qunit features as seen in GAS testing
 // https://script.google.com/home/projects/1cmwYQ6H7k6v3xNoFhhcASR8K2_JBJcgJ2W0WFNE8Sy3fAJzfE2Kpbh_M/edit
 
+/* global QUnit, strictEqual */
 /* eslint-disable no-undef */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
@@ -99,8 +100,8 @@ function validate(sheet) {
  *
  */
 function test1DataValidation() {
-    // @ts-expect-error Cannot find name QUnitGS2 as no type declarations exist for this library, name is present when loaded in GAS
-    QUnitGS2.QUnit.test('Cost Basis test1 - Data Validation - Date Out of Order', assert => {
+    // @ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
+    QUnit.test('Cost Basis test1 - Data Validation - Date Out of Order', () => {
     // test data for this test case
         const initialData = [['2017-01-01', '', '1.0', '1000', '', ''],
             ['2017-01-02', '', '1.0', '1000', '', ''],
@@ -119,7 +120,8 @@ function test1DataValidation() {
 
         const TestRun = function () {
             const result = validate(sheet);
-            assert.strictEqual(result, false, 'Test for Date Out of Order Validation : Validation Error : expected validation to fail');
+            // @ts-expect-error Cannot find QUnit assertions as no type declarations exist for this library, names are present when loaded in GAS
+            strictEqual(result, false, 'Test for Date Out of Order Validation : Validation Error : expected validation to fail');
         };
 
         // fill the in the test data
@@ -129,7 +131,7 @@ function test1DataValidation() {
         SpreadsheetApp.flush();
 
         // run the test
-        assert.expect(1);
+        expect(1);
         TestRun();
 
         // clean up temp sheet
@@ -141,8 +143,8 @@ function test1DataValidation() {
  * test2 for function validate(sheet)
  */
 function test2DataValidation() {
-    // @ts-expect-error Cannot find name QUnitGS2 as no type declarations exist for this library, name is present when loaded in GAS
-    QUnitGS2.QUnit.test('Cost Basis test2 - Data Validation - Coin Oversold', assert => {
+    // @ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
+    QUnit.test('Cost Basis test2 - Data Validation - Coin Oversold', () => {
     // test data for this test case
         const initialData = [['2017-01-01', '', '1.0', '1000', '', ''],
             ['2017-01-02', '', '1.0', '1000', '', ''],
@@ -161,7 +163,8 @@ function test2DataValidation() {
 
         const TestRun = function () {
             const result = validate(sheet);
-            assert.strictEqual(result, false, 'Test for Coin Oversold Condition : Validation Error : expected validation to fail');
+            // @ts-expect-error Cannot find QUnit assertions as no type declarations exist for this library, names are present when loaded in GAS
+            strictEqual(result, false, 'Test for Coin Oversold Condition : Validation Error : expected validation to fail');
         };
 
         // fill the in the test data
@@ -170,7 +173,7 @@ function test2DataValidation() {
         }
 
         // run the test
-        assert.expect(1);
+        expect(1);
         TestRun();
 
         // clean up temp sheet
@@ -182,8 +185,8 @@ function test2DataValidation() {
  * test3 for function validate(sheet)
  */
 function test3DataValidation() {
-    // @ts-expect-error Cannot find name QUnitGS2 as no type declarations exist for this library, name is present when loaded in GAS
-    QUnitGS2.QUnit.test('Cost Basis test3 - Data Validation - Buy and Sell on Same Line', assert => {
+    // @ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
+    QUnit.test('Cost Basis test3 - Data Validation - Buy and Sell on Same Line', () => {
     // test data for this test case
         const initialData = [['2017-01-01', '', '1.0', '1000', '', ''],
             ['2017-01-02', '', '1.0', '1000', '0.5', ''],
@@ -201,7 +204,8 @@ function test3DataValidation() {
 
         const TestRun = function () {
             const result = validate(sheet);
-            assert.strictEqual(result, false, 'Test for Buy and Sell on Same Line : Validation Error : expected validation to fail');
+            // @ts-expect-error Cannot find QUnit assertions as no type declarations exist for this library, names are present when loaded in GAS
+            strictEqual(result, false, 'Test for Buy and Sell on Same Line : Validation Error : expected validation to fail');
         };
 
         // fill the in the test data
@@ -211,7 +215,7 @@ function test3DataValidation() {
         SpreadsheetApp.flush();
 
         // run the test
-        assert.expect(1);
+        expect(1);
         TestRun();
 
         // clean up temp sheet
