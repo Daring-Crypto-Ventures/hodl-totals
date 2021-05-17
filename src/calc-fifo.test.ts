@@ -22,7 +22,6 @@ test('Check calculations on Example', () => {
 
     // execute the tests based on the test dataset
     const result = FIFOCalc(initialData);
-    console.log(`FIFOCalc() Test0 result ${result}`);
     expect(result).toBeTruthy();
 });
 
@@ -57,7 +56,6 @@ test('Check calculations on p0 Bug Fix', () => {
 
     // execute the tests based on the test dataset
     const result = FIFOCalc(initialData);
-    console.log(`FIFOCalc() Test1 result ${result}`);
     expect(result).toBeTruthy();
 });
 
@@ -90,15 +88,16 @@ function FIFOCalc(data: [string, number, number, number, number, string, number,
 
     // add freshly calculated values
     const lots = getOrderList(dateArray, data.length, lotsArray);
-    console.log(`Detected ${lots.length} purchases of TESTCOIN.`);
+    // console.log(`Detected ${lots.length} purchases of TESTCOIN.`);
 
     const sales = getOrderList(dateArray, data.length, salesArray);
-    console.log(`Detected ${sales.length} sales of TESTCOIN.`);
+    // console.log(`Detected ${sales.length} sales of TESTCOIN.`);
 
+    /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
     const annotations = calculateFIFO('TESTCOIN', data, lots, sales);
-    console.table(data);
-    console.log('Annotations to make at each (Row, Col) location:');
-    console.table(annotations);
+    // console.table(data);
+    // console.log('Annotations to make at each (Row, Col) location:');
+    // console.table(annotations);
 
     // TODO - check calculated columns in data to see if they matched expected
     // if didn't match, return false
@@ -106,9 +105,9 @@ function FIFOCalc(data: [string, number, number, number, number, string, number,
 
     // output the current date and time as the time last completed
     // Google Apps Script API can do this with Utilities.formatDate(new Date(), 'CST', 'MMMM dd, yyyy HH:mm');
-    const date = new Date(Date.now());
-    const now = date.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-    console.log(`Last calculation succeeded ${now}`);
+    // const date = new Date(Date.now());
+    // const now = date.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    // console.log(`Last calculation succeeded ${now}`);
 
     return true; // pass
 }

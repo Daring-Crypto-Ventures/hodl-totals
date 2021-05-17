@@ -5,14 +5,19 @@
  *
  * Gets the last row number based on a selected column range values
  *
- * @param {array} range : takes a 2d array of a single column's values
- * @returns {number} : the last row number with a value.
+ * @param range : takes a 2d array of a single column's values, assumes at least 2 rows of column header
+ * @returns : the last row number with a value.
  *
  */
-export default function getLastRowWithDataPresent(range: string[][]): number {
+export default function getLastRowWithDataPresent(range: string [][]): number {
     let rowNum = 0;
     let blank = false;
-    for (let row = 0; row < range.length; row++) {
+
+    // make sure there's at least one empty row of data
+    range.push(['']);
+
+    // search for last empty row in dataset
+    for (let row = 2; row < range.length; row++) {
         if (range[row][0] === '' && !blank) {
             rowNum = row;
             blank = true;
