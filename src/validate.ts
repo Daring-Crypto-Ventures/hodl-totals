@@ -6,7 +6,7 @@ import getLastRowWithDataPresent from './last-row';
  * @param dateLotAndSaleValues data from Google Sheet to validate, rows are 1-based and include space for 2 row header
  * @return true if sheet validated successfully, false if an error was encountered
  */
-export default function validate(dateLotAndSaleValues: [string, number, number, number, number][] | string[][]): boolean {
+export default function validate(dateLotAndSaleValues: [string, string | number, string | number, string | number, string | number][]): boolean {
     let lastDate;
     let coinCheck;
     lastDate = 0;

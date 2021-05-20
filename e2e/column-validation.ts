@@ -44,7 +44,8 @@ function test1DataValidation() {
             const sheet = SpreadsheetApp.getActiveSpreadsheet().insertSheet(uniqueSheetName);
 
             const TestRun = function () {
-                const result = validate(sheet.getRange('A:E').getValues());
+                // TODO - find a way to avoid using as keyword here
+                const result = validate(sheet.getRange('A:E').getValues() as [string, string, string, string, string][]);
                 // @ts-expect-error Cannot find QUnit assertions as no type declarations exist for this library, names are present when loaded in GAS
                 strictEqual(result, false, 'Test for Date Out of Order Validation : Validation Error : expected validation to fail');
             };
@@ -90,7 +91,8 @@ function test2DataValidation() {
             const sheet = SpreadsheetApp.getActiveSpreadsheet().insertSheet(uniqueSheetName);
 
             const TestRun = function () {
-                const result = validate(sheet.getRange('A:E').getValues());
+                // TODO - find a way to avoid using as keyword here
+                const result = validate(sheet.getRange('A:E').getValues() as [string, string, string, string, string][]);
                 // @ts-expect-error Cannot find QUnit assertions as no type declarations exist for this library, names are present when loaded in GAS
                 strictEqual(result, false, 'Test for Coin Oversold Condition : Validation Error : expected validation to fail');
             };
@@ -134,7 +136,8 @@ function test3DataValidation() {
             const sheet = SpreadsheetApp.getActiveSpreadsheet().insertSheet(uniqueSheetName);
 
             const TestRun = function () {
-                const result = validate(sheet.getRange('A:E').getValues());
+                // TODO - find a way to avoid using as keyword here
+                const result = validate(sheet.getRange('A:E').getValues() as [string, string, string, string, string][]);
                 // @ts-expect-error Cannot find QUnit assertions as no type declarations exist for this library, names are present when loaded in GAS
                 strictEqual(result, false, 'Test for Buy and Sell on Same Line : Validation Error : expected validation to fail');
             };
