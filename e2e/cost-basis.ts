@@ -48,7 +48,8 @@ function test4CostBasis() {
 
             const TestRun = function (round) {
                 // mimic calculateFIFO_()
-                if (validate(sheet.getRange('A:E').getValues())) {
+                // TODO - find a way to avoid using as keyword here
+                if (validate(sheet.getRange('A:E').getValues() as [string, string, string, string, string][])) {
                     const data = initialData;
                     const now = Utilities.formatDate(new Date(), 'CST', 'MMMM dd, yyyy HH:mm');
                     const dateDisplayValues = sheet.getRange('A3:A').getDisplayValues();
@@ -136,7 +137,8 @@ function test5CostBasis() {
 
             const TestRun = function (round) {
                 // mimic calculateFIFO_()
-                if (validate(sheet.getRange('A:E').getValues())) {
+                // TODO - find a way to avoid using as keyword here
+                if (validate(sheet.getRange('A:E').getValues() as [string, string, string, string, string][])) {
                     const data = initialData;
                     const dateDisplayValues = sheet.getRange('A3:A').getDisplayValues();
                     const lastRow = getLastRowWithDataPresent(dateDisplayValues);
@@ -223,7 +225,8 @@ function test6CostBasis() {
 
             const TestRun = function (round) {
                 // mimic calculateFIFO_()
-                if (validate(sheet.getRange('A:E').getValues())) {
+                // TODO - find a way to avoid using as keyword here
+                if (validate(sheet.getRange('A:E').getValues() as [string, string, string, string, string][])) {
                     const data = initialData;
                     const dateDisplayValues = sheet.getRange('A3:A').getDisplayValues();
                     const lastRow = getLastRowWithDataPresent(dateDisplayValues);
@@ -327,7 +330,8 @@ function test7CostBasis() {
 
             const TestRun = function (round) {
                 // mimic calculateFIFO_()
-                if (validate(sheet.getRange('A:E').getValues())) {
+                // TODO - find a way to avoid using as keyword here
+                if (validate(sheet.getRange('A:E').getValues() as [string, string, string, string, string][])) {
                     const data = initialData;
                     const dateDisplayValues = sheet.getRange('A3:A').getDisplayValues();
                     const lastRow = getLastRowWithDataPresent(dateDisplayValues);
@@ -413,7 +417,8 @@ function test8CostBasis() {
 
             const TestRun = function (round) {
                 // mimic calculateFIFO_()
-                if (validate(sheet.getRange('A:E').getValues())) {
+                // TODO - find a way to avoid using as keyword here
+                if (validate(sheet.getRange('A:E').getValues() as [string, string, string, string, string][])) {
                     const data = initialData;
                     const dateDisplayValues = sheet.getRange('A3:A').getDisplayValues();
                     const lastRow = getLastRowWithDataPresent(dateDisplayValues);
@@ -603,7 +608,8 @@ function test9CostBasis() {
 
             const TestRun = function (round) {
                 // mimic calculateFIFO_()
-                if (validate(sheet.getRange('A:E').getValues())) {
+                // TODO - find a way to avoid using as keyword here
+                if (validate(sheet.getRange('A:E').getValues() as [string, string, string, string, string][])) {
                     const data = initialData;
                     const dateDisplayValues = sheet.getRange('A3:A').getDisplayValues();
                     const lastRow = getLastRowWithDataPresent(dateDisplayValues);

@@ -11,6 +11,7 @@ export default function validate(dateLotAndSaleValues: [string, number, number, 
     let coinCheck;
     lastDate = 0;
     coinCheck = 0;
+    // TODO - find a way to avoid using as keyword here
     const lastRow = getLastRowWithDataPresent(dateLotAndSaleValues as string[][]);
 
     // ensure dates are in chronological order sorted from past to present
@@ -22,6 +23,7 @@ export default function validate(dateLotAndSaleValues: [string, number, number, 
             if (typeof ScriptApp !== 'undefined') {
                 Browser.msgBox('Data Validation Error', Utilities.formatString(`Date out of order in row ${row + 1}.`), Browser.Buttons.OK);
             } else {
+                // TODO - find a way to have no msg showing up in unit test logs testing failures
                 console.log(`Data Validation Error: Date out of order in row ${row + 1}.`);
             }
             return false;
@@ -45,6 +47,7 @@ export default function validate(dateLotAndSaleValues: [string, number, number, 
                     );
                     Browser.msgBox('Data Validation Error', msg, Browser.Buttons.OK);
                 } else {
+                    // TODO - find a way to have no msg showing up in unit test logs testing failures
                     console.log(`Data Validation Error: There were not enough coin inflows to support your coin outflow on row ${row + 1}.`);
                 }
                 return false;
@@ -58,6 +61,7 @@ export default function validate(dateLotAndSaleValues: [string, number, number, 
                     + 'Cannot list coin inflows and outflows on the same line.');
                 Browser.msgBox('Data Validation Error', msg, Browser.Buttons.OK);
             } else {
+                // TODO - find a way to have no msg showing up in unit test logs testing failures
                 console.log(`Data Validation Error: Invalid data in row ${row + 1}. Cannot list coin inflows and outflows on tje same line.`);
             }
             return false;
