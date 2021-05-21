@@ -2,7 +2,7 @@
     "compilerOptions": {
         "target": "es2019",
         "outDir": "./dist",
-        "rootDir": "./src",
+        "rootDirs": ["./src", "/tests"],
         "moduleResolution": "node",
         "allowSyntheticDefaultImports": true,
         "noEmitOnError": true,
@@ -10,6 +10,7 @@
         "sourceMap": true
     },
     "include": [
-      "src/**/*"
+      "src/**/*",
+      "tests/**/*"
     ]
 }

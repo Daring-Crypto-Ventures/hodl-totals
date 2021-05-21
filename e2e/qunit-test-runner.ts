@@ -1,4 +1,4 @@
-import testValidationFunctions from './column-validation';
+import { test1DataValidation, test2DataValidation, test3DataValidation } from '../tests/validate.spec';
 import testCostBasisFunctions from './cost-basis';
 
 /**
@@ -15,6 +15,19 @@ import testCostBasisFunctions from './cost-basis';
 
 // @ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
 QUnit.helpers(this);
+
+/**
+ * Tests for Cost Basis columns, cacluations, term-splitting and formatting.
+ *
+ */
+function testValidationFunctions(): void {
+    // @ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
+    QUnit.test('test1 - Data Validation - Date Out of Order', test1DataValidation());
+    // @ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
+    QUnit.test('test2 - Data Validation - Coin Oversold', test2DataValidation());
+    // @ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
+    QUnit.test('test3 - Data Validation - Buy and Sell on Same Line', test3DataValidation());
+}
 
 function doGet(request) {
     const suiteTitle = 'E2E Test Suite for HODL Totals';

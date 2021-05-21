@@ -1,31 +1,37 @@
+// import { expect, test } from '@jest/globals';
+// import { strictEqual } from 'qunitjs' (v1.12.0-pre)
 import validate from '../src/validate';
 
 // TODO - explore using other Qunit features as seen in GAS testing
 // https://script.google.com/home/projects/1cmwYQ6H7k6v3xNoFhhcASR8K2_JBJcgJ2W0WFNE8Sy3fAJzfE2Kpbh_M/edit
 
-/* global QUnit, strictEqual */
+/* global strictEqual */
 /* eslint-disable no-undef */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 
 /**
- * Tests for Cost Basis columns, cacluations, term-splitting and formatting.
- *
- */
-export default function testValidationFunctions(): void {
-    test1DataValidation();
-    test2DataValidation();
-    test3DataValidation();
-}
-
-/**
  * test1 for validate()
  *
  */
-function test1DataValidation() {
-    // @ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
-    QUnit.test('Cost Basis test1 - Data Validation - Date Out of Order', () => {
-        if (typeof ScriptApp !== 'undefined') {
+export function test1DataValidation(): () => void {
+    return () => {
+        if (typeof ScriptApp === 'undefined') {
+            // test data for this test case
+            const initialData: [string, number, number, number, number][] = [
+                ['', 0, 0, 0, 0],
+                ['', 0, 0, 0, 0],
+                ['2017-01-01', 1.0, 1000, 0, 0],
+                ['2017-01-02', 1.0, 1000, 0, 0],
+                ['2017-01-02', 0, 0, 0.5, 2000],
+                ['2017-01-01', 0, 0, 1.0, 2000]];
+
+            const TestRun = function (): void {
+                const result = validate(initialData);
+                expect(result).toBeFalsy();
+            };
+            TestRun();
+        } else {
             // test data for this test case
             const initialData: [string, number, number, number, number][] = [
                 ['2017-01-01', 1.0, 1000, 0, 0],
@@ -63,16 +69,30 @@ function test1DataValidation() {
             // clean up temp sheet
             SpreadsheetApp.getActiveSpreadsheet().deleteSheet(sheet);
         }
-    });
+    };
 }
 
 /**
  * test2 for function validate(sheet)
  */
-function test2DataValidation() {
-    // @ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
-    QUnit.test('Cost Basis test2 - Data Validation - Coin Oversold', () => {
-        if (typeof ScriptApp !== 'undefined') {
+export function test2DataValidation(): () => void {
+    return () => {
+        if (typeof ScriptApp === 'undefined') {
+            // test data for this test case
+            const initialData: [string, number, number, number, number][] = [
+                ['', 0, 0, 0, 0],
+                ['', 0, 0, 0, 0],
+                ['2017-01-01', 1.0, 1000, 0, 0],
+                ['2017-01-02', 1.0, 1000, 0, 0],
+                ['2017-01-03', 0, 0, 0.5, 2000],
+                ['2017-01-04', 0, 0, 2.0, 2000]];
+
+            const TestRun = function (): void {
+                const result = validate(initialData);
+                expect(result).toBeFalsy();
+            };
+            TestRun();
+        } else {
             // test data for this test case
             const initialData: [string, number, number, number, number][] = [
                 ['2017-01-01', 1.0, 1000, 0, 0],
@@ -109,16 +129,29 @@ function test2DataValidation() {
             // clean up temp sheet
             SpreadsheetApp.getActiveSpreadsheet().deleteSheet(sheet);
         }
-    });
+    };
 }
 
 /**
  * test3 for function validate(sheet)
  */
-function test3DataValidation() {
-    // @ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
-    QUnit.test('Cost Basis test3 - Data Validation - Buy and Sell on Same Line', () => {
-        if (typeof ScriptApp !== 'undefined') {
+export function test3DataValidation(): () => void {
+    return () => {
+        if (typeof ScriptApp === 'undefined') {
+            // test data for this test case
+            const initialData: [string, number, number, number, number][] = [
+                ['', 0, 0, 0, 0],
+                ['', 0, 0, 0, 0],
+                ['2017-01-01', 1.0, 1000, 0, 0],
+                ['2017-01-02', 1.0, 1000, 0.5, 0],
+                ['2017-01-03', 0, 0, 0.5, 2000]];
+
+            const TestRun = function (): void {
+                const result = validate(initialData);
+                expect(result).toBeFalsy();
+            };
+            TestRun();
+        } else {
             // test data for this test case
             const initialData: [string, number, number, number, number][] = [
                 ['2017-01-01', 1.0, 1000, 0, 0],
@@ -155,5 +188,5 @@ function test3DataValidation() {
             // clean up temp sheet
             SpreadsheetApp.getActiveSpreadsheet().deleteSheet(sheet);
         }
-    });
+    };
 }
