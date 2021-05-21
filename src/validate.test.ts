@@ -2,7 +2,8 @@
 import { test1DataValidation, test2DataValidation, test3DataValidation } from '../tests/validate.spec';
 
 /**
- *  data validation unit tests
+ * jest unit tests for validate()
+ * https://medium.com/@wesvdl1995/testing-nodejs-code-with-jest-28267a69324
  *
  */
 test('test1 - Data Validation - Date Out of Order', test1DataValidation());
