@@ -1,5 +1,5 @@
 import { test1DataValidation, test2DataValidation, test3DataValidation } from '../tests/validate.spec';
-import testCostBasisFunctions from './cost-basis';
+import { test4CostBasis, test5CostBasis, test6CostBasis, test7CostBasis, test8CostBasis, test9CostBasis } from '../tests/cost-basis.spec';
 
 /**
  * First make sure the deploymentId for your script is set correclty in package.json
@@ -17,7 +17,7 @@ import testCostBasisFunctions from './cost-basis';
 QUnit.helpers(this);
 
 /**
- * Tests for Cost Basis columns, cacluations, term-splitting and formatting.
+ * Tests for column validation, coin insanities and row formatting issues.
  *
  */
 function testValidationFunctions(): void {
@@ -29,6 +29,29 @@ function testValidationFunctions(): void {
     QUnit.test('test3 - Data Validation - Buy and Sell on Same Line', test3DataValidation());
 }
 
+/**
+ * Tests for Cost Basis columns, cacluations, term-splitting and formatting.
+ *
+ */
+function testCostBasisFunctions(): void {
+    // @ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
+    QUnit.test('test4 - Cost Basis - Simple Partial Short-Term Sale (Two Rounds)', test4CostBasis());
+    // @ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
+    QUnit.test('test5 - Cost Basis - Simple Whole Long-Term Sale (Two Rounds)', test5CostBasis());
+    // @ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
+    QUnit.test('test6 - Cost Basis - Simple Term Split (Two Rounds)', test6CostBasis());
+    // @ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
+    QUnit.test('test7 - Cost Basis - No Sale (Two Rounds)', test7CostBasis());
+    // @ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
+    QUnit.test('test8 - Cost Basis - Example Dataset (Two Rounds)', test8CostBasis());
+    // @ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
+    QUnit.test('test9 - Cost Basis - Real Data with Term Split (Two Rounds)', test9CostBasis());
+}
+
+/**
+ * Web app callback that will execute the QUnit tests and return test results in the browser
+ *
+ */
 function doGet(request) {
     const suiteTitle = 'E2E Test Suite for HODL Totals';
     // @ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
