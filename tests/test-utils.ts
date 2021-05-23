@@ -25,29 +25,15 @@ export function assert(value: boolean | number | string, expected: boolean | num
 }
 
 /**
- * wrapper for counting number of assertions expected, that works in both jest and QUnit test environments
- *
- */
-export function expectedAssertions(value: number): void {
-    if (typeof ScriptApp === 'undefined') {
-        // jest unit test
-        expect.assertions(value);
-    } else {
-        // QUnit unit test
-        expect(value);
-    }
-}
-
-/**
  * helper function to create temp sheet
  *
  * @return refernece to sheet if running in GAS, null if running locally
  */
-export function createTempSheet(): GoogleAppsScript.Spreadsheet.Sheet | null {
+export function createTempSheet(coinName = 'CB_TEST'): GoogleAppsScript.Spreadsheet.Sheet | null {
     // only if running in GAS environment, create a temp sheet
     if (typeof ScriptApp !== 'undefined') {
         const currentdate = new Date();
-        const uniqueSheetName = `CB_TEST1(${currentdate.getMonth() + 1}/${
+        const uniqueSheetName = `${coinName}(${currentdate.getMonth() + 1}/${
             currentdate.getDate()}/${
             currentdate.getFullYear()}@${
             currentdate.getHours()}:${

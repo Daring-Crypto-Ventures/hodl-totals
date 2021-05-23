@@ -1,4 +1,4 @@
-import { assert, expectedAssertions, createTempSheet, fillInTempSheet, deleteTempSheet } from './test-utils';
+import { assert, createTempSheet, fillInTempSheet, deleteTempSheet } from './test-utils';
 import validate from '../src/validate';
 
 /**
@@ -7,7 +7,8 @@ import validate from '../src/validate';
  */
 export function test1DataValidation(): () => void {
     return (): void => {
-        const sheet = createTempSheet();
+        const coinName = 'CB_TEST1';
+        const sheet = createTempSheet(coinName);
         const initialData: [string, number, number, number, number][] = [
             ['', 0, 0, 0, 0],
             ['', 0, 0, 0, 0],
@@ -20,7 +21,11 @@ export function test1DataValidation(): () => void {
             let result;
             if (typeof ScriptApp === 'undefined') {
                 // jest unit test
-                result = validate(initialData);
+                try {
+                    result = validate(initialData);
+                } catch (e) {
+                    result = false;
+                }
             } else if (sheet !== null) {
                 // QUnit unit test
                 // TODO - find a way to avoid using as keyword here
@@ -29,7 +34,6 @@ export function test1DataValidation(): () => void {
             assert(result, false, 'Test for Date Out of Order Validation : Validation Error : expected validation to fail');
         };
 
-        expectedAssertions(1);
         fillInTempSheet(sheet, initialData);
         TestRun();
 
@@ -42,7 +46,8 @@ export function test1DataValidation(): () => void {
  */
 export function test2DataValidation(): () => void {
     return (): void => {
-        const sheet = createTempSheet();
+        const coinName = 'CB_TEST2';
+        const sheet = createTempSheet(coinName);
         const initialData: [string, number, number, number, number][] = [
             ['', 0, 0, 0, 0],
             ['', 0, 0, 0, 0],
@@ -55,7 +60,11 @@ export function test2DataValidation(): () => void {
             let result;
             if (typeof ScriptApp === 'undefined') {
                 // jest unit test
-                result = validate(initialData);
+                try {
+                    result = validate(initialData);
+                } catch (e) {
+                    result = false;
+                }
             } else if (sheet !== null) {
                 // QUnit unit test
                 // TODO - find a way to avoid using as keyword here
@@ -64,7 +73,6 @@ export function test2DataValidation(): () => void {
             assert(result, false, 'Test for Coin Oversold Condition : Validation Error : expected validation to fail');
         };
 
-        expectedAssertions(1);
         fillInTempSheet(sheet, initialData);
         TestRun();
 
@@ -77,7 +85,8 @@ export function test2DataValidation(): () => void {
  */
 export function test3DataValidation(): () => void {
     return (): void => {
-        const sheet = createTempSheet();
+        const coinName = 'CB_TEST3';
+        const sheet = createTempSheet(coinName);
         const initialData: [string, number, number, number, number][] = [
             ['', 0, 0, 0, 0],
             ['', 0, 0, 0, 0],
@@ -89,7 +98,11 @@ export function test3DataValidation(): () => void {
             let result;
             if (typeof ScriptApp === 'undefined') {
                 // jest unit test
-                result = validate(initialData);
+                try {
+                    result = validate(initialData);
+                } catch (e) {
+                    result = false;
+                }
             } else if (sheet !== null) {
                 // QUnit unit test
                 // TODO - find a way to avoid using as keyword here
@@ -98,7 +111,6 @@ export function test3DataValidation(): () => void {
             assert(result, false, 'Test for Buy and Sell on Same Line : Validation Error : expected validation to fail');
         };
 
-        expectedAssertions(1);
         fillInTempSheet(sheet, initialData);
         TestRun();
 
