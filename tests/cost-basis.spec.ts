@@ -19,15 +19,34 @@ export function test4CostBasis(): () => void {
             if (typeof ScriptApp === 'undefined') {
                 // jest unit test
                 // TODO - better to include this error in array at expected (x,y) location?
-                const data = initialData;
-                data.forEach(row => row.splice(5, 4));
-                assert((validate(data as unknown as [string, number, number, number, number][]) === ''), true, 'Data validation failed');
+                const validationData = [...initialData];
+                validationData.forEach((row, rowIdx) => { validationData[rowIdx] = [...row]; });
 
-                // const data = initialData;
-                // const dateDisplayValues = column_zero_of(data);
-                // const lastRow = getLastRowWithDataPresent(dateDisplayValues);
+                validationData.forEach(row => row.splice(5, 4));
+                assert((validate(validationData as unknown as [string, number, number, number, number][]) === ''), true, 'Data validation failed');
+                const dateDisplayValues = validationData.map(row => [row[0], '']); // empty str makes this a 2D array of strings for getLastRowWithDataPresent()
+                const lastRow = getLastRowWithDataPresent(dateDisplayValues);
 
-                // TODO - implement local version of this test
+                // clone the data array, and trim down to only the needed information
+                const lotData = [...initialData];
+                lotData.forEach((row, rowIdx) => { lotData[rowIdx] = [...row]; });
+                lotData.forEach(row => row.splice(3, 2)); // split out and remove sales
+                lotData.forEach(row => row.splice(0, 1)); // remove leftmost date column from lots
+                const salesData = [...initialData];
+                salesData.forEach((row, rowIdx) => { salesData[rowIdx] = [...row]; });
+                salesData.forEach(row => row.splice(0, 3)); // split out and remove date column and lots
+
+                const lots = getOrderList(dateDisplayValues as [string][], lastRow, lotData as unknown as [number, number][]);
+                const sales = getOrderList(dateDisplayValues as [string][], lastRow, salesData as unknown as [number, number][]);
+                const annotations = calculateFIFO(coinName, initialData, lots, sales);
+
+                assert(initialData[0][5], '50% Sold', `Round ${round} Test for Partial Short-Term Sale : Row 3 lot half sold`);
+                assert(initialData[0][6], 0, `Round ${round} Test for Partial Short-Term Sale : Row 3 Cost Basis has no cost basis`);
+                assert(initialData[0][7], 0, `Round ${round} Test for Partial Short-Term Sale : Row 3 Gain(Loss) has no gain`);
+                assert(annotations[0][1], 'Sold lot from row 3 on 2017-01-01.', `Round ${round} Test for Lot Sold Hint : Row 4 Sold from row 3 lot`);
+                assert(initialData[1][5], 'Short-term', `Round ${round} Test for Partial Short-Term Sale : Row 4 Status short-term cost basis`);
+                assert(initialData[1][6].toFixed(2), '500.00', `Round ${round} Test for Partial Short-Term Sale : Row 4 Cost Basis is 500.00`);
+                assert(initialData[1][7].toFixed(2), '500.00', `Round ${round} Test for Partial Short-Term Sale : Row 4 Gain(Loss) is 500.00`);
             } else if (sheet !== null) {
                 // QUnit unit test
                 // TODO - find a way to avoid using as keyword here
