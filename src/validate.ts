@@ -4,9 +4,9 @@ import getLastRowWithDataPresent from './last-row';
  * Spreadsheet satisifes some specific data validation rules which are PREREQs for FIFO calculation
  *
  * @param dateLotAndSaleValues data from Google Sheet to validate, rows are 1-based and include space for 2 row header
- * @return true if sheet validated successfully, false if an error was encountered
+ * @return empty string if sheet validated successfully, non-empty string describing the validation error if validation failed
  */
-export default function validate(dateLotAndSaleValues: [string, string | number, string | number, string | number, string | number][]): boolean | never {
+export default function validate(dateLotAndSaleValues: [string, string | number, string | number, string | number, string | number][]): string {
     let lastDate;
     let coinCheck;
     lastDate = 0;
@@ -20,12 +20,7 @@ export default function validate(dateLotAndSaleValues: [string, string | number,
         if (dateLotAndSaleValues[row][0] >= lastDate) {
             lastDate = dateLotAndSaleValues[row][0];
         } else {
-            if (typeof ScriptApp !== 'undefined') {
-                Browser.msgBox('Data Validation Error', Utilities.formatString(`Date out of order in row ${row + 1}.`), Browser.Buttons.OK);
-            } else {
-                throw new Error(`Data Validation Error: Date out of order in row ${row + 1}.`);
-            }
-            return false;
+            return `Data Validation Error: Date out of order in row ${row + 1}.`;
         }
     }
 
@@ -39,31 +34,16 @@ export default function validate(dateLotAndSaleValues: [string, string | number,
 
         if ((bought > 0) || (sold > 0)) {
             if ((coinCheck - sold) < 0) {
-                if (typeof ScriptApp !== 'undefined') {
-                    const msg = Utilities.formatString(
-                        `There were not enough coin inflows to support your coin outflow on row ${row + 1}.\\n`
-                        + 'Ensure that you have recorded all of your coin inflows correctly.'
-                    );
-                    Browser.msgBox('Data Validation Error', msg, Browser.Buttons.OK);
-                } else {
-                    throw new Error(`Data Validation Error: There were not enough coin inflows to support your coin outflow on row ${row + 1}.`);
-                }
-                return false;
+                return `Data Validation Error: There were not enough coin inflows to support your coin outflow on row ${row + 1}.`
+                    + ' Ensure that you have recorded all of your coin inflows correctly.';
             }
             coinCheck += bought - sold;
         }
 
         if (((bought > 0) && (sold !== 0 || soldPrice !== 0)) || ((sold > 0) && (bought !== 0 || boughtPrice !== 0))) {
-            if (typeof ScriptApp !== 'undefined') {
-                const msg = Utilities.formatString(`Invalid data in row ${row + 1}.\\n`
-                    + 'Cannot list coin inflows and outflows on the same line.');
-                Browser.msgBox('Data Validation Error', msg, Browser.Buttons.OK);
-            } else {
-                throw new Error(`Data Validation Error: Invalid data in row ${row + 1}. Cannot list coin inflows and outflows on the same line.`);
-            }
-            return false;
+            return `Data Validation Error: Invalid data in row ${row + 1}. Cannot list coin inflows and outflows on the same line.`;
         }
     }
 
-    return true;
+    return ''; // no error message
 }

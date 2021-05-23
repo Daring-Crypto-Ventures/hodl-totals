@@ -627,7 +627,14 @@ function calculateFIFO_() {
   
   // sanity check the data in the sheet. only proceed if data is good
   Logger.log('Validating the data before starting calculations.');
-  if (validate(activeSheet)) {
+  // TODO update how validate is called liek this:
+  //  if (typeof ScriptApp !== 'undefined') {
+  //  const raw_msg = validate(activesheet);
+  //  const msg_prefix = part_of_string_before_colon(msg);
+  //  const msg = Utilities.formatString(msg);
+  // Browser.msgBox(msg_prefix, msg, Browser.Buttons.OK);
+
+  if (validate(activeSheet) === '') {
  
     var dateDisplayValues = activeSheet.getRange('A:A').getDisplayValues();
     var lastRow = getLastRowWithDataPresent(activeSheet.getRange('A:A').getValues());
@@ -658,5 +665,4 @@ function calculateFIFO_() {
     activeSheet.getRange('J1').setValue('Data validation failed '+now);
     Logger.log('Data validation failed '+now);
   }
-   
 }

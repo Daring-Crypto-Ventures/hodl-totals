@@ -18,11 +18,13 @@ export function test4CostBasis(): () => void {
         const TestRun = function (round): void {
             if (typeof ScriptApp === 'undefined') {
                 // jest unit test
+                // const data = initialData;
+                // assert((validate(data) === ''), true, 'Data validation failed');
                 // TODO - implement local version of this test
             } else if (sheet !== null) {
                 // QUnit unit test
                 // TODO - find a way to avoid using as keyword here
-                if (validate(sheet.getRange('A:E').getValues() as [string, string, string, string, string][])) {
+                if (validate(sheet.getRange('A:E').getValues() as [string, string, string, string, string][]) === '') {
                     const data = initialData;
                     const now = Utilities.formatDate(new Date(), 'CST', 'MMMM dd, yyyy HH:mm');
                     const dateDisplayValues = sheet.getRange('A3:A').getDisplayValues();
@@ -95,7 +97,7 @@ export function test5CostBasis(): () => void {
             } else if (sheet !== null) {
                 // QUnit unit test
                 // TODO - find a way to avoid using as keyword here
-                if (validate(sheet.getRange('A:E').getValues() as [string, string, string, string, string][])) {
+                if (validate(sheet.getRange('A:E').getValues() as [string, string, string, string, string][]) === '') {
                     const data = initialData;
                     const dateDisplayValues = sheet.getRange('A3:A').getDisplayValues();
                     const lastRow = getLastRowWithDataPresent(dateDisplayValues);
@@ -168,7 +170,7 @@ export function test6CostBasis(): () => void {
             } else if (sheet !== null) {
                 // QUnit unit test
                 // TODO - find a way to avoid using as keyword here
-                if (validate(sheet.getRange('A:E').getValues() as [string, string, string, string, string][])) {
+                if (validate(sheet.getRange('A:E').getValues() as [string, string, string, string, string][]) === '') {
                     const data = initialData;
                     const dateDisplayValues = sheet.getRange('A3:A').getDisplayValues();
                     const lastRow = getLastRowWithDataPresent(dateDisplayValues);
@@ -250,7 +252,7 @@ export function test7CostBasis(): () => void {
             } else if (sheet !== null) {
                 // QUnit unit test
                 // TODO - find a way to avoid using as keyword here
-                if (validate(sheet.getRange('A:E').getValues() as [string, string, string, string, string][])) {
+                if (validate(sheet.getRange('A:E').getValues() as [string, string, string, string, string][]) === '') {
                     const data = initialData;
                     const dateDisplayValues = sheet.getRange('A3:A').getDisplayValues();
                     const lastRow = getLastRowWithDataPresent(dateDisplayValues);
@@ -328,7 +330,7 @@ export function test8CostBasis(): () => void {
             } else if (sheet !== null) {
                 // QUnit unit test
                 // TODO - find a way to avoid using as keyword here
-                if (validate(sheet.getRange('A:E').getValues() as [string, string, string, string, string][])) {
+                if (validate(sheet.getRange('A:E').getValues() as [string, string, string, string, string][]) === '') {
                     const data = initialData;
                     const dateDisplayValues = sheet.getRange('A3:A').getDisplayValues();
                     const lastRow = getLastRowWithDataPresent(dateDisplayValues);
@@ -472,7 +474,7 @@ export function test9CostBasis(): () => void {
             } else if (sheet !== null) {
                 // QUnit unit test
                 // TODO - find a way to avoid using as keyword here
-                if (validate(sheet.getRange('A:E').getValues() as [string, string, string, string, string][])) {
+                if (validate(sheet.getRange('A:E').getValues() as [string, string, string, string, string][]) === '') {
                     const data = initialData;
                     const dateDisplayValues = sheet.getRange('A3:A').getDisplayValues();
                     const lastRow = getLastRowWithDataPresent(dateDisplayValues);
