@@ -18,16 +18,17 @@ export function test4CostBasis(): () => void {
         const TestRun = function (round): void {
             if (typeof ScriptApp === 'undefined') {
                 // jest unit test
-                // TODO - better to include this error in array at expected (x,y) location?
+                // clone the data array, and trim down to data needed for validation
                 const validationData = [...initialData];
                 validationData.forEach((row, rowIdx) => { validationData[rowIdx] = [...row]; });
-
                 validationData.forEach(row => row.splice(5, 4));
+
+                // TODO - better to include this error in array at expected (x,y) location?
                 assert((validate(validationData as unknown as [string, number, number, number, number][]) === ''), true, 'Data validation failed');
                 const dateDisplayValues = validationData.map(row => [row[0], '']); // empty str makes this a 2D array of strings for getLastRowWithDataPresent()
                 const lastRow = getLastRowWithDataPresent(dateDisplayValues);
 
-                // clone the data array, and trim down to only the needed information
+                // clone the data array, and trim down to data needed for cost basis calc
                 const lotData = [...initialData];
                 lotData.forEach((row, rowIdx) => { lotData[rowIdx] = [...row]; });
                 lotData.forEach(row => row.splice(3, 2)); // split out and remove sales
@@ -36,6 +37,7 @@ export function test4CostBasis(): () => void {
                 salesData.forEach((row, rowIdx) => { salesData[rowIdx] = [...row]; });
                 salesData.forEach(row => row.splice(0, 3)); // split out and remove date column and lots
 
+                // do the cost basis calc
                 const lots = getOrderList(dateDisplayValues as [string][], lastRow, lotData as unknown as [number, number][]);
                 const sales = getOrderList(dateDisplayValues as [string][], lastRow, salesData as unknown as [number, number][]);
                 const annotations = calculateFIFO(coinName, initialData, lots, sales);
