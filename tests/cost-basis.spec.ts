@@ -11,15 +11,22 @@ export function test4CostBasis(): () => void {
     return (): void => {
         const coinName = 'CB_TEST4';
         const sheet = createTempSheet(coinName);
-        const initialData: [string, number, number, number, number, string, number, number, string ][] = [
+        const initialData: [string, number, number, number, number, string, number, number, string][] = [
             ['2017-01-01', 1.0, 1000, 0, 0, '', 0, 0, ''],
             ['2017-01-03', 0, 0, 0.5, 1000, '', 0, 0, '']];
 
         const TestRun = function (round): void {
             if (typeof ScriptApp === 'undefined') {
                 // jest unit test
+                // TODO - better to include this error in array at expected (x,y) location?
+                const data = initialData;
+                data.forEach(row => row.splice(5, 4));
+                assert((validate(data as unknown as [string, number, number, number, number][]) === ''), true, 'Data validation failed');
+
                 // const data = initialData;
-                // assert((validate(data) === ''), true, 'Data validation failed');
+                // const dateDisplayValues = column_zero_of(data);
+                // const lastRow = getLastRowWithDataPresent(dateDisplayValues);
+
                 // TODO - implement local version of this test
             } else if (sheet !== null) {
                 // QUnit unit test

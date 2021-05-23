@@ -35,7 +35,7 @@ export default function validate(dateLotAndSaleValues: [string, string | number,
         if ((bought > 0) || (sold > 0)) {
             if ((coinCheck - sold) < 0) {
                 return `Data Validation Error: There were not enough coin inflows to support your coin outflow on row ${row + 1}.`
-                    + ' Ensure that you have recorded all of your coin inflows correctly.';
+                    + 'Ensure that you have recorded all of your coin inflows correctly.';
             }
             coinCheck += bought - sold;
         }

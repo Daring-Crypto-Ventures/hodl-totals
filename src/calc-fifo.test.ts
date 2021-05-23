@@ -1,5 +1,5 @@
 // import { expect, test } from '@jest/globals';
-import { test8CostBasis, test9CostBasis } from '../tests/cost-basis.spec';
+import { test4CostBasis, test8CostBasis, test9CostBasis } from '../tests/cost-basis.spec';
 // TODO test4CostBasis, test5CostBasis, test6CostBasis, test7CostBasis
 
 /**
@@ -7,7 +7,7 @@ import { test8CostBasis, test9CostBasis } from '../tests/cost-basis.spec';
  * https://medium.com/@wesvdl1995/testing-nodejs-code-with-jest-28267a69324
  *
  */
-// test('test4 - Cost Basis - Simple Partial Short-Term Sale (Two Rounds)', test4CostBasis());
+describe('test4 - Cost Basis - Simple Partial Short-Term Sale (Two Rounds)', test4CostBasis());
 // test('test5 - Cost Basis - Simple Whole Long-Term Sale (Two Rounds)', test5CostBasis());
 // test('test6 - Cost Basis - Simple Term Split (Two Rounds)', test6CostBasis());
 // test('test7 - Cost Basis - No Sale (Two Rounds)', test7CostBasis());
