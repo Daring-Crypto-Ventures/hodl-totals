@@ -243,7 +243,7 @@ export function test8CostBasis(): () => void {
     return (): void => {
         const coinName = 'CB_TEST8';
         const sheet = createTempSheet(coinName);
-        const initialData: [string, number, number, number, number, string, number, number, string ][] = [
+        const data: [string, number, number, number, number, string, number, number, string ][] = [
             ['', 0, 0, 0, 0, '', 0, 0, ''],
             ['', 0, 0, 0, 0, '', 0, 0, ''],
             ['2017-01-01', 0.2, 2000, 0, 0, '', 0, 0, ''],
@@ -258,40 +258,23 @@ export function test8CostBasis(): () => void {
             ['2018-03-07', 0, 0, 0.1, 2000, '', 0, 0, '']];
 
         const TestRun = function (round): void {
+            let annotations: string[][] = [];
             if (typeof ScriptApp === 'undefined') {
                 // jest unit test
                 // TODO - use same assertions as QUnit when running local jest test
-                const result = FIFOCalc(initialData);
+                const result = FIFOCalc(data);
                 assert(result, true);
             } else if (sheet !== null) {
                 // QUnit unit test
-                // TODO - find a way to avoid using as keyword here
-                if (validate(sheet.getRange('A:E').getValues() as [string, string, string, string, string][]) === '') {
-                    const data = initialData;
-                    const dateDisplayValues = sheet.getRange('A3:A').getDisplayValues(); // TODO remove the 3
-                    const lastRow = getLastRowWithDataPresent(dateDisplayValues);
-                    const lots = getOrderList(dateDisplayValues as [string][], lastRow, sheet.getRange('B3:C').getValues() as [number, number][]); // TODO remove the 3
-                    const sales = getOrderList(dateDisplayValues as [string][], lastRow, sheet.getRange('D3:E').getValues() as [number, number][]); // TODO remove the 3
-                    const now = Utilities.formatDate(new Date(), 'CST', 'MMMM dd, yyyy HH:mm');
+                assert((validate(sheet.getRange('A:E').getValues() as [string, string, string, string, string][]) === ''), true, `Round ${round} Data validated`);
+                const dateDisplayValues = sheet.getRange('A:A').getDisplayValues();
+                const lastRow = getLastRowWithDataPresent(dateDisplayValues);
+                const lots = getOrderList(dateDisplayValues as [string][], lastRow, sheet.getRange('B:C').getValues() as [number, number][]);
+                const sales = getOrderList(dateDisplayValues as [string][], lastRow, sheet.getRange('D:E').getValues() as [number, number][]);
 
-                    const annotations = calculateFIFO(coinName, data, lots, sales);
-
-                    // copy updated data values back to the Sheet
-                    for (let i = 0; i < data.length; i++) {
-                        sheet.getRange(`A${i + 3}:I${i + 3}`).setValues([data[i]]);
-                    }
-
-                    // iterate through annotations and add to the Sheet
-                    // TODO - use Map and Iterators here instead
-                    for (const annotation of annotations) {
-                        sheet.getRange(`${annotation[0]}`).setNote(annotation[1]);
-                    }
-
-                    sheet.getRange('J1').setValue(`Last calculation succeeded ${now}`);
-                } else {
-                    const now = Utilities.formatDate(new Date(), 'CST', 'MMMM dd, yyyy HH:mm');
-                    sheet.getRange('J1').setValue(`Data validation failed ${now}`);
-                }
+                annotations = calculateFIFO(coinName, data, lots, sales);
+                annotations.sort((e1, e2) => { if (e1[0] < e2[0]) { return -1; } if (e1[0] > e2[0]) { return 1; } return 0; });
+                fillInTempSheet(sheet, data as string[][]);
 
                 // check if test passed or failed
                 assert(sheet.getRange('F3').getValue(), '100% Sold', `Round ${round} Test for Lot Sold In Full Later : Row 3 Status : expected 100% sold`);
@@ -346,14 +329,7 @@ export function test8CostBasis(): () => void {
             // asserts should go here if can genericize the sheet.getValue() calls
         };
 
-        if ((typeof ScriptApp !== 'undefined') && (sheet !== null)) {
-            // fill the in the test data
-            for (let i = 0; i < initialData.length; i++) {
-                sheet.getRange(`A${i + 3}:I${i + 3}`).setValues([initialData[i]]);
-            }
-            SpreadsheetApp.flush();
-        }
-
+        fillInTempSheet(sheet, data as string[][]);
         TestRun(1);
         TestRun(2);
 
@@ -368,7 +344,7 @@ export function test9CostBasis(): () => void {
     return (): void => {
         const coinName = 'CB_TEST9';
         const sheet = createTempSheet(coinName);
-        const initialData: [string, number, number, number, number, string, number, number, string ][] = [
+        const data: [string, number, number, number, number, string, number, number, string ][] = [
             ['', 0, 0, 0, 0, '', 0, 0, ''],
             ['', 0, 0, 0, 0, '', 0, 0, ''],
             ['2019-02-14', 201.89592700, 25.30, 0, 0, '', 0, 0, ''],
@@ -404,42 +380,24 @@ export function test9CostBasis(): () => void {
             ['2020-07-07', 5.09400000, 0, 0, 0, '', 0, 0, '']];
 
         const TestRun = function (round): void {
+            let annotations: string[][] = [];
             if (typeof ScriptApp === 'undefined') {
                 // jest unit test
                 // TODO - use same assertions as QUnit when running local jest test
-                const result = FIFOCalc(initialData);
+                const result = FIFOCalc(data);
                 assert(result, true);
             } else if (sheet !== null) {
                 // QUnit unit test
-                // TODO - find a way to avoid using as keyword here
-                if (validate(sheet.getRange('A:E').getValues() as [string, string, string, string, string][]) === '') {
-                    const data = initialData;
-                    const dateDisplayValues = sheet.getRange('A3:A').getDisplayValues(); // TODO remove the 3
-                    const lastRow = getLastRowWithDataPresent(dateDisplayValues);
-                    const lots = getOrderList(dateDisplayValues as [string][], lastRow, sheet.getRange('B3:C').getValues() as [number, number][]); // TODO remove the 3
-                    const sales = getOrderList(dateDisplayValues as [string][], lastRow, sheet.getRange('D3:E').getValues() as [number, number][]); // TODO remove the 3
-                    const now = Utilities.formatDate(new Date(), 'CST', 'MMMM dd, yyyy HH:mm');
+                assert((validate(sheet.getRange('A:E').getValues() as [string, string, string, string, string][]) === ''), true, `Round ${round} Data validated`);
+                const dateDisplayValues = sheet.getRange('A:A').getDisplayValues();
+                const lastRow = getLastRowWithDataPresent(dateDisplayValues);
+                const lots = getOrderList(dateDisplayValues as [string][], lastRow, sheet.getRange('B:C').getValues() as [number, number][]);
+                const sales = getOrderList(dateDisplayValues as [string][], lastRow, sheet.getRange('D:E').getValues() as [number, number][]);
 
-                    const annotations = calculateFIFO(coinName, data, lots, sales);
+                annotations = calculateFIFO(coinName, data, lots, sales);
+                annotations.sort((e1, e2) => { if (e1[0] < e2[0]) { return -1; } if (e1[0] > e2[0]) { return 1; } return 0; });
+                fillInTempSheet(sheet, data as string[][]);
 
-                    // copy updated data values back to the Sheet
-                    for (let i = 0; i < data.length; i++) {
-                        sheet.getRange(`A${i + 3}:I${i + 3}`).setValues([data[i]]);
-                    }
-
-                    // iterate through annotations and add to the Sheet
-                    // TODO - use Map and Iterators here instead
-                    for (const annotation of annotations) {
-                        sheet.getRange(`${annotation[0]}`).setNote(annotation[1]);
-                    }
-
-                    sheet.getRange('J1').setValue(`Last calculation succeeded ${now}`);
-                } else {
-                    const now = Utilities.formatDate(new Date(), 'CST', 'MMMM dd, yyyy HH:mm');
-                    sheet.getRange('J1').setValue(`Data validation failed ${now}`);
-                }
-
-                // check if test passed or failed
                 for (let j = 3; j < 28; j++) {
                     assert(sheet.getRange(`F${j}`).getValue(), '100% Sold', `Round ${round} Test for Lot Sold In Full Later : Row ${j} Status : expected 100% sold`);
                     assert(sheet.getRange(`G${j}`).getValue().toFixed(2), '0.00', `Round ${round} Test for Lot Sold In Full Later : Row ${j} Cost Basis : expected no cost basis`);
@@ -467,14 +425,7 @@ export function test9CostBasis(): () => void {
             // asserts should go here if can genericize the sheet.getValue() calls
         };
 
-        if ((typeof ScriptApp !== 'undefined') && (sheet !== null)) {
-            // fill the in the test data
-            for (let i = 0; i < initialData.length; i++) {
-                sheet.getRange(`A${i + 3}:I${i + 3}`).setValues([initialData[i]]);
-            }
-            SpreadsheetApp.flush();
-        }
-
+        fillInTempSheet(sheet, data as string[][]);
         TestRun(1);
         TestRun(2);
 
