@@ -1,4 +1,4 @@
-import { assert, createTempSheet, deleteTempSheet } from './test-utils';
+import { assert, assertCell, createTempSheet, fillInTempSheet, deleteTempSheet } from './test-utils';
 import calculateFIFO from '../src/calc-fifo';
 import getOrderList from '../src/orders';
 import validate from '../src/validate';
@@ -11,95 +11,66 @@ export function test4CostBasis(): () => void {
     return (): void => {
         const coinName = 'CB_TEST4';
         const sheet = createTempSheet(coinName);
-        const initialData: [string, number, number, number, number, string, number, number, string][] = [
+        const data: [string, number, number, number, number, string, number, number, string][] = [
+            ['', 0, 0, 0, 0, '', 0, 0, ''],
+            ['', 0, 0, 0, 0, '', 0, 0, ''],
             ['2017-01-01', 1.0, 1000, 0, 0, '', 0, 0, ''],
             ['2017-01-03', 0, 0, 0.5, 1000, '', 0, 0, '']];
 
         const TestRun = function (round): void {
+            let annotations: string[][] = [];
             if (typeof ScriptApp === 'undefined') {
                 // jest unit test
                 // clone the data array, and trim down to data needed for validation
-                const validationData = [...initialData];
+                const validationData = [...data];
                 validationData.forEach((row, rowIdx) => { validationData[rowIdx] = [...row]; });
                 validationData.forEach(row => row.splice(5, 4));
 
                 // TODO - better to include this error in array at expected (x,y) location?
-                assert((validate(validationData as unknown as [string, number, number, number, number][]) === ''), true, 'Data validation failed');
+                assert((validate(validationData as unknown as [string, number, number, number, number][]) === ''), true, `Round ${round} Data validated`);
                 const dateDisplayValues = validationData.map(row => [row[0], '']); // empty str makes this a 2D array of strings for getLastRowWithDataPresent()
                 const lastRow = getLastRowWithDataPresent(dateDisplayValues);
 
                 // clone the data array, and trim down to data needed for cost basis calc
-                const lotData = [...initialData];
+                const lotData = [...data];
                 lotData.forEach((row, rowIdx) => { lotData[rowIdx] = [...row]; });
                 lotData.forEach(row => row.splice(3, 2)); // split out and remove sales
                 lotData.forEach(row => row.splice(0, 1)); // remove leftmost date column from lots
-                const salesData = [...initialData];
+                lotData.forEach(row => row.splice(2, row.length - 2)); // remove all remaining columns to the right
+                const salesData = [...data];
                 salesData.forEach((row, rowIdx) => { salesData[rowIdx] = [...row]; });
                 salesData.forEach(row => row.splice(0, 3)); // split out and remove date column and lots
+                salesData.forEach(row => row.splice(2, row.length - 2)); // remove all remaining columns to the right
 
                 // do the cost basis calc
                 const lots = getOrderList(dateDisplayValues as [string][], lastRow, lotData as unknown as [number, number][]);
                 const sales = getOrderList(dateDisplayValues as [string][], lastRow, salesData as unknown as [number, number][]);
-                const annotations = calculateFIFO(coinName, initialData, lots, sales);
-
-                assert(initialData[0][5], '50% Sold', `Round ${round} Test for Partial Short-Term Sale : Row 3 lot half sold`);
-                assert(initialData[0][6], 0, `Round ${round} Test for Partial Short-Term Sale : Row 3 Cost Basis has no cost basis`);
-                assert(initialData[0][7], 0, `Round ${round} Test for Partial Short-Term Sale : Row 3 Gain(Loss) has no gain`);
-                assert(annotations[0][1], 'Sold lot from row 3 on 2017-01-01.', `Round ${round} Test for Lot Sold Hint : Row 4 Sold from row 3 lot`);
-                assert(initialData[1][5], 'Short-term', `Round ${round} Test for Partial Short-Term Sale : Row 4 Status short-term cost basis`);
-                assert(initialData[1][6].toFixed(2), '500.00', `Round ${round} Test for Partial Short-Term Sale : Row 4 Cost Basis is 500.00`);
-                assert(initialData[1][7].toFixed(2), '500.00', `Round ${round} Test for Partial Short-Term Sale : Row 4 Gain(Loss) is 500.00`);
+                annotations = calculateFIFO(coinName, data, lots, sales);
             } else if (sheet !== null) {
                 // QUnit unit test
-                // TODO - find a way to avoid using as keyword here
-                if (validate(sheet.getRange('A:E').getValues() as [string, string, string, string, string][]) === '') {
-                    const data = initialData;
-                    const now = Utilities.formatDate(new Date(), 'CST', 'MMMM dd, yyyy HH:mm');
-                    const dateDisplayValues = sheet.getRange('A3:A').getDisplayValues();
-                    const lastRow = getLastRowWithDataPresent(dateDisplayValues);
+                assert((validate(sheet.getRange('A:E').getValues() as [string, string, string, string, string][]) === ''), true, 'Data validation failed');
+                const dateDisplayValues = sheet.getRange('A:A').getDisplayValues();
+                const lastRow = getLastRowWithDataPresent(dateDisplayValues);
 
-                    // NOTE - addition of categories row to column B was never included in these unit tests
-                    const lots = getOrderList(dateDisplayValues as [string][], lastRow, sheet.getRange('B3:C').getValues() as [number, number][]);
-                    const sales = getOrderList(dateDisplayValues as [string][], lastRow, sheet.getRange('D3:E').getValues() as [number, number][]);
-
-                    const annotations = calculateFIFO(coinName, data, lots, sales);
-
-                    // copy updated data values back to the Sheet
-                    for (let i = 0; i < data.length; i++) {
-                        sheet.getRange(`A${i + 3}:I${i + 3}`).setValues([data[i]]);
-                    }
-
-                    // iterate through annotations and add to the Sheet
-                    // TODO - use Map and Iterators here instead
-                    for (const annotation of annotations) {
-                        sheet.getRange(`${annotation[0]}`).setNote(annotation[1]);
-                    }
-
-                    // output the current date and time as the time last completed
-                    sheet.getRange('J1').setValue(`Last calculation succeeded ${now}`);
-                } else {
-                    const now = Utilities.formatDate(new Date(), 'CST', 'MMMM dd, yyyy HH:mm');
-                    sheet.getRange('J1').setValue(`Data validation failed ${now}`);
-                }
-                assert(sheet.getRange('F3').getValue(), '50% Sold', `Round ${round} Test for Partial Short-Term Sale : Row 3 lot half sold`);
-                assert(sheet.getRange('G3').getValue(), 0, `Round ${round} Test for Partial Short-Term Sale : Row 3 Cost Basis has no cost basis`);
-                assert(sheet.getRange('H3').getValue(), 0, `Round ${round} Test for Partial Short-Term Sale : Row 3 Gain(Loss) has no gain`);
-                assert(sheet.getRange('D4').getNote(), 'Sold lot from row 3 on 2017-01-01.', `Round ${round} Test for Lot Sold Hint : Row 4 Sold from row 3 lot`);
-                assert(sheet.getRange('F4').getValue(), 'Short-term', `Round ${round} Test for Partial Short-Term Sale : Row 4 Status short-term cost basis`);
-                assert(sheet.getRange('G4').getValue().toFixed(2), '500.00', `Round ${round} Test for Partial Short-Term Sale : Row 4 Cost Basis is 500.00`);
-                assert(sheet.getRange('H4').getValue().toFixed(2), '500.00', `Round ${round} Test for Partial Short-Term Sale : Row 4 Gain(Loss) is 500.00`);
+                // NOTE - addition of categories row to column B was never included in these unit tests
+                const lots = getOrderList(dateDisplayValues as [string][], lastRow, sheet.getRange('B:C').getValues() as [number, number][]);
+                const sales = getOrderList(dateDisplayValues as [string][], lastRow, sheet.getRange('D:E').getValues() as [number, number][]);
+                annotations = calculateFIFO(coinName, data, lots, sales);
+                fillInTempSheet(sheet, data as string[][]);
             }
-            // asserts should go here if can genericize the sheet.getValue() calls
+            // console.table(data);
+            // console.table(annotations);
+            assertCell(sheet, data, 2, 5, '50% Sold', `Round ${round} Test for Partial Short-Term Sale : Row 3 lot half sold`);
+            assertCell(sheet, data, 2, 6, 0, `Round ${round} Test for Partial Short-Term Sale : Row 3 Cost Basis has no cost basis`);
+            assertCell(sheet, data, 2, 7, 0, `Round ${round} Test for Partial Short-Term Sale : Row 3 Gain(Loss) has no gain`);
+            assert(annotations[0]?.[0], 'D4', `Round ${round} Test for Lot Sold Hint : Hint Anchor point on row 4`);
+            assert(annotations[0]?.[1], 'Sold lot from row 3 on 2017-01-01.', `Round ${round} Test for Lot Sold Hint : Row 4 Sold from row 3 lot`);
+            assertCell(sheet, data, 3, 5, 'Short-term', `Round ${round} Test for Partial Short-Term Sale : Row 4 Status short-term cost basis`);
+            assertCell(sheet, data, 3, 6, '500.00', `Round ${round} Test for Partial Short-Term Sale : Row 4 Cost Basis is 500.00`, 2);
+            assertCell(sheet, data, 3, 7, '500.00', `Round ${round} Test for Partial Short-Term Sale : Row 4 Gain(Loss) is 500.00`, 2);
         };
 
-        if ((typeof ScriptApp !== 'undefined') && (sheet !== null)) {
-            // fill the in the test data
-            for (let i = 0; i < initialData.length; i++) {
-                sheet.getRange(`A${i + 3}:I${i + 3}`).setValues([initialData[i]]);
-            }
-            SpreadsheetApp.flush();
-        }
-
+        fillInTempSheet(sheet, data as string[][]);
         TestRun(1);
         TestRun(2);
 
@@ -115,6 +86,8 @@ export function test5CostBasis(): () => void {
         const coinName = 'CB_TEST5';
         const sheet = createTempSheet(coinName);
         const initialData: [string, number, number, number, number, string, number, number, string ][] = [
+            ['', 0, 0, 0, 0, '', 0, 0, ''],
+            ['', 0, 0, 0, 0, '', 0, 0, ''],
             ['2017-01-01', 1.0, 1000, 0, 0, '', 0, 0, ''],
             ['2018-01-02', 0, 0, 1.0, 2000, '', 0, 0, '']];
 
@@ -127,10 +100,10 @@ export function test5CostBasis(): () => void {
                 // TODO - find a way to avoid using as keyword here
                 if (validate(sheet.getRange('A:E').getValues() as [string, string, string, string, string][]) === '') {
                     const data = initialData;
-                    const dateDisplayValues = sheet.getRange('A3:A').getDisplayValues();
+                    const dateDisplayValues = sheet.getRange('A3:A').getDisplayValues(); // TODO remove the 3
                     const lastRow = getLastRowWithDataPresent(dateDisplayValues);
-                    const lots = getOrderList(dateDisplayValues as [string][], lastRow, sheet.getRange('B3:C').getValues() as [number, number][]);
-                    const sales = getOrderList(dateDisplayValues as [string][], lastRow, sheet.getRange('D3:E').getValues() as [number, number][]);
+                    const lots = getOrderList(dateDisplayValues as [string][], lastRow, sheet.getRange('B3:C').getValues() as [number, number][]); // TODO remove the 3
+                    const sales = getOrderList(dateDisplayValues as [string][], lastRow, sheet.getRange('D3:E').getValues() as [number, number][]); // TODO remove the 3
                     const now = Utilities.formatDate(new Date(), 'CST', 'MMMM dd, yyyy HH:mm');
 
                     const annotations = calculateFIFO(coinName, data, lots, sales);
@@ -187,6 +160,8 @@ export function test6CostBasis(): () => void {
         const coinName = 'CB_TEST6';
         const sheet = createTempSheet(coinName);
         const initialData: [string, number, number, number, number, string, number, number, string ][] = [
+            ['', 0, 0, 0, 0, '', 0, 0, ''],
+            ['', 0, 0, 0, 0, '', 0, 0, ''],
             ['2017-01-01', 1.0, 1000, 0, 0, '', 0, 0, ''],
             ['2018-01-01', 1.0, 1000, 0, 0, '', 0, 0, ''],
             ['2018-07-01', 0, 0, 2.0, 4000, '', 0, 0, '']];
@@ -200,10 +175,10 @@ export function test6CostBasis(): () => void {
                 // TODO - find a way to avoid using as keyword here
                 if (validate(sheet.getRange('A:E').getValues() as [string, string, string, string, string][]) === '') {
                     const data = initialData;
-                    const dateDisplayValues = sheet.getRange('A3:A').getDisplayValues();
+                    const dateDisplayValues = sheet.getRange('A3:A').getDisplayValues(); // TODO remove the 3
                     const lastRow = getLastRowWithDataPresent(dateDisplayValues);
-                    const lots = getOrderList(dateDisplayValues as [string][], lastRow, sheet.getRange('B3:C').getValues() as [number, number][]);
-                    const sales = getOrderList(dateDisplayValues as [string][], lastRow, sheet.getRange('D3:E').getValues() as [number, number][]);
+                    const lots = getOrderList(dateDisplayValues as [string][], lastRow, sheet.getRange('B3:C').getValues() as [number, number][]); // TODO remove the 3
+                    const sales = getOrderList(dateDisplayValues as [string][], lastRow, sheet.getRange('D3:E').getValues() as [number, number][]); // TODO remove the 3
                     const now = Utilities.formatDate(new Date(), 'CST', 'MMMM dd, yyyy HH:mm');
 
                     const annotations = calculateFIFO(coinName, data, lots, sales);
@@ -271,6 +246,8 @@ export function test7CostBasis(): () => void {
         const coinName = 'CB_TEST7';
         const sheet = createTempSheet(coinName);
         const initialData: [string, number, number, number, number, string, number, number, string ][] = [
+            ['', 0, 0, 0, 0, '', 0, 0, ''],
+            ['', 0, 0, 0, 0, '', 0, 0, ''],
             ['2017-01-01', 1.0, 1000, 0, 0, '', 0, 0, '']];
 
         const TestRun = function (round): void {
@@ -282,10 +259,10 @@ export function test7CostBasis(): () => void {
                 // TODO - find a way to avoid using as keyword here
                 if (validate(sheet.getRange('A:E').getValues() as [string, string, string, string, string][]) === '') {
                     const data = initialData;
-                    const dateDisplayValues = sheet.getRange('A3:A').getDisplayValues();
+                    const dateDisplayValues = sheet.getRange('A3:A').getDisplayValues(); // TODO remove the 3
                     const lastRow = getLastRowWithDataPresent(dateDisplayValues);
-                    const lots = getOrderList(dateDisplayValues as [string][], lastRow, sheet.getRange('B3:C').getValues() as [number, number][]);
-                    const sales = getOrderList(dateDisplayValues as [string][], lastRow, sheet.getRange('D3:E').getValues() as [number, number][]);
+                    const lots = getOrderList(dateDisplayValues as [string][], lastRow, sheet.getRange('B3:C').getValues() as [number, number][]); // TODO remove the 3
+                    const sales = getOrderList(dateDisplayValues as [string][], lastRow, sheet.getRange('D3:E').getValues() as [number, number][]); // TODO remove the 3
                     const now = Utilities.formatDate(new Date(), 'CST', 'MMMM dd, yyyy HH:mm');
 
                     const annotations = calculateFIFO(coinName, data, lots, sales);
@@ -338,6 +315,8 @@ export function test8CostBasis(): () => void {
         const coinName = 'CB_TEST8';
         const sheet = createTempSheet(coinName);
         const initialData: [string, number, number, number, number, string, number, number, string ][] = [
+            ['', 0, 0, 0, 0, '', 0, 0, ''],
+            ['', 0, 0, 0, 0, '', 0, 0, ''],
             ['2017-01-01', 0.2, 2000, 0, 0, '', 0, 0, ''],
             ['2018-02-01', 0.6, 6000, 0, 0, '', 0, 0, ''],
             ['2018-02-01', 0, 0, 0.1, 2000, '', 0, 0, ''],
@@ -360,10 +339,10 @@ export function test8CostBasis(): () => void {
                 // TODO - find a way to avoid using as keyword here
                 if (validate(sheet.getRange('A:E').getValues() as [string, string, string, string, string][]) === '') {
                     const data = initialData;
-                    const dateDisplayValues = sheet.getRange('A3:A').getDisplayValues();
+                    const dateDisplayValues = sheet.getRange('A3:A').getDisplayValues(); // TODO remove the 3
                     const lastRow = getLastRowWithDataPresent(dateDisplayValues);
-                    const lots = getOrderList(dateDisplayValues as [string][], lastRow, sheet.getRange('B3:C').getValues() as [number, number][]);
-                    const sales = getOrderList(dateDisplayValues as [string][], lastRow, sheet.getRange('D3:E').getValues() as [number, number][]);
+                    const lots = getOrderList(dateDisplayValues as [string][], lastRow, sheet.getRange('B3:C').getValues() as [number, number][]); // TODO remove the 3
+                    const sales = getOrderList(dateDisplayValues as [string][], lastRow, sheet.getRange('D3:E').getValues() as [number, number][]); // TODO remove the 3
                     const now = Utilities.formatDate(new Date(), 'CST', 'MMMM dd, yyyy HH:mm');
 
                     const annotations = calculateFIFO(coinName, data, lots, sales);
@@ -461,6 +440,8 @@ export function test9CostBasis(): () => void {
         const coinName = 'CB_TEST9';
         const sheet = createTempSheet(coinName);
         const initialData: [string, number, number, number, number, string, number, number, string ][] = [
+            ['', 0, 0, 0, 0, '', 0, 0, ''],
+            ['', 0, 0, 0, 0, '', 0, 0, ''],
             ['2019-02-14', 201.89592700, 25.30, 0, 0, '', 0, 0, ''],
             ['2019-03-13', 104.50000000, 20.25, 0, 0, '', 0, 0, ''],
             ['2019-03-13', 5.55555600, 1.00, 0, 0, '', 0, 0, ''],
@@ -504,10 +485,10 @@ export function test9CostBasis(): () => void {
                 // TODO - find a way to avoid using as keyword here
                 if (validate(sheet.getRange('A:E').getValues() as [string, string, string, string, string][]) === '') {
                     const data = initialData;
-                    const dateDisplayValues = sheet.getRange('A3:A').getDisplayValues();
+                    const dateDisplayValues = sheet.getRange('A3:A').getDisplayValues(); // TODO remove the 3
                     const lastRow = getLastRowWithDataPresent(dateDisplayValues);
-                    const lots = getOrderList(dateDisplayValues as [string][], lastRow, sheet.getRange('B3:C').getValues() as [number, number][]);
-                    const sales = getOrderList(dateDisplayValues as [string][], lastRow, sheet.getRange('D3:E').getValues() as [number, number][]);
+                    const lots = getOrderList(dateDisplayValues as [string][], lastRow, sheet.getRange('B3:C').getValues() as [number, number][]); // TODO remove the 3
+                    const sales = getOrderList(dateDisplayValues as [string][], lastRow, sheet.getRange('D3:E').getValues() as [number, number][]); // TODO remove the 3
                     const now = Utilities.formatDate(new Date(), 'CST', 'MMMM dd, yyyy HH:mm');
 
                     const annotations = calculateFIFO(coinName, data, lots, sales);

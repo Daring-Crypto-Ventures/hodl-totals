@@ -30,7 +30,7 @@ export function test1DataValidation(): () => void {
             assert((result === ''), false, 'Test for Date Out of Order Validation : Validation Error : expected validation to fail');
         };
 
-        fillInTempSheet(sheet, initialData);
+        fillInTempSheet(sheet, initialData as string[][]);
         TestRun();
 
         deleteTempSheet(sheet);
@@ -65,7 +65,7 @@ export function test2DataValidation(): () => void {
             assert((result === ''), false, 'Test for Coin Oversold Condition : Validation Error : expected validation to fail');
         };
 
-        fillInTempSheet(sheet, initialData);
+        fillInTempSheet(sheet, initialData as string[][]);
         TestRun();
 
         deleteTempSheet(sheet);
@@ -98,7 +98,7 @@ export function test3DataValidation(): () => void {
             assert((result === ''), false, 'Test for Buy and Sell on Same Line : Validation Error : expected validation to fail');
         };
 
-        fillInTempSheet(sheet, initialData);
+        fillInTempSheet(sheet, initialData as string[][]);
         TestRun();
 
         deleteTempSheet(sheet);

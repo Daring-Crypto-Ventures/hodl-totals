@@ -30,7 +30,10 @@ export default function calculateFIFO(
 
     // if no sales yet, mark the status of the first lot as 0% sold
     if (sales.length === 0) {
-        data[0][5] = '0% Sold';
+        if (data.length === 2) {
+            data.push(['', 0, 0, 0, 0, '', 0, 0, '']);
+        }
+        data[2][5] = '0% Sold';
     }
 
     for (const sale of sales) {
@@ -104,8 +107,8 @@ export default function calculateFIFO(
                     data[sellRow + shift][2] = 0;
                     data[sellRow + shift][6] = costBasis;
                     data[sellRow + shift][7] = gainLoss;
-                    // Row numbers are based on the Google Sheet row which includes a +3 offset
-                    annotations.push([`D${sellRow + shift + 3}`, soldNoteString(lots[stLotCnt][3], lots[stLotCnt][0], lots[lot][3], lots[lot][0])]);
+                    // Row numbers are based on the Google Sheet row which includes a +1 offset
+                    annotations.push([`D${sellRow + shift + 1}`, soldNoteString(lots[stLotCnt][3], lots[stLotCnt][0], lots[lot][3], lots[lot][0])]);
                 }
 
                 break; // Exit the inner for loop
@@ -144,23 +147,23 @@ export default function calculateFIFO(
                     data[sellRow + shift][5] = 'Long-term';
                     data[sellRow + shift][6] = costBasis;
                     data[sellRow + shift][7] = gainLoss;
-                    // Row numbers are based on the Google Sheet row which includes a +3 offset
-                    annotations.push([`D${sellRow + shift + 3}`, soldNoteString(lots[stLotCnt][3], lots[stLotCnt][0], lots[lot][3], lots[lot][0])]);
+                    // Row numbers are based on the Google Sheet row which includes a +1 offset
+                    annotations.push([`D${sellRow + shift + 1}`, soldNoteString(lots[stLotCnt][3], lots[stLotCnt][0], lots[lot][3], lots[lot][0])]);
 
                     // Don't create note/new row if there is negligable value left in the short-term part
                     // likely caused by rounding errors repeating the cost basis calc on the same sheet
                     if (originalCoin * (1 - splitFactor) >= ONE_SATOSHI) {
                         // Row numbers are based on the Google Sheet row which includes a +3 offset
                         const splitNoteText = `Originally ${originalCoin.toFixed(8)} `
-                            + `${coinname} was sold for $${originalCost.toFixed(2)} and split into rows ${sellRow + shift + 3} and ${sellRow + shift + 4}.`;
-                        annotations.push([`A${sellRow + shift + 3}`, splitNoteText]);
+                            + `${coinname} was sold for $${originalCost.toFixed(2)} and split into rows ${sellRow + shift + 1} and ${sellRow + shift + 2}.`;
+                        annotations.push([`A${sellRow + shift + 1}`, splitNoteText]);
 
                         // shift to the next row to post the short-term split
                         shift += 1;
                         // create the new row for the short-term part of the term split
                         data.splice(sellRow + shift, 0, ['', 0, 0, 0, 0, '', 0, 0, '']);
                         // Row numbers are based on the Google Sheet row which includes a +3 offset
-                        annotations.push([`A${sellRow + shift + 3}`, splitNoteText]);
+                        annotations.push([`A${sellRow + shift + 1}`, splitNoteText]);
                         data[sellRow + shift][0] = originalDate;
                         data[sellRow + shift][3] = originalCoin * (1 - splitFactor);
                         data[sellRow + shift][4] = originalCost * (1 - splitFactor);
@@ -220,14 +223,13 @@ function dateFromString(dateStr, incYear): Date {
 
 /**
 * Helper function to create the text telling the user which lots were sold
-* Row numbers are based on the Google Sheet row which includes a +3 offset
+* Row numbers are based on the Google Sheet row which includes a +1 offset
 *    because Sheets are not zero index based, like the data array
-*    and Sheets have two rows reserved as column headers
 *
 * @return string
 */
 function soldNoteString(rowStart, rowStartDate, rowEnd, rowEndDate): string {
     // denote which lots were sold on the date they were sold
-    const fromStr = (rowStart === rowEnd) ? ' from' : `s from row ${rowStart + 3} on ${rowStartDate} to`;
-    return `Sold lot${fromStr} row ${rowEnd + 3} on ${rowEndDate}.`;
+    const fromStr = (rowStart === rowEnd) ? ' from' : `s from row ${rowStart + 1} on ${rowStartDate} to`;
+    return `Sold lot${fromStr} row ${rowEnd + 1} on ${rowEndDate}.`;
 }

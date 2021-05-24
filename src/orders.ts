@@ -8,7 +8,7 @@ export default function getOrderList(dateDisplayValues: [string][], lastRow: num
     let order = 0;
 
     // compact the data into a contiguous array
-    for (let row = 0; row < lastRow; row++) {
+    for (let row = 2; row < lastRow; row++) {
         if (coinAndPriceData[row][0] > 0) {
             // TODO - find a way to avoid using as keyword here
             orderList[order] = new Array(4) as [string, number, number, number];

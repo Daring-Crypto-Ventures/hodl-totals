@@ -652,8 +652,14 @@ function calculateFIFO_() {
     sales = getOrderList(dateDisplayValues, lastRow, activeSheet.getRange('E:F').getValues());
     Logger.log('Detected ' + sales.length + ' sales of '+activeSheet.getName().replace(/ *\([^)]*\) */g, "")+'.');
     
-    calculateFifo(activeSheet, lots, sales);
+    const annotations = calculateFifo(activeSheet, lots, sales);
     
+    // iterate through annotations and add to the Sheet
+    // TODO - use Map and Iterators here instead
+    for (const annotation of annotations) {
+        sheet.getRange(`${annotation[0]}`).setNote(annotation[1]);
+    }
+
     // output the current date and time as the time last completed
     var now = Utilities.formatDate(new Date(), 'CST', 'MMMM dd, yyyy HH:mm');
     activeSheet.getRange('J1').setValue('Last calculation succeeded '+now);
