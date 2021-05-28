@@ -72,10 +72,12 @@ export function test2DataValidation(): () => void {
     };
 }
 
+type aliasToFunc = () => void;
+
 /**
  * test3 for function validate(sheet)
  */
-export function test3DataValidation(): () => void {
+export function test3DataValidation(): aliasToFunc {
     return (): void => {
         const coinName = 'CB_TEST3';
         const sheet = createTempSheet(coinName);

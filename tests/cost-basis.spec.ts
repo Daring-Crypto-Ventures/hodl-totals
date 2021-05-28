@@ -1,4 +1,4 @@
-import { assert, assertCell, createTempSheet, fillInTempSheet, deleteTempSheet } from './test-utils';
+import { unitTestWrapper, assert, assertCell, createTempSheet, fillInTempSheet, deleteTempSheet } from './test-utils';
 import calculateFIFO from '../src/calc-fifo';
 import getOrderList from '../src/orders';
 import validate from '../src/validate';
@@ -7,7 +7,7 @@ import getLastRowWithDataPresent from '../src/last-row';
 /**
  * test4 for function calculateFIFO(sheet, lots, sales)
  */
-export function test4CostBasis(): () => void {
+export function test4CostBasis(): unitTestWrapper {
     return (): void => {
         const coinName = 'CB_TEST4';
         const sheet = createTempSheet(coinName);
@@ -18,46 +18,8 @@ export function test4CostBasis(): () => void {
             ['2017-01-03', 0, 0, 0.5, 1000, '', 0, 0, '']];
 
         const TestRun = function (round): void {
-            let annotations: string[][] = [];
-            if (typeof ScriptApp === 'undefined') {
-                // jest unit test
-                // clone the data array, and trim down to data needed for validation
-                const validationData = [...data];
-                validationData.forEach((row, rowIdx) => { validationData[rowIdx] = [...row]; });
-                validationData.forEach(row => row.splice(5, 4));
+            const annotations = callCalculateFIFO(sheet, coinName, data, round);
 
-                // TODO - better to include this error in array at expected (x,y) location?
-                assert((validate(validationData as unknown as [string, number, number, number, number][]) === ''), true, `Round ${round} Data validated`);
-                const dateDisplayValues = validationData.map(row => [row[0], '']); // empty str makes this a 2D array of strings for getLastRowWithDataPresent()
-                const lastRow = getLastRowWithDataPresent(dateDisplayValues);
-
-                // clone the data array, and trim down to data needed for cost basis calc
-                const lotData = [...data];
-                lotData.forEach((row, rowIdx) => { lotData[rowIdx] = [...row]; });
-                lotData.forEach(row => row.splice(3, 2)); // split out and remove sales
-                lotData.forEach(row => row.splice(0, 1)); // remove leftmost date column from lots
-                lotData.forEach(row => row.splice(2, row.length - 2)); // remove all remaining columns to the right
-                const salesData = [...data];
-                salesData.forEach((row, rowIdx) => { salesData[rowIdx] = [...row]; });
-                salesData.forEach(row => row.splice(0, 3)); // split out and remove date column and lots
-                salesData.forEach(row => row.splice(2, row.length - 2)); // remove all remaining columns to the right
-
-                // do the cost basis calc
-                const lots = getOrderList(dateDisplayValues as [string][], lastRow, lotData as unknown as [number, number][]);
-                const sales = getOrderList(dateDisplayValues as [string][], lastRow, salesData as unknown as [number, number][]);
-                annotations = calculateFIFO(coinName, data, lots, sales);
-            } else if (sheet !== null) {
-                // QUnit unit test
-                assert((validate(sheet.getRange('A:E').getValues() as [string, string, string, string, string][]) === ''), true, 'Data validation failed');
-                const dateDisplayValues = sheet.getRange('A:A').getDisplayValues();
-                const lastRow = getLastRowWithDataPresent(dateDisplayValues);
-
-                // NOTE - addition of categories row to column B was never included in these unit tests
-                const lots = getOrderList(dateDisplayValues as [string][], lastRow, sheet.getRange('B:C').getValues() as [number, number][]);
-                const sales = getOrderList(dateDisplayValues as [string][], lastRow, sheet.getRange('D:E').getValues() as [number, number][]);
-                annotations = calculateFIFO(coinName, data, lots, sales);
-                fillInTempSheet(sheet, data as string[][]);
-            }
             assertCell(sheet, data, 2, 5, '50% Sold', `Round ${round} Test for Partial Short-Term Sale : Row 3 lot half sold`);
             assertCell(sheet, data, 2, 6, 0, `Round ${round} Test for Partial Short-Term Sale : Row 3 Cost Basis has no cost basis`);
             assertCell(sheet, data, 2, 7, 0, `Round ${round} Test for Partial Short-Term Sale : Row 3 Gain(Loss) has no gain`);
@@ -79,7 +41,7 @@ export function test4CostBasis(): () => void {
 /**
  * test5 for function calculateFIFO(sheet, lots, sales)
  */
-export function test5CostBasis(): () => void {
+export function test5CostBasis(): unitTestWrapper {
     return (): void => {
         const coinName = 'CB_TEST5';
         const sheet = createTempSheet(coinName);
@@ -90,31 +52,15 @@ export function test5CostBasis(): () => void {
             ['2018-01-02', 0, 0, 1.0, 2000, '', 0, 0, '']];
 
         const TestRun = function (round): void {
-            let annotations: string[][] = [];
-            if (typeof ScriptApp === 'undefined') {
-                // jest unit test
-                // TODO - implement local version of this test
-            } else if (sheet !== null) {
-                // QUnit unit test
-                assert((validate(sheet.getRange('A:E').getValues() as [string, string, string, string, string][]) === ''), true, `Round ${round} Data validated`);
-                const dateDisplayValues = sheet.getRange('A:A').getDisplayValues();
-                const lastRow = getLastRowWithDataPresent(dateDisplayValues);
-                const lots = getOrderList(dateDisplayValues as [string][], lastRow, sheet.getRange('B:C').getValues() as [number, number][]);
-                const sales = getOrderList(dateDisplayValues as [string][], lastRow, sheet.getRange('D:E').getValues() as [number, number][]);
-
-                annotations = calculateFIFO(coinName, data, lots, sales);
-                fillInTempSheet(sheet, data as string[][]);
-
-                assertCell(sheet, data, 2, 5, '100% Sold', `Round ${round} Test for Whole Long-Term Sale : Row 3 Status : expected all coin sold`);
-                assertCell(sheet, data, 2, 6, 0, `Round ${round} Test for Whole Long-Term Sale : Row 3 Cost Basis : expected no cost basis`);
-                assertCell(sheet, data, 2, 7, 0, `Round ${round} Test for Whole Long-Term Sale : Row 3 Gain(Loss) : expected no gain`);
-                assert(annotations[0]?.[0], 'D4', `Round ${round} Test for Lot Sold Hint : Hint Anchor point on row 4`);
-                assert(annotations[0]?.[1], 'Sold lot from row 3 on 2017-01-01.', `Round ${round} Test for Lot Sold Hint : Row 4 Sold : expected sold from row 3`);
-                assertCell(sheet, data, 3, 5, 'Long-term', `Round ${round} Test for Whole Long-Term Sale : Row 4 Status : expected long-term cost basis`);
-                assertCell(sheet, data, 3, 6, '1000.00', `Round ${round} Test for Whole Long-Term Sale : Row 4 Cost Basis : expected 1000 cost basis`, 2);
-                assertCell(sheet, data, 3, 7, '1000.00', `Round ${round} Test for Whole Long-Term Sale : Row 4 Gain(Loss) : expected 1000 gain`, 2);
-            }
-            // asserts should go here if can genericize the sheet.getValue() calls
+            const annotations = callCalculateFIFO(sheet, coinName, data, round);
+            assertCell(sheet, data, 2, 5, '100% Sold', `Round ${round} Test for Whole Long-Term Sale : Row 3 Status : expected all coin sold`);
+            assertCell(sheet, data, 2, 6, 0, `Round ${round} Test for Whole Long-Term Sale : Row 3 Cost Basis : expected no cost basis`);
+            assertCell(sheet, data, 2, 7, 0, `Round ${round} Test for Whole Long-Term Sale : Row 3 Gain(Loss) : expected no gain`);
+            assert(annotations[0]?.[0], 'D4', `Round ${round} Test for Lot Sold Hint : Hint Anchor point on row 4`);
+            assert(annotations[0]?.[1], 'Sold lot from row 3 on 2017-01-01.', `Round ${round} Test for Lot Sold Hint : Row 4 Sold : expected sold from row 3`);
+            assertCell(sheet, data, 3, 5, 'Long-term', `Round ${round} Test for Whole Long-Term Sale : Row 4 Status : expected long-term cost basis`);
+            assertCell(sheet, data, 3, 6, '1000.00', `Round ${round} Test for Whole Long-Term Sale : Row 4 Cost Basis : expected 1000 cost basis`, 2);
+            assertCell(sheet, data, 3, 7, '1000.00', `Round ${round} Test for Whole Long-Term Sale : Row 4 Gain(Loss) : expected 1000 gain`, 2);
         };
 
         fillInTempSheet(sheet, data as string[][]);
@@ -128,7 +74,7 @@ export function test5CostBasis(): () => void {
 /**
  * test6 for function calculateFIFO(sheet, lots, sales)
  */
-export function test6CostBasis(): () => void {
+export function test6CostBasis(): unitTestWrapper {
     return (): void => {
         const coinName = 'CB_TEST6';
         const sheet = createTempSheet(coinName);
@@ -140,48 +86,31 @@ export function test6CostBasis(): () => void {
             ['2018-07-01', 0, 0, 2.0, 4000, '', 0, 0, '']];
 
         const TestRun = function (round): void {
-            let annotations: string[][] = [];
-            if (typeof ScriptApp === 'undefined') {
-                // jest unit test
-                // TODO - implement local version of this test
-            } else if (sheet !== null) {
-                // QUnit unit test
-                assert((validate(sheet.getRange('A:E').getValues() as [string, string, string, string, string][]) === ''), true, `Round ${round} Data validated`);
-                const dateDisplayValues = sheet.getRange('A:A').getDisplayValues();
-                const lastRow = getLastRowWithDataPresent(dateDisplayValues);
-                const lots = getOrderList(dateDisplayValues as [string][], lastRow, sheet.getRange('B:C').getValues() as [number, number][]);
-                const sales = getOrderList(dateDisplayValues as [string][], lastRow, sheet.getRange('D:E').getValues() as [number, number][]);
+            const annotations = callCalculateFIFO(sheet, coinName, data, round);
 
-                annotations = calculateFIFO(coinName, data, lots, sales);
-                annotations.sort((e1, e2) => { if (e1[0] < e2[0]) { return -1; } if (e1[0] > e2[0]) { return 1; } return 0; });
-                console.log(annotations); // TODO remove this
-                fillInTempSheet(sheet, data as string[][]);
+            assertCell(sheet, data, 2, 5, '100% Sold', `Round ${round} Test for Lot Sold In Full Later : Row 3 Status : expected 100% sold`);
+            assertCell(sheet, data, 2, 6, 0, `Round ${round} Test for Lot Sold In Full Later : Row 3 Cost Basis : expected no cost basis`);
+            assertCell(sheet, data, 2, 7, 0, `Round ${round} Test for Lot Sold In Full Later : Row 3 Gain(Loss) : expected no gain`);
+            assertCell(sheet, data, 3, 5, '100% Sold', `Round ${round} Test for Lot Sold In Full Later : Row 4 Status : expected 100% sold`);
+            assertCell(sheet, data, 3, 6, 0, `Round ${round} Test for Lot Sold In Full Later : Row 4 Cost Basis : expected no cost basis`);
+            assertCell(sheet, data, 3, 7, 0, `Round ${round} Test for Lot Sold In Full Later : Row 4 Gain(Loss) : expected no gain`);
+            assertCell(sheet, data, 4, 5, 'Long-term', `Round ${round} Test for Split into Long-Term Sale : Row 5 Status : expected long-term cost basis`);
+            assertCell(sheet, data, 4, 6, '1000.00', `Round ${round} Test for Split into Long-Term Sale : Row 5 Cost Basis : expected 1000 cost basis`, 2);
+            assertCell(sheet, data, 4, 7, '1000.00', `Round ${round} Test for Split into Long-Term Sale : Row 5 Gain(Loss) : expected 1000 gain`, 2);
+            assertCell(sheet, data, 5, 5, 'Short-term', `Round ${round} Test for Split into Short-Term Sale : Row 6 Status : expected short-term cost basis`);
+            assertCell(sheet, data, 5, 6, '1000.00', `Round ${round} Test for Split into Short-Term Sale : Row 6 Cost Basis : expected 1000 cost basis`, 2);
+            assertCell(sheet, data, 5, 7, '1000.00', `Round ${round} Test for Split into Short-Term Sale : Row 6 Gain(Loss) : expected 1000 gain`, 2);
 
-                assertCell(sheet, data, 2, 5, '100% Sold', `Round ${round} Test for Lot Sold In Full Later : Row 3 Status : expected 100% sold`);
-                assertCell(sheet, data, 2, 6, 0, `Round ${round} Test for Lot Sold In Full Later : Row 3 Cost Basis : expected no cost basis`);
-                assertCell(sheet, data, 2, 7, 0, `Round ${round} Test for Lot Sold In Full Later : Row 3 Gain(Loss) : expected no gain`);
-                assertCell(sheet, data, 3, 5, '100% Sold', `Round ${round} Test for Lot Sold In Full Later : Row 4 Status : expected 100% sold`);
-                assertCell(sheet, data, 3, 6, 0, `Round ${round} Test for Lot Sold In Full Later : Row 4 Cost Basis : expected no cost basis`);
-                assertCell(sheet, data, 3, 7, 0, `Round ${round} Test for Lot Sold In Full Later : Row 4 Gain(Loss) : expected no gain`);
-                assertCell(sheet, data, 4, 5, 'Long-term', `Round ${round} Test for Split into Long-Term Sale : Row 5 Status : expected long-term cost basis`);
-                assertCell(sheet, data, 4, 6, '1000.00', `Round ${round} Test for Split into Long-Term Sale : Row 5 Cost Basis : expected 1000 cost basis`, 2);
-                assertCell(sheet, data, 4, 7, '1000.00', `Round ${round} Test for Split into Long-Term Sale : Row 5 Gain(Loss) : expected 1000 gain`, 2);
-                assertCell(sheet, data, 5, 5, 'Short-term', `Round ${round} Test for Split into Short-Term Sale : Row 6 Status : expected short-term cost basis`);
-                assertCell(sheet, data, 5, 6, '1000.00', `Round ${round} Test for Split into Short-Term Sale : Row 6 Cost Basis : expected 1000 cost basis`, 2);
-                assertCell(sheet, data, 5, 7, '1000.00', `Round ${round} Test for Split into Short-Term Sale : Row 6 Gain(Loss) : expected 1000 gain`, 2);
-
-                assert(annotations[0]?.[0], 'A5', `Round ${round} Test for Original Data Before Split Hint : Hint Anchor point on row 5`);
-                assert(annotations[0]?.[1]?.replace(/ *\([^)]*\) */g, ' '), `Originally 2.00000000 ${coinName} was sold for $4000.00 and split into rows 5 and 6.`,
-                    `Round ${round} Test for Term Split Note : Row 5 Date : expected split into rows 5 and 6`);
-                assert(annotations[1]?.[0], 'A6', `Round ${round} Test for Original Data Before Split Hint : Hint Anchor point on row 6`);
-                assert(annotations[1]?.[1]?.replace(/ *\([^)]*\) */g, ' '), `Originally 2.00000000 ${coinName} was sold for $4000.00 and split into rows 5 and 6.`,
-                    `Round ${round} Test for Term Split Note : Row 6 Date : expected split into rows 5 and 6`);
-                assert(annotations[2]?.[0], 'D5', `Round ${round} Test for Lot Sold Hint : Hint Anchor point on row 5`);
-                assert(annotations[2]?.[1], 'Sold lot from row 3 on 2017-01-01.', `Round ${round} Test for Lot Sold Hint : Row 5 Sold : expected sold from row 3`);
-                assert(annotations[3]?.[0], 'D6', `Round ${round} Test for Lot Sold Hint : Hint Anchor point on row 6`);
-                assert(annotations[3]?.[1], 'Sold lot from row 4 on 2018-01-01.', `Round ${round} Test for Lot Sold Hint : Row 6 Sold : expected sold from row 4`);
-            }
-            // asserts should go here if can genericize the sheet.getValue() calls
+            assert(annotations[0]?.[0], 'A5', `Round ${round} Test for Original Data Before Split Hint : Hint Anchor point on row 5`);
+            assert(annotations[0]?.[1]?.replace(/ *\([^)]*\) */g, ' '), `Originally 2.00000000 ${coinName} was sold for $4000.00 and split into rows 5 and 6.`,
+                `Round ${round} Test for Term Split Note : Row 5 Date : expected split into rows 5 and 6`);
+            assert(annotations[1]?.[0], 'A6', `Round ${round} Test for Original Data Before Split Hint : Hint Anchor point on row 6`);
+            assert(annotations[1]?.[1]?.replace(/ *\([^)]*\) */g, ' '), `Originally 2.00000000 ${coinName} was sold for $4000.00 and split into rows 5 and 6.`,
+                `Round ${round} Test for Term Split Note : Row 6 Date : expected split into rows 5 and 6`);
+            assert(annotations[2]?.[0], 'D5', `Round ${round} Test for Lot Sold Hint : Hint Anchor point on row 5`);
+            assert(annotations[2]?.[1], 'Sold lot from row 3 on 2017-01-01.', `Round ${round} Test for Lot Sold Hint : Row 5 Sold : expected sold from row 3`);
+            assert(annotations[3]?.[0], 'D6', `Round ${round} Test for Lot Sold Hint : Hint Anchor point on row 6`);
+            assert(annotations[3]?.[1], 'Sold lot from row 4 on 2018-01-01.', `Round ${round} Test for Lot Sold Hint : Row 6 Sold : expected sold from row 4`);
         };
 
         fillInTempSheet(sheet, data as string[][]);
@@ -195,7 +124,7 @@ export function test6CostBasis(): () => void {
 /**
  * test7 for function calculateFIFO(sheet, lots, sales)
  */
-export function test7CostBasis(): () => void {
+export function test7CostBasis(): unitTestWrapper {
     return (): void => {
         const coinName = 'CB_TEST7';
         const sheet = createTempSheet(coinName);
@@ -205,27 +134,12 @@ export function test7CostBasis(): () => void {
             ['2017-01-01', 1.0, 1000, 0, 0, '', 0, 0, '']];
 
         const TestRun = function (round): void {
-            let annotations: string[][] = [];
-            if (typeof ScriptApp === 'undefined') {
-                // jest unit test
-                // TODO - implement local version of this test
-            } else if (sheet !== null) {
-                // QUnit unit test
-                assert((validate(sheet.getRange('A:E').getValues() as [string, string, string, string, string][]) === ''), true, `Round ${round} Data validated`);
-                const dateDisplayValues = sheet.getRange('A:A').getDisplayValues();
-                const lastRow = getLastRowWithDataPresent(dateDisplayValues);
-                const lots = getOrderList(dateDisplayValues as [string][], lastRow, sheet.getRange('B:C').getValues() as [number, number][]);
-                const sales = getOrderList(dateDisplayValues as [string][], lastRow, sheet.getRange('D:E').getValues() as [number, number][]);
+            const annotations = callCalculateFIFO(sheet, coinName, data, round);
 
-                annotations = calculateFIFO(coinName, data, lots, sales);
-                fillInTempSheet(sheet, data as string[][]);
-
-                assert(annotations.length, 0, `Round ${round} No annotations.`);
-                assertCell(sheet, data, 2, 5, '0% Sold', `Round ${round} Test for No Sale : Row 3 Status : expected no coin sold`);
-                assertCell(sheet, data, 2, 6, 0, `Round ${round} Test for No Sale : Row 3 Cost Basis : expected no cost basis`);
-                assertCell(sheet, data, 2, 7, 0, `Round ${round} Test for No Sale : Row 3 Gain(Loss) : expected no gain`);
-            }
-            // asserts should go here if can genericize the sheet.getValue() calls
+            assert(annotations.length, 0, `Round ${round} No annotations.`);
+            assertCell(sheet, data, 2, 5, '0% Sold', `Round ${round} Test for No Sale : Row 3 Status : expected no coin sold`);
+            assertCell(sheet, data, 2, 6, 0, `Round ${round} Test for No Sale : Row 3 Cost Basis : expected no cost basis`);
+            assertCell(sheet, data, 2, 7, 0, `Round ${round} Test for No Sale : Row 3 Gain(Loss) : expected no gain`);
         };
 
         fillInTempSheet(sheet, data as string[][]);
@@ -239,7 +153,7 @@ export function test7CostBasis(): () => void {
 /**
  * test8 for function calculateFIFO(sheet, lots, sales)
  */
-export function test8CostBasis(): () => void {
+export function test8CostBasis(): unitTestWrapper {
     return (): void => {
         const coinName = 'CB_TEST8';
         const sheet = createTempSheet(coinName);
@@ -258,75 +172,60 @@ export function test8CostBasis(): () => void {
             ['2018-03-07', 0, 0, 0.1, 2000, '', 0, 0, '']];
 
         const TestRun = function (round): void {
-            let annotations: string[][] = [];
-            if (typeof ScriptApp === 'undefined') {
-                // jest unit test
-                // TODO - use same assertions as QUnit when running local jest test
-                const result = FIFOCalc(data);
-                assert(result, true);
-            } else if (sheet !== null) {
-                // QUnit unit test
-                assert((validate(sheet.getRange('A:E').getValues() as [string, string, string, string, string][]) === ''), true, `Round ${round} Data validated`);
-                const dateDisplayValues = sheet.getRange('A:A').getDisplayValues();
-                const lastRow = getLastRowWithDataPresent(dateDisplayValues);
-                const lots = getOrderList(dateDisplayValues as [string][], lastRow, sheet.getRange('B:C').getValues() as [number, number][]);
-                const sales = getOrderList(dateDisplayValues as [string][], lastRow, sheet.getRange('D:E').getValues() as [number, number][]);
+            const annotations = callCalculateFIFO(sheet, coinName, data, round);
 
-                annotations = calculateFIFO(coinName, data, lots, sales);
-                annotations.sort((e1, e2) => { if (e1[0] < e2[0]) { return -1; } if (e1[0] > e2[0]) { return 1; } return 0; });
-                fillInTempSheet(sheet, data as string[][]);
+            assertCell(sheet, data, 2, 5, '100% Sold', `Round ${round} Test for Lot Sold In Full Later : Row 3 Status : expected 100% sold`);
+            assertCell(sheet, data, 2, 6, 0, `Round ${round} Test for Lot Sold In Full Later : Row 3 Cost Basis : expected no cost basis`);
+            assertCell(sheet, data, 2, 7, 0, `Round ${round} Test for Lot Sold In Full Later : Row 3 Gain(Loss) : expected no gain`);
+            assertCell(sheet, data, 3, 5, '100% Sold', `Round ${round} Test for Lot Sold In Full Later : Row 4 Status : expected 100% sold`);
+            assertCell(sheet, data, 3, 6, 0, `Round ${round} Test for Lot Sold In Full Later : Row 4 Cost Basis : expected no cost basis`);
+            assertCell(sheet, data, 3, 7, 0, `Round ${round} Test for Lot Sold In Full Later : Row 4 Gain(Loss) : expected no gain`);
+            assertCell(sheet, data, 4, 5, 'Long-term', `Round ${round} Test for Long-Term Sale : Row 5 Status : expected long-term cost basis`);
+            assertCell(sheet, data, 4, 6, '1000.00', `Round ${round} Test for Long-Term Sale : Row 5 Cost Basis : expected 1000 cost basis`, 2);
+            assertCell(sheet, data, 4, 7, '1000.00', `Round ${round} Test for Long-Term Sale : Row 5 Gain(Loss) : expected 1000 gain`, 2);
+            assertCell(sheet, data, 5, 5, 'Long-term', `Round ${round} Test for Split into Long-Term Sale : Row 6 Status : expected long-term cost basis`);
+            assertCell(sheet, data, 5, 6, '1000.00', `Round ${round} Test for Split into Long-Term Sale : Row 6 Cost Basis : expected 1000 cost basis`, 2);
+            assertCell(sheet, data, 5, 7, '1000.00', `Round ${round} Test for Split into Long-Term Sale : Row 6 Gain(Loss) : expected 1000 gain`, 2);
+            assertCell(sheet, data, 6, 5, 'Short-term', `Round ${round} Test for Split into Short-Term Sale : Row 7 Status : expected short-term cost basis`);
+            assertCell(sheet, data, 6, 6, '3000.00', `Round ${round} Test for Split into Short-Term Sale : Row 7 Cost Basis : expected 3000 cost basis`, 2);
+            assertCell(sheet, data, 6, 7, '3000.00', `Round ${round} Test for Split into Short-Term Sale : Row 7 Gain(Loss) : expected 3000 gain`, 2);
+            assertCell(sheet, data, 7, 5, '0% Sold', `Round ${round} Test for First Unsold Lot : Row 8 Status : expected 0% sold`);
+            assertCell(sheet, data, 7, 6, 0, `Round ${round} Test for First Unsold Lot : Row 8 Cost Basis : expected no cost basis`);
+            assertCell(sheet, data, 7, 7, 0, `Round ${round} Test for First Unsold Lot : Row 8 Gain(Loss) : expected no gain`);
+            assertCell(sheet, data, 8, 5, '', `Round ${round} Test for Second...Nth Unsold Lot : Row 9 Status : expected no message`);
+            assertCell(sheet, data, 8, 6, 0, `Round ${round} Test for Second...Nth Unsold Lot : Row 9 Cost Basis : expected no cost basis`);
+            assertCell(sheet, data, 8, 7, 0, `Round ${round} Test for Second...Nth Unsold Lot : Row 9 Gain(Loss) : expected no gain`);
+            assertCell(sheet, data, 9, 5, '', `Round ${round} Test for Second...Nth Unsold Lot : Row 10 Status : expected no message`);
+            assertCell(sheet, data, 9, 6, 0, `Round ${round} Test for Second...Nth Unsold Lot : Row 10 Cost Basis : expected no cost basis`);
+            assertCell(sheet, data, 9, 7, 0, `Round ${round} Test for Second...Nth Unsold Lot : Row 10 Gain(Loss) : expected no gain`);
+            assertCell(sheet, data, 10, 5, 'Short-term', `Round ${round} Test for Short-Term Sale : Row 11 Status : expected short-term cost basis`);
+            assertCell(sheet, data, 10, 6, '1000.00', `Round ${round} Test for Short-Term Sale : Row 11 Cost Basis : expected 1000 cost basis`, 2);
+            assertCell(sheet, data, 10, 7, '-500.00', `Round ${round} Test for Short-Term Sale : Row 11 Gain(Loss) : expected 500 loss`, 2);
+            assertCell(sheet, data, 11, 5, 'Short-term', `Round ${round} Test for Short-Term Sale : Row 12 Status : expected short-term cost basis`);
+            assertCell(sheet, data, 11, 6, '1000.00', `Round ${round} Test for Short-Term Sale : Row 12 Cost Basis : expected 1000 cost basis`, 2);
+            assertCell(sheet, data, 11, 7, '0.00', `Round ${round} Test for Short-Term Sale : Row 12 Gain(Loss) : expected 0 gain`, 2);
+            assertCell(sheet, data, 12, 5, 'Short-term', `Round ${round} Test for Short-Term Sale : Row 13 Status : expected short-term cost basis`);
+            assertCell(sheet, data, 12, 6, '1000.00', `Round ${round} Test for Short-Term Sale : Row 13 Cost Basis : expected 1000 cost basis`, 2);
+            assertCell(sheet, data, 12, 7, '1000.00', `Round ${round} Test for Short-Term Sale : Row 13 Gain(Loss) : expected 1000 gain`, 2);
 
-                // check if test passed or failed
-                assert(sheet.getRange('F3').getValue(), '100% Sold', `Round ${round} Test for Lot Sold In Full Later : Row 3 Status : expected 100% sold`);
-                assert(sheet.getRange('G3').getValue(), 0, `Round ${round} Test for Lot Sold In Full Later : Row 3 Cost Basis : expected no cost basis`);
-                assert(sheet.getRange('H3').getValue(), 0, `Round ${round} Test for Lot Sold In Full Later : Row 3 Gain(Loss) : expected no gain`);
-                assert(sheet.getRange('F4').getValue(), '100% Sold', `Round ${round} Test for Lot Sold In Full Later : Row 4 Status : expected 100% sold`);
-                assert(sheet.getRange('G4').getValue(), 0, `Round ${round} Test for Lot Sold In Full Later : Row 4 Cost Basis : expected no cost basis`);
-                assert(sheet.getRange('H4').getValue(), 0, `Round ${round} Test for Lot Sold In Full Later : Row 4 Gain(Loss) : expected no gain`);
-
-                assert(sheet.getRange('D5').getNote(), 'Sold lot from row 3 on 2017-01-01.', `Round ${round} Test for Lot Sold Hint : Row 5 Sold : expected sold from row 3`);
-                assert(sheet.getRange('F5').getValue(), 'Long-term', `Round ${round} Test for Long-Term Sale : Row 5 Status : expected long-term cost basis`);
-                assert(sheet.getRange('G5').getValue().toFixed(2), '1000.00', `Round ${round} Test for Long-Term Sale : Row 5 Cost Basis : expected 1000 cost basis`);
-                assert(sheet.getRange('H5').getValue().toFixed(2), '1000.00', `Round ${round} Test for Long-Term Sale : Row 5 Gain(Loss) : expected 1000 gain`);
-
-                assert(sheet.getRange('A6').getNote().replace(/ *\([^)]*\) */g, ' '), `Originally 0.40000000 ${coinName} was sold for $8000.00 and split into rows 6 and 7.`, `Round ${round} Test for Term Split Note : Row 6 Date : expected split into rows 6 and 7`);
-                assert(sheet.getRange('D6').getNote(), 'Sold lot from row 3 on 2017-01-01.', `Round ${round} Test for Lot Sold Hint : Row 6 Sold : expected sold from row 3`);
-                assert(sheet.getRange('F6').getValue(), 'Long-term', `Round ${round} Test for Split into Long-Term Sale : Row 6 Status : expected long-term cost basis`);
-                assert(sheet.getRange('G6').getValue().toFixed(2), '1000.00', `Round ${round} Test for Split into Long-Term Sale : Row 6 Cost Basis : expected 1000 cost basis`);
-                assert(sheet.getRange('H6').getValue().toFixed(2), '1000.00', `Round ${round} Test for Split into Long-Term Sale : Row 6 Gain(Loss) : expected 1000 gain`);
-
-                assert(sheet.getRange('A7').getNote().replace(/ *\([^)]*\) */g, ' '), `Originally 0.40000000 ${coinName} was sold for $8000.00 and split into rows 6 and 7.`, `Round ${round} Test for Term Split Note : Row 7 Date : expected split into rows 6 and 7`);
-                assert(sheet.getRange('D7').getNote(), 'Sold lot from row 4 on 2018-02-01.', `Round ${round} Test for Lot Sold Hint : Row 7 Sold : expected sold from row 4`);
-                assert(sheet.getRange('F7').getValue(), 'Short-term', `Round ${round} Test for Split into Short-Term Sale : Row 7 Status : expected short-term cost basis`);
-                assert(sheet.getRange('G7').getValue().toFixed(2), '3000.00', `Round ${round} Test for Split into Short-Term Sale : Row 7 Cost Basis : expected 3000 cost basis`);
-                assert(sheet.getRange('H7').getValue().toFixed(2), '3000.00', `Round ${round} Test for Split into Short-Term Sale : Row 7 Gain(Loss) : expected 3000 gain`);
-
-                assert(sheet.getRange('F8').getValue(), '0% Sold', `Round ${round} Test for First Unsold Lot : Row 8 Status : expected 0% sold`);
-                assert(sheet.getRange('G8').getValue(), 0, `Round ${round} Test for First Unsold Lot : Row 8 Cost Basis : expected no cost basis`);
-                assert(sheet.getRange('H8').getValue(), 0, `Round ${round} Test for First Unsold Lot : Row 8 Gain(Loss) : expected no gain`);
-                assert(sheet.getRange('F9').getValue(), '', `Round ${round} Test for Second...Nth Unsold Lot : Row 9 Status : expected no message`);
-                assert(sheet.getRange('G9').getValue(), 0, `Round ${round} Test for Second...Nth Unsold Lot : Row 9 Cost Basis : expected no cost basis`);
-                assert(sheet.getRange('H9').getValue(), 0, `Round ${round} Test for Second...Nth Unsold Lot : Row 9 Gain(Loss) : expected no gain`);
-                assert(sheet.getRange('F10').getValue(), '', `Round ${round} Test for Second...Nth Unsold Lot : Row 10 Status : expected no message`);
-                assert(sheet.getRange('G10').getValue(), 0, `Round ${round} Test for Second...Nth Unsold Lot : Row 10 Cost Basis : expected no cost basis`);
-                assert(sheet.getRange('H10').getValue(), 0, `Round ${round} Test for Second...Nth Unsold Lot : Row 10 Gain(Loss) : expected no gain`);
-
-                assert(sheet.getRange('D11').getNote(), 'Sold lot from row 4 on 2018-02-01.', `Round ${round} Test for Lot Sold Hint : Row 11 Sold : expected sold from row 4`);
-                assert(sheet.getRange('F11').getValue(), 'Short-term', `Round ${round} Test for Short-Term Sale : Row 11 Status : expected short-term cost basis`);
-                assert(sheet.getRange('G11').getValue().toFixed(2), '1000.00', `Round ${round} Test for Short-Term Sale : Row 11 Cost Basis : expected 1000 cost basis`);
-                assert(sheet.getRange('H11').getValue().toFixed(2), '-500.00', `Round ${round} Test for Short-Term Sale : Row 11 Gain(Loss) : expected 500 loss`);
-
-                assert(sheet.getRange('D12').getNote(), 'Sold lot from row 4 on 2018-02-01.', `Round ${round} Test for Lot Sold Hint : Row 12 Sold : expected sold from row 4`);
-                assert(sheet.getRange('F12').getValue(), 'Short-term', `Round ${round} Test for Short-Term Sale : Row 12 Status : expected short-term cost basis`);
-                assert(sheet.getRange('G12').getValue().toFixed(2), '1000.00', `Round ${round} Test for Short-Term Sale : Row 12 Cost Basis : expected 1000 cost basis`);
-                assert(sheet.getRange('H12').getValue().toFixed(2), '0.00', `Round ${round} Test for Short-Term Sale : Row 12 Gain(Loss) : expected 0 gain`);
-
-                assert(sheet.getRange('D13').getNote(), 'Sold lots from row 4 on 2018-02-01 to row 8 on 2018-03-02.', `Round ${round} Test for Lot Sold Hint : Row 13 Sold : expected sold from row 4 to 8`);
-                assert(sheet.getRange('F13').getValue(), 'Short-term', `Round ${round} Test for Short-Term Sale : Row 13 Status : expected short-term cost basis`);
-                assert(sheet.getRange('G13').getValue().toFixed(2), '1000.00', `Round ${round} Test for Short-Term Sale : Row 13 Cost Basis : expected 1000 cost basis`);
-                assert(sheet.getRange('H13').getValue().toFixed(2), '1000.00', `Round ${round} Test for Short-Term Sale : Row 13 Gain(Loss) : expected 1000 gain`);
-            }
-            // asserts should go here if can genericize the sheet.getValue() calls
+            assert(annotations[0]?.[0], 'A6', `Round ${round} Test for Original Data Before Split Hint : Hint Anchor point on row 6`);
+            assert(annotations[0]?.[1]?.replace(/ *\([^)]*\) */g, ' '), `Originally 0.40000000 ${coinName} was sold for $8000.00 and split into rows 6 and 7.`,
+                `Round ${round} Test for Term Split Note : Row 6 Date : expected split into rows 6 and 7`);
+            assert(annotations[1]?.[0], 'A7', `Round ${round} Test for Original Data Before Split Hint : Hint Anchor point on row 7`);
+            assert(annotations[1]?.[1]?.replace(/ *\([^)]*\) */g, ' '), `Originally 0.40000000 ${coinName} was sold for $8000.00 and split into rows 6 and 7.`,
+                `Round ${round} Test for Term Split Note : Row 7 Date : expected split into rows 6 and 7`);
+            assert(annotations[2]?.[0], 'D5', `Round ${round} Test for Lot Sold Hint : Hint Anchor point on row 5`);
+            assert(annotations[2]?.[1], 'Sold lot from row 3 on 2017-01-01.', `Round ${round} Test for Lot Sold Hint : Row 5 Sold : expected sold from row 3`);
+            assert(annotations[3]?.[0], 'D6', `Round ${round} Test for Lot Sold Hint : Hint Anchor point on row 6`);
+            assert(annotations[3]?.[1], 'Sold lot from row 3 on 2017-01-01.', `Round ${round} Test for Lot Sold Hint : Row 6 Sold : expected sold from row 3`);
+            assert(annotations[4]?.[0], 'D7', `Round ${round} Test for Lot Sold Hint : Hint Anchor point on row 7`);
+            assert(annotations[4]?.[1], 'Sold lot from row 4 on 2018-02-01.', `Round ${round} Test for Lot Sold Hint : Row 7 Sold : expected sold from row 4`);
+            assert(annotations[5]?.[0], 'D11', `Round ${round} Test for Lot Sold Hint : Hint Anchor point on row 11`);
+            assert(annotations[5]?.[1], 'Sold lot from row 4 on 2018-02-01.', `Round ${round} Test for Lot Sold Hint : Row 11 Sold : expected sold from row 4`);
+            assert(annotations[6]?.[0], 'D12', `Round ${round} Test for Lot Sold Hint : Hint Anchor point on row 12`);
+            assert(annotations[6]?.[1], 'Sold lot from row 4 on 2018-02-01.', `Round ${round} Test for Lot Sold Hint : Row 12 Sold : expected sold from row 4`);
+            assert(annotations[7]?.[0], 'D13', `Round ${round} Test for Lot Sold Hint : Hint Anchor point on row 13`);
+            assert(annotations[7]?.[1], 'Sold lots from row 4 on 2018-02-01 to row 8 on 2018-03-02.', `Round ${round} Test for Lot Sold Hint : Row 13 Sold : expected sold from row 4 to 8`);
         };
 
         fillInTempSheet(sheet, data as string[][]);
@@ -340,7 +239,7 @@ export function test8CostBasis(): () => void {
 /**
  * test9 for function calculateFIFO(sheet, lots, sales)
  */
-export function test9CostBasis(): () => void {
+export function test9CostBasis(): unitTestWrapper {
     return (): void => {
         const coinName = 'CB_TEST9';
         const sheet = createTempSheet(coinName);
@@ -380,49 +279,35 @@ export function test9CostBasis(): () => void {
             ['2020-07-07', 5.09400000, 0, 0, 0, '', 0, 0, '']];
 
         const TestRun = function (round): void {
-            let annotations: string[][] = [];
-            if (typeof ScriptApp === 'undefined') {
-                // jest unit test
-                // TODO - use same assertions as QUnit when running local jest test
-                const result = FIFOCalc(data);
-                assert(result, true);
-            } else if (sheet !== null) {
-                // QUnit unit test
-                assert((validate(sheet.getRange('A:E').getValues() as [string, string, string, string, string][]) === ''), true, `Round ${round} Data validated`);
-                const dateDisplayValues = sheet.getRange('A:A').getDisplayValues();
-                const lastRow = getLastRowWithDataPresent(dateDisplayValues);
-                const lots = getOrderList(dateDisplayValues as [string][], lastRow, sheet.getRange('B:C').getValues() as [number, number][]);
-                const sales = getOrderList(dateDisplayValues as [string][], lastRow, sheet.getRange('D:E').getValues() as [number, number][]);
+            const annotations = callCalculateFIFO(sheet, coinName, data, round);
 
-                annotations = calculateFIFO(coinName, data, lots, sales);
-                annotations.sort((e1, e2) => { if (e1[0] < e2[0]) { return -1; } if (e1[0] > e2[0]) { return 1; } return 0; });
-                fillInTempSheet(sheet, data as string[][]);
-
-                for (let j = 3; j < 28; j++) {
-                    assert(sheet.getRange(`F${j}`).getValue(), '100% Sold', `Round ${round} Test for Lot Sold In Full Later : Row ${j} Status : expected 100% sold`);
-                    assert(sheet.getRange(`G${j}`).getValue().toFixed(2), '0.00', `Round ${round} Test for Lot Sold In Full Later : Row ${j} Cost Basis : expected no cost basis`);
-                    assert(sheet.getRange(`H${j}`).getValue().toFixed(2), '0.00', `Round ${round} Test for Lot Sold In Full Later : Row ${j} Gain(Loss) : expected no gain`);
-                }
-
-                assert(sheet.getRange('A28').getNote().replace(/ *\([^)]*\) */g, ' '), `Originally 829.14000000 ${coinName} was sold for $151.26 and split into rows 28 and 29.`, `Round ${round} Test for Term Split Note : Row 28 Date : expected split into rows 28 and 29`);
-                assert(sheet.getRange('D28').getNote(), 'Sold lots from row 3 on 2019-02-14 to row 13 on 2019-04-09.', `Round ${round} Test for Lot Sold Hint : Row 28 Sold : expected sold from row 3 to 13`);
-                assert(sheet.getRange('F28').getValue(), 'Long-term', `Round ${round} Test for Split into Long-Term Sale : Row 28 Status : expected long-term cost basis`);
-                assert(sheet.getRange('G28').getValue().toFixed(2), '69.67', `Round ${round} Test for Split into Long-Term Sale : Row 28 Cost Basis : expected $69.67 cost basis`);
-                assert(sheet.getRange('H28').getValue().toFixed(2), '5.46', `Round ${round} Test for Split into Long-Term Sale : Row 28 Gain(Loss) : expected $5.46 gain`);
-
-                assert(sheet.getRange('A29').getNote().replace(/ *\([^)]*\) */g, ' '), `Originally 829.14000000 ${coinName} was sold for $151.26 and split into rows 28 and 29.`, `Round ${round} Test for Term Split Note : Row 29 Date : expected split into rows 28 and 29`);
-                assert(sheet.getRange('D29').getNote(), 'Sold lots from row 14 on 2019-05-09 to row 27 on 2020-04-08.', `Round ${round} Test for Lot Sold Hint : Row 29 Sold : expected sold from row 14 to 27`);
-                assert(sheet.getRange('F29').getValue(), 'Short-term', `Round ${round} Test for Split into Short-Term Sale : Row 29 Status : expected short-term cost basis`);
-                assert(sheet.getRange('G29').getValue().toFixed(2), '90.54', `Round ${round} Test for Split into Short-Term Sale : Row 29 Cost Basis : expected $90.54 cost basis`);
-                assert(sheet.getRange('H29').getValue().toFixed(2), '-14.41', `Round ${round} Test for Split into Short-Term Sale : Row 29 Gain(Loss) : expected $(14.41) gain`);
-
-                for (let k = 30; k < 35; k++) {
-                    assert(sheet.getRange(`F${k}`).getValue(), '', `Round ${round} Test for Unsold Lot : Row ${k} Status : expected no message`);
-                    assert(sheet.getRange(`G${k}`).getValue().toFixed(2), '0.00', `Round ${round} Test for Unsold Lot : Row ${k} Cost Basis : expected no cost basis`);
-                    assert(sheet.getRange(`H${k}`).getValue().toFixed(2), '0.00', `Round ${round} Test for Unsold Lot : Row ${k} Gain(Loss) : expected no gain`);
-                }
+            for (let j = 2; j < 27; j++) {
+                assertCell(sheet, data, j, 5, '100% Sold', `Round ${round} Test for Lot Sold In Full Later : Row ${j} Status : expected 100% sold`);
+                assertCell(sheet, data, j, 6, '0.00', `Round ${round} Test for Lot Sold In Full Later : Row ${j} Cost Basis : expected no cost basis`, 2);
+                assertCell(sheet, data, j, 7, '0.00', `Round ${round} Test for Lot Sold In Full Later : Row ${j} Gain(Loss) : expected no gain`, 2);
             }
-            // asserts should go here if can genericize the sheet.getValue() calls
+            assertCell(sheet, data, 27, 5, 'Long-term', `Round ${round} Test for Split into Long-Term Sale : Row 28 Status : expected long-term cost basis`);
+            assertCell(sheet, data, 27, 6, '69.67', `Round ${round} Test for Split into Long-Term Sale : Row 28 Cost Basis : expected $69.67 cost basis`, 2);
+            assertCell(sheet, data, 27, 7, '5.46', `Round ${round} Test for Split into Long-Term Sale : Row 28 Gain(Loss) : expected $5.46 gain`, 2);
+            assertCell(sheet, data, 28, 5, 'Short-term', `Round ${round} Test for Split into Short-Term Sale : Row 29 Status : expected short-term cost basis`);
+            assertCell(sheet, data, 28, 6, '90.54', `Round ${round} Test for Split into Short-Term Sale : Row 29 Cost Basis : expected $90.54 cost basis`, 2);
+            assertCell(sheet, data, 28, 7, '-14.41', `Round ${round} Test for Split into Short-Term Sale : Row 29 Gain(Loss) : expected $(14.41) gain`, 2);
+            for (let k = 29; k < 34; k++) {
+                assertCell(sheet, data, k, 5, '', `Round ${round} Test for Unsold Lot : Row ${k} Status : expected no message`);
+                assertCell(sheet, data, k, 6, '0.00', `Round ${round} Test for Unsold Lot : Row ${k} Cost Basis : expected no cost basis`, 2);
+                assertCell(sheet, data, k, 7, '0.00', `Round ${round} Test for Unsold Lot : Row ${k} Gain(Loss) : expected no gain`, 2);
+            }
+
+            assert(annotations[0]?.[0], 'A28', `Round ${round} Test for Original Data Before Split Hint : Hint Anchor point on row 28`);
+            assert(annotations[0]?.[1]?.replace(/ *\([^)]*\) */g, ' '), `Originally 829.14000000 ${coinName} was sold for $151.26 and split into rows 28 and 29.`,
+                `Round ${round} Test for Term Split Note : Row 28 Date : expected split into rows 28 and 29`);
+            assert(annotations[1]?.[0], 'A29', `Round ${round} Test for Original Data Before Split Hint : Hint Anchor point on row 29`);
+            assert(annotations[1]?.[1]?.replace(/ *\([^)]*\) */g, ' '), `Originally 829.14000000 ${coinName} was sold for $151.26 and split into rows 28 and 29.`,
+                `Round ${round} Test for Term Split Note : Row 29 Date : expected split into rows 28 and 29`);
+            assert(annotations[2]?.[0], 'D28', `Round ${round} Test for Lot Sold Hint : Hint Anchor point on row 28`);
+            assert(annotations[2]?.[1], 'Sold lots from row 3 on 2019-02-14 to row 13 on 2019-04-09.', `Round ${round} Test for Lot Sold Hint : Row 28 Sold : expected sold from row 3 to 13`);
+            assert(annotations[3]?.[0], 'D29', `Round ${round} Test for Lot Sold Hint : Hint Anchor point on row 29`);
+            assert(annotations[3]?.[1], 'Sold lots from row 14 on 2019-05-09 to row 27 on 2020-04-08.', `Round ${round} Test for Lot Sold Hint : Row 29 Sold : expected sold from row 14 to 27`);
         };
 
         fillInTempSheet(sheet, data as string[][]);
@@ -441,46 +326,46 @@ export function test9CostBasis(): () => void {
  *
  * @return true = passm, false = fail
  */
-function FIFOCalc(data: [string, number, number, number, number, string, number, number, string ][]): boolean {
-    const dateArray = new Array(data.length);
-    const lotsArray = new Array(data.length);
-    const salesArray = new Array(data.length);
+function callCalculateFIFO(sheet: GoogleAppsScript.Spreadsheet.Sheet | null, coinName: string, data: [string, number, number, number, number, string, number, number, string ][], round = 1): string[][] {
+    let annotations: string[][] = [];
+    if (typeof ScriptApp === 'undefined') {
+        // jest unit test
+        // clone the data array, and trim down to data needed for validation
+        const validationData = [...data];
+        validationData.forEach((row, rowIdx) => { validationData[rowIdx] = [...row]; });
+        validationData.forEach(row => row.splice(5, 4));
 
-    for (let i = 0; i < data.length; i++) {
-        dateArray[i] = data[i]; // order date
-        lotsArray[i] = new Array(2);
-        lotsArray[i][0] = Number(data[i][1]); // amount purchased
-        lotsArray[i][1] = Number(data[i][2]); // purchase price
-        salesArray[i] = new Array(2);
-        salesArray[i][0] = Number(data[i][3]); // amount sold
-        salesArray[i][1] = Number(data[i][4]); // sale price
-        data[i][5] = ''; // status
-        data[i][6] = 0; // costBasis
-        data[i][7] = 0; // gain(Loss)
-        data[i][8] = ''; // note
+        // TODO - better to include this error in array at expected (x,y) location?
+        assert((validate(validationData as unknown as [string, number, number, number, number][]) === ''), true, `Round ${round} Data validated`);
+        const dateDisplayValues = validationData.map(row => [row[0], '']); // empty str makes this a 2D array of strings for getLastRowWithDataPresent()
+        const lastRow = getLastRowWithDataPresent(dateDisplayValues);
+
+        // clone the data array, and trim down to data needed for cost basis calc
+        const lotData = [...data];
+        lotData.forEach((row, rowIdx) => { lotData[rowIdx] = [...row]; });
+        lotData.forEach(row => row.splice(3, 2)); // split out and remove sales
+        lotData.forEach(row => row.splice(0, 1)); // remove leftmost date column from lots
+        lotData.forEach(row => row.splice(2, row.length - 2)); // remove all remaining columns to the right
+        const salesData = [...data];
+        salesData.forEach((row, rowIdx) => { salesData[rowIdx] = [...row]; });
+        salesData.forEach(row => row.splice(0, 3)); // split out and remove date column and lots
+        salesData.forEach(row => row.splice(2, row.length - 2)); // remove all remaining columns to the right
+
+        // do the cost basis calc
+        const lots = getOrderList(dateDisplayValues as [string][], lastRow, lotData as unknown as [number, number][]);
+        const sales = getOrderList(dateDisplayValues as [string][], lastRow, salesData as unknown as [number, number][]);
+        annotations = calculateFIFO(coinName, data, lots, sales);
+    } else if (sheet !== null) {
+        // QUnit unit test
+        assert((validate(sheet.getRange('A:E').getValues() as [string, string, string, string, string][]) === ''), true, `Round ${round} Data validated`);
+        const dateDisplayValues = sheet.getRange('A:A').getDisplayValues();
+        const lastRow = getLastRowWithDataPresent(dateDisplayValues);
+        const lots = getOrderList(dateDisplayValues as [string][], lastRow, sheet.getRange('B:C').getValues() as [number, number][]);
+        const sales = getOrderList(dateDisplayValues as [string][], lastRow, sheet.getRange('D:E').getValues() as [number, number][]);
+
+        annotations = calculateFIFO(coinName, data, lots, sales);
+        fillInTempSheet(sheet, data as string[][]);
     }
-
-    // add freshly calculated values
-    const lots = getOrderList(dateArray, data.length, lotsArray);
-    // console.log(`Detected ${lots.length} purchases of TESTCOIN.`);
-
-    const sales = getOrderList(dateArray, data.length, salesArray);
-    // console.log(`Detected ${sales.length} sales of TESTCOIN.`);
-
-    /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
-    const annotations = calculateFIFO('TESTCOIN', data, lots, sales);
-    // console.table(data);
-    // console.table(annotations);
-
-    // TODO - check calculated columns in data to see if they matched expected
-    // if didn't match, return false
-    // else continue on
-
-    // output the current date and time as the time last completed
-    // Google Apps Script API can do this with Utilities.formatDate(new Date(), 'CST', 'MMMM dd, yyyy HH:mm');
-    // const date = new Date(Date.now());
-    // const now = date.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-    // console.log(`Last calculation succeeded ${now}`);
-
-    return true; // pass
+    annotations.sort((e1, e2) => { if (e1[0] < e2[0]) { return -1; } if (e1[0] > e2[0]) { return 1; } return 0; });
+    return annotations;
 }

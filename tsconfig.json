@@ -7,6 +7,8 @@
         "allowSyntheticDefaultImports": true,
         "noEmitOnError": true,
         "strictNullChecks": true,
+        "noUnusedParameters": true,
+        "noImplicitReturns": true,
         "sourceMap": true
     },
     "include": [

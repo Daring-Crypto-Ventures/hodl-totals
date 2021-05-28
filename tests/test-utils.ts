@@ -8,6 +8,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 /**
+ * types used when writing HODL Totals unit tests
+ *
+ */
+export type unitTestWrapper = () => void;
+
+/**
  * wrapper for asserting a value that works in both jest and QUnit test environments
  *
  */
