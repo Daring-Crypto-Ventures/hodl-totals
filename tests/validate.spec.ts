@@ -1,11 +1,11 @@
-import { assert, createTempSheet, fillInTempSheet, deleteTempSheet } from './test-utils';
+import { unitTestWrapper, assert, createTempSheet, fillInTempSheet, deleteTempSheet } from './test-utils';
 import validate from '../src/validate';
 
 /**
  * test1 for validate()
  *
  */
-export function test1DataValidation(): () => void {
+export function test1DataValidation(): unitTestWrapper {
     return (): void => {
         const coinName = 'CB_TEST1';
         const sheet = createTempSheet(coinName);
@@ -40,7 +40,7 @@ export function test1DataValidation(): () => void {
 /**
  * test2 for function validate(sheet)
  */
-export function test2DataValidation(): () => void {
+export function test2DataValidation(): unitTestWrapper {
     return (): void => {
         const coinName = 'CB_TEST2';
         const sheet = createTempSheet(coinName);
@@ -72,12 +72,10 @@ export function test2DataValidation(): () => void {
     };
 }
 
-type aliasToFunc = () => void;
-
 /**
  * test3 for function validate(sheet)
  */
-export function test3DataValidation(): aliasToFunc {
+export function test3DataValidation(): unitTestWrapper {
     return (): void => {
         const coinName = 'CB_TEST3';
         const sheet = createTempSheet(coinName);
