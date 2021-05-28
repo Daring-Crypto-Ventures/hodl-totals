@@ -224,24 +224,25 @@ export function test8CostBasis(): unitTestWrapper {
                 assert(splitNotePart2?.[1]?.replace(/ *\([^)]*\) */g, ' '), `Originally 0.40000000 ${coinName} was sold for $8000.00 and split into rows 6 and 7.`,
                     `Round ${round} Test for Term Split Note : Row 7 Date : expected split into rows 6 and 7`);
             }
+            // Because annotations are sorted as strings, D11..D13 comes before D5..D7
             const soldNote1 = annotations.shift() as string[];
-            assert(soldNote1?.[0], 'D5', `Round ${round} Test for Lot Sold Hint : Hint Anchor point on row 5`);
-            assert(soldNote1?.[1], 'Sold lot from row 3 on 2017-01-01.', `Round ${round} Test for Lot Sold Hint : Row 5 Sold : expected sold from row 3`);
+            assert(soldNote1?.[0], 'D11', `Round ${round} Test for Lot Sold Hint : Hint Anchor point on row 11`);
+            assert(soldNote1?.[1], 'Sold lot from row 4 on 2018-02-01.', `Round ${round} Test for Lot Sold Hint : Row 11 Sold : expected sold from row 4`);
             const soldNote2 = annotations.shift() as string[];
-            assert(soldNote2?.[0], 'D6', `Round ${round} Test for Lot Sold Hint : Hint Anchor point on row 6`);
-            assert(soldNote2?.[1], 'Sold lot from row 3 on 2017-01-01.', `Round ${round} Test for Lot Sold Hint : Row 6 Sold : expected sold from row 3`);
+            assert(soldNote2?.[0], 'D12', `Round ${round} Test for Lot Sold Hint : Hint Anchor point on row 12`);
+            assert(soldNote2?.[1], 'Sold lot from row 4 on 2018-02-01.', `Round ${round} Test for Lot Sold Hint : Row 12 Sold : expected sold from row 4`);
             const soldNote3 = annotations.shift() as string[];
-            assert(soldNote3?.[0], 'D7', `Round ${round} Test for Lot Sold Hint : Hint Anchor point on row 7`);
-            assert(soldNote3?.[1], 'Sold lot from row 4 on 2018-02-01.', `Round ${round} Test for Lot Sold Hint : Row 7 Sold : expected sold from row 4`);
+            assert(soldNote3?.[0], 'D13', `Round ${round} Test for Lot Sold Hint : Hint Anchor point on row 13`);
+            assert(soldNote3?.[1], 'Sold lots from row 4 on 2018-02-01 to row 8 on 2018-03-02.', `Round ${round} Test for Lot Sold Hint : Row 13 Sold : expected sold from row 4 to 8`);
             const soldNote4 = annotations.shift() as string[];
-            assert(soldNote4?.[0], 'D11', `Round ${round} Test for Lot Sold Hint : Hint Anchor point on row 11`);
-            assert(soldNote4?.[1], 'Sold lot from row 4 on 2018-02-01.', `Round ${round} Test for Lot Sold Hint : Row 11 Sold : expected sold from row 4`);
+            assert(soldNote4?.[0], 'D5', `Round ${round} Test for Lot Sold Hint : Hint Anchor point on row 5`);
+            assert(soldNote4?.[1], 'Sold lot from row 3 on 2017-01-01.', `Round ${round} Test for Lot Sold Hint : Row 5 Sold : expected sold from row 3`);
             const soldNote5 = annotations.shift() as string[];
-            assert(soldNote5?.[0], 'D12', `Round ${round} Test for Lot Sold Hint : Hint Anchor point on row 12`);
-            assert(soldNote5?.[1], 'Sold lot from row 4 on 2018-02-01.', `Round ${round} Test for Lot Sold Hint : Row 12 Sold : expected sold from row 4`);
+            assert(soldNote5?.[0], 'D6', `Round ${round} Test for Lot Sold Hint : Hint Anchor point on row 6`);
+            assert(soldNote5?.[1], 'Sold lot from row 3 on 2017-01-01.', `Round ${round} Test for Lot Sold Hint : Row 6 Sold : expected sold from row 3`);
             const soldNote6 = annotations.shift() as string[];
-            assert(soldNote6?.[0], 'D13', `Round ${round} Test for Lot Sold Hint : Hint Anchor point on row 13`);
-            assert(soldNote6?.[1], 'Sold lots from row 4 on 2018-02-01 to row 8 on 2018-03-02.', `Round ${round} Test for Lot Sold Hint : Row 13 Sold : expected sold from row 4 to 8`);
+            assert(soldNote6?.[0], 'D7', `Round ${round} Test for Lot Sold Hint : Hint Anchor point on row 7`);
+            assert(soldNote6?.[1], 'Sold lot from row 4 on 2018-02-01.', `Round ${round} Test for Lot Sold Hint : Row 7 Sold : expected sold from row 4`);
         };
 
         fillInTempSheet(sheet, data as string[][]);
