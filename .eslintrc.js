@@ -10,7 +10,7 @@ module.exports = {
         ecmaVersion: 2019,
         sourceType: 'module'
     },
-    ignorePatterns: ['fmv_tests.js', 'examples.js', 'discord.js', 'crypto_tools.js', 'crypto_tools_dbg.js', 'categories.js', 'about.js'],
+    ignorePatterns: ['fmv_tests.js', 'examples.js', 'discord.js', 'about.js'],
     rules: {
         'no-console': 'off'
     },

@@ -1,6 +1,8 @@
 // import { expect, test } from '@jest/globals';
 // import { strictEqual } from 'qunitjs' (v1.12.0-pre)
 
+import { tenPackDataRow } from '../src/types';
+
 // TODO - explore using other Qunit features as seen in GAS testing
 // https://script.google.com/home/projects/1cmwYQ6H7k6v3xNoFhhcASR8K2_JBJcgJ2W0WFNE8Sy3fAJzfE2Kpbh_M/edit
 
@@ -36,7 +38,7 @@ export function assert(value: boolean | number | string, expected: boolean | num
  */
 export function assertCell(
     sheet: GoogleAppsScript.Spreadsheet.Sheet | null,
-    dataTable: [string, number, number, number, number, string, number, number, string][],
+    dataTable: tenPackDataRow[],
     rowIdx: number, colIdx: number,
     expected: boolean | number | string,
     detail = '', digitsAfterDecimal = 0
