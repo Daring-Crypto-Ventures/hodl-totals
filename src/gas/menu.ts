@@ -23,6 +23,11 @@ export function onInstall(e: GoogleAppsScript.Events.AddonOnInstall): void {
  * custom menu to the spreadsheet.
  */
 export function onOpen(e: GoogleAppsScript.Events.AppsScriptEvent): void {
+    // https://developers.google.com/apps-script/reference/script/auth-mode
+    // typically should see AuthMode.LIMITED, implying the add-on is executing
+    // when bound to a document and launched from a simple Trigger
+    Logger.log(`onOpen called with AuthMode: ${e?.authMode}`);
+
     const ui = SpreadsheetApp.getUi();
     const menu = ui.createAddonMenu(); // createsMenu('HODL Totals')
 
@@ -38,31 +43,27 @@ export function onOpen(e: GoogleAppsScript.Events.AppsScriptEvent): void {
         .addItem('Join our Discord Server', 'openDiscordLink_')
         .addItem('About HODL Totals', 'showAboutDialog_');
 
-    // if (e && e.authMode != ScriptApp.AuthMode.NONE)
-    // https://ctrlq.org/google.apps.script/docs/add-ons/lifecycle.html
-    // Add a menu item based on properties (doesn't work in AuthMode.NONE).
-    // i.e. analytics UrlFetchApp.fetch('http://www.example.com/analytics?event=open');
-    // or add dynamic menu items based on stored *properties* [i.e. FIFO vs LIFO etc]
-
     menu.addToUi();
 }
 
 export function showNewCurrencyPrompt(): string | null {
-    const ui = SpreadsheetApp.getUi();
+    if (typeof ScriptApp !== 'undefined') {
+        const ui = SpreadsheetApp.getUi();
 
-    const result = ui.prompt(
-        'New Currency',
-        'Please enter the coin\'s trading symbol ("BTC", "ETH", "XRP"):',
-        ui.ButtonSet.OK_CANCEL
-    );
+        const result = ui.prompt(
+            'New Currency',
+            'Please enter the coin\'s trading symbol ("BTC", "ETH", "XRP"):',
+            ui.ButtonSet.OK_CANCEL
+        );
 
-    // Process the user's response.
-    const button = result.getSelectedButton();
-    const text = result.getResponseText();
-    if (button === ui.Button.OK) {
-        return text;
+        // Process the user's response.
+        const button = result.getSelectedButton();
+        const text = result.getResponseText();
+        if (button === ui.Button.OK) {
+            return text;
+        }
+        // if ((button === ui.Button.CANCEL) || (button === ui.Button.CLOSE))
     }
-    // if ((button === ui.Button.CANCEL) || (button === ui.Button.CLOSE))
     return null;
 }
 
@@ -71,7 +72,7 @@ export function showNewCurrencyPrompt(): string | null {
  *
  * @return the newly created sheet, for function chaining purposes.
  */
-export function newCurrencySheet_(): GoogleAppsScript.Spreadsheet.Sheet {
+export function newCurrencySheet_(): GoogleAppsScript.Spreadsheet.Sheet | null {
     // ask user what the name of the new currency will be
     const desiredCurrency = showNewCurrencyPrompt();
 
@@ -200,7 +201,7 @@ export function formatSheet_(): GoogleAppsScript.Spreadsheet.Sheet {
         .setFontSize(11);
 
     // lookup allowed categories from the "Categories sheet" to avoid hard-coding them
-    const categoriesList = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Categories').getRange('A2:A35').getValues();
+    const categoriesList = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Categories')?.getRange('A2:A35').getValues();
 
     // Prevent the user from entering bad inputs in the first place which removes
     // the need to check data in the validate() function during a calculation
