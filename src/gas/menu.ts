@@ -306,6 +306,7 @@ export function calculateFIFO_(): void {
     const validationErrMsg = validate(sheet.getRange('A:F').getValues() as sixPackLooselyTypedDataRow[]);
 
     if (validationErrMsg === '') {
+        const data = sheet.getRange('A:J').getValues() as [string, string, number, number, number, number, string, number, number, string ][];
         const dateDisplayValues = sheet.getRange('A:A').getDisplayValues();
         const lastRow = getLastRowWithDataPresent(dateDisplayValues);
 
@@ -314,12 +315,21 @@ export function calculateFIFO_(): void {
         sheet.getRange('G3:I').setValue('');
         sheet.getRange('E3:E').setNote('');
 
+        // TODO should go back thru notes on A3:A and roll back any previous attempts to split rows here?
+
         const lots = getOrderList(dateDisplayValues as [string][], lastRow, sheet.getRange('C:D').getValues() as [number, number][]);
         Logger.log(`Detected ${lots.length} purchases of ${sheet.getName().replace(/ *\([^)]*\) */g, '')}.`);
         const sales = getOrderList(dateDisplayValues as [string][], lastRow, sheet.getRange('E:F').getValues() as [number, number][]);
         Logger.log(`Detected ${sales.length} sales of ${sheet.getName().replace(/ *\([^)]*\) */g, '')}.`);
 
-        const annotations = calculateFIFO(coinName, sheet.getRange('A:J').getValues() as [string, string, number, number, number, number, string, number, number, string ][], lots, sales);
+        const annotations = calculateFIFO(coinName, data, lots, sales);
+
+        // fill the in the test data
+        // TODO - better/faster use of google APIs to batch set 2D array?
+        for (let i = 2; i < data.length; i++) {
+            sheet.getRange(i + 1, 1, 1, data[i].length).setValues([data[i]]);
+        }
+        SpreadsheetApp.flush();
 
         // iterate through annotations and add to the Sheet
         // TODO - use Map and Iterators here instead
