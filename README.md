@@ -32,7 +32,7 @@ COMING SOON - Free Training Videos!
 >
 > `npm install`
 
-📝 Additioanl Steps to set up a new Google sheet with the HODL totals scripts...
+📝 Additional steps to set up a new Google sheet with HODL totals scripts
 
 > Install [Google clasp](https://github.com/google/clasp), grant clasp access to your google account, create a sheet and push HODL Totals scripts to that sheet
 >
@@ -44,7 +44,7 @@ COMING SOON - Free Training Videos!
 >
 > `clasp open` and then navigate in browser to the overview page, click link under Project Details>Container to access your sheet
 
-📝 Additional steps to enable the End-to-End integration tests to run on your copy of the code, with your account on your sheet
+📝 Additional steps to enable End-to-End integration tests to run on your copy of the code, using your Google account on your sheet
 
 > `clasp open` and then navigate in browser, click Deploy dropdwn, select Test Deployment, copy deployment ID out of the webapp URL
 >
