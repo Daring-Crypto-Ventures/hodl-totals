@@ -27,7 +27,7 @@ jobs:
         node-version: ${{ matrix.node-version }}
     - run: npm ci
     - run: npm run build
-    - run: npm run test:unit -- && node_modules/coveralls/bin/coveralls.js < coverage/lcov.info
+    - run: npm run test:unit
     
     - name: Coveralls GitHub Action
       uses: coverallsapp/github-action@v1.1.2
