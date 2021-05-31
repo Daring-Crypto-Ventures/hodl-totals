@@ -1,4 +1,4 @@
-import { unitTestWrapper, assert, assertCell, createTempSheet, fillInTempSheet, deleteTempSheet } from './test-utils';
+import { unitTestWrapper, assert, assertCell, createTempSheet, fillInTempSheet, deleteTempSheet } from './utils.test';
 import { sixPackDataRow, tenPackDataRow } from '../src/types';
 import calculateFIFO from '../src/calc-fifo';
 import getOrderList from '../src/orders';

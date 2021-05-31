@@ -1,4 +1,4 @@
-import { unitTestWrapper, assert, createTempSheet, fillInTempSheet, deleteTempSheet } from './test-utils';
+import { unitTestWrapper, assert, createTempSheet, fillInTempSheet, deleteTempSheet } from './utils.test';
 import { sixPackDataRow, sixPackLooselyTypedDataRow } from '../src/types';
 import validate from '../src/validate';
 
