@@ -5,22 +5,24 @@
  * example1: Populates spreadsheet with Altcoin data, more complex FMV calcs
  *
  */
+/* global SpreadsheetApp */
 import newCategorySheet from './categories';
 import { newCurrencySheet_, formatSheet_, calculateFIFO_ } from './menu';
 
-export function loadExample0_(): void {
+export function loadCostBasisExample_(): GoogleAppsScript.Spreadsheet.Sheet | null {
     // if no Categories sheet previously exists, create one
-    if (SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Categories') == null) {
+    if ((typeof ScriptApp !== 'undefined') && (SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Categories') == null)) {
         newCategorySheet();
     }
 
     const newSheet = newCurrencySheet_();
     if (newSheet !== null) {
-        example0(newSheet);
+        costBasisExample(newSheet);
     }
+    return newSheet;
 }
 
-export function example0(sheet: GoogleAppsScript.Spreadsheet.Sheet): void {
+function costBasisExample(sheet: GoogleAppsScript.Spreadsheet.Sheet): void {
     // sample data set
     const initialData: string[][] = [
         ['2017/01/01', '', '0.20000000', '2000.00', '', '', '', '', '', 'Enter coin buys in the left-hand columns. Include fees in the cost.', 'value known', '', ''],
@@ -44,19 +46,20 @@ export function example0(sheet: GoogleAppsScript.Spreadsheet.Sheet): void {
     calculateFIFO_();
 }
 
-export function loadExample1_(): void {
+export function loadFMVExample_(): GoogleAppsScript.Spreadsheet.Sheet | null {
     // if no Categories sheet previously exists, create one
-    if (SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Categories') == null) {
+    if ((typeof ScriptApp !== 'undefined') && (SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Categories') == null)) {
         newCategorySheet();
     }
 
     const newSheet = newCurrencySheet_();
     if (newSheet !== null) {
-        example1(newSheet);
+        fmvExample(newSheet);
     }
+    return newSheet;
 }
 
-export function example1(sheet: GoogleAppsScript.Spreadsheet.Sheet): void {
+function fmvExample(sheet: GoogleAppsScript.Spreadsheet.Sheet): void {
     // sample data set
     const initialData: string[][] = [
         ['2015-12-01', '', '1.00000000', '', '', '', '', '', '', 'Grab High/Lows from historical values tab on https://coinmarketcap.com', '1.111100', '0.992222', ''],

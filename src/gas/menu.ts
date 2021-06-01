@@ -37,8 +37,8 @@ export function onOpen(e: GoogleAppsScript.Events.AppsScriptEvent): void {
         .addItem('Calculate (FIFO method)', 'calculateFIFO_')
         .addSeparator()
         .addSubMenu(ui.createMenu('Examples')
-            .addItem('Cost basis', 'loadExample0_')
-            .addItem('Fair market value', 'loadExample1_'))
+            .addItem('Cost basis', 'loadCostBasisExample_')
+            .addItem('Fair market value', 'loadFMVExample_'))
         .addSeparator()
         .addItem('Join our Discord Server', 'openDiscordLink_')
         .addItem('About HODL Totals', 'showAboutDialog_');
