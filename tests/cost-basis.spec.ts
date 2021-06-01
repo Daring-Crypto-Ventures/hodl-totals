@@ -1,5 +1,5 @@
 import { unitTestWrapper, assert, assertCell, createTempSheet, fillInTempSheet, deleteTempSheet } from './utils.test';
-import { sixPackDataRow, tenPackDataRow } from '../src/types';
+import { sixPackDataRow, completeDataRow } from '../src/types';
 import calculateFIFO from '../src/calc-fifo';
 import getOrderList from '../src/orders';
 import validate from '../src/validate';
@@ -12,7 +12,7 @@ export function test4CostBasis(): unitTestWrapper {
     return (): void => {
         const coinName = 'CB_TEST4';
         const sheet = createTempSheet(coinName);
-        const data: tenPackDataRow[] = [
+        const data: completeDataRow[] = [
             ['', '', 0, 0, 0, 0, '', 0, 0, ''],
             ['', '', 0, 0, 0, 0, '', 0, 0, ''],
             ['2017-01-01', '', 1.0, 1000, 0, 0, '', 0, 0, ''],
@@ -46,7 +46,7 @@ export function test5CostBasis(): unitTestWrapper {
     return (): void => {
         const coinName = 'CB_TEST5';
         const sheet = createTempSheet(coinName);
-        const data: tenPackDataRow[] = [
+        const data: completeDataRow[] = [
             ['', '', 0, 0, 0, 0, '', 0, 0, ''],
             ['', '', 0, 0, 0, 0, '', 0, 0, ''],
             ['2017-01-01', '', 1.0, 1000, 0, 0, '', 0, 0, ''],
@@ -79,7 +79,7 @@ export function test6CostBasis(): unitTestWrapper {
     return (): void => {
         const coinName = 'CB_TEST6';
         const sheet = createTempSheet(coinName);
-        const data: tenPackDataRow[] = [
+        const data: completeDataRow[] = [
             ['', '', 0, 0, 0, 0, '', 0, 0, ''],
             ['', '', 0, 0, 0, 0, '', 0, 0, ''],
             ['2017-01-01', '', 1.0, 1000, 0, 0, '', 0, 0, ''],
@@ -135,7 +135,7 @@ export function test7CostBasis(): unitTestWrapper {
     return (): void => {
         const coinName = 'CB_TEST7';
         const sheet = createTempSheet(coinName);
-        const data: tenPackDataRow[] = [
+        const data: completeDataRow[] = [
             ['', '', 0, 0, 0, 0, '', 0, 0, ''],
             ['', '', 0, 0, 0, 0, '', 0, 0, ''],
             ['2017-01-01', '', 1.0, 1000, 0, 0, '', 0, 0, '']];
@@ -164,19 +164,19 @@ export function test8CostBasis(): unitTestWrapper {
     return (): void => {
         const coinName = 'CB_TEST8';
         const sheet = createTempSheet(coinName);
-        const data: tenPackDataRow[] = [
-            ['', '', 0, 0, 0, 0, '', 0, 0, ''],
-            ['', '', 0, 0, 0, 0, '', 0, 0, ''],
-            ['2017-01-01', '', 0.2, 2000, 0, 0, '', 0, 0, ''],
-            ['2018-02-01', '', 0.6, 6000, 0, 0, '', 0, 0, ''],
-            ['2018-02-01', '', 0, 0, 0.1, 2000, '', 0, 0, ''],
-            ['2018-03-01', '', 0, 0, 0.4, 8000, '', 0, 0, ''],
-            ['2018-03-02', '', 0.4, 4000, 0, 0, '', 0, 0, ''],
-            ['2018-03-03', '', 0.8, 8000, 0, 0, '', 0, 0, ''],
-            ['2018-03-04', '', 0.6, 6000, 0, 0, '', 0, 0, ''],
-            ['2018-03-05', '', 0, 0, 0.1, 500, '', 0, 0, ''],
-            ['2018-03-06', '', 0, 0, 0.1, 1000, '', 0, 0, ''],
-            ['2018-03-07', '', 0, 0, 0.1, 2000, '', 0, 0, '']];
+        const data: completeDataRow[] = [
+            ['', '', 0, 0, 0, 0, '', 0, 0, '', 'a'],
+            ['', '', 0, 0, 0, 0, '', 0, 0, '', 'b'],
+            ['2017-01-01', '', 0.2, 2000, 0, 0, '', 0, 0, '', 'c'],
+            ['2018-02-01', '', 0.6, 6000, 0, 0, '', 0, 0, '', 'd'],
+            ['2018-02-01', '', 0, 0, 0.1, 2000, '', 0, 0, '', 'e'],
+            ['2018-03-01', '', 0, 0, 0.4, 8000, '', 0, 0, '', 'f'],
+            ['2018-03-02', '', 0.4, 4000, 0, 0, '', 0, 0, '', 'g'],
+            ['2018-03-03', '', 0.8, 8000, 0, 0, '', 0, 0, '', 'h'],
+            ['2018-03-04', '', 0.6, 6000, 0, 0, '', 0, 0, '', 'i'],
+            ['2018-03-05', '', 0, 0, 0.1, 500, '', 0, 0, '', 'j'],
+            ['2018-03-06', '', 0, 0, 0.1, 1000, '', 0, 0, '', 'k'],
+            ['2018-03-07', '', 0, 0, 0.1, 2000, '', 0, 0, '', 'l']];
 
         const TestRun = function (round): void {
             const annotations = callCalculateFIFO(sheet, coinName, data, round);
@@ -261,7 +261,7 @@ export function test9CostBasis(): unitTestWrapper {
     return (): void => {
         const coinName = 'CB_TEST9';
         const sheet = createTempSheet(coinName);
-        const data: tenPackDataRow[] = [
+        const data: completeDataRow[] = [
             ['', '', 0, 0, 0, 0, '', 0, 0, ''],
             ['', '', 0, 0, 0, 0, '', 0, 0, ''],
             ['2019-02-14', '', 201.89592700, 25.30, 0, 0, '', 0, 0, ''],
@@ -348,7 +348,7 @@ export function test9CostBasis(): unitTestWrapper {
  * TODO - reimplement to avoid array copies
  * https://stackoverflow.com/questions/51383031/slice-section-of-two-dimensional-array-in-javascript
  */
-function callCalculateFIFO(sheet: GoogleAppsScript.Spreadsheet.Sheet | null, coinName: string, data: tenPackDataRow[], round = 1): string[][] {
+function callCalculateFIFO(sheet: GoogleAppsScript.Spreadsheet.Sheet | null, coinName: string, data: completeDataRow[], round = 1): string[][] {
     let annotations: string[][] = [];
     if (typeof ScriptApp === 'undefined') {
         // jest unit test

@@ -1,4 +1,4 @@
-import { tenPackDataRow } from './types';
+import { completeDataRow } from './types';
 
 /**
  * Using the FIFO method calculate short and long term gains from the data.
@@ -6,7 +6,7 @@ import { tenPackDataRow } from './types';
  */
 export default function calculateFIFO(
     coinname: string,
-    data: tenPackDataRow[],
+    data: completeDataRow[],
     lots: [string, number, number, number][],
     sales: [string, number, number, number][]
 ): [string, string][] { // TODO replace with Map<{ row, col }, string>
@@ -33,7 +33,7 @@ export default function calculateFIFO(
     // if no sales yet, mark the status of the first lot as 0% sold
     if (sales.length === 0) {
         if (data.length === 2) {
-            data.push(['', '', 0, 0, 0, 0, '', 0, 0, '']);
+            data.push(['', '', 0, 0, 0, 0, '', 0, 0, '', '', '', '']);
         }
         data[2][6] = '0% Sold';
     }
@@ -163,7 +163,7 @@ export default function calculateFIFO(
                         // shift to the next row to post the short-term split
                         shift += 1;
                         // create the new row for the short-term part of the term split
-                        data.splice(sellRow + shift, 0, ['', '', 0, 0, 0, 0, '', 0, 0, '']);
+                        data.splice(sellRow + shift, 0, [...data[sellRow + shift - 1]]);
                         // Row numbers are based on the Google Sheet row which includes a +3 offset
                         annotations.push([`A${sellRow + shift + 1}`, splitNoteText]);
                         data[sellRow + shift][0] = originalDate;

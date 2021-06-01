@@ -8,7 +8,7 @@ import calculateFIFO from '../calc-fifo';
 import getOrderList from '../orders';
 import validate from '../validate';
 import getLastRowWithDataPresent from '../last-row';
-import { sixPackLooselyTypedDataRow } from '../types';
+import { completeDataRow, sixPackLooselyTypedDataRow } from '../types';
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
@@ -270,7 +270,7 @@ export function calculateFIFO_(): void {
     const validationErrMsg = validate(sheet.getRange('A:F').getValues() as sixPackLooselyTypedDataRow[]);
 
     if (validationErrMsg === '') {
-        const data = sheet.getRange('A:J').getValues() as [string, string, number, number, number, number, string, number, number, string ][];
+        const data = sheet.getRange('A:P').getValues() as completeDataRow[];
         const dateDisplayValues = sheet.getRange('A:A').getDisplayValues();
         const lastRow = getLastRowWithDataPresent(dateDisplayValues);
 
@@ -288,9 +288,13 @@ export function calculateFIFO_(): void {
 
         const annotations = calculateFIFO(coinName, data, lots, sales);
 
-        // fill the in the test data
-        // TODO - better/faster use of google APIs to batch set 2D array?
         for (let i = 2; i < data.length; i++) {
+            // scan just the inflow & outlfow data of the row we're about to write, to avoid writing zeroes to previously empty cells
+            for (let j = 0; j < 6; j++) {
+                if (Number(data[i][j]) === 0) {
+                    data[i][j] = '';
+                }
+            }
             sheet.getRange(i + 1, 1, 1, data[i].length).setValues([data[i]]);
         }
         SpreadsheetApp.flush();
