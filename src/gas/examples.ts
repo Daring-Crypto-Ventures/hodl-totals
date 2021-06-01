@@ -39,7 +39,7 @@ function costBasisExample(sheet: GoogleAppsScript.Spreadsheet.Sheet): void {
     ];
 
     for (let i = 0; i < initialData.length; i++) {
-        sheet.getRange(`A${i + 3}:N${i + 3}`).setValues([initialData[i]]);
+        sheet.getRange(`A${i + 3}:M${i + 3}`).setValues([initialData[i]]);
     }
 
     formatSheet_();

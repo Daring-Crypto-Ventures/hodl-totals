@@ -1,5 +1,5 @@
 import { unitTestWrapper, assert, assertCell, createTempSheet, fillInTempSheet, deleteTempSheet } from './utils.test';
-import { sixPackDataRow, thirteenPackDataRow } from '../src/types';
+import { sixPackDataRow, completeDataRow } from '../src/types';
 import calcFiatValuesFromFMV from '../src/gas/fmv';
 import validate from '../src/validate';
 import getLastRowWithDataPresent from '../src/last-row';
@@ -11,7 +11,7 @@ export default function test10FMV(): unitTestWrapper {
     return (): void => {
         const coinName = 'FMV_TEST10';
         const sheet = createTempSheet(coinName);
-        const data: thirteenPackDataRow[] = [
+        const data: completeDataRow[] = [
             ['', '', 0, 0, 0, 0, '', 0, 0, '', '', '', ''],
             ['', '', 0, 0, 0, 0, '', 0, 0, '', '', '', ''],
             ['2015-12-01', '', 1.00000000, 0, 0, 0, '', 0, 0, '', '1.111100', '0.992222', ''],
