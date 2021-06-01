@@ -10,7 +10,6 @@ module.exports = {
         ecmaVersion: 2019,
         sourceType: 'module'
     },
-    ignorePatterns: ['fmv_tests.js'],
     rules: {
         'no-console': 'off'
     },

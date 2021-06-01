@@ -9,3 +9,6 @@ export type sixPackLooselyTypedDataRow = [string, string, string | number, strin
 
 // types used for cost basis calculation
 export type tenPackDataRow = [string, string, number, number, number, number, string, number, number, string ];
+
+// types used for fiar market value calculation
+export type thirteenPackDataRow = [string, string, number, number, number, number, string, number, number, string, string, string, string];

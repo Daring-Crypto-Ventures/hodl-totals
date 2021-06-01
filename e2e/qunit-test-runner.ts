@@ -1,5 +1,6 @@
 import { test1DataValidation, test2DataValidation, test3DataValidation } from '../tests/validate.spec';
 import { test4CostBasis, test5CostBasis, test6CostBasis, test7CostBasis, test8CostBasis, test9CostBasis } from '../tests/cost-basis.spec';
+import test10FMV from '../tests/fmv.spec';
 
 /**
  * First make sure the deploymentId for your script is set correclty in package.json
@@ -49,6 +50,16 @@ function testCostBasisFunctions(): void {
 }
 
 /**
+ * Tests for Fair Market Value columns, cacluations and formatting.
+ *
+ */
+
+function testFairMktValueFunctions() {
+    // @ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
+    QUnit.test('test10 - Fair Market Value - Example Dataset (One Round)', test10FMV());
+}
+
+/**
  * Web app callback that will execute the QUnit tests and return test results in the browser
  *
  */
@@ -67,7 +78,7 @@ function doGet(request) {
             if (lock.tryLock(1200000)) { // currently using 120 sec to be safe
                 testValidationFunctions(); // E2E test of spreadsheet data validation rules (PREREQs for FIFO calculation)
                 testCostBasisFunctions(); // E2E test of cost basis functions in spreadsheet context
-                // testFairMktValueFunctions(); // E2E test of FMV functions in spreadsheet context.
+                testFairMktValueFunctions(); // E2E test of FMV functions in spreadsheet context.
 
                 // done with important spreadsheet stuff, release the lock
                 lock.releaseLock();
