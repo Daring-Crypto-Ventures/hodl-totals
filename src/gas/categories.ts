@@ -10,14 +10,9 @@
  *
  * @return the newly created sheet, for function chaining purposes.
  */
-export default function newCategorySheet(): GoogleAppsScript.Spreadsheet.Sheet {
-    const sheet = SpreadsheetApp.getActiveSpreadsheet().insertSheet('Categories');
-
-    // populate the header cells
-    const header = ['Categories', 'Type', 'Tax Status', 'Inflow Categories', 'Outflow Categories'];
-    sheet.getRange('A1:E1').setValues([header]).setFontWeight('bold');
-
+export default function newCategorySheet(): GoogleAppsScript.Spreadsheet.Sheet | null {
     // Initial set of categories provided out of the box
+    const header = ['Categories', 'Type', 'Tax Status', 'Inflow Categories', 'Outflow Categories'];
     const initialData = [
         ['USD Deposit', 'Cash In', 'Not Taxable', '=IF(EXACT(B2,"Inflow"), A2, "")', '=IF(AND(EXACT(B2,"Outflow"),NOT(EXACT(A2,"Traded")),NOT(EXACT(A2,"Tx Fee"))), A2, "")'],
         ['USD Withdrawal', 'Cash Out', 'Taxable', '=IF(EXACT(B3,"Inflow"), A3, "")', '=IF(AND(EXACT(B3,"Outflow"),NOT(EXACT(A3,"Traded")),NOT(EXACT(A3,"Tx Fee"))), A3, "")'],
@@ -44,16 +39,24 @@ export default function newCategorySheet(): GoogleAppsScript.Spreadsheet.Sheet {
         ['Unknown Outflow', 'Outflow', 'Taxable', '=IF(EXACT(B24,"Inflow"), A24, "")', '=IF(AND(EXACT(B24,"Outflow"),NOT(EXACT(A24,"Traded")),NOT(EXACT(A24,"Tx Fee"))), A24, "")']
     ];
 
-    for (let i = 0; i < initialData.length; i++) {
-        sheet.getRange(`A${i + 2}:E${i + 2}`).setValues([initialData[i]]);
+    if (typeof ScriptApp !== 'undefined') {
+        const sheet = SpreadsheetApp.getActiveSpreadsheet().insertSheet('Categories');
+
+        // populate the header cells
+        sheet.getRange('A1:E1').setValues([header]).setFontWeight('bold');
+
+        for (let i = 0; i < initialData.length; i++) {
+            sheet.getRange(`A${i + 2}:E${i + 2}`).setValues([initialData[i]]);
+        }
+
+        // autosize the 5 columns' widths to fit content
+        sheet.autoResizeColumns(1, 5);
+
+        // draw border around the rows that will fed into dropdowns in other sheets
+        sheet.getRange('A2:C35').setBorder(true, true, true, true, false, false);
+
+        SpreadsheetApp.flush();
+        return sheet;
     }
-
-    // autosize the 5 columns' widths to fit content
-    sheet.autoResizeColumns(1, 5);
-
-    // draw border around the rows that will fed into dropdowns in other sheets
-    sheet.getRange('A2:C35').setBorder(true, true, true, true, false, false);
-
-    SpreadsheetApp.flush();
-    return sheet;
+    return null;
 }

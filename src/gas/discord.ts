@@ -7,13 +7,15 @@
 
 export default function openDiscordLink_(): void {
     // Invite link to the HODL Totals Discord that never expires
-    openUrl('https://discord.gg/TWuA9DzZth');
+    if (typeof ScriptApp !== 'undefined') {
+        openUrlFromGoogleSheet('https://discord.gg/TWuA9DzZth');
+    }
 }
 
 /**
  * Open a URL in a new tab.
  */
-function openUrl(url): void {
+function openUrlFromGoogleSheet(url): void {
     const html = HtmlService.createHtmlOutput(`${'<html><script>'
       + 'window.close = function(){window.setTimeout(function(){google.script.host.close()},9)};'
       + 'var a = document.createElement("a"); a.href="'}${url}"; a.target="_blank";`
