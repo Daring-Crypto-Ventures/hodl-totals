@@ -1,27 +1,61 @@
-![HODL Totals Google Sheets Add-On](hodl-totals.png)
-
-# HODL Totals
+# HODL Totals [![Node.js CI](https://github.com/dogracer/hodl-totals/actions/workflows/node.js.yml/badge.svg?branch=typescript)](https://github.com/dogracer/hodl-totals/actions/workflows/node.js.yml) [![Coverage Status](https://coveralls.io/repos/github/dogracer/hodl-totals/badge.svg?branch=typescript)](https://coveralls.io/github/dogracer/hodl-totals?branch=typescript) [![Discord](https://img.shields.io/discord/591914197219016707.svg?label=&logo=discord&logoColor=ffffff&color=7389D8&labelColor=6A7EC2)](https://discord.gg/TWuA9DzZth) [![MIT license](https://img.shields.io/badge/License-MIT-blue.svg)](https://lbesson.mit-license.org/) [![clasp](https://img.shields.io/badge/built%20with-clasp-4285f4.svg)](https://github.com/google/clasp) [![made-for-VSCode](https://img.shields.io/badge/Made%20for-VSCode-1f425f.svg)](https://code.visualstudio.com/)
 
 Your crypto data is yours to keep; I built this so that you could own your data and manage the data in a convienent way without a need to send your coin data to anyone else.
 
 These Google Apps Scripts will add menu commands to Google Sheets that will help you track cost basis and long-term or short-term treatment for your cryptocurrency trades. 
+
 It uses the first-in, first-out (FIFO) cost method, which is commonly used for tax compliance.
 
-## Usage
+## Use
 
-Two options for getting started:
+Options for getting started:
 
-OPTION 1 - Wait until the Google Workspace Marketplace approves this as an Add-on, and then download it from within your Google Sheets
+OPTION 1 - Wait until the Google Workspace Marketplace approves this as an Add-on, and then download it from within Google Sheets
 
-OPTION 2 - Start now by using the Container-bound Scripts edition and copying the google sheet linked in the release tag into your Google account.
-
-## Getting Started
+OPTION 2 - [Install](#install) the scripts from GitHub into your own new sheet following the [Installation steps]
 
 COMING SOON - Free Training Videos!
+
+## Install
+
+📝 Steps required to run unit tests locally with `npm build`, `npm run test:unit`
+
+> Install nvm (Node Version Manager)
+>
+> `curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash`
+>
+> Install node.js, built for most recent [Long-Term Support version](https://nodejs.org/en/about/releases/)
+> 
+> `nvm install --lts`
+>
+> Install HODL Totals dependencies
+>
+> `npm install`
+
+📝 Additional steps to set up a new Google sheet with HODL totals scripts
+
+> Install [Google clasp](https://github.com/google/clasp), grant clasp access to your google account, create a sheet and push HODL Totals scripts to that sheet
+>
+> `npm install -g @google/clasp`
+> 
+> `clasp login` and then grant access in the browser window that opens
+>
+> `clasp create "<desired sheet name>"` and then select Sheet as doc type to create
+>
+> `clasp open` and then navigate in browser to the overview page, click link under Project Details>Container to access your sheet
+
+📝 Additional steps to enable End-to-End integration tests to run on your copy of the code, using your Google account on your sheet
+
+> `clasp open` and then navigate in browser, click Deploy dropdwn, select Test Deployment, copy deployment ID out of the webapp URL
+>
+> `code package.json` to edit package.json locally, paste deploymentID over the test:e2e cmd's deployment ID
+> 
+> `npm run test:e2e` to run the E2E test suite -- or simply `npm test` to run both local and E2E test suites
 
 ## Development Environment
 
 - Windows 10 PC with WSL2 (Ubuntu 20.04.1 LTS)
+- Node.js LTS version (14.x or later)
 - Visual Studio Code on Windows 10, and its WSL2 integration for editing code stored in WSL
 - GitHub CLI commands via the WSL2 Linux terminal
 - Publish changes to your live google sheet(s) using clasp from the command line - https://developers.google.com/apps-script/guides/clasp

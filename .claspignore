@@ -1,0 +1,10 @@
+*.html
+*.js
+coverage/**
+dist/**
+docs/**
+node_modules/**
+src/*.test.ts
+src/gas/*.test.ts
+src/index.ts
+!appsscript.json
