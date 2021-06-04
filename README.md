@@ -58,7 +58,7 @@ COMING SOON - Free Training Videos!
 - Node.js LTS version (14.x or later)
 - Visual Studio Code on Windows 10, and its WSL2 integration for editing code stored in WSL
 - GitHub CLI commands via the WSL2 Linux terminal
-- Publish changes to your live google sheet(s) using clasp from the command line - https://developers.google.com/apps-script/guides/clasp
+- Publish changes to your google sheet [using clasp](https://developers.google.com/apps-script/guides/clasp) from the command line
 
 ## Changelog
 - 04-25-21 - Links out to Policies + Discord. Fixed a wave of Apply Formatting bugs, halfway through my Blocker list for submission to the Google Marketplace.
