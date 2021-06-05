@@ -8,7 +8,7 @@ import validate from '../src/validate';
  */
 export function test1DataValidation(): unitTestWrapper {
     return (): void => {
-        const coinName = 'CB_TEST1';
+        const coinName = 'VAL_TEST1';
         const sheet = createTempSheet(coinName);
         const initialData: sixPackDataRow[] = [
             ['', '', 0, 0, 0, 0],
@@ -42,7 +42,7 @@ export function test1DataValidation(): unitTestWrapper {
  */
 export function test2DataValidation(): unitTestWrapper {
     return (): void => {
-        const coinName = 'CB_TEST2';
+        const coinName = 'VAL_TEST2';
         const sheet = createTempSheet(coinName);
         const initialData: sixPackDataRow[] = [
             ['', '', 0, 0, 0, 0],
@@ -76,7 +76,7 @@ export function test2DataValidation(): unitTestWrapper {
  */
 export function test3DataValidation(): unitTestWrapper {
     return (): void => {
-        const coinName = 'CB_TEST3';
+        const coinName = 'VAL_TEST3';
         const sheet = createTempSheet(coinName);
         const initialData: sixPackDataRow[] = [
             ['', '', 0, 0, 0, 0],

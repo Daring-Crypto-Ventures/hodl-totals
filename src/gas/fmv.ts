@@ -2,40 +2,52 @@
  * @NotOnlyCurrentDoc Limits the script to only accessing the current sheet.
  *
  */
+import { completeDataRow } from '../types';
 
-export default function calcFiatValuesFromFMV(sheet: GoogleAppsScript.Spreadsheet.Sheet, lastRow: number): void {
-    const purchasedCol = sheet.getRange('C:C').getValues();
-    const soldCol = sheet.getRange('E:E').getValues();
-    const firstFMVcol = sheet.getRange('K:K').getValues();
-
+export default function calcFiatValuesFromFMV(
+    sheet: GoogleAppsScript.Spreadsheet.Sheet | null,
+    data: completeDataRow[] | null,
+    acquiredCol: string[][],
+    disposedCol: string[][],
+    firstFMVcol: string[][],
+    lastRow: number
+): void {
     for (let row = 2; row < lastRow; row++) {
         const highValue = firstFMVcol[row][0] || 'value known';
 
         // if value known don't include formulas to calculate the price from FMV columns
         if (highValue !== 'value known') {
             // calculate fiat price based on other columns
-            if (purchasedCol[row][0]) {
-                sheet.getRange(`D${row + 1}`).setValue(`=C${row + 1}*M${row + 1}`);
-            } else if (soldCol[row][0]) {
-                sheet.getRange(`F${row + 1}`).setValue(`=E${row + 1}*M${row + 1}`);
+            if (acquiredCol[row][0]) {
+                fillInCell(sheet, data, row, 3, `=C${row + 1}*M${row + 1}`);
+            } else if (disposedCol[row][0]) {
+                fillInCell(sheet, data, row, 5, `=E${row + 1}*M${row + 1}`);
             }
 
             // unless the price is known, calculate via averaging high/low price for that date
             if (highValue !== 'price known') {
-                sheet.getRange(`M${row + 1}`).setValue(`=AVERAGE(K${row + 1},L${row + 1})`);
+                fillInCell(sheet, data, row, 12, `=AVERAGE(K${row + 1},L${row + 1})`);
             } else {
                 // copy the price known sentinel value to any cells to the right
-                sheet.getRange(`L${row + 1}`).setValue('price known');
+                fillInCell(sheet, data, row, 11, 'price known');
             }
         } else {
-        // copy the price known sentinel value to any cells to the right
-            sheet.getRange(`K${row + 1}`).setValue('value known'); // if was empty, need to fill it in here
-            sheet.getRange(`L${row + 1}`).setValue('value known');
-            sheet.getRange(`M${row + 1}`).setValue('value known');
-
-            // when marked 'value known', bold the hard-coded FIAT value entered for buy or for sale
-            sheet.getRange(`D${row + 1}`).setFontWeight('bold');
-            sheet.getRange(`F${row + 1}`).setFontWeight('bold');
+            // copy the price known sentinel value to any cells to the right
+            fillInCell(sheet, data, row, 10, 'value known'); // if was empty, need to fill it in here
+            fillInCell(sheet, data, row, 11, 'value known');
+            fillInCell(sheet, data, row, 12, 'value known');
         }
+    }
+}
+
+/**
+ * wrapper for asserting a value that could come from either sheet or data table
+ *
+ */
+function fillInCell(sheet: GoogleAppsScript.Spreadsheet.Sheet | null, data: completeDataRow[] | null, posX: number, posY: number, value: string): void {
+    if ((typeof ScriptApp === 'undefined') && (data !== null)) {
+        data[posX][posY] = value;
+    } else if (sheet !== null) {
+        sheet.getRange(posX + 1, posY + 1).setValue(value);
     }
 }

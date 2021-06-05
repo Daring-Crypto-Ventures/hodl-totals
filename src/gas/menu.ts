@@ -172,7 +172,20 @@ export function formatSheet_(): GoogleAppsScript.Spreadsheet.Sheet {
 
     // iterate through the rows in the sheet to
     // set col {Fiat Cost} and col {Fiat Received} to be calculated based on other cells in the sheet
-    calcFiatValuesFromFMV(sheet, lastRow);
+    const acquiredCol = sheet.getRange('C:C').getValues();
+    const disposedCol = sheet.getRange('E:E').getValues();
+    const firstFMVcol = sheet.getRange('K:K').getValues();
+    calcFiatValuesFromFMV(sheet, null, acquiredCol, disposedCol, firstFMVcol, lastRow);
+
+    // when marked 'value known', bold the hard-coded FIAT value entered for buy or for sale
+    for (let row = 2; row < lastRow; row++) {
+        const highValue = firstFMVcol[row][0] || 'value known';
+        // if value known don't include formulas to calculate the price from FMV columns
+        if (highValue === 'value known') {
+            sheet.getRange(`D${row + 1}`).setFontWeight('bold');
+            sheet.getRange(`F${row + 1}`).setFontWeight('bold');
+        }
+    }
 
     // set col styles for {Status}, {Notes} and {transaction ID}
     sheet.getRange('G3:G').setFontColor('#424250').setFontStyle('italic').setHorizontalAlignment('center');
