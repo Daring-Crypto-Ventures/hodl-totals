@@ -345,8 +345,6 @@ export function test9CostBasis(): unitTestWrapper {
 /**
  * Used for Local testing of the FIFO Calculation function outside of the spreadsheet context
  *
- * TODO - reimplement to avoid array copies
- * https://stackoverflow.com/questions/51383031/slice-section-of-two-dimensional-array-in-javascript
  */
 function callCalculateFIFO(sheet: GoogleAppsScript.Spreadsheet.Sheet | null, coinName: string, data: completeDataRow[], round = 1): string[][] {
     let annotations: string[][] = [];
@@ -357,7 +355,6 @@ function callCalculateFIFO(sheet: GoogleAppsScript.Spreadsheet.Sheet | null, coi
         validationData.forEach((row, rowIdx) => { validationData[rowIdx] = [...row]; });
         validationData.forEach(row => row.splice(6, 4));
 
-        // TODO - better to include this error in array at expected (x,y) location?
         assert((validate(validationData as unknown as sixPackDataRow[]) === ''), true, `Round ${round} Data validated`);
         const dateDisplayValues = validationData.map(row => [row[0], '']); // empty str makes this a 2D array of strings for getLastRowWithDataPresent()
         const lastRow = getLastRowWithDataPresent(dateDisplayValues);

@@ -100,13 +100,6 @@ export function formatSheet_(): GoogleAppsScript.Spreadsheet.Sheet {
     const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
     const desiredCurrency = sheet.getName().replace(/ *\([^)]*\) */g, '');
 
-    // TODO add configurable "# digits to the right to show' here
-    // and then use it down below to set format on COIN columns
-
-    // TODO instead of 2 row tall header, explore using Groups: an association between an interval of contiguous
-    // rows or columns that can be expanded or collapsed as a unit to hide/show the rows or columns
-    // https://developers.google.com/apps-script/reference/spreadsheet/group
-
     // populate the two-row-tall header cells
     const header1part1 = ['', '', 'Inflow', '', 'Outflow', '', 'Calculated', '', ''];
     const header1part2 = ['Fair Mkt Value', '', '', 'Transaction Details', '', ''];
@@ -186,8 +179,7 @@ export function formatSheet_(): GoogleAppsScript.Spreadsheet.Sheet {
     sheet.getRange('J3:J').setFontColor('#424250').setFontStyle('italic').setHorizontalAlignment('left');
     sheet.getRange('N3:N').setFontColor(null).setFontStyle(null).setHorizontalAlignment('left');
 
-    // TODO - special case formatting if coin price is > $100?  Annoying to list BTC-USD price to 6 decimal places.
-    // set cols {COIN High, Low, Price} to be foramtted into USD value but to 6 decimal places
+    // set cols {COIN High, Low, Price} to be formatted into USD value but to 6 decimal places
     sheet.getRange('K3:K').setNumberFormat('$#,######0.000000;$(#,######0.000000)').setFontColor(null).setFontStyle(null)
         .setHorizontalAlignment('right')
         .setFontFamily('Calibri')
@@ -210,7 +202,6 @@ export function formatSheet_(): GoogleAppsScript.Spreadsheet.Sheet {
 
     // set cols {Status, Cost Basis, Gain(Loss)} to be grayed background
     sheet.getRange('G3:I').setBackground('#EEEEEE');
-    // TODO explore using ProtectionType to prevent user edits to these cells
 
     // add the HODL Total summary footer
     // sheet.getRange('C'+(lastRow+2)+':F'+(lastRow+2)).setBorder(true,false,false,false,false,false,'black', SpreadsheetApp.BorderStyle.DOUBLE);
@@ -257,9 +248,6 @@ function setValidationRules(sheet: GoogleAppsScript.Spreadsheet.Sheet, categorie
  * Creates a new sheet containing step-by-step directions between the two
  * addresses on the "Settings" sheet that the user selected.
  *
- * TODO - figure out how to launch this as a Macro (this func doesn't show up as Importable Macro
- * https://developers.google.com/apps-script/guides/sheets/macros
- * as a macro, should be able to find a shirtcut key like Ctrl+Alt+Shift+Number
  */
 export function calculateFIFO_(): void {
     const sheet = SpreadsheetApp.getActive().getActiveSheet();
@@ -278,8 +266,6 @@ export function calculateFIFO_(): void {
         Logger.log('Clearing previously calculated values and notes.');
         sheet.getRange('G3:I').setValue('');
         sheet.getRange('E3:E').setNote('');
-
-        // TODO should go back thru notes on A3:A and roll back any previous attempts to split rows here?
 
         const lots = getOrderList(dateDisplayValues as [string][], lastRow, sheet.getRange('C:D').getValues() as [number, number][]);
         Logger.log(`Detected ${lots.length} purchases of ${sheet.getName().replace(/ *\([^)]*\) */g, '')}.`);
@@ -300,7 +286,6 @@ export function calculateFIFO_(): void {
         SpreadsheetApp.flush();
 
         // iterate through annotations and add to the Sheet
-        // TODO - use Map and Iterators here instead
         for (const annotation of annotations) {
             sheet.getRange(`${annotation[0]}`).setNote(annotation[1]);
         }

@@ -25,7 +25,6 @@ export function test1DataValidation(): unitTestWrapper {
                 result = validate(initialData);
             } else if (sheet !== null) {
                 // QUnit unit test
-                // TODO - find a way to avoid using as keyword here
                 result = validate(sheet.getRange('A:F').getValues() as sixPackLooselyTypedDataRow[]);
             }
             assert((result === ''), false, 'Test for Date Out of Order Validation : Validation Error : expected validation to fail');
@@ -60,7 +59,6 @@ export function test2DataValidation(): unitTestWrapper {
                 result = validate(initialData);
             } else if (sheet !== null) {
                 // QUnit unit test
-                // TODO - find a way to avoid using as keyword here
                 result = validate(sheet.getRange('A:F').getValues() as sixPackLooselyTypedDataRow[]);
             }
             assert((result === ''), false, 'Test for Coin Oversold Condition : Validation Error : expected validation to fail');
@@ -93,7 +91,6 @@ export function test3DataValidation(): unitTestWrapper {
                 result = validate(initialData);
             } else if (sheet !== null) {
                 // QUnit unit test
-                // TODO - find a way to avoid using as keyword here
                 result = validate(sheet.getRange('A:F').getValues() as sixPackLooselyTypedDataRow[]);
             }
             assert((result === ''), false, 'Test for Buy and Sell on Same Line : Validation Error : expected validation to fail');

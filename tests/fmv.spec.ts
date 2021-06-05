@@ -31,7 +31,6 @@ export default function test10FMV(): unitTestWrapper {
                 validationData.forEach(row => row.splice(6, 4));
 
                 assert((validate(validationData as unknown as sixPackDataRow[]) === ''), true, `Round ${round} Data validated`);
-                // TODO - impl version of this that doesn't operate on a sheet
                 // const dateDisplayValues = data.map(row => [row[0], '']); // empty str makes this a 2D array of strings for getLastRowWithDataPresent()
                 // const lastRow = getLastRowWithDataPresent(dateDisplayValues);
                 // calcFiatValuesFromFMV(sheet, lastRow);

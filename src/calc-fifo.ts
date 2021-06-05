@@ -9,7 +9,7 @@ export default function calculateFIFO(
     data: completeDataRow[],
     lots: [string, number, number, number][],
     sales: [string, number, number, number][]
-): [string, string][] { // TODO replace with Map<{ row, col }, string>
+): [string, string][] {
     let shift; // Integer
     let lotCnt; // Integer
     let lotCoinRemain; // Double
