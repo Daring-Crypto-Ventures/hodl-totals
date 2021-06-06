@@ -12,8 +12,6 @@ export default function validate(dateLotAndSaleValues: sixPackLooselyTypedDataRo
     let coinCheck;
     lastDate = 0;
     coinCheck = 0;
-    // TODO - find a way to avoid using as keyword here
-    // TODO - make it such that calling this doesn't modify the data array (by adding a blank row to the end)
     const lastRow = getLastRowWithDataPresent(dateLotAndSaleValues as string[][]);
 
     // ensure dates are in chronological order sorted from past to present

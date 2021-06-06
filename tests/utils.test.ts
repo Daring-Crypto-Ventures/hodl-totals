@@ -1,9 +1,6 @@
 // import { expect, test } from '@jest/globals';
 // import { strictEqual } from 'qunitjs' (v1.12.0-pre)
 
-// TODO - explore using other Qunit features as seen in GAS testing
-// https://script.google.com/home/projects/1cmwYQ6H7k6v3xNoFhhcASR8K2_JBJcgJ2W0WFNE8Sy3fAJzfE2Kpbh_M/edit
-
 /* global strictEqual */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
@@ -90,7 +87,6 @@ export function fillInTempSheet(sheet: GoogleAppsScript.Spreadsheet.Sheet | null
     // only if running in GAS environment, fill in columns of temp sheet
     if ((typeof ScriptApp !== 'undefined') && (sheet !== null)) {
         // fill the in the test data
-        // TODO - better/faster use of google APIs to batch set 2D array?
         for (let i = 2; i < data.length; i++) {
             sheet.getRange(i + 1, 1, 1, data[i].length).setValues([data[i]]);
         }

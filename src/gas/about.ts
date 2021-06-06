@@ -11,6 +11,4 @@ export default function showAboutDialog_(): void {
             .setHeight(300);
         SpreadsheetApp.getUi().showModalDialog(html, 'About HODL Totals');
     }
-
-    // TODO - find way to launch about HTML UI even when run locally
 }
