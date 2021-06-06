@@ -1,6 +1,14 @@
 import { test1DataValidation, test2DataValidation, test3DataValidation } from '../tests/validate.spec';
-import { test4CostBasis, test5CostBasis, test6CostBasis, test7CostBasis, test8CostBasis, test9CostBasis } from '../tests/cost-basis.spec';
-import test10FMV from '../tests/fmv.spec';
+import {
+    test1CostBasis,
+    test2CostBasis,
+    test3CostBasis,
+    test4CostBasis,
+    test5CostBasis,
+    test6CostBasis,
+    test7CostBasis
+} from '../tests/cost-basis.spec';
+import test1FMV from '../tests/fmv.spec';
 
 /**
  * First make sure the deploymentId for your script is set correclty in package.json
@@ -23,11 +31,11 @@ QUnit.helpers(this);
  */
 function testValidationFunctions(): void {
     // @ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
-    QUnit.test('test1 - Data Validation - Date Out of Order', test1DataValidation());
+    QUnit.test('Data Validation - Date Out of Order', test1DataValidation());
     // @ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
-    QUnit.test('test2 - Data Validation - Coin Oversold', test2DataValidation());
+    QUnit.test('Data Validation - Coin Oversold', test2DataValidation());
     // @ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
-    QUnit.test('test3 - Data Validation - Buy and Sell on Same Line', test3DataValidation());
+    QUnit.test('Data Validation - Buy and Sell on Same Line', test3DataValidation());
 }
 
 /**
@@ -36,17 +44,19 @@ function testValidationFunctions(): void {
  */
 function testCostBasisFunctions(): void {
     // @ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
-    QUnit.test('test4 - Cost Basis - Simple Partial Short-Term Sale (Two Rounds)', test4CostBasis());
+    QUnit.test('Cost Basis - Simple Partial Short-Term Sale (Two Rounds)', test1CostBasis());
     // @ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
-    QUnit.test('test5 - Cost Basis - Simple Whole Long-Term Sale (Two Rounds)', test5CostBasis());
+    QUnit.test('Cost Basis - Simple Whole Long-Term Sale (Two Rounds)', test2CostBasis());
     // @ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
-    QUnit.test('test6 - Cost Basis - Simple Term Split (Two Rounds)', test6CostBasis());
+    QUnit.test('Cost Basis - Simple Term Split (Two Rounds)', test3CostBasis());
     // @ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
-    QUnit.test('test7 - Cost Basis - No Sale (Two Rounds)', test7CostBasis());
+    QUnit.test('Cost Basis - No Sale (Two Rounds)', test4CostBasis());
     // @ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
-    QUnit.test('test8 - Cost Basis - Example Dataset (Two Rounds)', test8CostBasis());
+    QUnit.test('Cost Basis - Example Dataset (Two Rounds)', test5CostBasis());
     // @ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
-    QUnit.test('test9 - Cost Basis - Real Data with Term Split (Two Rounds)', test9CostBasis());
+    QUnit.test('Cost Basis - Real Data with Term Split (Two Rounds)', test6CostBasis());
+    // @ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
+    QUnit.test('Cost Basis - Simple Calc with all coins sold (Two Round)', test7CostBasis());
 }
 
 /**
@@ -56,7 +66,7 @@ function testCostBasisFunctions(): void {
 
 function testFairMktValueFunctions() {
     // @ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
-    QUnit.test('test10 - Fair Market Value - Example Dataset (One Round)', test10FMV());
+    QUnit.test('Fair Market Value - Example Dataset (One Round)', test1FMV());
 }
 
 /**

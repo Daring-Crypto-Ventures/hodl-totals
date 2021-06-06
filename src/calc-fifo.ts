@@ -71,7 +71,7 @@ export default function calculateFIFO(
 
             // if the remaining coin to sell is less than what is in the lot,
             // calculate and post the cost basis and the gain or loss
-            if (sellCoinRemain <= lotCoinRemain) {
+            if ((sellCoinRemain <= lotCoinRemain) || (Math.abs(sellCoinRemain - lotCoinRemain) <= ONE_SATOSHI)) {
                 if (Math.abs(sellCoinRemain - lotCoinRemain) <= ONE_SATOSHI) {
                     // all of this lot was sold
                     data[lotRow][6] = '100% Sold';
