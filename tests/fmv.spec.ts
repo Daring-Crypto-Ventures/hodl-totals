@@ -5,11 +5,11 @@ import validate from '../src/validate';
 import getLastRowWithDataPresent from '../src/last-row';
 
 /**
- * test10 for function calcFiatValuesFromFMV(sheet)
+ * test1 for function calcFiatValuesFromFMV(sheet)
  */
-export default function test10FMV(): unitTestWrapper {
+export default function test1FMV(): unitTestWrapper {
     return (): void => {
-        const coinName = 'FMV_TEST10';
+        const coinName = 'FMV_TEST1';
         const sheet = createTempSheet(coinName);
         const data: completeDataRow[] = [
             ['', '', 0, 0, 0, 0, '', 0, 0, '', '', '', ''],

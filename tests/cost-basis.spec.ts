@@ -6,11 +6,11 @@ import validate from '../src/validate';
 import getLastRowWithDataPresent from '../src/last-row';
 
 /**
- * test4 for function calculateFIFO(sheet, lots, sales)
+ * test1 for function calculateFIFO(sheet, lots, sales)
  */
-export function test4CostBasis(): unitTestWrapper {
+export function test1CostBasis(): unitTestWrapper {
     return (): void => {
-        const coinName = 'CB_TEST4';
+        const coinName = 'CB_TEST1';
         const sheet = createTempSheet(coinName);
         const data: completeDataRow[] = [
             ['', '', 0, 0, 0, 0, '', 0, 0, ''],
@@ -40,11 +40,11 @@ export function test4CostBasis(): unitTestWrapper {
 }
 
 /**
- * test5 for function calculateFIFO(sheet, lots, sales)
+ * test2 for function calculateFIFO(sheet, lots, sales)
  */
-export function test5CostBasis(): unitTestWrapper {
+export function test2CostBasis(): unitTestWrapper {
     return (): void => {
-        const coinName = 'CB_TEST5';
+        const coinName = 'CB_TEST2';
         const sheet = createTempSheet(coinName);
         const data: completeDataRow[] = [
             ['', '', 0, 0, 0, 0, '', 0, 0, ''],
@@ -73,11 +73,11 @@ export function test5CostBasis(): unitTestWrapper {
 }
 
 /**
- * test6 for function calculateFIFO(sheet, lots, sales)
+ * test3 for function calculateFIFO(sheet, lots, sales)
  */
-export function test6CostBasis(): unitTestWrapper {
+export function test3CostBasis(): unitTestWrapper {
     return (): void => {
-        const coinName = 'CB_TEST6';
+        const coinName = 'CB_TEST3';
         const sheet = createTempSheet(coinName);
         const data: completeDataRow[] = [
             ['', '', 0, 0, 0, 0, '', 0, 0, ''],
@@ -129,11 +129,11 @@ export function test6CostBasis(): unitTestWrapper {
 }
 
 /**
- * test7 for function calculateFIFO(sheet, lots, sales)
+ * test4 for function calculateFIFO(sheet, lots, sales)
  */
-export function test7CostBasis(): unitTestWrapper {
+export function test4CostBasis(): unitTestWrapper {
     return (): void => {
-        const coinName = 'CB_TEST7';
+        const coinName = 'CB_TEST4';
         const sheet = createTempSheet(coinName);
         const data: completeDataRow[] = [
             ['', '', 0, 0, 0, 0, '', 0, 0, ''],
@@ -158,11 +158,11 @@ export function test7CostBasis(): unitTestWrapper {
 }
 
 /**
- * test8 for function calculateFIFO(sheet, lots, sales)
+ * test5 for function calculateFIFO(sheet, lots, sales)
  */
-export function test8CostBasis(): unitTestWrapper {
+export function test5CostBasis(): unitTestWrapper {
     return (): void => {
-        const coinName = 'CB_TEST8';
+        const coinName = 'CB_TEST5';
         const sheet = createTempSheet(coinName);
         const data: completeDataRow[] = [
             ['', '', 0, 0, 0, 0, '', 0, 0, '', 'a'],
@@ -255,11 +255,11 @@ export function test8CostBasis(): unitTestWrapper {
 }
 
 /**
- * test9 for function calculateFIFO(sheet, lots, sales)
+ * test6 for function calculateFIFO(sheet, lots, sales)
  */
-export function test9CostBasis(): unitTestWrapper {
+export function test6CostBasis(): unitTestWrapper {
     return (): void => {
-        const coinName = 'CB_TEST9';
+        const coinName = 'CB_TEST6';
         const sheet = createTempSheet(coinName);
         const data: completeDataRow[] = [
             ['', '', 0, 0, 0, 0, '', 0, 0, ''],
@@ -332,6 +332,57 @@ export function test9CostBasis(): unitTestWrapper {
             const soldNote2 = annotations.shift() as string[];
             assert(soldNote2?.[0], 'E29', `Round ${round} Test for Lot Sold Hint : Hint Anchor point on row 29`);
             assert(soldNote2?.[1], 'Sold lots from row 14 on 2019-05-09 to row 27 on 2020-04-08.', `Round ${round} Test for Lot Sold Hint : Row 29 Sold : expected sold from row 14 to 27`);
+        };
+
+        fillInTempSheet(sheet, data as string[][]);
+        TestRun(1);
+        TestRun(2);
+
+        deleteTempSheet(sheet);
+    };
+}
+
+/**
+ * test7 for function calculateFIFO(sheet, lots, sales)
+ */
+export function test7CostBasis(): unitTestWrapper {
+    return (): void => {
+        const coinName = 'CB_TEST7';
+        const sheet = createTempSheet(coinName);
+        const data: completeDataRow[] = [
+            ['', '', 0, 0, 0, 0, '', 0, 0, ''],
+            ['', '', 0, 0, 0, 0, '', 0, 0, ''],
+            ['2018-10-27', 'Mining', 0.10348353, 0.23, 0, 0, '', 0, 0, ''],
+            ['2018-10-28', 'Mining', 0.01205424, 0.02, 0, 0, '', 0, 0, ''],
+            ['2018-10-31', 'Mining', 0.10012453, 0.19, 0, 0, '', 0, 0, ''],
+            ['2018-11-02', 'Mining', 0.10260444, 0.18, 0, 0, '', 0, 0, ''],
+            ['2018-11-04', 'Mining', 0.07621054, 0.14, 0, 0, '', 0, 0, ''],
+            ['2018-11-07', 'Mining', 0.10091816, 0.18, 0, 0, '', 0, 0, ''],
+            ['2018-11-10', 'Mining', 0.10321628, 0.18, 0, 0, '', 0, 0, ''],
+            ['2018-11-11', 'Mining', 0.04484832, 0.08, 0, 0, '', 0, 0, ''],
+            ['2018-11-13', 'Mining', 0.10099363, 0.15, 0, 0, '', 0, 0, ''],
+            ['2018-11-18', 'Mining', 0.06530715, 0.09, 0, 0, '', 0, 0, ''],
+            ['2021-01-17', 'Spent', 0, 0, 0.80975982, 0.09, '', 0, 0, ''],
+            ['2021-01-17', 'Tx Fee', 0, 0, 0.00000100, 0.00, '', 0, 0, '']];
+
+        const TestRun = function (round): void {
+            const annotations = callCalculateFIFO(sheet, coinName, data, round);
+
+            for (let j = 2; j < 12; j++) {
+                assertCell(sheet, data as string[][], j, 6, '100% Sold', `Round ${round} Test for Lot Sold In Full Later : Row ${j} Status : expected 100% sold`);
+                assertCell(sheet, data as string[][], j, 7, '0.00', `Round ${round} Test for Lot Sold In Full Later : Row ${j} Cost Basis : expected no cost basis`, 2);
+                assertCell(sheet, data as string[][], j, 8, '0.00', `Round ${round} Test for Lot Sold In Full Later : Row ${j} Gain(Loss) : expected no gain`, 2);
+            }
+            assertCell(sheet, data as string[][], 12, 6, 'Long-term', `Round ${round} Test for Split into Long-Term Sale : Row 28 Status : expected long-term cost basis`);
+            assertCell(sheet, data as string[][], 12, 7, '1.44', `Round ${round} Test for Split into Long-Term Sale : Row 28 Cost Basis : expected $69.67 cost basis`, 2);
+            assertCell(sheet, data as string[][], 12, 8, '-1.35', `Round ${round} Test for Split into Long-Term Sale : Row 28 Gain(Loss) : expected $5.46 gain`, 2);
+            assertCell(sheet, data as string[][], 13, 6, 'Long-term', `Round ${round} Test for Split into Short-Term Sale : Row 29 Status : expected short-term cost basis`);
+            assertCell(sheet, data as string[][], 13, 7, '0.00', `Round ${round} Test for Split into Short-Term Sale : Row 29 Cost Basis : expected $90.54 cost basis`, 2);
+            assertCell(sheet, data as string[][], 13, 8, '0.00', `Round ${round} Test for Split into Short-Term Sale : Row 29 Gain(Loss) : expected $(14.41) gain`, 2);
+
+            const soldNote1 = annotations.shift() as string[];
+            assert(soldNote1?.[0], 'E13', `Round ${round} Test for Lot Sold Hint : Hint Anchor point on row 13`);
+            assert(soldNote1?.[1], 'Sold lots from row 3 on 2018-10-27 to row 12 on 2018-11-18.', `Round ${round} Test for Lot Sold Hint : Row 5 Sold : expected sold from row 3 thru row 12`);
         };
 
         fillInTempSheet(sheet, data as string[][]);
