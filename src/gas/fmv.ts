@@ -19,23 +19,23 @@ export default function calcFiatValuesFromFMV(
         if (highValue !== 'value known') {
             // calculate fiat price based on other columns
             if (acquiredCol[row][0]) {
-                fillInCell(sheet, data, row, 3, `=C${row + 1}*M${row + 1}`);
+                fillInCell(sheet, data, row, 4, `=D${row + 1}*N${row + 1}`);
             } else if (disposedCol[row][0]) {
-                fillInCell(sheet, data, row, 5, `=E${row + 1}*M${row + 1}`);
+                fillInCell(sheet, data, row, 6, `=F${row + 1}*N${row + 1}`);
             }
 
             // unless the price is known, calculate via averaging high/low price for that date
             if (highValue !== 'price known') {
-                fillInCell(sheet, data, row, 12, `=AVERAGE(K${row + 1},L${row + 1})`);
+                fillInCell(sheet, data, row, 13, `=AVERAGE(L${row + 1},M${row + 1})`);
             } else {
                 // copy the price known sentinel value to any cells to the right
-                fillInCell(sheet, data, row, 11, 'price known');
+                fillInCell(sheet, data, row, 12, 'price known');
             }
         } else {
             // copy the price known sentinel value to any cells to the right
-            fillInCell(sheet, data, row, 10, 'value known'); // if was empty, need to fill it in here
-            fillInCell(sheet, data, row, 11, 'value known');
+            fillInCell(sheet, data, row, 11, 'value known'); // if was empty, need to fill it in here
             fillInCell(sheet, data, row, 12, 'value known');
+            fillInCell(sheet, data, row, 13, 'value known');
         }
     }
 }
