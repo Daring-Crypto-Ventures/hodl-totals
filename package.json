@@ -40,7 +40,7 @@
     "@types/google-apps-script": "^1.0.34",
     "@types/jest": "^26.0.23",
     "@typescript-eslint/eslint-plugin": "^4.28.1",
-    "coveralls": "^3.1.0",
+    "coveralls": "^3.1.1",
     "eslint": "^7.28.0",
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-jest": "^24.3.6",
