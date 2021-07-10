@@ -8,7 +8,7 @@ import {
     test6CostBasis,
     test7CostBasis
 } from '../tests/cost-basis.spec';
-import test1FMV from '../tests/fmv.spec';
+import { test1FMV, test2FMV } from '../tests/fmv.spec';
 
 /**
  * First make sure the deploymentId for your script is set correclty in package.json
@@ -66,7 +66,9 @@ function testCostBasisFunctions(): void {
 
 function testFairMktValueFunctions() {
     // @ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
-    QUnit.test('Fair Market Value - Example Dataset (One Round)', test1FMV());
+    QUnit.test('Fair Market Value - Example Dataset', test1FMV());
+    // @ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
+    QUnit.test('Fair Market Value - Strategies', test2FMV());
 }
 
 /**
