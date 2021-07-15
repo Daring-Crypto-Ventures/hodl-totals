@@ -277,7 +277,7 @@ export function calculateFIFO_(): void {
 
         for (let i = 2; i < data.length; i++) {
             // scan just the inflow & outlfow data of the row we're about to write, to avoid writing zeroes to previously empty cells
-            for (let j = 0; j < 7; j++) {
+            for (let j = 0; j < 6; j++) {
                 if (Number(data[i][j]) === 0) {
                     data[i][j] = '';
                 }

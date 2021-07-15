@@ -13,6 +13,7 @@ export function setFMVformulasOnSheet(
     lastRow: number
 ): void {
     for (let row = 2; row < lastRow; row++) {
+        // TODO switch off the strategy choice, rather than fake values in the FMV columns
         const highValue = firstFMVcol[row][0] || 'value known';
 
         // if value known don't include formulas to calculate the price from FMV columns
@@ -28,10 +29,12 @@ export function setFMVformulasOnSheet(
             if (highValue !== 'price known') {
                 fillInCell(sheet, data, row, 13, `=AVERAGE(L${row + 1},M${row + 1})`);
             } else {
+                // TODO stop including fake values in the FMV columns, as it breaks switching strategies
                 // copy the price known sentinel value to any cells to the right
                 fillInCell(sheet, data, row, 12, 'price known');
             }
         } else {
+            // TODO stop including fake values in the FMV columns, as it breaks switching strategies
             // copy the price known sentinel value to any cells to the right
             fillInCell(sheet, data, row, 11, 'value known'); // if was empty, need to fill it in here
             fillInCell(sheet, data, row, 12, 'value known');

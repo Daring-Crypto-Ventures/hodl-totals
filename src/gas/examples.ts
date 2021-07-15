@@ -24,6 +24,7 @@ export function loadCostBasisExample_(): GoogleAppsScript.Spreadsheet.Sheet | nu
 
 function costBasisExample(sheet: GoogleAppsScript.Spreadsheet.Sheet): void {
     // sample data set
+    // TODO stop including value known values in the FMV columns, as it breaks switching strategies
     const initialData: string[][] = [
         ['2017/01/01', 'Gift Received', 'Value Known', '0.20000000', '2000.00', '', '', '', '', '', 'Enter coin buys in the left-hand columns. Include fees in the cost.', 'value known', '', ''],
         ['2018/02/01', 'USD Deposit', 'Value Known', '0.60000000', '6000.00', '', '', '', '', '', 'Enter everything in chronological order.', 'value known', '', ''],
@@ -61,6 +62,7 @@ export function loadFMVExample_(): GoogleAppsScript.Spreadsheet.Sheet | null {
 
 function fmvExample(sheet: GoogleAppsScript.Spreadsheet.Sheet): void {
     // sample data set
+    // TODO stop including value known, price known vlaues in the FMV columns, as it breaks switching strategies
     const initialData: string[][] = [
         ['2015-12-01', 'USD Deposit', 'Avg Daily Price Variation', '1.00000000', '', '', '', '', '', '', 'Grab High/Lows from historical values tab on https://coinmarketcap.com', '1.111100', '0.992222', ''],
         ['2016-02-29', 'USD Deposit', 'Value Known', '1.00000000', '1', '', '', '', '', '', 'If USD amount paid to receive the coin is known, enter in col C and \'value known\' in col J', 'value known', 'value known', ''],
