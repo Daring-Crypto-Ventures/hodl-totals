@@ -3,7 +3,7 @@
  *
  */
 import newCategorySheet from './categories';
-import calcFiatValuesFromFMV from './fmv';
+import { setFMVformulasOnSheet } from './fmv';
 import calculateFIFO from '../calc-fifo';
 import getOrderList from '../orders';
 import validate from '../validate';
@@ -175,7 +175,7 @@ export function formatSheet_(): GoogleAppsScript.Spreadsheet.Sheet {
     const acquiredCol = sheet.getRange('D:D').getValues();
     const disposedCol = sheet.getRange('F:F').getValues();
     const firstFMVcol = sheet.getRange('L:L').getValues();
-    calcFiatValuesFromFMV(sheet, null, acquiredCol, disposedCol, firstFMVcol, lastRow);
+    setFMVformulasOnSheet(sheet, null, acquiredCol, disposedCol, firstFMVcol, lastRow);
 
     // set col styles for {Status}, {Notes} and {transaction ID}
     sheet.getRange('H3:H').setFontColor('#424250').setFontStyle('italic').setHorizontalAlignment('center');
