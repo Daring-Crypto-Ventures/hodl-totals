@@ -172,10 +172,10 @@ export function formatSheet_(): GoogleAppsScript.Spreadsheet.Sheet {
 
     // iterate through the rows in the sheet to
     // set col {Fiat Cost} and col {Fiat Received} to be calculated based on other cells in the sheet
+    const strategyCol = sheet.getRange('C:C').getValues();
     const acquiredCol = sheet.getRange('D:D').getValues();
     const disposedCol = sheet.getRange('F:F').getValues();
-    const firstFMVcol = sheet.getRange('L:L').getValues();
-    setFMVformulasOnSheet(sheet, null, acquiredCol, disposedCol, firstFMVcol, lastRow);
+    setFMVformulasOnSheet(sheet, null, strategyCol, acquiredCol, disposedCol, lastRow);
 
     // set col styles for {Status}, {Notes} and {transaction ID}
     sheet.getRange('H3:H').setFontColor('#424250').setFontStyle('italic').setHorizontalAlignment('center');
@@ -276,8 +276,8 @@ export function calculateFIFO_(): void {
         const annotations = calculateFIFO(coinName, data, lots, sales);
 
         for (let i = 2; i < data.length; i++) {
-            // scan just the inflow & outlfow data of the row we're about to write, to avoid writing zeroes to previously empty cells
-            for (let j = 0; j < 6; j++) {
+            // scan just the inflow & outflow data of the row we're about to write, to avoid writing zeroes to previously empty cells
+            for (let j = 0; j < 7; j++) {
                 if (Number(data[i][j]) === 0) {
                     data[i][j] = '';
                 }

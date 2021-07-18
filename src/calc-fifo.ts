@@ -165,6 +165,7 @@ export default function calculateFIFO(
                         // create the new row for the short-term part of the term split
                         data.splice(sellRow + shift, 0, [...data[sellRow + shift - 1]]);
                         // TODO copy any attached FMV notes over from old row to new row also
+                        // TODO copy any FMV cell formatting over from old row to new row also
                         // Row numbers are based on the Google Sheet row which includes a +3 offset
                         annotations.push([`A${sellRow + shift + 1}`, splitNoteText]);
                         data[sellRow + shift][0] = originalDate;

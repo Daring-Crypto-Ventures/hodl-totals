@@ -51,7 +51,7 @@ export function assertCell(
         // QUnit unit test
         if (digitsAfterDecimal !== 0) {
             // @ts-expect-error Cannot find QUnit assertions as no type declarations exist for this library, names are present when loaded in GAS
-            strictEqual(sheet.getRange(rowIdx + 1, colIdx + 1).getValue().toFixed(digitsAfterDecimal), expected, detail);
+            strictEqual(Number(sheet.getRange(rowIdx + 1, colIdx + 1).getValue()).toFixed(digitsAfterDecimal), expected, detail);
         } else {
             // @ts-expect-error Cannot find QUnit assertions as no type declarations exist for this library, names are present when loaded in GAS
             strictEqual(sheet.getRange(rowIdx + 1, colIdx + 1).getValue(), expected, detail);
