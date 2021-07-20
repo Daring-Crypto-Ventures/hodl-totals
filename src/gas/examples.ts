@@ -63,9 +63,9 @@ function fmvExample(sheet: GoogleAppsScript.Spreadsheet.Sheet): void {
     // sample data set
     const initialData: string[][] = [
         ['2015-12-01', 'USD Deposit', 'Avg Daily Price Variation', '1.00000000', '', '', '', '', '', '', 'Grab High/Lows from historical values tab on https://coinmarketcap.com', '1.111100', '0.992222', ''],
-        ['2016-02-29', 'USD Deposit', 'Value Known', '1.00000000', '1', '', '', '', '', '', 'If USD amount paid to receive the coin is known, enter in col C and \'value known\' in col J', '', '', ''],
-        ['2016-03-01', 'Spent', 'Value Known', '', '', '1.00000000', '5', '', '', '', 'If USD amount received for the coin is known, enter in col E and \'value known\' in col J', '', '', ''],
-        ['2018-02-28', 'USD Deposit', 'Price Known', '23.00000000', '', '', '', '', '', '', 'If USD purchase/sale price per coin is known, enter in col L and \'price known\' in col J', '', '', '34'],
+        ['2016-02-29', 'USD Deposit', 'Value Known', '1.00000000', '1', '', '', '', '', '', 'If USD amount paid to receive the coin is known, enter in the Fiat Value column and set strategy to \'Value Known\'', '', '', ''],
+        ['2016-03-01', 'Spent', 'Value Known', '', '', '1.00000000', '5', '', '', '', 'If USD amount received for the coin is known, enter the in the Fiat Value column and set strategy to \'Value Known\'', '', '', ''],
+        ['2018-02-28', 'USD Deposit', 'Price Known', '23.00000000', '', '', '', '', '', '', 'If USD purchase/sale price per coin is known, enter in the FMV Price column and set strategy to \'Price Known\'', '', '', '34'],
         ['2020-04-01', 'Traded', 'Avg Daily Price Variation', '', '', '2.00000000', '', '', '', '', 'High/Low cells can contain formulas that translate sales of coin to BTC, to USD.', '2.312002', '1.8222', ''],
         ['2020-04-02', 'USD Withdrawal', 'Avg Daily Price Variation', '', '', '20.00000000', '', '', '', '', 'i.e. Sale Outcome Known: binance.us traded 20 TEST for 0.0003561 BTC', '=0.0003561*7088.25', '=0.0003561*6595.92', ''],
         ['2020-05-31', 'Passive Airdrop', 'Avg Daily Price Variation', '26.92000000', '', '', '', '', '', '', 'i.e. Purchase Price Known: coinbase.com traded BTC for 26.92 TEST @ 0.0069319', '=0.0069319*9700.34/D9', '=0.0069319*9432.3/D9', '']

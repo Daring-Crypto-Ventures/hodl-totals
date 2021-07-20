@@ -282,6 +282,7 @@ export function calculateFIFO_(): void {
                     data[i][j] = '';
                 }
             }
+            // BUG this replaces any formulas with their calculated values which is wrong!
             sheet.getRange(i + 1, 1, 1, data[i].length).setValues([data[i]]);
         }
         SpreadsheetApp.flush();
