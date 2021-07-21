@@ -9,3 +9,4 @@ export type sevenPackLooselyTypedDataRow = [string, string, string, string | num
 
 // types used for cost basis calculation
 export type completeDataRow = [string, string, string, number, number, number, number, string, number, number, ...string[] ];
+export type formulaDataRow = [ ...string[] ];

@@ -1,5 +1,5 @@
 import { unitTestWrapper, assert, assertCell, createTempSheet, fillInTempSheet, deleteTempSheet } from './utils.test';
-import { sevenPackDataRow, completeDataRow } from '../src/types';
+import { sevenPackDataRow, completeDataRow, formulaDataRow } from '../src/types';
 import calculateFIFO from '../src/calc-fifo';
 import getOrderList from '../src/orders';
 import validate from '../src/validate';
@@ -421,10 +421,13 @@ function callCalculateFIFO(sheet: GoogleAppsScript.Spreadsheet.Sheet | null, coi
         salesData.forEach(row => row.splice(0, 5)); // split out and remove date, category, FMV strategy and lot columns
         salesData.forEach(row => row.splice(2, row.length - 2)); // remove all remaining columns to the right
 
+        // make an empty 2D array same size and shape as the data array, to represent formulas
+        const formulaData = data.map(x => x.map(() => '')) as formulaDataRow[];
+
         // do the cost basis calc
         const lots = getOrderList(dateDisplayValues as [string][], lastRow, lotData as unknown as [number, number][]);
         const sales = getOrderList(dateDisplayValues as [string][], lastRow, salesData as unknown as [number, number][]);
-        annotations = calculateFIFO(coinName, data, lots, sales);
+        annotations = calculateFIFO(coinName, data, formulaData, lots, sales);
     } else if (sheet !== null) {
         // QUnit unit test
         assert((validate(sheet.getRange('A:G').getValues() as sevenPackDataRow[]) === ''), true, `Round ${round} Data validated`);
@@ -433,7 +436,10 @@ function callCalculateFIFO(sheet: GoogleAppsScript.Spreadsheet.Sheet | null, coi
         const lots = getOrderList(dateDisplayValues as [string][], lastRow, sheet.getRange('D:E').getValues() as [number, number][]);
         const sales = getOrderList(dateDisplayValues as [string][], lastRow, sheet.getRange('F:G').getValues() as [number, number][]);
 
-        annotations = calculateFIFO(coinName, data, lots, sales);
+        // make an empty 2D array same size and shape as the data array, to represent formulas
+        const formulaData = data.map(x => x.map(() => '')) as formulaDataRow[];
+
+        annotations = calculateFIFO(coinName, data, formulaData, lots, sales);
         fillInTempSheet(sheet, data as string[][]);
     }
     annotations.sort((e1, e2) => { if (e1[0] < e2[0]) { return -1; } if (e1[0] > e2[0]) { return 1; } return 0; });
