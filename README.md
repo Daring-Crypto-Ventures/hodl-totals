@@ -76,4 +76,4 @@ COMING SOON - Free Training Videos!
 Did this save you a tax prep headache?
 
 Support development with a BTC donation: [38Ehpz3XutgoVEUZWtrXvrWTLJetkDZF5s](https://www.blockchain.com/btc/address/38Ehpz3XutgoVEUZWtrXvrWTLJetkDZF5s)
-or a VRSC donation to dogracer.vrsc@
+or a VRSC donation to DCV@
