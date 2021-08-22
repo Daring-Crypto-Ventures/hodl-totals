@@ -80,7 +80,6 @@ export default function newCategorySheet(): GoogleAppsScript.Spreadsheet.Sheet |
             const range = SpreadsheetApp.getActive().getRange(`F${j + 2}`);
             const richValue = SpreadsheetApp.newRichTextValue()
                 .setText(justificationLinks[j][0])
-                // @ts-expect-error Cannot find name setLinkUrl as no type declarations exists for this function, name is present when loaded in GAS
                 .setLinkUrl((justificationLinks[j][1] === '') ? null : justificationLinks[j][1])
                 .build();
             range.setRichTextValue(richValue);

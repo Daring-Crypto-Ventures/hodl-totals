@@ -1,4 +1,4 @@
-import { completeDataRow } from './types';
+import { completeDataRow, formulaDataRow } from './types';
 
 /**
  * Using the FIFO method calculate short and long term gains from the data.
@@ -7,6 +7,7 @@ import { completeDataRow } from './types';
 export default function calculateFIFO(
     coinname: string,
     data: completeDataRow[],
+    formulaData: formulaDataRow[], // TODO don't pass this in, find a better way for caller to track what rows got added
     lots: [string, number, number, number][],
     sales: [string, number, number, number][]
 ): [string, string][] {
@@ -164,7 +165,10 @@ export default function calculateFIFO(
                         shift += 1;
                         // create the new row for the short-term part of the term split
                         data.splice(sellRow + shift, 0, [...data[sellRow + shift - 1]]);
+                        formulaData.splice(sellRow + shift, 0, [...formulaData[sellRow + shift - 1]]);
+
                         // TODO copy any attached FMV notes over from old row to new row also
+                        // TODO copy any FMV cell formatting over from old row to new row also
                         // Row numbers are based on the Google Sheet row which includes a +3 offset
                         annotations.push([`A${sellRow + shift + 1}`, splitNoteText]);
                         data[sellRow + shift][0] = originalDate;

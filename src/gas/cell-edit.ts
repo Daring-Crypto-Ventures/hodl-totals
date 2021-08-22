@@ -20,10 +20,11 @@ export default function onEdit(e: GoogleAppsScript.Events.SheetsOnEdit): void {
         if ((e.range.getColumn() === 3) && (rowFMVstrategyChange >= 3)) {
             // update the FMV columns
             const newStrategy = e.value;
+            const oldStrategy = e.oldValue;
             const data = sheet.getRange('A:N').getValues() as completeDataRow[];
             const acquired = sheet.getRange(`D${rowFMVstrategyChange}`).getValue();
             const disposed = sheet.getRange(`F${rowFMVstrategyChange}`).getValue();
-            setFMVStrategyOnRow(sheet, rowFMVstrategyChange - 1, newStrategy, data, acquired, disposed);
+            setFMVStrategyOnRow(sheet, rowFMVstrategyChange - 1, data, newStrategy, acquired, disposed, oldStrategy);
         }
     }
 }

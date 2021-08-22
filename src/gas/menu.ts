@@ -3,12 +3,12 @@
  *
  */
 import newCategorySheet from './categories';
-import calcFiatValuesFromFMV from './fmv';
+import { setFMVformulasOnSheet } from './fmv';
 import calculateFIFO from '../calc-fifo';
 import getOrderList from '../orders';
 import validate from '../validate';
 import getLastRowWithDataPresent from '../last-row';
-import { completeDataRow, sevenPackLooselyTypedDataRow } from '../types';
+import { completeDataRow, formulaDataRow, sevenPackLooselyTypedDataRow } from '../types';
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
@@ -172,10 +172,10 @@ export function formatSheet_(): GoogleAppsScript.Spreadsheet.Sheet {
 
     // iterate through the rows in the sheet to
     // set col {Fiat Cost} and col {Fiat Received} to be calculated based on other cells in the sheet
+    const strategyCol = sheet.getRange('C:C').getValues();
     const acquiredCol = sheet.getRange('D:D').getValues();
     const disposedCol = sheet.getRange('F:F').getValues();
-    const firstFMVcol = sheet.getRange('L:L').getValues();
-    calcFiatValuesFromFMV(sheet, null, acquiredCol, disposedCol, firstFMVcol, lastRow);
+    setFMVformulasOnSheet(sheet, null, strategyCol, acquiredCol, disposedCol, lastRow);
 
     // set col styles for {Status}, {Notes} and {transaction ID}
     sheet.getRange('H3:H').setFontColor('#424250').setFontStyle('italic').setHorizontalAlignment('center');
@@ -260,6 +260,7 @@ export function calculateFIFO_(): void {
 
     if (validationErrMsg === '') {
         const data = sheet.getRange('A:Q').getValues() as completeDataRow[];
+        const formulaData = sheet.getRange('A:Q').getFormulas() as formulaDataRow[];
         const dateDisplayValues = sheet.getRange('A:A').getDisplayValues();
         const lastRow = getLastRowWithDataPresent(dateDisplayValues);
 
@@ -273,13 +274,18 @@ export function calculateFIFO_(): void {
         const sales = getOrderList(dateDisplayValues as [string][], lastRow, sheet.getRange('F:G').getValues() as [number, number][]);
         Logger.log(`Detected ${sales.length} sales of ${sheet.getName().replace(/ *\([^)]*\) */g, '')}.`);
 
-        const annotations = calculateFIFO(coinName, data, lots, sales);
+        const annotations = calculateFIFO(coinName, data, formulaData, lots, sales);
 
         for (let i = 2; i < data.length; i++) {
-            // scan just the inflow & outlfow data of the row we're about to write, to avoid writing zeroes to previously empty cells
-            for (let j = 0; j < 7; j++) {
-                if (Number(data[i][j]) === 0) {
+            // scan just the inflow & outflow data of the row we're about to write
+            // avoid writing zeroes to previously empty cells (but write zeros to the Calculated columns)
+            // avoid overwriting any formulas used to calculate the values
+            for (let j = 0; j < 14; j++) {
+                if (((j < 7) || (j > 9)) && (Number(data[i][j]) === 0)) {
                     data[i][j] = '';
+                }
+                if (formulaData[i][j] !== '') {
+                    data[i][j] = formulaData[i][j];
                 }
             }
             sheet.getRange(i + 1, 1, 1, data[i].length).setValues([data[i]]);
