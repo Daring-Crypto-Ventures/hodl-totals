@@ -37,7 +37,7 @@
     "@google/clasp": "^2.3.2",
     "@ni/eslint-config": "^1.0.0",
     "@rollup/plugin-node-resolve": "^13.0.0",
-    "@types/google-apps-script": "^1.0.36",
+    "@types/google-apps-script": "^1.0.37",
     "@types/jest": "^26.0.24",
     "@typescript-eslint/eslint-plugin": "^4.29.2",
     "coveralls": "^3.1.1",
