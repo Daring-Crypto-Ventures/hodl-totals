@@ -1,5 +1,5 @@
 // import { expect, test } from '@jest/globals';
-import { unitTestWrapper } from '../../tests/utils.test';
+import { UnitTestWrapper } from '../../tests/utils.test';
 import { showNewCurrencyPrompt } from './menu';
 
 /**
@@ -8,7 +8,7 @@ import { showNewCurrencyPrompt } from './menu';
  */
 describe('Menu UI unit tests', testMenus());
 
-function testMenus(): unitTestWrapper {
+function testMenus(): UnitTestWrapper {
     return (): void => {
         if (typeof ScriptApp === 'undefined') {
             // jest unit test

@@ -1,4 +1,4 @@
-import { unitTestWrapper, assert, assertCell, createTempSheet, fillInTempSheet, deleteTempSheet } from './utils.test';
+import { UnitTestWrapper, assert, assertCell, createTempSheet, fillInTempSheet, deleteTempSheet } from './utils.test';
 import { SevenPackDataRow, CompleteDataRow } from '../src/types';
 import { setFMVformulasOnSheet } from '../src/gas/fmv';
 import validate from '../src/validate';
@@ -7,7 +7,7 @@ import getLastRowWithDataPresent from '../src/last-row';
 /**
  * test1 for function setFMVformulasOnSheet()
  */
-export function test1FMV(): unitTestWrapper {
+export function test1FMV(): UnitTestWrapper {
     return (): void => {
         const coinName = 'FMV_TEST1';
         const sheet = createTempSheet(coinName);
@@ -22,7 +22,7 @@ export function test1FMV(): unitTestWrapper {
             ['2020-04-02', '', 'Avg Daily Price Variation', 0, 0, 20.00000000, 0, '', 0, 0, '', '=0.0003561*7088.25', '=0.0003561*6595.92', ''],
             ['2020-05-31', '', 'Avg Daily Price Variation', 26.92000000, 0, 0, 0, '', 0, 0, '', '=0.0069319*9700.34/D9', '=0.0069319*9432.3/D9', '']
         ];
-        const TestRun = function (round): void {
+        const testRun = function (round: number): void {
             if (typeof ScriptApp === 'undefined') {
                 // jest unit test
                 // clone the data array, and trim down to data needed for validation
@@ -73,7 +73,7 @@ export function test1FMV(): unitTestWrapper {
         };
 
         fillInTempSheet(sheet, data as string[][]);
-        TestRun(1);
+        testRun(1);
 
         deleteTempSheet(sheet);
     };
@@ -82,7 +82,7 @@ export function test1FMV(): unitTestWrapper {
 /**
  * test2 for function setFMVformulasOnSheet(sheet)
  */
-export function test2FMV(): unitTestWrapper {
+export function test2FMV(): UnitTestWrapper {
     return (): void => {
         const coinName = 'FMV_TEST2';
         const sheet = createTempSheet(coinName);
@@ -96,7 +96,7 @@ export function test2FMV(): unitTestWrapper {
             ['2019-07-08', 'Traded', 'Avg Daily Price Variation', 51.19, 0, 0, 0, '', 0, 0, 'binance.com traded for 51.19 KMD for 0.00627589 BTC', '=0.00627589/51.19*12345.83', '=0.00627589/51.19*11393.37', ''],
             ['2019-10-04', 'Gift Received', 'Value Known', 0.00491033, 46.02, 0, 0, '', 0, 0, 'BTC recieved at Pretentious Party', '', '', '']
         ];
-        const TestRun = function (): void {
+        const testRun = function (): void {
             if (typeof ScriptApp === 'undefined') {
                 // jest unit test
                 // clone the data array, and trim down to data needed for validation
@@ -160,7 +160,7 @@ export function test2FMV(): unitTestWrapper {
         };
 
         fillInTempSheet(sheet, data as string[][]);
-        TestRun();
+        testRun();
 
         deleteTempSheet(sheet);
     };

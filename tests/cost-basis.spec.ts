@@ -1,4 +1,4 @@
-import { unitTestWrapper, assert, assertCell, createTempSheet, fillInTempSheet, deleteTempSheet } from './utils.test';
+import { UnitTestWrapper, assert, assertCell, createTempSheet, fillInTempSheet, deleteTempSheet } from './utils.test';
 import { SevenPackDataRow, CompleteDataRow, FormulaDataRow } from '../src/types';
 import calculateFIFO from '../src/calc-fifo';
 import getOrderList from '../src/orders';
@@ -8,7 +8,7 @@ import getLastRowWithDataPresent from '../src/last-row';
 /**
  * test1 for function calculateFIFO(sheet, lots, sales)
  */
-export function test1CostBasis(): unitTestWrapper {
+export function test1CostBasis(): UnitTestWrapper {
     return (): void => {
         const coinName = 'CB_TEST1';
         const sheet = createTempSheet(coinName);
@@ -42,7 +42,7 @@ export function test1CostBasis(): unitTestWrapper {
 /**
  * test2 for function calculateFIFO(sheet, lots, sales)
  */
-export function test2CostBasis(): unitTestWrapper {
+export function test2CostBasis(): UnitTestWrapper {
     return (): void => {
         const coinName = 'CB_TEST2';
         const sheet = createTempSheet(coinName);
@@ -75,7 +75,7 @@ export function test2CostBasis(): unitTestWrapper {
 /**
  * test3 for function calculateFIFO(sheet, lots, sales)
  */
-export function test3CostBasis(): unitTestWrapper {
+export function test3CostBasis(): UnitTestWrapper {
     return (): void => {
         const coinName = 'CB_TEST3';
         const sheet = createTempSheet(coinName);
@@ -131,7 +131,7 @@ export function test3CostBasis(): unitTestWrapper {
 /**
  * test4 for function calculateFIFO(sheet, lots, sales)
  */
-export function test4CostBasis(): unitTestWrapper {
+export function test4CostBasis(): UnitTestWrapper {
     return (): void => {
         const coinName = 'CB_TEST4';
         const sheet = createTempSheet(coinName);
@@ -160,7 +160,7 @@ export function test4CostBasis(): unitTestWrapper {
 /**
  * test5 for function calculateFIFO(sheet, lots, sales)
  */
-export function test5CostBasis(): unitTestWrapper {
+export function test5CostBasis(): UnitTestWrapper {
     return (): void => {
         const coinName = 'CB_TEST5';
         const sheet = createTempSheet(coinName);
@@ -257,7 +257,7 @@ export function test5CostBasis(): unitTestWrapper {
 /**
  * test6 for function calculateFIFO(sheet, lots, sales)
  */
-export function test6CostBasis(): unitTestWrapper {
+export function test6CostBasis(): UnitTestWrapper {
     return (): void => {
         const coinName = 'CB_TEST6';
         const sheet = createTempSheet(coinName);
@@ -345,7 +345,7 @@ export function test6CostBasis(): unitTestWrapper {
 /**
  * test7 for function calculateFIFO(sheet, lots, sales)
  */
-export function test7CostBasis(): unitTestWrapper {
+export function test7CostBasis(): UnitTestWrapper {
     return (): void => {
         const coinName = 'CB_TEST7';
         const sheet = createTempSheet(coinName);

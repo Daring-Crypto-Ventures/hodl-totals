@@ -1,5 +1,5 @@
 // import { expect, test } from '@jest/globals';
-import { unitTestWrapper } from '../../tests/utils.test';
+import { UnitTestWrapper } from '../../tests/utils.test';
 import showAboutDialog_ from './about';
 
 /**
@@ -8,7 +8,7 @@ import showAboutDialog_ from './about';
  */
 describe('About Dialog UI unit tests', testAbout());
 
-function testAbout(): unitTestWrapper {
+function testAbout(): UnitTestWrapper {
     return (): void => {
         if (typeof ScriptApp === 'undefined') {
             // jest unit test

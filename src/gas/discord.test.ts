@@ -1,5 +1,5 @@
 // import { expect, test } from '@jest/globals';
-import { unitTestWrapper } from '../../tests/utils.test';
+import { UnitTestWrapper } from '../../tests/utils.test';
 import openDiscordLink_ from './discord';
 
 /**
@@ -8,7 +8,7 @@ import openDiscordLink_ from './discord';
  */
 describe('Link to Discord unit tests', testDiscordLink());
 
-function testDiscordLink(): unitTestWrapper {
+function testDiscordLink(): UnitTestWrapper {
     return (): void => {
         if (typeof ScriptApp === 'undefined') {
             // jest unit test

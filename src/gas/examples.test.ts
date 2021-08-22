@@ -1,5 +1,5 @@
 // import { expect, test } from '@jest/globals';
-import { unitTestWrapper } from '../../tests/utils.test';
+import { UnitTestWrapper } from '../../tests/utils.test';
 import { loadCostBasisExample_, loadFMVExample_ } from './examples';
 
 /**
@@ -8,7 +8,7 @@ import { loadCostBasisExample_, loadFMVExample_ } from './examples';
  */
 describe('Examples unit tests', testExamples());
 
-function testExamples(): unitTestWrapper {
+function testExamples(): UnitTestWrapper {
     return (): void => {
         if (typeof ScriptApp === 'undefined') {
             // jest unit test

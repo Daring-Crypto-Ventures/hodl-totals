@@ -1,4 +1,4 @@
-import { unitTestWrapper, assert, createTempSheet, fillInTempSheet, deleteTempSheet } from './utils.test';
+import { UnitTestWrapper, assert, createTempSheet, fillInTempSheet, deleteTempSheet } from './utils.test';
 import { SevenPackDataRow, SevenPackLooselyTypedDataRow } from '../src/types';
 import validate from '../src/validate';
 
@@ -6,7 +6,7 @@ import validate from '../src/validate';
  * test1 for validate()
  *
  */
-export function test1DataValidation(): unitTestWrapper {
+export function test1DataValidation(): UnitTestWrapper {
     return (): void => {
         const coinName = 'VAL_TEST1';
         const sheet = createTempSheet(coinName);
@@ -18,7 +18,7 @@ export function test1DataValidation(): unitTestWrapper {
             ['2017-01-02', '', '', 0, 0, 0.5, 2000],
             ['2017-01-01', '', '', 0, 0, 1.0, 2000]];
 
-        const TestRun = function (): void {
+        const testRun = function (): void {
             let result = '';
             if (typeof ScriptApp === 'undefined') {
                 // jest unit test
@@ -31,7 +31,7 @@ export function test1DataValidation(): unitTestWrapper {
         };
 
         fillInTempSheet(sheet, initialData as string[][]);
-        TestRun();
+        testRun();
 
         deleteTempSheet(sheet);
     };
@@ -40,7 +40,7 @@ export function test1DataValidation(): unitTestWrapper {
 /**
  * test2 for function validate(sheet)
  */
-export function test2DataValidation(): unitTestWrapper {
+export function test2DataValidation(): UnitTestWrapper {
     return (): void => {
         const coinName = 'VAL_TEST2';
         const sheet = createTempSheet(coinName);
@@ -52,7 +52,7 @@ export function test2DataValidation(): unitTestWrapper {
             ['2017-01-03', '', '', 0, 0, 0.5, 2000],
             ['2017-01-04', '', '', 0, 0, 2.0, 2000]];
 
-        const TestRun = function (): void {
+        const testRun = function (): void {
             let result = '';
             if (typeof ScriptApp === 'undefined') {
                 // jest unit test
@@ -65,7 +65,7 @@ export function test2DataValidation(): unitTestWrapper {
         };
 
         fillInTempSheet(sheet, initialData as string[][]);
-        TestRun();
+        testRun();
 
         deleteTempSheet(sheet);
     };
@@ -74,7 +74,7 @@ export function test2DataValidation(): unitTestWrapper {
 /**
  * test3 for function validate(sheet)
  */
-export function test3DataValidation(): unitTestWrapper {
+export function test3DataValidation(): UnitTestWrapper {
     return (): void => {
         const coinName = 'VAL_TEST3';
         const sheet = createTempSheet(coinName);
@@ -85,7 +85,7 @@ export function test3DataValidation(): unitTestWrapper {
             ['2017-01-02', '', '', 1.0, 1000, 0.5, 0],
             ['2017-01-03', '', '', 0, 0, 0.5, 2000]];
 
-        const TestRun = function (): void {
+        const testRun = function (): void {
             let result = '';
             if (typeof ScriptApp === 'undefined') {
                 result = validate(initialData);
@@ -97,7 +97,7 @@ export function test3DataValidation(): unitTestWrapper {
         };
 
         fillInTempSheet(sheet, initialData as string[][]);
-        TestRun();
+        testRun();
 
         deleteTempSheet(sheet);
     };
