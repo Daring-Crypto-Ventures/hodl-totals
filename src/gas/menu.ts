@@ -8,7 +8,7 @@ import calculateFIFO from '../calc-fifo';
 import getOrderList from '../orders';
 import validate from '../validate';
 import getLastRowWithDataPresent from '../last-row';
-import { completeDataRow, formulaDataRow, sevenPackLooselyTypedDataRow } from '../types';
+import { CompleteDataRow, FormulaDataRow, SevenPackLooselyTypedDataRow } from '../types';
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
@@ -256,11 +256,11 @@ export function calculateFIFO_(): void {
 
     // sanity check the data in the sheet. only proceed if data is good
     Logger.log('Validating the data before starting calculations.');
-    const validationErrMsg = validate(sheet.getRange('A:G').getValues() as sevenPackLooselyTypedDataRow[]);
+    const validationErrMsg = validate(sheet.getRange('A:G').getValues() as SevenPackLooselyTypedDataRow[]);
 
     if (validationErrMsg === '') {
-        const data = sheet.getRange('A:Q').getValues() as completeDataRow[];
-        const formulaData = sheet.getRange('A:Q').getFormulas() as formulaDataRow[];
+        const data = sheet.getRange('A:Q').getValues() as CompleteDataRow[];
+        const formulaData = sheet.getRange('A:Q').getFormulas() as FormulaDataRow[];
         const dateDisplayValues = sheet.getRange('A:A').getDisplayValues();
         const lastRow = getLastRowWithDataPresent(dateDisplayValues);
 

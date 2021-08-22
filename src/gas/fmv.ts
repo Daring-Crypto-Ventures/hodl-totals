@@ -2,11 +2,11 @@
  * @NotOnlyCurrentDoc Limits the script to only accessing the current sheet.
  *
  */
-import { completeDataRow } from '../types';
+import { CompleteDataRow } from '../types';
 
 export function setFMVformulasOnSheet(
     sheet: GoogleAppsScript.Spreadsheet.Sheet | null,
-    data: completeDataRow[] | null,
+    data: CompleteDataRow[] | null,
     strategyCol: string[][],
     acquiredCol: string[][],
     disposedCol: string[][],
@@ -20,7 +20,7 @@ export function setFMVformulasOnSheet(
 export function setFMVStrategyOnRow(
     sheet: GoogleAppsScript.Spreadsheet.Sheet | null,
     row: number,
-    data: completeDataRow[] | null,
+    data: CompleteDataRow[] | null,
     strategy: string,
     acquired: string,
     disposed: string,
@@ -96,7 +96,7 @@ export function setFMVStrategyOnRow(
  * wrapper for asserting a value that could come from either sheet or data table
  *
  */
-function getCellValue(sheet: GoogleAppsScript.Spreadsheet.Sheet | null, data: completeDataRow[] | null, posX: number, posY: number): string {
+function getCellValue(sheet: GoogleAppsScript.Spreadsheet.Sheet | null, data: CompleteDataRow[] | null, posX: number, posY: number): string {
     if ((typeof ScriptApp === 'undefined') && (data !== null)) {
         return `${data[posX][posY]}`;
     }
@@ -115,7 +115,7 @@ function getCellValue(sheet: GoogleAppsScript.Spreadsheet.Sheet | null, data: co
  * wrapper for asserting a value that could come from either sheet or data table
  *
  */
-function fillInCell(sheet: GoogleAppsScript.Spreadsheet.Sheet | null, data: completeDataRow[] | null, posX: number, posY: number, value: string): void {
+function fillInCell(sheet: GoogleAppsScript.Spreadsheet.Sheet | null, data: CompleteDataRow[] | null, posX: number, posY: number, value: string): void {
     if ((typeof ScriptApp === 'undefined') && (data !== null)) {
         data[posX][posY] = value;
     } else if (sheet !== null) {
@@ -127,7 +127,7 @@ function fillInCell(sheet: GoogleAppsScript.Spreadsheet.Sheet | null, data: comp
  * wrapper for disabling a cell in either sheet or data table
  *
  */
-function drawCellDisabled(sheet: GoogleAppsScript.Spreadsheet.Sheet | null, data: completeDataRow[] | null, posX: number, posY: number, disable: boolean): void {
+function drawCellDisabled(sheet: GoogleAppsScript.Spreadsheet.Sheet | null, data: CompleteDataRow[] | null, posX: number, posY: number, disable: boolean): void {
     if ((typeof ScriptApp === 'undefined') && (data !== null)) {
         // no data table representation of this
     } else if (sheet !== null) {
@@ -143,7 +143,7 @@ function drawCellDisabled(sheet: GoogleAppsScript.Spreadsheet.Sheet | null, data
  * wrapper for removing all metadata from a row
  *
  */
-function clearStrategyValuesFromRow(sheet: GoogleAppsScript.Spreadsheet.Sheet | null, data: completeDataRow[] | null, strategy: string, posX: number): void {
+function clearStrategyValuesFromRow(sheet: GoogleAppsScript.Spreadsheet.Sheet | null, data: CompleteDataRow[] | null, strategy: string, posX: number): void {
     if ((typeof ScriptApp === 'undefined') && (data !== null)) {
         // no data table representation of this
     } else if (sheet !== null) {
@@ -160,7 +160,7 @@ function clearStrategyValuesFromRow(sheet: GoogleAppsScript.Spreadsheet.Sheet | 
  * wrapper for adding metadata to a cell in either sheet or data table
  *
  */
-function associateValueWithStrategy(sheet: GoogleAppsScript.Spreadsheet.Sheet | null, data: completeDataRow[] | null, strategy: string, posX: number, posY: number): void {
+function associateValueWithStrategy(sheet: GoogleAppsScript.Spreadsheet.Sheet | null, data: CompleteDataRow[] | null, strategy: string, posX: number, posY: number): void {
     if ((typeof ScriptApp === 'undefined') && (data !== null)) {
         // no data table representation of this
     } else if (sheet !== null) {
@@ -179,7 +179,7 @@ function associateValueWithStrategy(sheet: GoogleAppsScript.Spreadsheet.Sheet | 
  * wrapper for retoring a cell value from metadata associated with a cell
  *
  */
-function restoreValueAssociatedWithStrategy(sheet: GoogleAppsScript.Spreadsheet.Sheet | null, data: completeDataRow[] | null, strategy: string, posX: number): void {
+function restoreValueAssociatedWithStrategy(sheet: GoogleAppsScript.Spreadsheet.Sheet | null, data: CompleteDataRow[] | null, strategy: string, posX: number): void {
     if ((typeof ScriptApp === 'undefined') && (data !== null)) {
         // no data table representation of this
     } else if (sheet !== null) {

@@ -1,4 +1,4 @@
-import { completeDataRow, formulaDataRow } from './types';
+import { CompleteDataRow, FormulaDataRow } from './types';
 
 /**
  * Using the FIFO method calculate short and long term gains from the data.
@@ -6,8 +6,8 @@ import { completeDataRow, formulaDataRow } from './types';
  */
 export default function calculateFIFO(
     coinname: string,
-    data: completeDataRow[],
-    formulaData: formulaDataRow[], // TODO don't pass this in, find a better way for caller to track what rows got added
+    data: CompleteDataRow[],
+    formulaData: FormulaDataRow[], // TODO don't pass this in, find a better way for caller to track what rows got added
     lots: [string, number, number, number][],
     sales: [string, number, number, number][]
 ): [string, string][] {

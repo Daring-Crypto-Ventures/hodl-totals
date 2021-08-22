@@ -1,5 +1,5 @@
 import { unitTestWrapper, assert, assertCell, createTempSheet, fillInTempSheet, deleteTempSheet } from './utils.test';
-import { sevenPackDataRow, completeDataRow, formulaDataRow } from '../src/types';
+import { SevenPackDataRow, CompleteDataRow, FormulaDataRow } from '../src/types';
 import calculateFIFO from '../src/calc-fifo';
 import getOrderList from '../src/orders';
 import validate from '../src/validate';
@@ -12,7 +12,7 @@ export function test1CostBasis(): unitTestWrapper {
     return (): void => {
         const coinName = 'CB_TEST1';
         const sheet = createTempSheet(coinName);
-        const data: completeDataRow[] = [
+        const data: CompleteDataRow[] = [
             ['', '', '', 0, 0, 0, 0, '', 0, 0, ''],
             ['', '', '', 0, 0, 0, 0, '', 0, 0, ''],
             ['2017-01-01', '', '', 1.0, 1000, 0, 0, '', 0, 0, ''],
@@ -46,7 +46,7 @@ export function test2CostBasis(): unitTestWrapper {
     return (): void => {
         const coinName = 'CB_TEST2';
         const sheet = createTempSheet(coinName);
-        const data: completeDataRow[] = [
+        const data: CompleteDataRow[] = [
             ['', '', '', 0, 0, 0, 0, '', 0, 0, ''],
             ['', '', '', 0, 0, 0, 0, '', 0, 0, ''],
             ['2017-01-01', '', '', 1.0, 1000, 0, 0, '', 0, 0, ''],
@@ -79,7 +79,7 @@ export function test3CostBasis(): unitTestWrapper {
     return (): void => {
         const coinName = 'CB_TEST3';
         const sheet = createTempSheet(coinName);
-        const data: completeDataRow[] = [
+        const data: CompleteDataRow[] = [
             ['', '', '', 0, 0, 0, 0, '', 0, 0, ''],
             ['', '', '', 0, 0, 0, 0, '', 0, 0, ''],
             ['2017-01-01', '', '', 1.0, 1000, 0, 0, '', 0, 0, ''],
@@ -135,7 +135,7 @@ export function test4CostBasis(): unitTestWrapper {
     return (): void => {
         const coinName = 'CB_TEST4';
         const sheet = createTempSheet(coinName);
-        const data: completeDataRow[] = [
+        const data: CompleteDataRow[] = [
             ['', '', '', 0, 0, 0, 0, '', 0, 0, ''],
             ['', '', '', 0, 0, 0, 0, '', 0, 0, ''],
             ['2017-01-01', '', '', 1.0, 1000, 0, 0, '', 0, 0, '']];
@@ -164,7 +164,7 @@ export function test5CostBasis(): unitTestWrapper {
     return (): void => {
         const coinName = 'CB_TEST5';
         const sheet = createTempSheet(coinName);
-        const data: completeDataRow[] = [
+        const data: CompleteDataRow[] = [
             ['', '', '', 0, 0, 0, 0, '', 0, 0, '', 'a'],
             ['', '', '', 0, 0, 0, 0, '', 0, 0, '', 'b'],
             ['2017-01-01', '', '', 0.2, 2000, 0, 0, '', 0, 0, '', 'c'],
@@ -261,7 +261,7 @@ export function test6CostBasis(): unitTestWrapper {
     return (): void => {
         const coinName = 'CB_TEST6';
         const sheet = createTempSheet(coinName);
-        const data: completeDataRow[] = [
+        const data: CompleteDataRow[] = [
             ['', '', '', 0, 0, 0, 0, '', 0, 0, ''],
             ['', '', '', 0, 0, 0, 0, '', 0, 0, ''],
             ['2019-02-14', '', '', 201.89592700, 25.30, 0, 0, '', 0, 0, ''],
@@ -349,7 +349,7 @@ export function test7CostBasis(): unitTestWrapper {
     return (): void => {
         const coinName = 'CB_TEST7';
         const sheet = createTempSheet(coinName);
-        const data: completeDataRow[] = [
+        const data: CompleteDataRow[] = [
             ['', '', '', 0, 0, 0, 0, '', 0, 0, ''],
             ['', '', '', 0, 0, 0, 0, '', 0, 0, ''],
             ['2018-10-27', 'Mining', '', 0.10348353, 0.23, 0, 0, '', 0, 0, ''],
@@ -397,7 +397,7 @@ export function test7CostBasis(): unitTestWrapper {
  * Used for Local testing of the FIFO Calculation function outside of the spreadsheet context
  *
  */
-function callCalculateFIFO(sheet: GoogleAppsScript.Spreadsheet.Sheet | null, coinName: string, data: completeDataRow[], round = 1): string[][] {
+function callCalculateFIFO(sheet: GoogleAppsScript.Spreadsheet.Sheet | null, coinName: string, data: CompleteDataRow[], round = 1): string[][] {
     let annotations: string[][] = [];
     if (typeof ScriptApp === 'undefined') {
         // jest unit test
@@ -406,7 +406,7 @@ function callCalculateFIFO(sheet: GoogleAppsScript.Spreadsheet.Sheet | null, coi
         validationData.forEach((row, rowIdx) => { validationData[rowIdx] = [...row]; });
         validationData.forEach(row => row.splice(7, 4));
 
-        assert((validate(validationData as unknown as sevenPackDataRow[]) === ''), true, `Round ${round} Data validated`);
+        assert((validate(validationData as unknown as SevenPackDataRow[]) === ''), true, `Round ${round} Data validated`);
         const dateDisplayValues = validationData.map(row => [row[0], '']); // empty str makes this a 2D array of strings for getLastRowWithDataPresent()
         const lastRow = getLastRowWithDataPresent(dateDisplayValues);
 
@@ -422,7 +422,7 @@ function callCalculateFIFO(sheet: GoogleAppsScript.Spreadsheet.Sheet | null, coi
         salesData.forEach(row => row.splice(2, row.length - 2)); // remove all remaining columns to the right
 
         // make an empty 2D array same size and shape as the data array, to represent formulas
-        const formulaData = data.map(x => x.map(() => '')) as formulaDataRow[];
+        const formulaData = data.map(x => x.map(() => '')) as FormulaDataRow[];
 
         // do the cost basis calc
         const lots = getOrderList(dateDisplayValues as [string][], lastRow, lotData as unknown as [number, number][]);
@@ -430,14 +430,14 @@ function callCalculateFIFO(sheet: GoogleAppsScript.Spreadsheet.Sheet | null, coi
         annotations = calculateFIFO(coinName, data, formulaData, lots, sales);
     } else if (sheet !== null) {
         // QUnit unit test
-        assert((validate(sheet.getRange('A:G').getValues() as sevenPackDataRow[]) === ''), true, `Round ${round} Data validated`);
+        assert((validate(sheet.getRange('A:G').getValues() as SevenPackDataRow[]) === ''), true, `Round ${round} Data validated`);
         const dateDisplayValues = sheet.getRange('A:A').getDisplayValues();
         const lastRow = getLastRowWithDataPresent(dateDisplayValues);
         const lots = getOrderList(dateDisplayValues as [string][], lastRow, sheet.getRange('D:E').getValues() as [number, number][]);
         const sales = getOrderList(dateDisplayValues as [string][], lastRow, sheet.getRange('F:G').getValues() as [number, number][]);
 
         // make an empty 2D array same size and shape as the data array, to represent formulas
-        const formulaData = data.map(x => x.map(() => '')) as formulaDataRow[];
+        const formulaData = data.map(x => x.map(() => '')) as FormulaDataRow[];
 
         annotations = calculateFIFO(coinName, data, formulaData, lots, sales);
         fillInTempSheet(sheet, data as string[][]);

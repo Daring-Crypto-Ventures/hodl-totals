@@ -1,5 +1,5 @@
 import { unitTestWrapper, assert, createTempSheet, fillInTempSheet, deleteTempSheet } from './utils.test';
-import { sevenPackDataRow, sevenPackLooselyTypedDataRow } from '../src/types';
+import { SevenPackDataRow, SevenPackLooselyTypedDataRow } from '../src/types';
 import validate from '../src/validate';
 
 /**
@@ -10,7 +10,7 @@ export function test1DataValidation(): unitTestWrapper {
     return (): void => {
         const coinName = 'VAL_TEST1';
         const sheet = createTempSheet(coinName);
-        const initialData: sevenPackDataRow[] = [
+        const initialData: SevenPackDataRow[] = [
             ['', '', '', 0, 0, 0, 0],
             ['', '', '', 0, 0, 0, 0],
             ['2017-01-01', '', '', 1.0, 1000, 0, 0],
@@ -25,7 +25,7 @@ export function test1DataValidation(): unitTestWrapper {
                 result = validate(initialData);
             } else if (sheet !== null) {
                 // QUnit unit test
-                result = validate(sheet.getRange('A:G').getValues() as sevenPackLooselyTypedDataRow[]);
+                result = validate(sheet.getRange('A:G').getValues() as SevenPackLooselyTypedDataRow[]);
             }
             assert((result === ''), false, 'Test for Date Out of Order Validation : Validation Error : expected validation to fail');
         };
@@ -44,7 +44,7 @@ export function test2DataValidation(): unitTestWrapper {
     return (): void => {
         const coinName = 'VAL_TEST2';
         const sheet = createTempSheet(coinName);
-        const initialData: sevenPackDataRow[] = [
+        const initialData: SevenPackDataRow[] = [
             ['', '', '', 0, 0, 0, 0],
             ['', '', '', 0, 0, 0, 0],
             ['2017-01-01', '', '', 1.0, 1000, 0, 0],
@@ -59,7 +59,7 @@ export function test2DataValidation(): unitTestWrapper {
                 result = validate(initialData);
             } else if (sheet !== null) {
                 // QUnit unit test
-                result = validate(sheet.getRange('A:G').getValues() as sevenPackLooselyTypedDataRow[]);
+                result = validate(sheet.getRange('A:G').getValues() as SevenPackLooselyTypedDataRow[]);
             }
             assert((result === ''), false, 'Test for Coin Oversold Condition : Validation Error : expected validation to fail');
         };
@@ -78,7 +78,7 @@ export function test3DataValidation(): unitTestWrapper {
     return (): void => {
         const coinName = 'VAL_TEST3';
         const sheet = createTempSheet(coinName);
-        const initialData: sevenPackDataRow[] = [
+        const initialData: SevenPackDataRow[] = [
             ['', '', '', 0, 0, 0, 0],
             ['', '', '', 0, 0, 0, 0],
             ['2017-01-01', '', '', 1.0, 1000, 0, 0],
@@ -91,7 +91,7 @@ export function test3DataValidation(): unitTestWrapper {
                 result = validate(initialData);
             } else if (sheet !== null) {
                 // QUnit unit test
-                result = validate(sheet.getRange('A:G').getValues() as sevenPackLooselyTypedDataRow[]);
+                result = validate(sheet.getRange('A:G').getValues() as SevenPackLooselyTypedDataRow[]);
             }
             assert((result === ''), false, 'Test for Buy and Sell on Same Line : Validation Error : expected validation to fail');
         };

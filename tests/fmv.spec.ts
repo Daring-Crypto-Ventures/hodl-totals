@@ -1,5 +1,5 @@
 import { unitTestWrapper, assert, assertCell, createTempSheet, fillInTempSheet, deleteTempSheet } from './utils.test';
-import { sevenPackDataRow, completeDataRow } from '../src/types';
+import { SevenPackDataRow, CompleteDataRow } from '../src/types';
 import { setFMVformulasOnSheet } from '../src/gas/fmv';
 import validate from '../src/validate';
 import getLastRowWithDataPresent from '../src/last-row';
@@ -11,7 +11,7 @@ export function test1FMV(): unitTestWrapper {
     return (): void => {
         const coinName = 'FMV_TEST1';
         const sheet = createTempSheet(coinName);
-        const data: completeDataRow[] = [
+        const data: CompleteDataRow[] = [
             ['', '', '', 0, 0, 0, 0, '', 0, 0, '', '', '', ''],
             ['', '', '', 0, 0, 0, 0, '', 0, 0, '', '', '', ''],
             ['2015-12-01', '', 'Avg Daily Price Variation', 1.00000000, 0, 0, 0, '', 0, 0, '', '1.111100', '0.992222', ''],
@@ -30,7 +30,7 @@ export function test1FMV(): unitTestWrapper {
                 validationData.forEach((row, rowIdx) => { validationData[rowIdx] = [...row]; });
                 validationData.forEach(row => row.splice(7, 4));
 
-                assert((validate(validationData as unknown as sevenPackDataRow[]) === ''), true, `Round ${round} Data validated`);
+                assert((validate(validationData as unknown as SevenPackDataRow[]) === ''), true, `Round ${round} Data validated`);
                 const dateDisplayValues = data.map(row => [row[0], '']); // empty str makes this a 2D array of strings for getLastRowWithDataPresent()
                 const lastRow = getLastRowWithDataPresent(dateDisplayValues);
 
@@ -50,7 +50,7 @@ export function test1FMV(): unitTestWrapper {
                 setFMVformulasOnSheet(null, data, strategyCol, acquiredCol, disposedCol, lastRow);
             } else if (sheet !== null) {
                 // QUnit unit test
-                assert((validate(sheet.getRange('A:G').getValues() as sevenPackDataRow[]) === ''), true, `Round ${round} Data validated`);
+                assert((validate(sheet.getRange('A:G').getValues() as SevenPackDataRow[]) === ''), true, `Round ${round} Data validated`);
                 const dateDisplayValues = sheet.getRange('A:A').getDisplayValues();
                 const lastRow = getLastRowWithDataPresent(dateDisplayValues);
                 const strategyCol = sheet.getRange('C:C').getValues();
@@ -86,7 +86,7 @@ export function test2FMV(): unitTestWrapper {
     return (): void => {
         const coinName = 'FMV_TEST2';
         const sheet = createTempSheet(coinName);
-        const data: completeDataRow[] = [
+        const data: CompleteDataRow[] = [
             ['', '', '', 0, 0, 0, 0, '', 0, 0, '', '', '', ''],
             ['', '', '', 0, 0, 0, 0, '', 0, 0, '', '', '', ''],
             ['2018-10-27', 'Mining', 'Avg Daily Price Variation', 0.10348353, 0, 0, 0, '', 0, 0, 'Pool mining on BSOD', '2.32', '2.07', ''],
@@ -104,7 +104,7 @@ export function test2FMV(): unitTestWrapper {
                 validationData.forEach((row, rowIdx) => { validationData[rowIdx] = [...row]; });
                 validationData.forEach(row => row.splice(7, 4));
 
-                assert((validate(validationData as unknown as sevenPackDataRow[]) === ''), true, 'Data validated');
+                assert((validate(validationData as unknown as SevenPackDataRow[]) === ''), true, 'Data validated');
                 const dateDisplayValues = data.map(row => [row[0], '']); // empty str makes this a 2D array of strings for getLastRowWithDataPresent()
                 const lastRow = getLastRowWithDataPresent(dateDisplayValues);
 
@@ -136,7 +136,7 @@ export function test2FMV(): unitTestWrapper {
                 assertCell(sheet, data as string[][], 7, 4, '46.02', 'Test Application of Value Known Strategy : Row 8 Fiat Value : expected E8 -> 46.02', 2);
             } else if (sheet !== null) {
                 // QUnit unit test
-                assert((validate(sheet.getRange('A:G').getValues() as sevenPackDataRow[]) === ''), true, 'Data validated');
+                assert((validate(sheet.getRange('A:G').getValues() as SevenPackDataRow[]) === ''), true, 'Data validated');
                 const dateDisplayValues = sheet.getRange('A:A').getDisplayValues();
                 const lastRow = getLastRowWithDataPresent(dateDisplayValues);
                 const strategyCol = sheet.getRange('C:C').getValues();
