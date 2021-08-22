@@ -1,0 +1,7 @@
+*.html
+*.js
+coverage/**
+dist/**
+docs/**
+node_modules/**
+!appsscript.json
