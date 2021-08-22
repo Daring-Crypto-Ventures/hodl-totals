@@ -1,5 +1,5 @@
-import { unitTestWrapper, assert, assertCell, createTempSheet, fillInTempSheet, deleteTempSheet } from './utils.test';
-import { sevenPackDataRow, completeDataRow } from '../src/types';
+import { UnitTestWrapper, assert, assertCell, createTempSheet, fillInTempSheet, deleteTempSheet } from './utils.test';
+import { SevenPackDataRow, CompleteDataRow } from '../src/types';
 import { setFMVformulasOnSheet } from '../src/gas/fmv';
 import validate from '../src/validate';
 import getLastRowWithDataPresent from '../src/last-row';
@@ -7,11 +7,11 @@ import getLastRowWithDataPresent from '../src/last-row';
 /**
  * test1 for function setFMVformulasOnSheet()
  */
-export function test1FMV(): unitTestWrapper {
+export function test1FMV(): UnitTestWrapper {
     return (): void => {
         const coinName = 'FMV_TEST1';
         const sheet = createTempSheet(coinName);
-        const data: completeDataRow[] = [
+        const data: CompleteDataRow[] = [
             ['', '', '', 0, 0, 0, 0, '', 0, 0, '', '', '', ''],
             ['', '', '', 0, 0, 0, 0, '', 0, 0, '', '', '', ''],
             ['2015-12-01', '', 'Avg Daily Price Variation', 1.00000000, 0, 0, 0, '', 0, 0, '', '1.111100', '0.992222', ''],
@@ -22,7 +22,7 @@ export function test1FMV(): unitTestWrapper {
             ['2020-04-02', '', 'Avg Daily Price Variation', 0, 0, 20.00000000, 0, '', 0, 0, '', '=0.0003561*7088.25', '=0.0003561*6595.92', ''],
             ['2020-05-31', '', 'Avg Daily Price Variation', 26.92000000, 0, 0, 0, '', 0, 0, '', '=0.0069319*9700.34/D9', '=0.0069319*9432.3/D9', '']
         ];
-        const TestRun = function (round): void {
+        const testRun = function (round: number): void {
             if (typeof ScriptApp === 'undefined') {
                 // jest unit test
                 // clone the data array, and trim down to data needed for validation
@@ -30,7 +30,7 @@ export function test1FMV(): unitTestWrapper {
                 validationData.forEach((row, rowIdx) => { validationData[rowIdx] = [...row]; });
                 validationData.forEach(row => row.splice(7, 4));
 
-                assert((validate(validationData as unknown as sevenPackDataRow[]) === ''), true, `Round ${round} Data validated`);
+                assert((validate(validationData as unknown as SevenPackDataRow[]) === ''), true, `Round ${round} Data validated`);
                 const dateDisplayValues = data.map(row => [row[0], '']); // empty str makes this a 2D array of strings for getLastRowWithDataPresent()
                 const lastRow = getLastRowWithDataPresent(dateDisplayValues);
 
@@ -50,7 +50,7 @@ export function test1FMV(): unitTestWrapper {
                 setFMVformulasOnSheet(null, data, strategyCol, acquiredCol, disposedCol, lastRow);
             } else if (sheet !== null) {
                 // QUnit unit test
-                assert((validate(sheet.getRange('A:G').getValues() as sevenPackDataRow[]) === ''), true, `Round ${round} Data validated`);
+                assert((validate(sheet.getRange('A:G').getValues() as SevenPackDataRow[]) === ''), true, `Round ${round} Data validated`);
                 const dateDisplayValues = sheet.getRange('A:A').getDisplayValues();
                 const lastRow = getLastRowWithDataPresent(dateDisplayValues);
                 const strategyCol = sheet.getRange('C:C').getValues();
@@ -73,7 +73,7 @@ export function test1FMV(): unitTestWrapper {
         };
 
         fillInTempSheet(sheet, data as string[][]);
-        TestRun(1);
+        testRun(1);
 
         deleteTempSheet(sheet);
     };
@@ -82,11 +82,11 @@ export function test1FMV(): unitTestWrapper {
 /**
  * test2 for function setFMVformulasOnSheet(sheet)
  */
-export function test2FMV(): unitTestWrapper {
+export function test2FMV(): UnitTestWrapper {
     return (): void => {
         const coinName = 'FMV_TEST2';
         const sheet = createTempSheet(coinName);
-        const data: completeDataRow[] = [
+        const data: CompleteDataRow[] = [
             ['', '', '', 0, 0, 0, 0, '', 0, 0, '', '', '', ''],
             ['', '', '', 0, 0, 0, 0, '', 0, 0, '', '', '', ''],
             ['2018-10-27', 'Mining', 'Avg Daily Price Variation', 0.10348353, 0, 0, 0, '', 0, 0, 'Pool mining on BSOD', '2.32', '2.07', ''],
@@ -96,7 +96,7 @@ export function test2FMV(): unitTestWrapper {
             ['2019-07-08', 'Traded', 'Avg Daily Price Variation', 51.19, 0, 0, 0, '', 0, 0, 'binance.com traded for 51.19 KMD for 0.00627589 BTC', '=0.00627589/51.19*12345.83', '=0.00627589/51.19*11393.37', ''],
             ['2019-10-04', 'Gift Received', 'Value Known', 0.00491033, 46.02, 0, 0, '', 0, 0, 'BTC recieved at Pretentious Party', '', '', '']
         ];
-        const TestRun = function (): void {
+        const testRun = function (): void {
             if (typeof ScriptApp === 'undefined') {
                 // jest unit test
                 // clone the data array, and trim down to data needed for validation
@@ -104,7 +104,7 @@ export function test2FMV(): unitTestWrapper {
                 validationData.forEach((row, rowIdx) => { validationData[rowIdx] = [...row]; });
                 validationData.forEach(row => row.splice(7, 4));
 
-                assert((validate(validationData as unknown as sevenPackDataRow[]) === ''), true, 'Data validated');
+                assert((validate(validationData as unknown as SevenPackDataRow[]) === ''), true, 'Data validated');
                 const dateDisplayValues = data.map(row => [row[0], '']); // empty str makes this a 2D array of strings for getLastRowWithDataPresent()
                 const lastRow = getLastRowWithDataPresent(dateDisplayValues);
 
@@ -136,7 +136,7 @@ export function test2FMV(): unitTestWrapper {
                 assertCell(sheet, data as string[][], 7, 4, '46.02', 'Test Application of Value Known Strategy : Row 8 Fiat Value : expected E8 -> 46.02', 2);
             } else if (sheet !== null) {
                 // QUnit unit test
-                assert((validate(sheet.getRange('A:G').getValues() as sevenPackDataRow[]) === ''), true, 'Data validated');
+                assert((validate(sheet.getRange('A:G').getValues() as SevenPackDataRow[]) === ''), true, 'Data validated');
                 const dateDisplayValues = sheet.getRange('A:A').getDisplayValues();
                 const lastRow = getLastRowWithDataPresent(dateDisplayValues);
                 const strategyCol = sheet.getRange('C:C').getValues();
@@ -160,7 +160,7 @@ export function test2FMV(): unitTestWrapper {
         };
 
         fillInTempSheet(sheet, data as string[][]);
-        TestRun();
+        testRun();
 
         deleteTempSheet(sheet);
     };

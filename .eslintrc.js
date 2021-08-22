@@ -1,5 +1,5 @@
 module.exports = {
-    extends: '@ni/eslint-config/typescript',
+    extends: ['@ni/eslint-config/typescript', '@ni/eslint-config/typescript-requiring-type-checking'],
     env: {
         es6: true,
         node: true,
@@ -8,10 +8,12 @@ module.exports = {
     plugins: ['@typescript-eslint', 'jest'],
     parserOptions: {
         ecmaVersion: 2019,
-        sourceType: 'module'
+        sourceType: 'module',
+        project: 'tsconfig.json'
     },
     rules: {
-        'no-console': 'off'
+        'no-console': 'off',
+        'import/no-default-export': 'off'
     },
     settings: {
         jest: {

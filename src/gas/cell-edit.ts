@@ -4,7 +4,7 @@
  */
 
 import { setFMVStrategyOnRow } from './fmv';
-import { completeDataRow } from '../types';
+import { CompleteDataRow } from '../types';
 
 /**
  * A special function that runs when a user changes the value of any cell in a spreadsheet
@@ -21,7 +21,7 @@ export default function onEdit(e: GoogleAppsScript.Events.SheetsOnEdit): void {
             // update the FMV columns
             const newStrategy = e.value;
             const oldStrategy = e.oldValue;
-            const data = sheet.getRange('A:N').getValues() as completeDataRow[];
+            const data = sheet.getRange('A:N').getValues() as CompleteDataRow[];
             const acquired = sheet.getRange(`D${rowFMVstrategyChange}`).getValue();
             const disposed = sheet.getRange(`F${rowFMVstrategyChange}`).getValue();
             setFMVStrategyOnRow(sheet, rowFMVstrategyChange - 1, data, newStrategy, acquired, disposed, oldStrategy);

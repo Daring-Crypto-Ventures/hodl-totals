@@ -1,0 +1,9 @@
+*.html
+*.js
+coverage/**
+dist/**
+docs/**
+e2e/**
+node_modules/**
+src/gas/**
+!appsscript.json

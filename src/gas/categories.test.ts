@@ -1,5 +1,5 @@
 // import { expect, test } from '@jest/globals';
-import { unitTestWrapper } from '../../tests/utils.test';
+import { UnitTestWrapper } from '../../tests/utils.test';
 import newCategorySheet from './categories';
 
 /**
@@ -8,7 +8,7 @@ import newCategorySheet from './categories';
  */
 describe('Category sheet unit tests', testCategories());
 
-function testCategories(): unitTestWrapper {
+function testCategories(): UnitTestWrapper {
     return (): void => {
         if (typeof ScriptApp === 'undefined') {
             // jest unit test

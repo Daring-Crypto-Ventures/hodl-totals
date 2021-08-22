@@ -1,4 +1,4 @@
-import { completeDataRow, formulaDataRow } from './types';
+import { CompleteDataRow, FormulaDataRow } from './types';
 
 /**
  * Using the FIFO method calculate short and long term gains from the data.
@@ -6,21 +6,21 @@ import { completeDataRow, formulaDataRow } from './types';
  */
 export default function calculateFIFO(
     coinname: string,
-    data: completeDataRow[],
-    formulaData: formulaDataRow[], // TODO don't pass this in, find a better way for caller to track what rows got added
+    data: CompleteDataRow[],
+    formulaData: FormulaDataRow[], // TODO don't pass this in, find a better way for caller to track what rows got added
     lots: [string, number, number, number][],
     sales: [string, number, number, number][]
 ): [string, string][] {
-    let shift; // Integer
-    let lotCnt; // Integer
-    let lotCoinRemain; // Double
-    let costBasis; // Double
-    let gainLoss; // Double
-    let sellCoinRemain; // Double
-    let sellDate; // Date
-    let sellCoin; // Double
-    let sellRecd; // Double
-    let sellRow; // Integer
+    let shift: number; // Integer
+    let lotCnt: number; // Integer
+    let lotCoinRemain: number; // Double
+    let costBasis: number; // Double
+    let gainLoss: number; // Double
+    let sellCoinRemain: number; // Double
+    let sellDate: Date;
+    let sellCoin: number; // Double
+    let sellRecd: number; // Double
+    let sellRow: number; // Integer
     const annotations: [string, string][] = [];
     const MILLIS_PER_DAY = 1000 * 60 * 60 * 24;
     const ONE_SATOSHI = 0.00000001;
@@ -40,12 +40,12 @@ export default function calculateFIFO(
     }
 
     for (const sale of sales) {
-        let termSplit; // Boolean
-        let prevSplitRow; // Boolean
-        let splitFactor; // Double
-        let totalCoin; // Double
-        let totalCost; // Double
-        let stLotCnt;
+        let termSplit: boolean;
+        let prevSplitRow: boolean;
+        let splitFactor: number; // Double
+        let totalCoin: number; // Double
+        let totalCost: number; // Double
+        let stLotCnt: number;
         termSplit = false; // flag if sale involved both short-term and long-term holdings
         prevSplitRow = false; // flag to avoid creating extra rows when running calc repeatedly on same sheet
         splitFactor = 0; // ratio of totalCoin to sellCoin
@@ -59,10 +59,10 @@ export default function calculateFIFO(
         stLotCnt = lotCnt;
 
         for (let lot = lotCnt; lot < lots.length; lot++) {
-            let nextTerm; // Date
-            let originalDate; // Date
-            let originalCoin; // Double
-            let originalCost; // Double
+            let nextTerm: Date;
+            let originalDate: Date;
+            let originalCoin: number;
+            let originalCost: number;
             const lotCoin = lots[lot][1];
             const lotCost = lots[lot][2];
             const lotRow = lots[lot][3];
@@ -140,7 +140,7 @@ export default function calculateFIFO(
                     costBasis = sellCoin * (totalCost / totalCoin) * splitFactor; // average price
                     gainLoss = (sellRecd * splitFactor) - costBasis;
 
-                    originalDate = data[sellRow + shift][0];
+                    originalDate = data[sellRow + shift][0] as unknown as Date; // TODO clean this TS mess up
                     originalCoin = Number(data[sellRow + shift][5]);
                     originalCost = Number(data[sellRow + shift][6]);
 
@@ -171,7 +171,7 @@ export default function calculateFIFO(
                         // TODO copy any FMV cell formatting over from old row to new row also
                         // Row numbers are based on the Google Sheet row which includes a +3 offset
                         annotations.push([`A${sellRow + shift + 1}`, splitNoteText]);
-                        data[sellRow + shift][0] = originalDate;
+                        data[sellRow + shift][0] = originalDate as unknown as string; // TODO clean this TS mess up
                         data[sellRow + shift][5] = originalCoin * (1 - splitFactor);
                         data[sellRow + shift][6] = originalCost * (1 - splitFactor);
                         data[sellRow + shift][7] = 'Short-term';
@@ -220,7 +220,7 @@ export default function calculateFIFO(
  *
  * @return Date object corresponding to that string input.
  */
-function dateFromString(dateStr, incYear): Date {
+function dateFromString(dateStr: string, incYear: number): Date {
     const year = Number(dateStr.substring(0, 4));
     const month = Number(dateStr.substring(5, 7));
     const day = Number(dateStr.substring(8, 10));
@@ -235,7 +235,7 @@ function dateFromString(dateStr, incYear): Date {
 *
 * @return string
 */
-function soldNoteString(rowStart, rowStartDate, rowEnd, rowEndDate): string {
+function soldNoteString(rowStart: number, rowStartDate: string, rowEnd: number, rowEndDate: string): string {
     // denote which lots were sold on the date they were sold
     const fromStr = (rowStart === rowEnd) ? ' from' : `s from row ${rowStart + 1} on ${rowStartDate} to`;
     return `Sold lot${fromStr} row ${rowEnd + 1} on ${rowEndDate}.`;
