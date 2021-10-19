@@ -39,7 +39,7 @@
     "@rollup/plugin-node-resolve": "^13.0.4",
     "@types/google-apps-script": "^1.0.37",
     "@types/jest": "^27.0.1",
-    "@typescript-eslint/eslint-plugin": "^4.29.2",
+    "@typescript-eslint/eslint-plugin": "^5.1.0",
     "coveralls": "^3.1.1",
     "eslint": "^7.32.0",
     "eslint-plugin-import": "^2.24.1",
