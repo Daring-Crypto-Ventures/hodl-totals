@@ -11,7 +11,7 @@ It uses the first-in, first-out (FIFO) cost method, which is commonly used for t
 Installation options can be found in the #💻setup channel within the [HODL Totals Discord](https://discord.gg/TWuA9DzZth)
 
 
-## Setup(Developer)
+## Setup (for Development)
 
 📝 Steps required to run unit tests locally with `npm build`, `npm run test:unit`
 
