@@ -6,17 +6,12 @@ These Google Apps Scripts will add menu commands to Google Sheets that will help
 
 It uses the first-in, first-out (FIFO) cost method, which is commonly used for tax compliance.
 
-## Use
+## Setup
 
-Options for getting started:
+Installation options can be found in the #💻setup channel within the [HODL Totals Discord](https://discord.gg/TWuA9DzZth)
 
-OPTION 1 - Wait until the Google Workspace Marketplace approves this as an Add-on, and then download it from within Google Sheets
 
-OPTION 2 - [Install](#install) the scripts from GitHub into your own new sheet following the [Installation steps]
-
-COMING SOON - Free Training Videos!
-
-## Install
+## Setup(Developer)
 
 📝 Steps required to run unit tests locally with `npm build`, `npm run test:unit`
 
