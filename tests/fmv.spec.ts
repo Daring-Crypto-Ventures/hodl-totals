@@ -53,9 +53,9 @@ export function test1FMV(): UnitTestWrapper {
                 assert((validate(sheet.getRange('A:G').getValues() as SevenPackDataRow[]) === ''), true, `Round ${round} Data validated`);
                 const dateDisplayValues = sheet.getRange('A:A').getDisplayValues();
                 const lastRow = getLastRowWithDataPresent(dateDisplayValues);
-                const strategyCol = sheet.getRange('C:C').getValues();
-                const acquiredCol = sheet.getRange('D:D').getValues();
-                const disposedCol = sheet.getRange('F:F').getValues();
+                const strategyCol = sheet.getRange('C:C').getValues() as string[][];
+                const acquiredCol = sheet.getRange('D:D').getValues() as string[][];
+                const disposedCol = sheet.getRange('F:F').getValues() as string[][];
                 setFMVformulasOnSheet(sheet, null, strategyCol, acquiredCol, disposedCol, lastRow);
                 // these assertions aren't checked locally becasue they require cell formula calcs to happen
                 assertCell(sheet, data as string[][], 2, 4, '1.05', 'Test for Fiat Cost calculated from FMV data : Row 3 Fiat Cost : expected fiat cost calc from FMV average', 2);
@@ -139,9 +139,9 @@ export function test2FMV(): UnitTestWrapper {
                 assert((validate(sheet.getRange('A:G').getValues() as SevenPackDataRow[]) === ''), true, 'Data validated');
                 const dateDisplayValues = sheet.getRange('A:A').getDisplayValues();
                 const lastRow = getLastRowWithDataPresent(dateDisplayValues);
-                const strategyCol = sheet.getRange('C:C').getValues();
-                const acquiredCol = sheet.getRange('D:D').getValues();
-                const disposedCol = sheet.getRange('F:F').getValues();
+                const strategyCol = sheet.getRange('C:C').getValues() as string[][];
+                const acquiredCol = sheet.getRange('D:D').getValues() as string[][];
+                const disposedCol = sheet.getRange('F:F').getValues() as string[][];
                 // TODO - return annotations?  Or stop making annotations in the first place
                 setFMVformulasOnSheet(sheet, null, strategyCol, acquiredCol, disposedCol, lastRow);
                 // these assertions aren't checked locally becasue they require cell formula calcs to happen
