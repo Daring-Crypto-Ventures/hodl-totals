@@ -44,7 +44,7 @@
     "eslint": "^8.5.0",
     "eslint-plugin-import": "^2.25.3",
     "eslint-plugin-jest": "^25.3.0",
-    "jest": "^27.4.4",
+    "jest": "^27.4.5",
     "json-schema": ">=0.4.0",
     "replace-in-file": "^6.2.0",
     "rollup": "^2.61.0",
