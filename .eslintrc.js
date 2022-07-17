@@ -1,13 +1,16 @@
 module.exports = {
-    extends: ['@ni/eslint-config/typescript', '@ni/eslint-config/typescript-requiring-type-checking'],
+    extends: ['@ni/eslint-config-typescript', 
+        '@ni/eslint-config-typescript/requiring-type-checking',
+        "eslint:recommended", 
+        "plugin:jest/recommended"
+    ],
     env: {
         es6: true,
-        node: true,
-        'jest/globals': true
+        node: true
     },
     plugins: ['@typescript-eslint', 'jest'],
     parserOptions: {
-        ecmaVersion: 2019,
+        ecmaVersion: 2020,
         sourceType: 'module',
         project: 'tsconfig.json'
     },
