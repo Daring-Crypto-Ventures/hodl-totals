@@ -9,6 +9,8 @@ import {
     test7CostBasis
 } from '../tests/cost-basis.spec';
 
+/* eslint-disable jest/valid-describe-callback */
+
 /**
  * jest unit tests for calculateFIFO()
  * https://medium.com/@wesvdl1995/testing-nodejs-code-with-jest-28267a69324

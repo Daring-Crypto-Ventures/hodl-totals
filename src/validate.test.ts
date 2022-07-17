@@ -1,6 +1,8 @@
 // import { expect, test } from '@jest/globals';
 import { test1DataValidation, test2DataValidation, test3DataValidation } from '../tests/validate.spec';
 
+/* eslint-disable jest/valid-describe-callback */
+
 /**
  * jest unit tests for validate()
  * https://medium.com/@wesvdl1995/testing-nodejs-code-with-jest-28267a69324
