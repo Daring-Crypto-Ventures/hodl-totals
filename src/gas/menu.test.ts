@@ -12,7 +12,7 @@ function testMenus(): UnitTestWrapper {
     return (): void => {
         if (typeof ScriptApp === 'undefined') {
             // jest unit test
-            test('Test currency prompt dialog fails during local execution', () => {
+            it('Test currency prompt dialog fails during local execution', () => {
                 expect(showNewCurrencyPrompt()).toBe(null);
             });
         }

@@ -12,7 +12,7 @@ function testAbout(): UnitTestWrapper {
     return (): void => {
         if (typeof ScriptApp === 'undefined') {
             // jest unit test
-            test('Test about dialog fails during local execution', () => {
+            it('Test about dialog fails during local execution', () => {
                 const mock = jest.fn(showAboutDialog_);
                 mock();
                 expect(mock).toHaveReturned();

@@ -12,10 +12,10 @@ function testExamples(): UnitTestWrapper {
     return (): void => {
         if (typeof ScriptApp === 'undefined') {
             // jest unit test
-            test('Test example 1 fails during local execution', () => {
+            it('Test example 1 fails during local execution', () => {
                 expect(loadCostBasisExample_()).toBe(null);
             });
-            test('Test example 2 fails during local execution', () => {
+            it('Test example 2 fails during local execution', () => {
                 expect(loadFMVExample_()).toBe(null);
             });
         }

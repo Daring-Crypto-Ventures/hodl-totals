@@ -23,7 +23,7 @@ export type UnitTestWrapper = () => void;
 export function assert(value: boolean | number | string, expected: boolean | number | string, detail = ''): void {
     if (typeof ScriptApp === 'undefined') {
         // jest unit test
-        test(detail, () => {
+        it(detail, () => {
             expect(value).toBe(expected);
         });
     } else {
@@ -46,7 +46,7 @@ export function assertCell(
 ): void {
     if (typeof ScriptApp === 'undefined') {
         // jest unit test
-        test(detail, () => {
+        it(detail, () => {
             if (digitsAfterDecimal !== 0) {
                 expect(Number(dataTable[rowIdx][colIdx]).toFixed(digitsAfterDecimal)).toBe(expected);
             } else {

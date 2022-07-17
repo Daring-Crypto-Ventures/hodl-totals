@@ -12,7 +12,7 @@ function testCategories(): UnitTestWrapper {
     return (): void => {
         if (typeof ScriptApp === 'undefined') {
             // jest unit test
-            test('Test new category sheet fails during local execution', () => {
+            it('Test new category sheet fails during local execution', () => {
                 expect(newCategorySheet()).toBe(null);
             });
         }

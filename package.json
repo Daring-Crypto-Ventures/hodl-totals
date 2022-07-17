@@ -6,7 +6,7 @@
   "scripts": {
     "compile": "rollup -c",
     "lint": "eslint -c .eslintrc.js .",
-    "test:e2e": "npm run deploy && clasp open --webapp --deploymentId AKfycbwB39XB368iOkeCDgE9L8RFgbfu73V5X0-C5PiH2JTH",
+    "test:e2e": "npm run deploy && clasp open --webapp --deploymentId AKfycbw0a1U_xiXP-nvYfDG6lHJSyCafrGeJkIPrzMmFMSk",
     "test:debug": "node --experimental-specifier-resolution=node --inspect node_modules/.bin/jest --runInBand",
     "test:unit": "jest --coverage",
     "test:unit-watch": "jest --verbose --watchAll",
@@ -37,6 +37,7 @@
     "@google/clasp": "^2.4.1",
     "@ni/eslint-config": "^1.1.1",
     "@rollup/plugin-node-resolve": "^13.0.4",
+    "@rollup/plugin-typescript": "^8.3.3",
     "@types/google-apps-script": "^1.0.37",
     "@types/jest": "^27.0.1",
     "@typescript-eslint/eslint-plugin": "^5.6.0",
@@ -48,7 +49,6 @@
     "json-schema": ">=0.4.0",
     "replace-in-file": "^6.2.0",
     "rollup": "^2.61.0",
-    "rollup-plugin-typescript2": "^0.30.0",
     "ts-jest": "^27.0.5",
     "typescript": "^4.3.5"
   },

@@ -12,7 +12,7 @@ function testDiscordLink(): UnitTestWrapper {
     return (): void => {
         if (typeof ScriptApp === 'undefined') {
             // jest unit test
-            test('Test redirect to Discord Invite Link fails during local execution', () => {
+            it('Test redirect to Discord Invite Link fails during local execution', () => {
                 const mock = jest.fn(openDiscordLink_);
                 mock();
                 expect(mock).toHaveReturned();
