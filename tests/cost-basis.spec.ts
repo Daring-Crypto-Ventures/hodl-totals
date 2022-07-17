@@ -5,6 +5,9 @@ import getOrderList from '../src/orders';
 import validate from '../src/validate';
 import getLastRowWithDataPresent from '../src/last-row';
 
+/* global GoogleAppsScript */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+
 /**
  * test1 for function calculateFIFO(sheet, lots, sales)
  */

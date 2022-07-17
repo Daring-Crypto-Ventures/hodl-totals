@@ -2,8 +2,13 @@
 // import { strictEqual } from 'qunitjs' (v1.12.0-pre)
 
 /* global strictEqual */
+/* global GoogleAppsScript */
+/* global SpreadsheetApp */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable jest/no-export */
+/* eslint-disable jest/valid-title */
+/* eslint-disable jest/no-conditional-expect */
 
 /**
  * types used when writing HODL Totals unit tests

@@ -2,8 +2,8 @@
 // setup: `npm i rollup @rollup/plugin-typescript` or `npm i rollup rollup-plugin-typescript2` (for visible TS error output)
 // ref: <https://devhints.io/rollup>
 
-// import typescript from '@rollup/plugin-typescript';
-import typescript from 'rollup-plugin-typescript2';
+import typescript from '@rollup/plugin-typescript';
+// import typescript from 'rollup-plugin-typescript2';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 
 export default [

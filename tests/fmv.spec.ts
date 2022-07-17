@@ -4,6 +4,8 @@ import { setFMVformulasOnSheet } from '../src/gas/fmv';
 import validate from '../src/validate';
 import getLastRowWithDataPresent from '../src/last-row';
 
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+
 /**
  * test1 for function setFMVformulasOnSheet()
  */
