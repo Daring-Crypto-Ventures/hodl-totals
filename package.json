@@ -36,9 +36,9 @@
   "devDependencies": {
     "@google/clasp": "^2.4.1",
     "@ni/eslint-config": "^2.0.1",
-    "@rollup/plugin-node-resolve": "^13.1.1",
+    "@rollup/plugin-node-resolve": "^13.3.0",
     "@rollup/plugin-typescript": "^8.3.3",
-    "@types/google-apps-script": "^1.0.41",
+    "@types/google-apps-script": "^1.0.53",
     "@types/jest": "^27.0.3",
     "@typescript-eslint/eslint-plugin": "^5.30.6",
     "@typescript-eslint/parser": "^5.30.6",
