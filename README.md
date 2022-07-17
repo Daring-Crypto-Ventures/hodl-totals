@@ -76,5 +76,5 @@ Installation options can be found in the #💻setup channel within the [HODL Tot
 
 Did this save you a tax prep headache?
 
-Support development with a BTC donation: [38Ehpz3XutgoVEUZWtrXvrWTLJetkDZF5s](https://www.blockchain.com/btc/address/38Ehpz3XutgoVEUZWtrXvrWTLJetkDZF5s)
+Support development with a BTC donation: [bc1qskvk3rnpjvhcy4kcl3d0tcc4z6x90udcz8nnfm](https://www.blockchain.com/btc/address/bc1qskvk3rnpjvhcy4kcl3d0tcc4z6x90udcz8nnfm)
 or a VRSC donation to DCV@
