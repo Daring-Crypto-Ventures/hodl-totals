@@ -19,13 +19,13 @@ Installation options can be found in the #💻setup channel within the [HODL Tot
 >
 > `curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash`
 >
-> Install node.js, built for most recent [Long-Term Support version](https://nodejs.org/en/about/releases/)
+> Install node.js, built for the most recent [Long-Term Support versions](https://nodejs.org/en/about/releases/)
 > 
 > `nvm install --lts`
 >
 > Install HODL Totals dependencies
 >
-> `npm install`
+> `npm install --legacy-peer-deps`
 
 📝 Additional steps to set up a new Google sheet with HODL totals scripts
 
@@ -50,12 +50,13 @@ Installation options can be found in the #💻setup channel within the [HODL Tot
 ## Development Environment
 
 - Windows 10 PC with WSL2 (Ubuntu 20.04.1 LTS)
-- Node.js LTS version (14.x or later)
+- Node.js LTS version (14.x or 16.x)
 - Visual Studio Code on Windows 10, and its WSL2 integration for editing code stored in WSL
 - GitHub CLI commands via the WSL2 Linux terminal
 - Publish changes to your google sheet [using clasp](https://developers.google.com/apps-script/guides/clasp) from the command line
 
 ## Changelog
+- 07-16-22 - Upgraded stale dependendencies and added support for Node.js 16.x LTS.
 - 08-22-21 - Added a dropdown column to explicitly specify the Fair Market Value calculation strategy.
 - 06-03-21 - Ported JS to TypeScript. Tests runs locally, can be debugged using Node.js as well as on Google Servers as Google Apps Script. Code coverage stats published on [coveralls.io](https://coveralls.io/github/dogracer/hodl-totals). Integreated npm script commands for common tasks. Added Continuous Integration, code analysis, and dependabot.
 - 04-25-21 - Links out to Policies + Discord. Fixed a wave of Apply Formatting bugs, halfway through my Blocker list for submission to the Google Marketplace.
