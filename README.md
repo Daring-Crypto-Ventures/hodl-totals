@@ -23,7 +23,11 @@ Installation options can be found in the #💻setup channel within the [HODL Tot
 > 
 > `nvm install --lts`
 >
-> Install HODL Totals dependencies
+> Install the latest npm version,
+> 
+> `npm install -g npm`
+>
+> From the directory with the HODL Totals source code, install the HODL Totals dependencies
 >
 > `npm install --legacy-peer-deps`
 
