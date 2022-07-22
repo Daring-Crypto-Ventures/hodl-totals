@@ -227,7 +227,7 @@ function setValidationRules(sheet: GoogleAppsScript.Spreadsheet.Sheet, categorie
 
     // limit FMV Strategy entries to adhere to supported strategies
     const fmvStrategyRule = SpreadsheetApp.newDataValidation()
-        .requireValueInList(['Value Known', 'Price Known', 'Avg Daily Price Variation'])
+        .requireValueInList(['Value Known', 'Price Known', 'Avg Daily Price Variation', 'n/a'])
         .setAllowInvalid(true)
         .build();
     sheet.getRange('H3:H').setDataValidation(fmvStrategyRule);
