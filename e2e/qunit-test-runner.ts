@@ -3,9 +3,9 @@ import {
     test1CostBasis,
     test2CostBasis,
     test3CostBasis,
-    test4CostBasis
+    test4CostBasis,
+    test5CostBasis
     /*
-    test5CostBasis,
     test6CostBasis,
     test7CostBasis */
 } from '../tests/cost-basis.spec';
@@ -53,8 +53,8 @@ function testCostBasisFunctions(): void {
     QUnit.test('Cost Basis - Simple Term Split (Two Rounds)', test3CostBasis());
     // @ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
     QUnit.test('Cost Basis - No Sale (Two Rounds)', test4CostBasis());
-    // ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
-    // QUnit.test('Cost Basis - Example Dataset (Two Rounds)', test5CostBasis());
+    // @ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
+    QUnit.test('Cost Basis - Example Dataset (Two Rounds)', test5CostBasis());
     // ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
     // QUnit.test('Cost Basis - Real Data with Term Split (Two Rounds)', test6CostBasis());
     // ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
