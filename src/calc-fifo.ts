@@ -237,6 +237,6 @@ function dateFromString(dateStr: string, incYear: number): Date {
 */
 function soldNoteString(rowStart: number, rowStartDate: string, rowEnd: number, rowEndDate: string): string {
     // denote which lots were sold on the date they were sold
-    const fromStr = (rowStart === rowEnd) ? ' from' : `s from row ${rowStart + 1} on ${rowStartDate} to`;
-    return `Sold lot${fromStr} row ${rowEnd + 1} on ${rowEndDate}.`;
+    const fromStr = (rowStart === rowEnd) ? ' from' : `s from row ${rowStart + 1} on ${rowStartDate.substring(0, 10)} to`;
+    return `Sold lot${fromStr} row ${rowEnd + 1} on ${rowEndDate.substring(0, 10)}.`;
 }

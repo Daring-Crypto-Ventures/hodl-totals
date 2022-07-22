@@ -5,6 +5,7 @@
 
 import { setFMVStrategyOnRow } from './fmv';
 import { CompleteDataRow } from '../types';
+import getLastRowWithDataPresent from '../last-row';
 
 /**
  * A special function that runs when a user changes the value of any cell in a spreadsheet
@@ -14,17 +15,26 @@ export default function onEdit(e: GoogleAppsScript.Events.SheetsOnEdit): void {
     const currency = sheet.getName().replace(/ *\([^)]*\) */g, '');
 
     // simple check to verify that onEdit actions only happen on coin tracking sheets
-    if (sheet.getRange('B1').getValue() === currency) {
+    if (sheet.getRange('H1').getValue().trim() === currency) {
+        const editedRow = e.range.getRow();
+        // edit events triggered by the Tx column
+        if ((e.range.getColumn() === 1) && (editedRow >= 3)) {
+            const lastRow = getLastRowWithDataPresent(sheet.getRange('E:E').getValues());
+            if (editedRow > lastRow) {
+                // create filter around all transactions
+                sheet.getFilter()?.remove();
+                sheet.getRange(`A2:U${editedRow}`).createFilter();
+            }
+        }
         // edit events triggered by the FMV Strategy column
-        const rowFMVstrategyChange = e.range.getRow();
-        if ((e.range.getColumn() === 3) && (rowFMVstrategyChange >= 3)) {
+        if ((e.range.getColumn() === 8) && (editedRow >= 3)) {
             // update the FMV columns
             const newStrategy = e.value;
             const oldStrategy = e.oldValue;
-            const data = sheet.getRange('A:N').getValues() as CompleteDataRow[];
-            const acquired = sheet.getRange(`D${rowFMVstrategyChange}`).getValue();
-            const disposed = sheet.getRange(`F${rowFMVstrategyChange}`).getValue();
-            setFMVStrategyOnRow(sheet, rowFMVstrategyChange - 1, data, newStrategy, acquired, disposed, oldStrategy);
+            const data = sheet.getRange('A:U').getValues() as CompleteDataRow[];
+            const acquired = sheet.getRange(`I${editedRow}`).getValue();
+            const disposed = sheet.getRange(`K${editedRow}`).getValue();
+            setFMVStrategyOnRow(sheet, editedRow - 1, data, newStrategy, acquired, disposed, oldStrategy);
         }
     }
 }

@@ -102,20 +102,20 @@ export function formatSheet_(): GoogleAppsScript.Spreadsheet.Sheet {
 
     // populate the two-row-tall header cells
     const header1 = [' ↩ Portfolio ', 'All Wallets & Accounts','', `${desiredCurrency} balance on `, '<unknown date>','was off by','0.000',
-      ` ${desiredCurrency}`, 'Inflow', '', 'Outflow', '',
+      `${desiredCurrency}`, 'Inflow', '', 'Outflow', '',
       'Fair Mkt Value', '','',
-      'Last Gain/Loss Calculation (FIFO Method)', '', '','','', 'Income or Gain/Loss'];
+      'Last', 'FIFO Method', 'Calculation on','','', 'Income or Gain/Loss'];
     // NOTE: spaces are hard coded around header text that help autosizecolumns behave correctly
     const header2 = ['   Tx ✔   ','    All Wallet & Accounts    ', '    Transaction ID    ', '   Description   ', '    Date & Time    ', '       Category       ', '    Net Change    ',
-      '   Valuation Strategy   ', `   ${desiredCurrency} Acquired   `, '    Value (USD)    ', `   ${desiredCurrency} Disposed   `, '    Value (USD)    ',
-      `   ${desiredCurrency} High   `, `   ${desiredCurrency} Low   `, `   ${desiredCurrency} Price   `,
-      '   Lot ID   ','   Date Acquired   ','   Status   ','    Cost Basis    ', '    Gain (Loss)    ', '   Summarized In   '];
+      '        Valuation Strategy        ', `   ${desiredCurrency} Acquired   `, '    Value (USD)    ', `   ${desiredCurrency} Disposed   `, '    Value (USD)    ',
+      `   ${desiredCurrency} High   `, `     ${desiredCurrency} Low     `, `    ${desiredCurrency} Price    `,
+      '     Lot ID     ','    Date Acquired    ','   Status   ','        Cost Basis        ', '    Gain (Loss)    ', '   Summarized In   '];
 
     sheet.getRange('A1:U1').setValues([header1]).setFontWeight('bold').setHorizontalAlignment('center');
     sheet.getRange('A2:U2').setValues([header2]).setFontWeight('bold').setHorizontalAlignment('center');
 
     // see if any row data exists beyond the header we just added
-    const lastRow = getLastRowWithDataPresent(sheet.getRange('A:A').getValues());
+    const lastRow = getLastRowWithDataPresent(sheet.getRange('E:E').getValues());
 
     // set up row 1 cells for reconcilation
     sheet.getRange('1:1').addDeveloperMetadata('version', '1.0.0');
@@ -131,7 +131,6 @@ export function formatSheet_(): GoogleAppsScript.Spreadsheet.Sheet {
     sheet.getRange('I1:J1').merge();
     sheet.getRange('K1:L1').merge();
     sheet.getRange('M1:O1').merge();
-    sheet.getRange('P1:R1').merge();
 
     // color background and freeze the header rows
     sheet.getRange('A1:U1').setBackground('#DDDDEE');
@@ -172,10 +171,9 @@ export function formatSheet_(): GoogleAppsScript.Spreadsheet.Sheet {
         .setFontSize(11);
     sheet.getRange('U3:U').setFontColor(null).setFontStyle(null).setHorizontalAlignment('center');
 
-    // create filter around all transactions, only if no filter previously exists
-    if (sheet.getFilter() === null) {
-        sheet.getRange(`A2:U${lastRow}`).createFilter();
-    }
+    // create filter around all transactions
+    sheet.getFilter()?.remove();
+    sheet.getRange(`A2:U${lastRow}`).createFilter();
 
     // iterate through the rows in the sheet to
     // set col {Fiat Cost} and col {Fiat Received} to be calculated based on other cells in the sheet
@@ -277,8 +275,8 @@ export function calculateFIFO_(): void {
             // scan just the inflow & outflow data of the row we're about to write
             // avoid writing zeroes to previously empty cells (but write zeros to the Calculated columns)
             // avoid overwriting any formulas used to calculate the values
-            for (let j = 0; j < 14; j++) {
-                if (((j < 7) || (j > 9)) && (Number(data[i][j]) === 0)) {
+            for (let j = 0; j < 21; j++) {
+                if ((j < 15) && (Number(data[i][j]) === 0)) {
                     data[i][j] = '';
                 }
                 if (formulaData[i][j] !== '') {
