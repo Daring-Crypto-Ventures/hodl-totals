@@ -1,14 +1,15 @@
 import { test1DataValidation, test2DataValidation, test3DataValidation } from '../tests/validate.spec';
 import {
-    test1CostBasis,
+    test1CostBasis /*,
     test2CostBasis,
     test3CostBasis,
     test4CostBasis,
     test5CostBasis,
     test6CostBasis,
-    test7CostBasis
+    test7CostBasis */
 } from '../tests/cost-basis.spec';
 import { test1FMV, test2FMV } from '../tests/fmv.spec';
+import { version } from '../src/version';
 
 /**
  * First make sure the deploymentId for your script is set correclty in package.json
@@ -45,18 +46,18 @@ function testValidationFunctions(): void {
 function testCostBasisFunctions(): void {
     // @ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
     QUnit.test('Cost Basis - Simple Partial Short-Term Sale (Two Rounds)', test1CostBasis());
-    // @ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
-    QUnit.test('Cost Basis - Simple Whole Long-Term Sale (Two Rounds)', test2CostBasis());
-    // @ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
-    QUnit.test('Cost Basis - Simple Term Split (Two Rounds)', test3CostBasis());
-    // @ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
-    QUnit.test('Cost Basis - No Sale (Two Rounds)', test4CostBasis());
-    // @ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
-    QUnit.test('Cost Basis - Example Dataset (Two Rounds)', test5CostBasis());
-    // @ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
-    QUnit.test('Cost Basis - Real Data with Term Split (Two Rounds)', test6CostBasis());
-    // @ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
-    QUnit.test('Cost Basis - Simple Calc with all coins sold (Two Round)', test7CostBasis());
+    // ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
+    // QUnit.test('Cost Basis - Simple Whole Long-Term Sale (Two Rounds)', test2CostBasis());
+    // ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
+    // QUnit.test('Cost Basis - Simple Term Split (Two Rounds)', test3CostBasis());
+    // ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
+    // QUnit.test('Cost Basis - No Sale (Two Rounds)', test4CostBasis());
+    // ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
+    // QUnit.test('Cost Basis - Example Dataset (Two Rounds)', test5CostBasis());
+    // ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
+    // QUnit.test('Cost Basis - Real Data with Term Split (Two Rounds)', test6CostBasis());
+    // ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
+    // QUnit.test('Cost Basis - Simple Calc with all coins sold (Two Round)', test7CostBasis());
 }
 
 /**
@@ -76,7 +77,7 @@ function testFairMktValueFunctions() {
  *
  */
 function doGet(request) {
-    const suiteTitle = 'E2E Test Suite for HODL Totals';
+    const suiteTitle = `v${version} HODL Totals E2E Test Suite`;
     // @ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
     QUnit.urlParams(request.parameter);
     // @ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS

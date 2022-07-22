@@ -4,7 +4,7 @@
   "description": "Collection of various cryptocurrency tracking tools and scripts for Google Sheets.",
   "main": "index.js",
   "scripts": {
-    "compile": "genversion --es6 --semi src/version.ts && rollup -c",
+    "compile": "genversion --es6 --semi src/version.ts && replace-in-file \"export const\" \"const\" src/version.ts && replace-in-file \";\" \"; export { version };\" src/version.ts && rollup -c",
     "lint": "eslint -c .eslintrc.js .",
     "test:e2e": "npm run deploy && clasp open --webapp --deploymentId AKfycbw0a1U_xiXP-nvYfDG6lHJSyCafrGeJkIPrzMmFMSk",
     "test:debug": "node --experimental-specifier-resolution=node --inspect node_modules/.bin/jest --runInBand",

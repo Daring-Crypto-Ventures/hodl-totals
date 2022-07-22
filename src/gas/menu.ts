@@ -3,7 +3,7 @@
  *
  */
 import newCategorySheet from './categories';
-import { version } from '../version'
+import { version } from '../version';
 import { setFMVformulasOnSheet } from './fmv';
 import calculateFIFO from '../calc-fifo';
 import getOrderList from '../orders';
