@@ -1,5 +1,5 @@
 import { UnitTestWrapper, assert, assertCell, createTempSheet, fillInTempSheet, deleteTempSheet } from './utils.test';
-import { SevenPackDataRow, CompleteDataRow } from '../src/types';
+import { DataValidationRow, CompleteDataRow } from '../src/types';
 import { setFMVformulasOnSheet } from '../src/gas/fmv';
 import validate from '../src/validate';
 import getLastRowWithDataPresent from '../src/last-row';
@@ -14,64 +14,66 @@ export function test1FMV(): UnitTestWrapper {
         const coinName = 'FMV_TEST1';
         const sheet = createTempSheet(coinName);
         const data: CompleteDataRow[] = [
-            ['', '', '', 0, 0, 0, 0, '', 0, 0, '', '', '', ''],
-            ['', '', '', 0, 0, 0, 0, '', 0, 0, '', '', '', ''],
-            ['2015-12-01', '', 'Avg Daily Price Variation', 1.00000000, 0, 0, 0, '', 0, 0, '', '1.111100', '0.992222', ''],
-            ['2016-02-29', '', 'Value Known', 1.00000000, 1, 0, 0, '', 0, 0, '', '', '', ''],
-            ['2016-03-01', '', 'Value Known', 0, 0, 1.00000000, 5, '', 0, 0, '', '', '', ''],
-            ['2018-02-28', '', 'Price Known', 23.00000000, 0, 0, 0, '', 0, 0, '', '', '', '34'],
-            ['2020-04-01', '', 'Avg Daily Price Variation', 0, 0, 2.00000000, 0, '', 0, 0, '', '2.312002', '1.8222', ''],
-            ['2020-04-02', '', 'Avg Daily Price Variation', 0, 0, 20.00000000, 0, '', 0, 0, '', '=0.0003561*7088.25', '=0.0003561*6595.92', ''],
-            ['2020-05-31', '', 'Avg Daily Price Variation', 26.92000000, 0, 0, 0, '', 0, 0, '', '=0.0069319*9700.34/D9', '=0.0069319*9432.3/D9', '']
+            ['FALSE', '', '', '', '', '', 0, '', 0, 0, 0, 0, '', '', '', '', '', '', 0, 0, ''],
+            ['FALSE', '', '', '', '', '', 0, '', 0, 0, 0, 0, '', '', '', '', '', '', 0, 0, ''],
+            ['FALSE', '', '', '', '2015-12-01', '', 1, 'Avg Daily Price Variation', 1.00000000, 0, 0, 0, '1.111100', '0.992222', '', '', '', '', 0, 0, ''],
+            ['FALSE', '', '', '', '2016-02-29', '', 1, 'Value Known', 1.00000000, 1, 0, 0, '', '', '', '', '', '', 0, 0, ''],
+            ['FALSE', '', '', '', '2016-03-01', '', -1, 'Value Known', 0, 0, 1.00000000, 5, '', '', '', '', '', '', 0, 0, ''],
+            ['FALSE', '', '', '', '2018-02-28', '', 23, 'Price Known', 23.00000000, 0, 0, 0, '', '', '34', '', '', '', 0, 0, ''],
+            ['FALSE', '', '', '', '2020-04-01', '', -2, 'Avg Daily Price Variation', 0, 0, 2.00000000, 0, '2.312002', '1.8222', '', '', '', '', 0, 0, ''],
+            ['FALSE', '', '', '', '2020-04-02', '', -20, 'Avg Daily Price Variation', 0, 0, 20.00000000, 0, '=0.0003561*7088.25', '=0.0003561*6595.92', '', '', '', '', 0, 0, ''],
+            ['FALSE', '', '', '', '2020-05-31', '', 26.92, 'Avg Daily Price Variation', 26.92000000, 0, 0, 0, '=0.0069319*9700.34/D9', '=0.0069319*9432.3/D9', '', '', '', '', 0, 0, '']
         ];
+
         const testRun = function (round: number): void {
             if (typeof ScriptApp === 'undefined') {
                 // jest unit test
                 // clone the data array, and trim down to data needed for validation
                 const validationData = [...data];
                 validationData.forEach((row, rowIdx) => { validationData[rowIdx] = [...row]; });
-                validationData.forEach(row => row.splice(7, 4));
+                validationData.forEach(row => row.splice(15, row.length - 15)); // remove rightmost calculation columns and summarized in column
+                validationData.forEach(row => row.splice(0, 4)); // remove leftmost Tx ✔, wallets, Tx ID and description columns
 
-                assert((validate(validationData as unknown as SevenPackDataRow[]) === ''), true, `Round ${round} Data validated`);
-                const dateDisplayValues = data.map(row => [row[0], '']); // empty str makes this a 2D array of strings for getLastRowWithDataPresent()
+                assert((validate(validationData as unknown as DataValidationRow[]) === ''), true, `Round ${round} Data validated`);
+                const dateDisplayValues = validationData.map(row => [row[0], '']); // empty str makes this a 2D array of strings for getLastRowWithDataPresent()
                 const lastRow = getLastRowWithDataPresent(dateDisplayValues);
 
                 // clone the data array, and trim down to data needed for FMV calcs
-                const strategyCol = [...data as string[][]];
+                const strategyCol = [...validationData as string[][]];
                 strategyCol.forEach((row, rowIdx) => { strategyCol[rowIdx] = [...row]; });
-                strategyCol.forEach(row => row.splice(0, 2)); // remove leftmost date, category
+                strategyCol.forEach(row => row.splice(0, 3)); // remove leftmost date, category, net change columns
                 strategyCol.forEach(row => row.splice(1, row.length - 1)); // remove all remaining columns to the right
-                const acquiredCol = [...data as string[][]];
+                const acquiredCol = [...validationData as string[][]];
                 acquiredCol.forEach((row, rowIdx) => { acquiredCol[rowIdx] = [...row]; });
-                acquiredCol.forEach(row => row.splice(0, 3)); // remove leftmost date, category, FMV strategy columns
-                acquiredCol.forEach(row => row.splice(1, row.length - 2)); // remove all remaining columns to the right
-                const disposedCol = [...data as string[][]];
+                acquiredCol.forEach(row => row.splice(0, 4)); // remove leftmost date, category, net change, FMV strategy columns
+                acquiredCol.forEach(row => row.splice(1, row.length - 1)); // remove all remaining columns to the right
+                const disposedCol = [...validationData as string[][]];
                 disposedCol.forEach((row, rowIdx) => { disposedCol[rowIdx] = [...row]; });
-                disposedCol.forEach(row => row.splice(0, 5)); // remove leftmost date, category, FMV strategy, inflow columns
-                disposedCol.forEach(row => row.splice(1, row.length - 4)); // remove all remaining columns to the right
+                disposedCol.forEach(row => row.splice(0, 6)); // remove leftmost date, category, net change, FMV strategy, inflow columns
+                disposedCol.forEach(row => row.splice(1, row.length - 1)); // remove all remaining columns to the right
                 setFMVformulasOnSheet(null, data, strategyCol, acquiredCol, disposedCol, lastRow);
             } else if (sheet !== null) {
                 // QUnit unit test
-                assert((validate(sheet.getRange('A:G').getValues() as SevenPackDataRow[]) === ''), true, `Round ${round} Data validated`);
-                const dateDisplayValues = sheet.getRange('A:A').getDisplayValues();
+                assert((validate(sheet.getRange('E:L').getValues() as DataValidationRow[]) === ''), true, `Round ${round} Data validated`);
+                const dateDisplayValues = sheet.getRange('E:E').getDisplayValues();
                 const lastRow = getLastRowWithDataPresent(dateDisplayValues);
-                const strategyCol = sheet.getRange('C:C').getValues() as string[][];
-                const acquiredCol = sheet.getRange('D:D').getValues() as string[][];
-                const disposedCol = sheet.getRange('F:F').getValues() as string[][];
+                const strategyCol = sheet.getRange('H:H').getValues() as string[][];
+                const acquiredCol = sheet.getRange('I:I').getValues() as string[][];
+                const disposedCol = sheet.getRange('K:K').getValues() as string[][];
                 setFMVformulasOnSheet(sheet, null, strategyCol, acquiredCol, disposedCol, lastRow);
                 // these assertions aren't checked locally becasue they require cell formula calcs to happen
-                assertCell(sheet, data as string[][], 2, 4, '1.05', 'Test for Fiat Cost calculated from FMV data : Row 3 Fiat Cost : expected fiat cost calc from FMV average', 2);
-                assertCell(sheet, data as string[][], 2, 13, '1.05', 'Test for FMV average formula inserted : Row 3 Price : expected FMV calc averaged from supplied high/low prices', 2);
-                assertCell(sheet, data as string[][], 5, 4, '782.00', 'Test for Fiat Cost with known FMV price : Row 6 Fiat Cost : expected fiat cost calc from known FMV price', 2);
-                assertCell(sheet, data as string[][], 6, 6, '4.13', 'Test for Fiat Received calculated from FMV data : Row 7 Fiat Received : expected fiat received calc from FMV average', 2);
-                assertCell(sheet, data as string[][], 6, 13, '2.07', 'Test for FMV average formula inserted : Row 7 Price : expected FMV calc averaged from supplied high/low prices', 2);
-                assertCell(sheet, data as string[][], 7, 6, '48.73', 'Test for Fiat Received calculated from FMV data : Row 8 Fiat Received : expected fiat received calc from FMV average derived from formulas', 2);
-                assertCell(sheet, data as string[][], 7, 13, '2.44', 'Test for FMV average formula inserted : Row 8 Price : expected FMV calc averaged from supplied high/low prices', 2);
-                assertCell(sheet, data as string[][], 8, 4, '66.31', 'Test for Fiat Cost calculated from FMV data : Row 9 Fiat Cost : expected fiat cost calc from FMV average derived from formulas', 2);
-                assertCell(sheet, data as string[][], 8, 13, '2.46', 'Test for FMV average formula inserted : Row 9 Price : expected FMV calc averaged from supplied high/low prices', 2);
+                assertCell(sheet, data as string[][], 2, 9, '1.05', 'Test for Fiat Cost calculated from FMV data : Row 3 Fiat Cost : expected fiat cost calc from FMV average', 2);
+                assertCell(sheet, data as string[][], 2, 14, '1.05', 'Test for FMV average formula inserted : Row 3 Price : expected FMV calc averaged from supplied high/low prices', 2);
+                assertCell(sheet, data as string[][], 5, 9, '782.00', 'Test for Fiat Cost with known FMV price : Row 6 Fiat Cost : expected fiat cost calc from known FMV price', 2);
+                assertCell(sheet, data as string[][], 6, 11, '4.13', 'Test for Fiat Received calculated from FMV data : Row 7 Fiat Received : expected fiat received calc from FMV average', 2);
+                assertCell(sheet, data as string[][], 6, 14, '2.07', 'Test for FMV average formula inserted : Row 7 Price : expected FMV calc averaged from supplied high/low prices', 2);
+                assertCell(sheet, data as string[][], 7, 11, '48.73', 'Test for Fiat Received calculated from FMV data : Row 8 Fiat Received : expected fiat received calc from FMV average derived from formulas', 2);
+                assertCell(sheet, data as string[][], 7, 14, '2.44', 'Test for FMV average formula inserted : Row 8 Price : expected FMV calc averaged from supplied high/low prices', 2);
+                assertCell(sheet, data as string[][], 8, 9, '66.31', 'Test for Fiat Cost calculated from FMV data : Row 9 Fiat Cost : expected fiat cost calc from FMV average derived from formulas', 2);
+                assertCell(sheet, data as string[][], 8, 14, '2.46', 'Test for FMV average formula inserted : Row 9 Price : expected FMV calc averaged from supplied high/low prices', 2);
             }
-            assertCell(sheet, data as string[][], 3, 4, '1.00', 'Test for Fiat Cost with no FMV data : Row 4 Fiat Cost : expected user supplied number', 2);
-            assertCell(sheet, data as string[][], 4, 6, '5.00', 'Test for Fiat Received with no FMV data : Row 5 Fiat Received : expected user supplied number', 2);
+            assertCell(sheet, data as string[][], 3, 9, '1.00', 'Test for Fiat Cost with no FMV data : Row 4 Fiat Cost : expected user supplied number', 2);
+            assertCell(sheet, data as string[][], 4, 11, '5.00', 'Test for Fiat Received with no FMV data : Row 5 Fiat Received : expected user supplied number', 2);
         };
 
         fillInTempSheet(sheet, data as string[][]);
@@ -83,7 +85,7 @@ export function test1FMV(): UnitTestWrapper {
 
 /**
  * test2 for function setFMVformulasOnSheet(sheet)
- */
+ *//*
 export function test2FMV(): UnitTestWrapper {
     return (): void => {
         const coinName = 'FMV_TEST2';
@@ -106,7 +108,7 @@ export function test2FMV(): UnitTestWrapper {
                 validationData.forEach((row, rowIdx) => { validationData[rowIdx] = [...row]; });
                 validationData.forEach(row => row.splice(7, 4));
 
-                assert((validate(validationData as unknown as SevenPackDataRow[]) === ''), true, 'Data validated');
+                assert((validate(validationData as unknown as DataValidationRow[]) === ''), true, 'Data validated');
                 const dateDisplayValues = data.map(row => [row[0], '']); // empty str makes this a 2D array of strings for getLastRowWithDataPresent()
                 const lastRow = getLastRowWithDataPresent(dateDisplayValues);
 
@@ -138,7 +140,7 @@ export function test2FMV(): UnitTestWrapper {
                 assertCell(sheet, data as string[][], 7, 4, '46.02', 'Test Application of Value Known Strategy : Row 8 Fiat Value : expected E8 -> 46.02', 2);
             } else if (sheet !== null) {
                 // QUnit unit test
-                assert((validate(sheet.getRange('A:G').getValues() as SevenPackDataRow[]) === ''), true, 'Data validated');
+                assert((validate(sheet.getRange('A:G').getValues() as DataValidationRow[]) === ''), true, 'Data validated');
                 const dateDisplayValues = sheet.getRange('A:A').getDisplayValues();
                 const lastRow = getLastRowWithDataPresent(dateDisplayValues);
                 const strategyCol = sheet.getRange('C:C').getValues() as string[][];
@@ -167,3 +169,4 @@ export function test2FMV(): UnitTestWrapper {
         deleteTempSheet(sheet);
     };
 }
+*/

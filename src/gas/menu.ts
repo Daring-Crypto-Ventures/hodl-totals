@@ -8,7 +8,7 @@ import calculateFIFO from '../calc-fifo';
 import getOrderList from '../orders';
 import validate from '../validate';
 import getLastRowWithDataPresent from '../last-row';
-import { CompleteDataRow, FormulaDataRow, SevenPackLooselyTypedDataRow } from '../types';
+import { CompleteDataRow, FormulaDataRow, LooselyTypedDataValidationRow } from '../types';
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
@@ -100,46 +100,16 @@ export function formatSheet_(): GoogleAppsScript.Spreadsheet.Sheet {
     const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
     const desiredCurrency = sheet.getName().replace(/ *\([^)]*\) */g, '');
 
-    /*  Update Row 1 Cell use accordingly
-        A1: Titled "<ARROW Portfolio> no hyperlink **for now**
-        B1:  Ttield "All Wallets & Accounts" **for now**
-        C1: New temp home for the Coin Totals
-        D1: Titled "COIN balance on"
-        E1: Tiled "<unknown date> **for now**
-        F1: Titled "was off by" 
-        G1: Titled "0.000" **for now**
-        H1: New home for the Coin Name (optionally hyperlinked)
-        I1:O1:  Inflow, Outflow, FMV unchanged
-        P1:R1: New longer title for calcs
-        S1: New temp home for the Long succeed/fail string
-        T1: Leave blank unless can split S1 string into success/date correctly
-        U1: Titled "Income or Gain Loss"
-    */
     // populate the two-row-tall header cells
-    const header1 = ['↩ Portfolio', 'All Wallets & Accounts','', `${desiredCurrency} balance on `, '','was off by','',
+    const header1 = [' ↩ Portfolio ', 'All Wallets & Accounts','', `${desiredCurrency} balance on `, '<unknown date>','was off by','0.000',
       ` ${desiredCurrency}`, 'Inflow', '', 'Outflow', '',
       'Fair Mkt Value', '','',
       'Last Gain/Loss Calculation (FIFO Method)', '', '','','', 'Income or Gain/Loss'];
-
-    /*  A: New unused TX CHCECK column at left,
-        B: Move Wallet/Account column here
-        C: Move Transaction ID column here
-        D: Move Notes column here and call it Description
-        E,F: Move Date, Category here
-        G: New unused Net Change column with +/- values in it
-        H: Move Valuation Strategy here
-        I,J,K,L: Outflow/Inflow Columns here
-        M,N,O: FMV Columns here
-        P,Q: New unused Lot IDs and Date Acquired columns
-        R,S,T: the existing Cost Basis columns
-        U: New *unused Summarized In Column
-        V: No more official Address column header, but leave data there alone
-    */
     // NOTE: spaces are hard coded around header text that help autosizecolumns behave correctly
-    const header2 = ['   Tx ✔   ','   All Wallet & Accounts   ', '   Transaction ID   ', '   Description   ', '   Date & Time   ', '       Category       ', '   Net Change   ',
-      '   Valuation Strategy   ', `   ${desiredCurrency} Acquired   `, '   Value (USD)   ', `   ${desiredCurrency} Disposed   `, '   Value USD   ',
+    const header2 = ['   Tx ✔   ','    All Wallet & Accounts    ', '    Transaction ID    ', '   Description   ', '    Date & Time    ', '       Category       ', '    Net Change    ',
+      '   Valuation Strategy   ', `   ${desiredCurrency} Acquired   `, '    Value (USD)    ', `   ${desiredCurrency} Disposed   `, '    Value (USD)    ',
       `   ${desiredCurrency} High   `, `   ${desiredCurrency} Low   `, `   ${desiredCurrency} Price   `,
-      '   Lot ID   ','   Date Acquired   ','   Status   ','   Cost Basis   ', '   Gain (Loss)   ', '   Summarized In   '];
+      '   Lot ID   ','   Date Acquired   ','   Status   ','    Cost Basis    ', '    Gain (Loss)    ', '   Summarized In   '];
 
     sheet.getRange('A1:U1').setValues([header1]).setFontWeight('bold').setHorizontalAlignment('center');
     sheet.getRange('A2:U2').setValues([header2]).setFontWeight('bold').setHorizontalAlignment('center');
@@ -148,8 +118,9 @@ export function formatSheet_(): GoogleAppsScript.Spreadsheet.Sheet {
     const lastRow = getLastRowWithDataPresent(sheet.getRange('A:A').getValues());
 
     // set up row 1 cells for reconcilation
+    sheet.getRange('1:1').addDeveloperMetadata('version', '1.0.0');
     sheet.getRange('B1:H1').setBorder(false, true, false, true, false, false);
-    sheet.getRange('G1').setValue('=$C$1-SUBTOTAL(109,$G$3:G)');
+    sheet.getRange('G1').setValue('=$C$1-SUBTOTAL(109,$G$3:G)').setNumberFormat('+0.000;-0.000;0.000')
     sheet.getRange('H1').setHorizontalAlignment('left');
 
     // add borders to demarcate the row 1 headers into logical groups
@@ -168,7 +139,7 @@ export function formatSheet_(): GoogleAppsScript.Spreadsheet.Sheet {
     sheet.setFrozenRows(2);
 
     // set numeric formats as described here: https://developers.google.com/sheets/api/guides/formats
-    sheet.getRange('A3:A').setHorizontalAlignment('center');
+    sheet.getRange('A3:A').setHorizontalAlignment('center').insertCheckboxes();
     sheet.getRange('B3:B').setFontColor('#424250').setFontStyle('italic').setHorizontalAlignment('center');
     sheet.getRange('C3:C').setFontColor(null).setFontStyle(null).setHorizontalAlignment('left');
     sheet.getRange('D3:D').setFontColor('#424250').setFontStyle('italic').setHorizontalAlignment('left');
@@ -177,7 +148,7 @@ export function formatSheet_(): GoogleAppsScript.Spreadsheet.Sheet {
         .setFontSize(10)
         .setHorizontalAlignment('center');
     sheet.getRange('F3:F').setFontColor('#424250').setFontStyle('italic').setHorizontalAlignment('center');
-    sheet.getRange('G3:G').setNumberFormat('+;-;0.00000000').setFontColor(null).setFontStyle(null)
+    sheet.getRange('G3:G').setNumberFormat('+0.00000000;-0.00000000;0.00000000').setFontColor(null).setFontStyle(null)
         .setFontFamily('Calibri')
         .setFontSize(11);
     sheet.getRange('H3:H').setFontColor('#424250').setFontStyle('italic').setHorizontalAlignment('center');
@@ -282,22 +253,22 @@ export function calculateFIFO_(): void {
 
     // sanity check the data in the sheet. only proceed if data is good
     Logger.log('Validating the data before starting calculations.');
-    const validationErrMsg = validate(sheet.getRange('A:G').getValues() as SevenPackLooselyTypedDataRow[]);
+    const validationErrMsg = validate(sheet.getRange('E:L').getValues() as LooselyTypedDataValidationRow[]);
 
     if (validationErrMsg === '') {
-        const data = sheet.getRange('A:Q').getValues() as CompleteDataRow[];
-        const formulaData = sheet.getRange('A:Q').getFormulas() as FormulaDataRow[];
-        const dateDisplayValues = sheet.getRange('A:A').getDisplayValues();
+        const data = sheet.getRange('A:U').getValues() as CompleteDataRow[];
+        const formulaData = sheet.getRange('A:U').getFormulas() as FormulaDataRow[];
+        const dateDisplayValues = sheet.getRange('E:E').getDisplayValues();
         const lastRow = getLastRowWithDataPresent(dateDisplayValues);
 
         // clear previously calculated values
         Logger.log('Clearing previously calculated values and notes.');
-        sheet.getRange('H3:J').setValue('');
-        sheet.getRange('F3:F').setNote('');
+        sheet.getRange('P3:T').setValue('');
+        sheet.getRange('K3:K').setNote('');
 
-        const lots = getOrderList(dateDisplayValues as [string][], lastRow, sheet.getRange('D:E').getValues() as [number, number][]);
+        const lots = getOrderList(dateDisplayValues as [string][], lastRow, sheet.getRange('I:J').getValues() as [number, number][]);
         Logger.log(`Detected ${lots.length} purchases of ${sheet.getName().replace(/ *\([^)]*\) */g, '')}.`);
-        const sales = getOrderList(dateDisplayValues as [string][], lastRow, sheet.getRange('F:G').getValues() as [number, number][]);
+        const sales = getOrderList(dateDisplayValues as [string][], lastRow, sheet.getRange('K:L').getValues() as [number, number][]);
         Logger.log(`Detected ${sales.length} sales of ${sheet.getName().replace(/ *\([^)]*\) */g, '')}.`);
 
         const annotations = calculateFIFO(coinName, data, formulaData, lots, sales);
@@ -324,8 +295,9 @@ export function calculateFIFO_(): void {
         }
 
         // output the current date and time as the time last completed
-        const now = Utilities.formatDate(new Date(), 'CST', 'MMMM dd, yyyy HH:mm');
-        sheet.getRange('K1').setValue(`Last calculation succeeded ${now}`);
+        const now = Utilities.formatDate(new Date(), 'CST', 'yyyy-mm-dd HH:mm');
+        sheet.getRange('S1').setValue(`${now}`);
+        sheet.getRange('T1').setValue('Succeeded');
         Logger.log(`Last calculation succeeded ${now}`);
     } else {
         // notify the user of the data validation error
@@ -334,8 +306,9 @@ export function calculateFIFO_(): void {
         Browser.msgBox(msgPrefix, msg, Browser.Buttons.OK);
 
         // record the failure in the sheet as well
-        const now = Utilities.formatDate(new Date(), 'CST', 'MMMM dd, yyyy HH:mm');
-        sheet.getRange('K1').setValue(`Data validation failed ${now}`);
+        const now = Utilities.formatDate(new Date(), 'CST', 'yyyy-mm-dd HH:mm');
+        sheet.getRange('S1').setValue(`${now}`);
+        sheet.getRange('T1').setValue('Failed');
         Logger.log(`Data validation failed ${now}`);
     }
 }

@@ -1,5 +1,5 @@
 // import { expect, test } from '@jest/globals';
-import { test1FMV, test2FMV } from '../../tests/fmv.spec';
+import { test1FMV /*, test2FMV */ } from '../../tests/fmv.spec';
 
 /**
  * jest unit tests for calculateFIFO()
@@ -7,4 +7,4 @@ import { test1FMV, test2FMV } from '../../tests/fmv.spec';
  *
  */
 describe('Fair Market Value - Example Dataset (One Round)', test1FMV());
-describe('Fair Market Value - Strategies (One Round)', test2FMV());
+//describe('Fair Market Value - Strategies (One Round)', test2FMV());

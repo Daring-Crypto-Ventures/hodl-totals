@@ -28,67 +28,52 @@ export function setFMVStrategyOnRow(
 ): void {
     const errorValues = ['#NULL!', '#DIV/0!', '#VALUE!', '#REF!', '#NAME?', '#NUM!', '#N/A', '#ERROR!'];
     if (strategy === 'Value Known') {
-        drawCellDisabled(sheet, data, row, 11, true);
         drawCellDisabled(sheet, data, row, 12, true);
         drawCellDisabled(sheet, data, row, 13, true);
+        drawCellDisabled(sheet, data, row, 14, true);
         restoreValueAssociatedWithStrategy(sheet, data, strategy, row); // restore any prev acquired/disposed values
     } else if (strategy === 'Price Known') {
         if (typeof oldStrategy !== 'undefined') {
             clearStrategyValuesFromRow(sheet, data, oldStrategy, row);
         }
-        drawCellDisabled(sheet, data, row, 11, true);
         drawCellDisabled(sheet, data, row, 12, true);
-        drawCellDisabled(sheet, data, row, 13, false);
-        if (acquired) {
-            if ((typeof oldStrategy !== 'undefined') && (oldStrategy === 'Value Known')) {
-                const oldVal = getCellValue(sheet, data, row, 4);
-                if (!errorValues.includes(oldVal)) {
-                    associateValueWithStrategy(sheet, data, oldStrategy, row, 4);
-                }
-            }
-            fillInCell(sheet, data, row, 4, `=D${row + 1}*N${row + 1}`);
-        } else if (disposed) {
-            if ((typeof oldStrategy !== 'undefined') && (oldStrategy === 'Value Known')) {
-                const oldVal = getCellValue(sheet, data, row, 6);
-                if (!errorValues.includes(oldVal)) {
-                    associateValueWithStrategy(sheet, data, oldStrategy, row, 6);
-                }
-            }
-            fillInCell(sheet, data, row, 6, `=F${row + 1}*N${row + 1}`);
-        }
+        drawCellDisabled(sheet, data, row, 13, true);
+        drawCellDisabled(sheet, data, row, 14, false);
+        setFormulasInAcquiredDisposedCells(acquired, oldStrategy, sheet, data, row, errorValues, disposed);
         restoreValueAssociatedWithStrategy(sheet, data, strategy, row); // restore any prev stashed price value
     } else if (strategy === 'Avg Daily Price Variation') {
         if (typeof oldStrategy !== 'undefined') {
             clearStrategyValuesFromRow(sheet, data, oldStrategy, row);
         }
-        drawCellDisabled(sheet, data, row, 11, false);
-        drawCellDisabled(sheet, data, row, 12, false);
-        drawCellDisabled(sheet, data, row, 13, false);
-        if (acquired) {
-            if ((typeof oldStrategy !== 'undefined') && (oldStrategy === 'Value Known')) {
-                const oldVal = getCellValue(sheet, data, row, 4);
-                if (!errorValues.includes(oldVal)) {
-                    associateValueWithStrategy(sheet, data, oldStrategy, row, 4);
-                }
-            }
-            fillInCell(sheet, data, row, 4, `=D${row + 1}*N${row + 1}`);
-        } else if (disposed) {
-            if ((typeof oldStrategy !== 'undefined') && (oldStrategy === 'Value Known')) {
-                const oldVal = getCellValue(sheet, data, row, 6);
-                if (!errorValues.includes(oldVal)) {
-                    associateValueWithStrategy(sheet, data, oldStrategy, row, 6);
-                }
-            }
-            fillInCell(sheet, data, row, 6, `=F${row + 1}*N${row + 1}`);
-        }
+        setFormulasInAcquiredDisposedCells(acquired, oldStrategy, sheet, data, row, errorValues, disposed);
         if ((typeof oldStrategy !== 'undefined') && (oldStrategy === 'Price Known')) {
-            const oldVal = getCellValue(sheet, data, row, 13);
+            const oldVal = getCellValue(sheet, data, row, 14);
             if (!errorValues.includes(oldVal)) {
-                associateValueWithStrategy(sheet, data, oldStrategy, row, 13);
+                associateValueWithStrategy(sheet, data, oldStrategy, row, 14);
             }
         }
-        fillInCell(sheet, data, row, 13, `=AVERAGE(L${row + 1},M${row + 1})`);
+        fillInCell(sheet, data, row, 14, `=AVERAGE(M${row + 1},N${row + 1})`);
         // no need to restore values for Avg Daily Price Variation, since fields are filled in
+    }
+}
+
+function setFormulasInAcquiredDisposedCells(acquired: string, oldStrategy: string | undefined, sheet: GoogleAppsScript.Spreadsheet.Sheet | null, data: CompleteDataRow[] | null, row: number, errorValues: string[], disposed: string) {
+    if (acquired) {
+        if ((typeof oldStrategy !== 'undefined') && (oldStrategy === 'Value Known')) {
+            const oldVal = getCellValue(sheet, data, row, 9);
+            if (!errorValues.includes(oldVal)) {
+                associateValueWithStrategy(sheet, data, oldStrategy, row, 9);
+            }
+        }
+        fillInCell(sheet, data, row, 9, `=I${row + 1}*O${row + 1}`);
+    } else if (disposed) {
+        if ((typeof oldStrategy !== 'undefined') && (oldStrategy === 'Value Known')) {
+            const oldVal = getCellValue(sheet, data, row, 11);
+            if (!errorValues.includes(oldVal)) {
+                associateValueWithStrategy(sheet, data, oldStrategy, row, 11);
+            }
+        }
+        fillInCell(sheet, data, row, 11, `=K${row + 1}*O${row + 1}`);
     }
 }
 
