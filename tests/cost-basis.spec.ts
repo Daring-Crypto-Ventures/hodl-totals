@@ -133,23 +133,23 @@ export function test3CostBasis(): UnitTestWrapper {
 
 /**
  * test4 for function calculateFIFO(sheet, lots, sales)
- *
+ */
 export function test4CostBasis(): UnitTestWrapper {
     return (): void => {
         const coinName = 'CB_TEST4';
         const sheet = createTempSheet(coinName);
         const data: CompleteDataRow[] = [
-            ['', '', '', 0, 0, 0, 0, '', 0, 0, ''],
-            ['', '', '', 0, 0, 0, 0, '', 0, 0, ''],
-            ['2017-01-01', '', '', 1.0, 1000, 0, 0, '', 0, 0, '']];
+            ['FALSE', '', '', '', '', '', 0, '', 0, 0, 0, 0, '', '', '', '', '', '', 0, 0, ''],
+            ['FALSE', '', '', '', '', '', 0, '', 0, 0, 0, 0, '', '', '', '', '', '', 0, 0, ''],
+            ['FALSE', '', '', '', '2017-01-01', '', +1.0, '', 1.0, 1000, 0, 0, '', '', '', '', '', '', 0, 0, '']];
 
         const testRun = function (round: number): void {
             const annotations = callCalculateFIFO(sheet, coinName, data, round);
 
             assert(annotations.length, 0, `Round ${round} No annotations.`);
-            assertCell(sheet, data as string[][], 2, 7, '0% Sold', `Round ${round} Test for No Sale : Row 3 Status : expected no coin sold`);
-            assertCell(sheet, data as string[][], 2, 8, 0, `Round ${round} Test for No Sale : Row 3 Cost Basis : expected no cost basis`);
-            assertCell(sheet, data as string[][], 2, 9, 0, `Round ${round} Test for No Sale : Row 3 Gain(Loss) : expected no gain`);
+            assertCell(sheet, data as string[][], 2, 17, '0% Sold', `Round ${round} Test for No Sale : Row 3 Status : expected no coin sold`);
+            assertCell(sheet, data as string[][], 2, 18, 0, `Round ${round} Test for No Sale : Row 3 Cost Basis : expected no cost basis`);
+            assertCell(sheet, data as string[][], 2, 19, 0, `Round ${round} Test for No Sale : Row 3 Gain(Loss) : expected no gain`);
         };
 
         fillInTempSheet(sheet, data as string[][]);
@@ -158,7 +158,7 @@ export function test4CostBasis(): UnitTestWrapper {
 
         deleteTempSheet(sheet);
     };
-} */
+}
 
 /**
  * test5 for function calculateFIFO(sheet, lots, sales)
