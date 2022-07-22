@@ -49,4 +49,4 @@ export type CompleteDataRow = [
     number, // T: Gain (Loss)
     string, // U: Summarized In
     ...string[]];
-export type FormulaDataRow = [ ...string[] ];
+export type CompleteDataRowAsStrings = [ ...string[] ];

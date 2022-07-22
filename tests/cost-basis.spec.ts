@@ -1,5 +1,5 @@
 import { UnitTestWrapper, assert, assertCell, createTempSheet, fillInTempSheet, deleteTempSheet } from './utils.test';
-import { DataValidationRow, CompleteDataRow, FormulaDataRow } from '../src/types';
+import { DataValidationRow, CompleteDataRow, CompleteDataRowAsStrings } from '../src/types';
 import calculateFIFO from '../src/calc-fifo';
 import getOrderList from '../src/orders';
 import validate from '../src/validate';
@@ -426,7 +426,7 @@ function callCalculateFIFO(sheet: GoogleAppsScript.Spreadsheet.Sheet | null, coi
         salesData.forEach(row => row.splice(2, row.length - 2)); // remove all remaining columns to the right
 
         // make an empty 2D array same size and shape as the data array, to represent formulas
-        const formulaData = data.map(x => x.map(() => '')) as FormulaDataRow[];
+        const formulaData = data.map(x => x.map(() => '')) as CompleteDataRowAsStrings[];
 
         // do the cost basis calc
         const lots = getOrderList(dateDisplayValues as [string][], lastRow, lotData as unknown as [number, number][]);
@@ -441,7 +441,7 @@ function callCalculateFIFO(sheet: GoogleAppsScript.Spreadsheet.Sheet | null, coi
         const sales = getOrderList(dateDisplayValues as [string][], lastRow, sheet.getRange('K:L').getValues() as [number, number][]);
 
         // make an empty 2D array same size and shape as the data array, to represent formulas
-        const formulaData = data.map(x => x.map(() => '')) as FormulaDataRow[];
+        const formulaData = data.map(x => x.map(() => '')) as CompleteDataRowAsStrings[];
 
         annotations = calculateFIFO(coinName, data, formulaData, lots, sales);
         fillInTempSheet(sheet, data as string[][]);

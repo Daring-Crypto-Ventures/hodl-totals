@@ -9,7 +9,7 @@ import calculateFIFO from '../calc-fifo';
 import getOrderList from '../orders';
 import validate from '../validate';
 import getLastRowWithDataPresent from '../last-row';
-import { CompleteDataRow, FormulaDataRow, LooselyTypedDataValidationRow } from '../types';
+import { CompleteDataRow, CompleteDataRowAsStrings, LooselyTypedDataValidationRow } from '../types';
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
@@ -256,7 +256,7 @@ export function calculateFIFO_(): void {
 
     if (validationErrMsg === '') {
         const data = sheet.getRange('A:U').getValues() as CompleteDataRow[];
-        const formulaData = sheet.getRange('A:U').getFormulas() as FormulaDataRow[];
+        const formulaData = sheet.getRange('A:U').getFormulas() as CompleteDataRowAsStrings[];
         const dateDisplayValues = sheet.getRange('E:E').getDisplayValues();
         const lastRow = getLastRowWithDataPresent(dateDisplayValues);
 
