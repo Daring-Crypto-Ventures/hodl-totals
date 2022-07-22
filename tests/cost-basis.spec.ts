@@ -77,49 +77,49 @@ export function test2CostBasis(): UnitTestWrapper {
 
 /**
  * test3 for function calculateFIFO(sheet, lots, sales)
- *
+ */
 export function test3CostBasis(): UnitTestWrapper {
     return (): void => {
         const coinName = 'CB_TEST3';
         const sheet = createTempSheet(coinName);
         const data: CompleteDataRow[] = [
-            ['', '', '', 0, 0, 0, 0, '', 0, 0, ''],
-            ['', '', '', 0, 0, 0, 0, '', 0, 0, ''],
-            ['2017-01-01', '', '', 1.0, 1000, 0, 0, '', 0, 0, ''],
-            ['2018-01-01', '', '', 1.0, 1000, 0, 0, '', 0, 0, ''],
-            ['2018-07-01', '', '', 0, 0, 2.0, 4000, '', 0, 0, '']];
+            ['FALSE', '', '', '', '', '', 0, '', 0, 0, 0, 0, '', '', '', '', '', '', 0, 0, ''],
+            ['FALSE', '', '', '', '', '', 0, '', 0, 0, 0, 0, '', '', '', '', '', '', 0, 0, ''],
+            ['FALSE', '', '', '', '2017-01-01', '', +1.0, '', 1.0, 1000, 0, 0, '', '', '', '', '', '', 0, 0, ''],
+            ['FALSE', '', '', '', '2018-01-01', '', +1.0, '', 1.0, 1000, 0, 0, '', '', '', '', '', '', 0, 0, ''],
+            ['FALSE', '', '', '', '2018-07-01', '', -2.0, '', 0, 0, 2.0, 4000, '', '', '', '', '', '', 0, 0, '']];
 
         const testRun = function (round: number): void {
             const annotations = callCalculateFIFO(sheet, coinName, data, round);
 
-            assertCell(sheet, data as string[][], 2, 7, '100% Sold', `Round ${round} Test for Lot Sold In Full Later : Row 3 Status : expected 100% sold`);
-            assertCell(sheet, data as string[][], 2, 8, 0, `Round ${round} Test for Lot Sold In Full Later : Row 3 Cost Basis : expected no cost basis`);
-            assertCell(sheet, data as string[][], 2, 9, 0, `Round ${round} Test for Lot Sold In Full Later : Row 3 Gain(Loss) : expected no gain`);
-            assertCell(sheet, data as string[][], 3, 7, '100% Sold', `Round ${round} Test for Lot Sold In Full Later : Row 4 Status : expected 100% sold`);
-            assertCell(sheet, data as string[][], 3, 8, 0, `Round ${round} Test for Lot Sold In Full Later : Row 4 Cost Basis : expected no cost basis`);
-            assertCell(sheet, data as string[][], 3, 9, 0, `Round ${round} Test for Lot Sold In Full Later : Row 4 Gain(Loss) : expected no gain`);
-            assertCell(sheet, data as string[][], 4, 7, 'Long-term', `Round ${round} Test for Split into Long-Term Sale : Row 5 Status : expected long-term cost basis`);
-            assertCell(sheet, data as string[][], 4, 8, '1000.00', `Round ${round} Test for Split into Long-Term Sale : Row 5 Cost Basis : expected 1000 cost basis`, 2);
-            assertCell(sheet, data as string[][], 4, 9, '1000.00', `Round ${round} Test for Split into Long-Term Sale : Row 5 Gain(Loss) : expected 1000 gain`, 2);
-            assertCell(sheet, data as string[][], 5, 7, 'Short-term', `Round ${round} Test for Split into Short-Term Sale : Row 6 Status : expected short-term cost basis`);
-            assertCell(sheet, data as string[][], 5, 8, '1000.00', `Round ${round} Test for Split into Short-Term Sale : Row 6 Cost Basis : expected 1000 cost basis`, 2);
-            assertCell(sheet, data as string[][], 5, 9, '1000.00', `Round ${round} Test for Split into Short-Term Sale : Row 6 Gain(Loss) : expected 1000 gain`, 2);
+            assertCell(sheet, data as string[][], 2, 17, '100% Sold', `Round ${round} Test for Lot Sold In Full Later : Row 3 Status : expected 100% sold`);
+            assertCell(sheet, data as string[][], 2, 18, 0, `Round ${round} Test for Lot Sold In Full Later : Row 3 Cost Basis : expected no cost basis`);
+            assertCell(sheet, data as string[][], 2, 19, 0, `Round ${round} Test for Lot Sold In Full Later : Row 3 Gain(Loss) : expected no gain`);
+            assertCell(sheet, data as string[][], 3, 17, '100% Sold', `Round ${round} Test for Lot Sold In Full Later : Row 4 Status : expected 100% sold`);
+            assertCell(sheet, data as string[][], 3, 18, 0, `Round ${round} Test for Lot Sold In Full Later : Row 4 Cost Basis : expected no cost basis`);
+            assertCell(sheet, data as string[][], 3, 19, 0, `Round ${round} Test for Lot Sold In Full Later : Row 4 Gain(Loss) : expected no gain`);
+            assertCell(sheet, data as string[][], 4, 17, 'Long-term', `Round ${round} Test for Split into Long-Term Sale : Row 5 Status : expected long-term cost basis`);
+            assertCell(sheet, data as string[][], 4, 18, '1000.00', `Round ${round} Test for Split into Long-Term Sale : Row 5 Cost Basis : expected 1000 cost basis`, 2);
+            assertCell(sheet, data as string[][], 4, 19, '1000.00', `Round ${round} Test for Split into Long-Term Sale : Row 5 Gain(Loss) : expected 1000 gain`, 2);
+            assertCell(sheet, data as string[][], 5, 17, 'Short-term', `Round ${round} Test for Split into Short-Term Sale : Row 6 Status : expected short-term cost basis`);
+            assertCell(sheet, data as string[][], 5, 18, '1000.00', `Round ${round} Test for Split into Short-Term Sale : Row 6 Cost Basis : expected 1000 cost basis`, 2);
+            assertCell(sheet, data as string[][], 5, 19, '1000.00', `Round ${round} Test for Split into Short-Term Sale : Row 6 Gain(Loss) : expected 1000 gain`, 2);
 
             if (round === 1) { // Will not see split tx notes on subsequent calculations
                 const splitNotePart1 = annotations?.shift() ?? '';
-                assert(splitNotePart1?.[0], 'A5', 'Round 1 Test for Original Data Before Split Hint : Hint Anchor point on row 5'); */
-//                assert(splitNotePart1?.[1]?.replace(/ *\([^)]*\) */g, ' '), `Originally 2.00000000 ${coinName} was sold for $4000.00 and split into rows 5 and 6.`,
-//                    `Round ${round} Test for Term Split Note : Row 5 Date : expected split into rows 5 and 6`);
-//                const splitNotePart2 = annotations?.shift() ?? '';
-//                assert(splitNotePart2?.[0], 'A6', 'Round 1 Test for Original Data Before Split Hint : Hint Anchor point on row 6');
-//                assert(splitNotePart2?.[1]?.replace(/ *\([^)]*\) */g, ' '), `Originally 2.00000000 ${coinName} was sold for $4000.00 and split into rows 5 and 6.`,
-//                    `Round ${round} Test for Term Split Note : Row 6 Date : expected split into rows 5 and 6`);
-/*          }
+                assert(splitNotePart1?.[0], 'E5', 'Round 1 Test for Original Data Before Split Hint : Hint Anchor point on row 5');
+                assert(splitNotePart1?.[1]?.replace(/ *\([^)]*\) */g, ' '), `Originally 2.00000000 ${coinName} was sold for $4000.00 and split into rows 5 and 6.`,
+                    `Round ${round} Test for Term Split Note : Row 5 Date : expected split into rows 5 and 6`);
+                const splitNotePart2 = annotations?.shift() ?? '';
+                assert(splitNotePart2?.[0], 'E6', 'Round 1 Test for Original Data Before Split Hint : Hint Anchor point on row 6');
+                assert(splitNotePart2?.[1]?.replace(/ *\([^)]*\) */g, ' '), `Originally 2.00000000 ${coinName} was sold for $4000.00 and split into rows 5 and 6.`,
+                    `Round ${round} Test for Term Split Note : Row 6 Date : expected split into rows 5 and 6`);
+            }
             const soldNote1 = annotations?.shift() ?? '';
-            assert(soldNote1?.[0], 'F5', `Round ${round} Test for Lot Sold Hint : Hint Anchor point on row 5`);
+            assert(soldNote1?.[0], 'K5', `Round ${round} Test for Lot Sold Hint : Hint Anchor point on row 5`);
             assert(soldNote1?.[1], 'Sold lot from row 3 on 2017-01-01.', `Round ${round} Test for Lot Sold Hint : Row 5 Sold : expected sold from row 3`);
             const soldNote2 = annotations?.shift() ?? '';
-            assert(soldNote2?.[0], 'F6', `Round ${round} Test for Lot Sold Hint : Hint Anchor point on row 6`);
+            assert(soldNote2?.[0], 'K6', `Round ${round} Test for Lot Sold Hint : Hint Anchor point on row 6`);
             assert(soldNote2?.[1], 'Sold lot from row 4 on 2018-01-01.', `Round ${round} Test for Lot Sold Hint : Row 6 Sold : expected sold from row 4`);
         };
 
@@ -129,7 +129,7 @@ export function test3CostBasis(): UnitTestWrapper {
 
         deleteTempSheet(sheet);
     };
-} */
+}
 
 /**
  * test4 for function calculateFIFO(sheet, lots, sales)
