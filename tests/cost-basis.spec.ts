@@ -44,27 +44,27 @@ export function test1CostBasis(): UnitTestWrapper {
 
 /**
  * test2 for function calculateFIFO(sheet, lots, sales)
- *
+ */
 export function test2CostBasis(): UnitTestWrapper {
     return (): void => {
         const coinName = 'CB_TEST2';
         const sheet = createTempSheet(coinName);
         const data: CompleteDataRow[] = [
-            ['', '', '', 0, 0, 0, 0, '', 0, 0, ''],
-            ['', '', '', 0, 0, 0, 0, '', 0, 0, ''],
-            ['2017-01-01', '', '', 1.0, 1000, 0, 0, '', 0, 0, ''],
-            ['2018-01-02', '', '', 0, 0, 1.0, 2000, '', 0, 0, '']];
+            ['FALSE', '', '', '', '', '', 0, '', 0, 0, 0, 0, '', '', '', '', '', '', 0, 0, ''],
+            ['FALSE', '', '', '', '', '', 0, '', 0, 0, 0, 0, '', '', '', '', '', '', 0, 0, ''],
+            ['FALSE', '', '', '', '2017-01-01', '', 1.0, '', 1.0, 1000, 0, 0, '', '', '', '', '', '', 0, 0, ''],
+            ['FALSE', '', '', '', '2018-01-02', '', -1.0, '', 0, 0, 1.0, 2000, '', '', '', '', '', '', 0, 0, '']];
 
         const testRun = function (round: number): void {
             const annotations = callCalculateFIFO(sheet, coinName, data, round);
-            assertCell(sheet, data as string[][], 2, 7, '100% Sold', `Round ${round} Test for Whole Long-Term Sale : Row 3 Status : expected all coin sold`);
-            assertCell(sheet, data as string[][], 2, 8, 0, `Round ${round} Test for Whole Long-Term Sale : Row 3 Cost Basis : expected no cost basis`);
-            assertCell(sheet, data as string[][], 2, 9, 0, `Round ${round} Test for Whole Long-Term Sale : Row 3 Gain(Loss) : expected no gain`);
-            assert(annotations[0]?.[0], 'F4', `Round ${round} Test for Lot Sold Hint : Hint Anchor point on row 4`);
+            assertCell(sheet, data as string[][], 2, 17, '100% Sold', `Round ${round} Test for Whole Long-Term Sale : Row 3 Status : expected all coin sold`);
+            assertCell(sheet, data as string[][], 2, 18, 0, `Round ${round} Test for Whole Long-Term Sale : Row 3 Cost Basis : expected no cost basis`);
+            assertCell(sheet, data as string[][], 2, 19, 0, `Round ${round} Test for Whole Long-Term Sale : Row 3 Gain(Loss) : expected no gain`);
+            assert(annotations[0]?.[0], 'K4', `Round ${round} Test for Lot Sold Hint : Hint Anchor point on row 4`);
             assert(annotations[0]?.[1], 'Sold lot from row 3 on 2017-01-01.', `Round ${round} Test for Lot Sold Hint : Row 4 Sold : expected sold from row 3`);
-            assertCell(sheet, data as string[][], 3, 7, 'Long-term', `Round ${round} Test for Whole Long-Term Sale : Row 4 Status : expected long-term cost basis`);
-            assertCell(sheet, data as string[][], 3, 8, '1000.00', `Round ${round} Test for Whole Long-Term Sale : Row 4 Cost Basis : expected 1000 cost basis`, 2);
-            assertCell(sheet, data as string[][], 3, 9, '1000.00', `Round ${round} Test for Whole Long-Term Sale : Row 4 Gain(Loss) : expected 1000 gain`, 2);
+            assertCell(sheet, data as string[][], 3, 17, 'Long-term', `Round ${round} Test for Whole Long-Term Sale : Row 4 Status : expected long-term cost basis`);
+            assertCell(sheet, data as string[][], 3, 18, '1000.00', `Round ${round} Test for Whole Long-Term Sale : Row 4 Cost Basis : expected 1000 cost basis`, 2);
+            assertCell(sheet, data as string[][], 3, 19, '1000.00', `Round ${round} Test for Whole Long-Term Sale : Row 4 Gain(Loss) : expected 1000 gain`, 2);
         };
 
         fillInTempSheet(sheet, data as string[][]);
@@ -73,7 +73,7 @@ export function test2CostBasis(): UnitTestWrapper {
 
         deleteTempSheet(sheet);
     };
-} */
+}
 
 /**
  * test3 for function calculateFIFO(sheet, lots, sales)

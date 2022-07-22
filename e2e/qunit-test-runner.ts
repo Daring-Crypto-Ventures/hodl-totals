@@ -46,8 +46,8 @@ function testValidationFunctions(): void {
 function testCostBasisFunctions(): void {
     // @ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
     QUnit.test('Cost Basis - Simple Partial Short-Term Sale (Two Rounds)', test1CostBasis());
-    // ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
-    // QUnit.test('Cost Basis - Simple Whole Long-Term Sale (Two Rounds)', test2CostBasis());
+    // @ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
+    QUnit.test('Cost Basis - Simple Whole Long-Term Sale (Two Rounds)', test2CostBasis());
     // ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
     // QUnit.test('Cost Basis - Simple Term Split (Two Rounds)', test3CostBasis());
     // ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
