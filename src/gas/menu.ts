@@ -102,7 +102,7 @@ export function formatSheet_(): GoogleAppsScript.Spreadsheet.Sheet {
     const desiredCurrency = sheet.getName().replace(/ *\([^)]*\) */g, '');
 
     // populate the two-row-tall header cells
-    const header1 = [' ↩ Portfolio ', 'All Wallets & Accounts','', `${desiredCurrency} balance on `, '<unknown date>','was off by','0.000',
+    const header1 = [' ↩ Totals ', 'All Wallets & Accounts','', `${desiredCurrency} balance on `, '<unknown date>','was off by','0.000',
       `${desiredCurrency}`, 'Inflow', '', 'Outflow', '',
       'Fair Mkt Value', '','',
       'Last', 'FIFO Method', 'Calculation on','','', 'Income or Gain/Loss'];
