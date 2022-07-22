@@ -259,81 +259,81 @@ export function test5CostBasis(): UnitTestWrapper {
 
 /**
  * test6 for function calculateFIFO(sheet, lots, sales)
- *
+ */
 export function test6CostBasis(): UnitTestWrapper {
     return (): void => {
         const coinName = 'CB_TEST6';
         const sheet = createTempSheet(coinName);
         const data: CompleteDataRow[] = [
-            ['', '', '', 0, 0, 0, 0, '', 0, 0, ''],
-            ['', '', '', 0, 0, 0, 0, '', 0, 0, ''],
-            ['2019-02-14', '', '', 201.89592700, 25.30, 0, 0, '', 0, 0, ''],
-            ['2019-03-13', '', '', 104.50000000, 20.25, 0, 0, '', 0, 0, ''],
-            ['2019-03-13', '', '', 5.55555600, 1.00, 0, 0, '', 0, 0, ''],
-            ['2019-03-13', '', '', 5.55555600, 1.00, 0, 0, '', 0, 0, ''],
-            ['2019-03-13', '', '', 5.55555600, 1.00, 0, 0, '', 0, 0, ''],
-            ['2019-03-13', '', '', 38.88888900, 7.00, 0, 0, '', 0, 0, ''],
-            ['2019-03-30', '', '', 3.55968800, 1.00, 0, 0, '', 0, 0, ''],
-            ['2019-03-30', '', '', 3.56238300, 1.00, 0, 0, '', 0, 0, ''],
-            ['2019-03-30', '', '', 3.56293500, 1.00, 0, 0, '', 0, 0, ''],
-            ['2019-03-30', '', '', 24.93663400, 6.98, 0, 0, '', 0, 0, ''],
-            ['2019-04-09', '', '', 14.25000000, 4.14, 0, 0, '', 0, 0, ''],
-            ['2019-05-09', '', '', 14.25000000, 4.22, 0, 0, '', 0, 0, ''],
-            ['2019-06-10', '', '', 19.00000000, 6.19, 0, 0, '', 0, 0, ''],
-            ['2019-09-08', '', '', 7.60000000, 1.34, 0, 0, '', 0, 0, ''],
-            ['2019-10-09', '', '', 49.40000000, 10.18, 0, 0, '', 0, 0, ''],
-            ['2019-11-08', '', '', 25.65000000, 6.20, 0, 0, '', 0, 0, ''],
-            ['2019-12-07', '', '', 43.46250000, 8.40, 0, 0, '', 0, 0, ''],
-            ['2020-01-07', '', '', 4.50000000, 0.88, 0, 0, '', 0, 0, ''],
-            ['2020-02-01', '', '', 61.91077800, 13.76, 0, 0, '', 0, 0, ''],
-            ['2020-02-09', '', '', 23.51250000, 6.24, 0, 0, '', 0, 0, ''],
-            ['2020-02-09', '', '', 20.35000000, 5.40, 0, 0, '', 0, 0, ''],
-            ['2020-03-06', '', '', 22.05640000, 5.23, 0, 0, '', 0, 0, ''],
-            ['2020-03-09', '', '', 75.76250000, 14.54, 0, 0, '', 0, 0, ''],
-            ['2020-04-06', '', '', 24.21220000, 3.73, 0, 0, '', 0, 0, ''],
-            ['2020-04-08', '', '', 25.65000000, 4.23, 0, 0, '', 0, 0, ''],
-            ['2020-05-04', '', '', 0, 0, 829.14000000, 151.26, '', 0, 0, ''],
-            ['2020-05-06', '', '', 16.37960000, 0, 0, 0, '', 0, 0, ''],
-            ['2020-05-09', '', '', 26.60000000, 0, 0, 0, '', 0, 0, ''],
-            ['2020-06-05', '', '', 6.30000000, 0, 0, 0, '', 0, 0, ''],
-            ['2020-06-10', '', '', 37.78054500, 0, 0, 0, '', 0, 0, ''],
-            ['2020-07-07', '', '', 5.09400000, 0, 0, 0, '', 0, 0, '']];
+            ['FALSE', '', '', '', '', '', 0, '', 0, 0, 0, 0, '', '', '', '', '', '', 0, 0, ''],
+            ['FALSE', '', '', '', '', '', 0, '', 0, 0, 0, 0, '', '', '', '', '', '', 0, 0, ''],
+            ['FALSE', '', '', '', '2019-02-14', '', +201.895927, '', 201.89592700, 25.30, 0, 0, '', '', '', '', '', '', 0, 0, ''],
+            ['FALSE', '', '', '', '2019-03-13', '', +104.5, '', 104.50000000, 20.25, 0, 0, '', '', '', '', '', '', 0, 0, ''],
+            ['FALSE', '', '', '', '2019-03-13', '', +5.555556, '', 5.55555600, 1.00, 0, 0, '', '', '', '', '', '', 0, 0, ''],
+            ['FALSE', '', '', '', '2019-03-13', '', +5.555556, '', 5.55555600, 1.00, 0, 0, '', '', '', '', '', '', 0, 0, ''],
+            ['FALSE', '', '', '', '2019-03-13', '', +5.555556, '', 5.55555600, 1.00, 0, 0, '', '', '', '', '', '', 0, 0, ''],
+            ['FALSE', '', '', '', '2019-03-13', '', +38.888889, '', 38.88888900, 7.00, 0, 0, '', '', '', '', '', '', 0, 0, ''],
+            ['FALSE', '', '', '', '2019-03-30', '', +3.559688, '', 3.55968800, 1.00, 0, 0, '', '', '', '', '', '', 0, 0, ''],
+            ['FALSE', '', '', '', '2019-03-30', '', +3.562383, '', 3.56238300, 1.00, 0, 0, '', '', '', '', '', '', 0, 0, ''],
+            ['FALSE', '', '', '', '2019-03-30', '', +3.562935, '', 3.56293500, 1.00, 0, 0, '', '', '', '', '', '', 0, 0, ''],
+            ['FALSE', '', '', '', '2019-03-30', '', +24.936634, '', 24.93663400, 6.98, 0, 0, '', '', '', '', '', '', 0, 0, ''],
+            ['FALSE', '', '', '', '2019-04-09', '', +14.25, '', 14.25000000, 4.14, 0, 0, '', '', '', '', '', '', 0, 0, ''],
+            ['FALSE', '', '', '', '2019-05-09', '', +14.25, '', 14.25000000, 4.22, 0, 0, '', '', '', '', '', '', 0, 0, ''],
+            ['FALSE', '', '', '', '2019-06-10', '', +19.0, '', 19.00000000, 6.19, 0, 0, '', '', '', '', '', '', 0, 0, ''],
+            ['FALSE', '', '', '', '2019-09-08', '', +7.6, '', 7.60000000, 1.34, 0, 0, '', '', '', '', '', '', 0, 0, ''],
+            ['FALSE', '', '', '', '2019-10-09', '', +49.4, '', 49.40000000, 10.18, 0, 0, '', '', '', '', '', '', 0, 0, ''],
+            ['FALSE', '', '', '', '2019-11-08', '', +25.65, '', 25.65000000, 6.20, 0, 0, '', '', '', '', '', '', 0, 0, ''],
+            ['FALSE', '', '', '', '2019-12-07', '', +43.4625, '', 43.46250000, 8.40, 0, 0, '', '', '', '', '', '', 0, 0, ''],
+            ['FALSE', '', '', '', '2020-01-07', '', +4.5, '', 4.50000000, 0.88, 0, 0, '', '', '', '', '', '', 0, 0, ''],
+            ['FALSE', '', '', '', '2020-02-01', '', +61.910778, '', 61.91077800, 13.76, 0, 0, '', '', '', '', '', '', 0, 0, ''],
+            ['FALSE', '', '', '', '2020-02-09', '', +23.5125, '', 23.51250000, 6.24, 0, 0, '', '', '', '', '', '', 0, 0, ''],
+            ['FALSE', '', '', '', '2020-02-09', '', +20.35, '', 20.35000000, 5.40, 0, 0, '', '', '', '', '', '', 0, 0, ''],
+            ['FALSE', '', '', '', '2020-03-06', '', +22.0564, '', 22.05640000, 5.23, 0, 0, '', '', '', '', '', '', 0, 0, ''],
+            ['FALSE', '', '', '', '2020-03-09', '', +75.7625, '', 75.76250000, 14.54, 0, 0, '', '', '', '', '', '', 0, 0, ''],
+            ['FALSE', '', '', '', '2020-04-06', '', +24.2122, '', 24.21220000, 3.73, 0, 0, '', '', '', '', '', '', 0, 0, ''],
+            ['FALSE', '', '', '', '2020-04-08', '', +25.65, '', 25.65000000, 4.23, 0, 0, '', '', '', '', '', '', 0, 0, ''],
+            ['FALSE', '', '', '', '2020-05-04', '', -829.14, '', 0, 0, 829.14000000, 151.26, '', '', '', '', '', '', 0, 0, ''],
+            ['FALSE', '', '', '', '2020-05-06', '', +16.3796, '', 16.37960000, 0, 0, 0, '', '', '', '', '', '', 0, 0, ''],
+            ['FALSE', '', '', '', '2020-05-09', '', +26.6, '', 26.60000000, 0, 0, 0, '', '', '', '', '', '', 0, 0, ''],
+            ['FALSE', '', '', '', '2020-06-05', '', +6.3, '', 6.30000000, 0, 0, 0, '', '', '', '', '', '', 0, 0, ''],
+            ['FALSE', '', '', '', '2020-06-10', '', +37.780545, '', 37.78054500, 0, 0, 0, '', '', '', '', '', '', 0, 0, ''],
+            ['FALSE', '', '', '', '2020-07-07', '', +5.094, '', 5.09400000, 0, 0, 0, '', '', '', '', '', '', 0, 0, '']];
 
         const testRun = function (round: number): void {
             const annotations = callCalculateFIFO(sheet, coinName, data, round);
 
             for (let j = 2; j < 27; j++) {
-                assertCell(sheet, data as string[][], j, 7, '100% Sold', `Round ${round} Test for Lot Sold In Full Later : Row ${j} Status : expected 100% sold`);
-                assertCell(sheet, data as string[][], j, 8, '0.00', `Round ${round} Test for Lot Sold In Full Later : Row ${j} Cost Basis : expected no cost basis`, 2);
-                assertCell(sheet, data as string[][], j, 9, '0.00', `Round ${round} Test for Lot Sold In Full Later : Row ${j} Gain(Loss) : expected no gain`, 2);
+                assertCell(sheet, data as string[][], j, 17, '100% Sold', `Round ${round} Test for Lot Sold In Full Later : Row ${j} Status : expected 100% sold`);
+                assertCell(sheet, data as string[][], j, 18, '0.00', `Round ${round} Test for Lot Sold In Full Later : Row ${j} Cost Basis : expected no cost basis`, 2);
+                assertCell(sheet, data as string[][], j, 19, '0.00', `Round ${round} Test for Lot Sold In Full Later : Row ${j} Gain(Loss) : expected no gain`, 2);
             }
-            assertCell(sheet, data as string[][], 27, 7, 'Long-term', `Round ${round} Test for Split into Long-Term Sale : Row 28 Status : expected long-term cost basis`);
-            assertCell(sheet, data as string[][], 27, 8, '69.67', `Round ${round} Test for Split into Long-Term Sale : Row 28 Cost Basis : expected $69.67 cost basis`, 2);
-            assertCell(sheet, data as string[][], 27, 9, '5.46', `Round ${round} Test for Split into Long-Term Sale : Row 28 Gain(Loss) : expected $5.46 gain`, 2);
-            assertCell(sheet, data as string[][], 28, 7, 'Short-term', `Round ${round} Test for Split into Short-Term Sale : Row 29 Status : expected short-term cost basis`);
-            assertCell(sheet, data as string[][], 28, 8, '90.54', `Round ${round} Test for Split into Short-Term Sale : Row 29 Cost Basis : expected $90.54 cost basis`, 2);
-            assertCell(sheet, data as string[][], 28, 9, '-14.41', `Round ${round} Test for Split into Short-Term Sale : Row 29 Gain(Loss) : expected $(14.41) gain`, 2);
+            assertCell(sheet, data as string[][], 27, 17, 'Long-term', `Round ${round} Test for Split into Long-Term Sale : Row 28 Status : expected long-term cost basis`);
+            assertCell(sheet, data as string[][], 27, 18, '69.67', `Round ${round} Test for Split into Long-Term Sale : Row 28 Cost Basis : expected $69.67 cost basis`, 2);
+            assertCell(sheet, data as string[][], 27, 19, '5.46', `Round ${round} Test for Split into Long-Term Sale : Row 28 Gain(Loss) : expected $5.46 gain`, 2);
+            assertCell(sheet, data as string[][], 28, 17, 'Short-term', `Round ${round} Test for Split into Short-Term Sale : Row 29 Status : expected short-term cost basis`);
+            assertCell(sheet, data as string[][], 28, 18, '90.54', `Round ${round} Test for Split into Short-Term Sale : Row 29 Cost Basis : expected $90.54 cost basis`, 2);
+            assertCell(sheet, data as string[][], 28, 19, '-14.41', `Round ${round} Test for Split into Short-Term Sale : Row 29 Gain(Loss) : expected $(14.41) gain`, 2);
             for (let k = 29; k < 34; k++) {
-                assertCell(sheet, data as string[][], k, 7, '', `Round ${round} Test for Unsold Lot : Row ${k} Status : expected no message`);
-                assertCell(sheet, data as string[][], k, 8, '0.00', `Round ${round} Test for Unsold Lot : Row ${k} Cost Basis : expected no cost basis`, 2);
-                assertCell(sheet, data as string[][], k, 9, '0.00', `Round ${round} Test for Unsold Lot : Row ${k} Gain(Loss) : expected no gain`, 2);
+                assertCell(sheet, data as string[][], k, 17, '', `Round ${round} Test for Unsold Lot : Row ${k} Status : expected no message`);
+                assertCell(sheet, data as string[][], k, 18, '0.00', `Round ${round} Test for Unsold Lot : Row ${k} Cost Basis : expected no cost basis`, 2);
+                assertCell(sheet, data as string[][], k, 19, '0.00', `Round ${round} Test for Unsold Lot : Row ${k} Gain(Loss) : expected no gain`, 2);
             }
 
             if (round === 1) { // Will not see split tx notes on subsequent calculations
                 const splitNotePart1 = annotations?.shift() ?? '';
-                assert(splitNotePart1?.[0], 'A28', `Round ${round} Test for Original Data Before Split Hint : Hint Anchor point on row 28`); */
-//                assert(splitNotePart1?.[1]?.replace(/ *\([^)]*\) */g, ' '), `Originally 829.14000000 ${coinName} was sold for $151.26 and split into rows 28 and 29.`,
-//                    `Round ${round} Test for Term Split Note : Row 28 Date : expected split into rows 28 and 29`);
-//                const splitNotePart2 = annotations?.shift() ?? '';
-//                assert(splitNotePart2?.[0], 'A29', `Round ${round} Test for Original Data Before Split Hint : Hint Anchor point on row 29`);
-//                assert(splitNotePart2?.[1]?.replace(/ *\([^)]*\) */g, ' '), `Originally 829.14000000 ${coinName} was sold for $151.26 and split into rows 28 and 29.`,
-//                    `Round ${round} Test for Term Split Note : Row 29 Date : expected split into rows 28 and 29`);
-//            }
-/*            const soldNote1 = annotations?.shift() ?? '';
-            assert(soldNote1?.[0], 'F28', `Round ${round} Test for Lot Sold Hint : Hint Anchor point on row 28`);
+                assert(splitNotePart1?.[0], 'E28', `Round ${round} Test for Original Data Before Split Hint : Hint Anchor point on row 28`);
+                assert(splitNotePart1?.[1]?.replace(/ *\([^)]*\) */g, ' '), `Originally 829.14000000 ${coinName} was sold for $151.26 and split into rows 28 and 29.`,
+                    `Round ${round} Test for Term Split Note : Row 28 Date : expected split into rows 28 and 29`);
+                const splitNotePart2 = annotations?.shift() ?? '';
+                assert(splitNotePart2?.[0], 'E29', `Round ${round} Test for Original Data Before Split Hint : Hint Anchor point on row 29`);
+                assert(splitNotePart2?.[1]?.replace(/ *\([^)]*\) */g, ' '), `Originally 829.14000000 ${coinName} was sold for $151.26 and split into rows 28 and 29.`,
+                    `Round ${round} Test for Term Split Note : Row 29 Date : expected split into rows 28 and 29`);
+            }
+            const soldNote1 = annotations?.shift() ?? '';
+            assert(soldNote1?.[0], 'K28', `Round ${round} Test for Lot Sold Hint : Hint Anchor point on row 28`);
             assert(soldNote1?.[1], 'Sold lots from row 3 on 2019-02-14 to row 13 on 2019-04-09.', `Round ${round} Test for Lot Sold Hint : Row 28 Sold : expected sold from row 3 to 13`);
             const soldNote2 = annotations?.shift() ?? '';
-            assert(soldNote2?.[0], 'F29', `Round ${round} Test for Lot Sold Hint : Hint Anchor point on row 29`);
+            assert(soldNote2?.[0], 'K29', `Round ${round} Test for Lot Sold Hint : Hint Anchor point on row 29`);
             assert(soldNote2?.[1], 'Sold lots from row 14 on 2019-05-09 to row 27 on 2020-04-08.', `Round ${round} Test for Lot Sold Hint : Row 29 Sold : expected sold from row 14 to 27`);
         };
 
@@ -343,48 +343,48 @@ export function test6CostBasis(): UnitTestWrapper {
 
         deleteTempSheet(sheet);
     };
-} */
+}
 
 /**
  * test7 for function calculateFIFO(sheet, lots, sales)
- *
+ */
 export function test7CostBasis(): UnitTestWrapper {
     return (): void => {
         const coinName = 'CB_TEST7';
         const sheet = createTempSheet(coinName);
         const data: CompleteDataRow[] = [
-            ['', '', '', 0, 0, 0, 0, '', 0, 0, ''],
-            ['', '', '', 0, 0, 0, 0, '', 0, 0, ''],
-            ['2018-10-27', 'Mining', '', 0.10348353, 0.23, 0, 0, '', 0, 0, ''],
-            ['2018-10-28', 'Mining', '', 0.01205424, 0.02, 0, 0, '', 0, 0, ''],
-            ['2018-10-31', 'Mining', '', 0.10012453, 0.19, 0, 0, '', 0, 0, ''],
-            ['2018-11-02', 'Mining', '', 0.10260444, 0.18, 0, 0, '', 0, 0, ''],
-            ['2018-11-04', 'Mining', '', 0.07621054, 0.14, 0, 0, '', 0, 0, ''],
-            ['2018-11-07', 'Mining', '', 0.10091816, 0.18, 0, 0, '', 0, 0, ''],
-            ['2018-11-10', 'Mining', '', 0.10321628, 0.18, 0, 0, '', 0, 0, ''],
-            ['2018-11-11', 'Mining', '', 0.04484832, 0.08, 0, 0, '', 0, 0, ''],
-            ['2018-11-13', 'Mining', '', 0.10099363, 0.15, 0, 0, '', 0, 0, ''],
-            ['2018-11-18', 'Mining', '', 0.06530715, 0.09, 0, 0, '', 0, 0, ''],
-            ['2021-01-17', 'Spent', '', 0, 0, 0.80975982, 0.09, '', 0, 0, ''],
-            ['2021-01-17', 'Tx Fee', '', 0, 0, 0.00000100, 0.00, '', 0, 0, '']];
+            ['FALSE', '', '', '', '', '', 0, '', 0, 0, 0, 0, '', '', '', '', '', '', 0, 0, ''],
+            ['FALSE', '', '', '', '', '', 0, '', 0, 0, 0, 0, '', '', '', '', '', '', 0, 0, ''],
+            ['FALSE', '', '', '', '2018-10-27', 'Mining', +0.10348353, '', 0.10348353, 0.23, 0, 0, '', '', '', '', '', '', 0, 0, ''],
+            ['FALSE', '', '', '', '2018-10-28', 'Mining', +0.01205424, '', 0.01205424, 0.02, 0, 0, '', '', '', '', '', '', 0, 0, ''],
+            ['FALSE', '', '', '', '2018-10-31', 'Mining', +0.10012453, '', 0.10012453, 0.19, 0, 0, '', '', '', '', '', '', 0, 0, ''],
+            ['FALSE', '', '', '', '2018-11-02', 'Mining', +0.10260444, '', 0.10260444, 0.18, 0, 0, '', '', '', '', '', '', 0, 0, ''],
+            ['FALSE', '', '', '', '2018-11-04', 'Mining', +0.07621054, '', 0.07621054, 0.14, 0, 0, '', '', '', '', '', '', 0, 0, ''],
+            ['FALSE', '', '', '', '2018-11-07', 'Mining', +0.10091816, '', 0.10091816, 0.18, 0, 0, '', '', '', '', '', '', 0, 0, ''],
+            ['FALSE', '', '', '', '2018-11-10', 'Mining', +0.10321628, '', 0.10321628, 0.18, 0, 0, '', '', '', '', '', '', 0, 0, ''],
+            ['FALSE', '', '', '', '2018-11-11', 'Mining', +0.04484832, '', 0.04484832, 0.08, 0, 0, '', '', '', '', '', '', 0, 0, ''],
+            ['FALSE', '', '', '', '2018-11-13', 'Mining', +0.10099363, '', 0.10099363, 0.15, 0, 0, '', '', '', '', '', '', 0, 0, ''],
+            ['FALSE', '', '', '', '2018-11-18', 'Mining', +0.06530715, '', 0.06530715, 0.09, 0, 0, '', '', '', '', '', '', 0, 0, ''],
+            ['FALSE', '', '', '', '2021-01-17', 'Spent', -0.80975982, '', 0, 0, 0.80975982, 0.09, '', '', '', '', '', '', 0, 0, ''],
+            ['FALSE', '', '', '', '2021-01-17', 'Tx Fee', -0.000001, '', 0, 0, 0.00000100, 0.00, '', '', '', '', '', '', 0, 0, '']];
 
         const testRun = function (round: number): void {
             const annotations = callCalculateFIFO(sheet, coinName, data, round);
 
             for (let j = 2; j < 12; j++) {
-                assertCell(sheet, data as string[][], j, 7, '100% Sold', `Round ${round} Test for Lot Sold In Full Later : Row ${j} Status : expected 100% sold`);
-                assertCell(sheet, data as string[][], j, 8, '0.00', `Round ${round} Test for Lot Sold In Full Later : Row ${j} Cost Basis : expected no cost basis`, 2);
-                assertCell(sheet, data as string[][], j, 9, '0.00', `Round ${round} Test for Lot Sold In Full Later : Row ${j} Gain(Loss) : expected no gain`, 2);
+                assertCell(sheet, data as string[][], j, 17, '100% Sold', `Round ${round} Test for Lot Sold In Full Later : Row ${j} Status : expected 100% sold`);
+                assertCell(sheet, data as string[][], j, 18, '0.00', `Round ${round} Test for Lot Sold In Full Later : Row ${j} Cost Basis : expected no cost basis`, 2);
+                assertCell(sheet, data as string[][], j, 19, '0.00', `Round ${round} Test for Lot Sold In Full Later : Row ${j} Gain(Loss) : expected no gain`, 2);
             }
-            assertCell(sheet, data as string[][], 12, 7, 'Long-term', `Round ${round} Test for Split into Long-Term Sale : Row 28 Status : expected long-term cost basis`);
-            assertCell(sheet, data as string[][], 12, 8, '1.44', `Round ${round} Test for Split into Long-Term Sale : Row 28 Cost Basis : expected $1.44 cost basis`, 2);
-            assertCell(sheet, data as string[][], 12, 9, '-1.35', `Round ${round} Test for Split into Long-Term Sale : Row 28 Gain(Loss) : expected $(1.35) loss`, 2);
-            assertCell(sheet, data as string[][], 13, 7, 'Long-term', `Round ${round} Test for Split into Short-Term Sale : Row 29 Status : expected short-term cost basis`);
-            assertCell(sheet, data as string[][], 13, 8, '0.00', `Round ${round} Test for Split into Short-Term Sale : Row 29 Cost Basis : expected no cost basis`, 2);
-            assertCell(sheet, data as string[][], 13, 9, '-0.00', `Round ${round} Test for Split into Short-Term Sale : Row 29 Gain(Loss) : expected no gain`, 2);
+            assertCell(sheet, data as string[][], 12, 17, 'Long-term', `Round ${round} Test for Split into Long-Term Sale : Row 28 Status : expected long-term cost basis`);
+            assertCell(sheet, data as string[][], 12, 18, '1.44', `Round ${round} Test for Split into Long-Term Sale : Row 28 Cost Basis : expected $1.44 cost basis`, 2);
+            assertCell(sheet, data as string[][], 12, 19, '-1.35', `Round ${round} Test for Split into Long-Term Sale : Row 28 Gain(Loss) : expected $(1.35) loss`, 2);
+            assertCell(sheet, data as string[][], 13, 17, 'Long-term', `Round ${round} Test for Split into Short-Term Sale : Row 29 Status : expected short-term cost basis`);
+            assertCell(sheet, data as string[][], 13, 18, '0.00', `Round ${round} Test for Split into Short-Term Sale : Row 29 Cost Basis : expected no cost basis`, 2);
+            assertCell(sheet, data as string[][], 13, 19, '-0.00', `Round ${round} Test for Split into Short-Term Sale : Row 29 Gain(Loss) : expected no gain`, 2);
 
             const soldNote1 = annotations?.shift() ?? '';
-            assert(soldNote1?.[0], 'F13', `Round ${round} Test for Lot Sold Hint : Hint Anchor point on row 13`);
+            assert(soldNote1?.[0], 'K13', `Round ${round} Test for Lot Sold Hint : Hint Anchor point on row 13`);
             assert(soldNote1?.[1], 'Sold lots from row 3 on 2018-10-27 to row 12 on 2018-11-18.', `Round ${round} Test for Lot Sold Hint : Row 5 Sold : expected sold from row 3 thru row 12`);
         };
 
@@ -394,7 +394,7 @@ export function test7CostBasis(): UnitTestWrapper {
 
         deleteTempSheet(sheet);
     };
-} */
+}
 
 /**
  * Used for Local testing of the FIFO Calculation function outside of the spreadsheet context
