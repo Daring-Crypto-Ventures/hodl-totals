@@ -3,6 +3,7 @@
  *
  */
 import newCategorySheet from './categories';
+import { version } from '../version'
 import { setFMVformulasOnSheet } from './fmv';
 import calculateFIFO from '../calc-fifo';
 import getOrderList from '../orders';
@@ -118,7 +119,7 @@ export function formatSheet_(): GoogleAppsScript.Spreadsheet.Sheet {
     const lastRow = getLastRowWithDataPresent(sheet.getRange('E:E').getValues());
 
     // set up row 1 cells for reconcilation
-    sheet.getRange('1:1').addDeveloperMetadata('version', '1.0.0');
+    sheet.getRange('1:1').addDeveloperMetadata('version', version);
     sheet.getRange('B1:H1').setBorder(false, true, false, true, false, false);
     sheet.getRange('G1').setValue('=$C$1-SUBTOTAL(109,$G$3:G)').setNumberFormat('+0.000;-0.000;0.000')
     sheet.getRange('H1').setHorizontalAlignment('left');
