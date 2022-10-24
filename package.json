@@ -41,7 +41,7 @@
     "@rollup/plugin-typescript": "^8.5.0",
     "@types/google-apps-script": "^1.0.53",
     "@types/jest": "^28.1.6",
-    "@typescript-eslint/eslint-plugin": "^5.38.1",
+    "@typescript-eslint/eslint-plugin": "^5.40.1",
     "@typescript-eslint/parser": "^5.38.1",
     "browserslist": "^4.21.4",
     "coveralls": "^3.1.1",
