@@ -45,10 +45,21 @@ Installation options can be found in the #💻setup channel within the [HODL Tot
 
 📝 Additional steps to enable End-to-End integration tests to run on your copy of the code, using your Google account on your sheet
 
+<!--
+> Due to clasp breaking support for symbol export/import across  ES6-like-module boundaries
+> https://github.com/grant/ts2gas/issues/26#issuecomment-1003428178
+> Must freeze at the version of clasp that last worked v2.3.2
+> This leads to a bunch of npm security vulernability alerts at npm install time
+>
+> If could upgrade to latest, then could use the --deploymentID flag and make E2E tests more seamless and not require a manual keypress to select deployment, by appending
+> `--deploymentId AKfycbw0a1U_xiXP-nvYfDG6lHJSyCafrGeJkIPrzMmFMSk`
+> to package.json's test:e2e cmd
+>
 > `clasp open` and then navigate in browser, click Deploy dropdwn, select Test Deployment, copy deployment ID out of the webapp URL
 >
 > `code package.json` to edit package.json locally, paste deploymentID over the test:e2e cmd's deployment ID
 > 
+--> 
 > `npm run test:e2e` to run the E2E test suite -- or simply `npm test` to run both local and E2E test suites
 
 ## Development Environment
