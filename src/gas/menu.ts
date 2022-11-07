@@ -2,7 +2,9 @@
  * @NotOnlyCurrentDoc Limits the script to only accessing the current sheet.
  *
  */
+import newTotalsSheet from './totals';
 import newCategorySheet from './categories';
+import showNewCoinPrompt from './new-coin';
 import { formatSheet } from './format';
 import calculateFIFO from '../calc-fifo';
 import getOrderList from '../orders';
@@ -32,7 +34,7 @@ export function onOpen(e: GoogleAppsScript.Events.AppsScriptEvent): void {
     const ui = SpreadsheetApp.getUi();
     const menu = ui.createAddonMenu(); // createsMenu('HODL Totals')
 
-    menu.addItem('Track new coin...', 'newCurrencySheet_')
+    menu.addItem('Track new coin...', 'newCoinSheet_')
         .addSeparator()
         .addItem('Apply formatting', 'formatSheet_')
         .addItem('Calculate (FIFO method)', 'calculateFIFO_')
@@ -47,44 +49,31 @@ export function onOpen(e: GoogleAppsScript.Events.AppsScriptEvent): void {
     menu.addToUi();
 }
 
-export function showNewCurrencyPrompt(): string | null {
-    if (typeof ScriptApp !== 'undefined') {
-        const ui = SpreadsheetApp.getUi();
-
-        const result = ui.prompt(
-            'New Currency',
-            'Please enter the coin\'s trading symbol ("BTC", "ETH", "XRP"):',
-            ui.ButtonSet.OK_CANCEL
-        );
-
-        // Process the user's response.
-        const button = result.getSelectedButton();
-        const text = result.getResponseText();
-        if (button === ui.Button.OK) {
-            return text;
-        }
-        // if ((button === ui.Button.CANCEL) || (button === ui.Button.CLOSE))
-    }
-    return null;
-}
-
 /**
  * A function that adds columns and headers to the spreadsheet.
  *
  * @return the newly created sheet, for function chaining purposes.
  */
-export function newCurrencySheet_(): GoogleAppsScript.Spreadsheet.Sheet | null {
+export function newCoinSheet_(): GoogleAppsScript.Spreadsheet.Sheet | null {
     // ask user what the name of the new currency will be
-    const desiredCurrency = showNewCurrencyPrompt();
+    const newCoinName = showNewCoinPrompt();
 
     // indicates that the user canceled, so abort without making a new sheet
-    if (desiredCurrency === null) return null;
+    if (newCoinName === null) return null;
 
     // if no Categories sheet previously exists, create one
     if (SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Categories') == null) {
         newCategorySheet();
     }
-    SpreadsheetApp.getActiveSpreadsheet().insertSheet(desiredCurrency);
+    const newCoinSheet = SpreadsheetApp.getActiveSpreadsheet().insertSheet(newCoinName);
+    const ssUrl = SpreadsheetApp.getActiveSpreadsheet().getUrl();
+    const newCoinSheetUrl = `${ssUrl}#gid=${newCoinSheet.getSheetId()}`;
+
+    // if no Totals sheet previously exists, create one
+    if (SpreadsheetApp.getActiveSpreadsheet().getSheetByName('HODL Totals') == null) {
+        newTotalsSheet(newCoinName, newCoinSheetUrl);
+        SpreadsheetApp.setActiveSheet(newCoinSheet);
+    }
 
     return formatSheet_();
 }

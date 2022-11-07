@@ -18,8 +18,16 @@ export function formatSheet(): GoogleAppsScript.Spreadsheet.Sheet | null {
         const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
         const desiredCurrency = sheet.getName().replace(/ *\([^)]*\) */g, '');
 
+        // calculate URL to nav user back to the Totals sheet
+        const totalsSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('HODL Totals');
+        var totalsSheetUrl = '';
+        if (totalsSheet != null) {
+            const ssUrl = SpreadsheetApp.getActiveSpreadsheet().getUrl();
+            totalsSheetUrl = `${ssUrl}#gid=${totalsSheet.getSheetId()}`;
+        }
+
         // populate the sheet header
-        const headerRow1p1 = [' ↩ Totals ', 'All Wallets & Accounts' ];
+        const headerRow1p1 = [`=HYPERLINK("${totalsSheetUrl}"," ↩ Totals ")`, 'All Wallets & Accounts' ];
         // leave ONE cell gap to prevent overwriting user value: calculated coin total from Wallets/Accounts page
         const headerRow1p2 = `${desiredCurrency} balance on `;
         // leave ONE cell gap to prevent overwriting user value: date of this coin's last reconciliation from Wallets/Accounts page

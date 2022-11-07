@@ -6,8 +6,9 @@
  *
  */
 /* global SpreadsheetApp */
+import newTotalsSheet from './totals';
 import newCategorySheet from './categories';
-import { newCurrencySheet_, formatSheet_, calculateFIFO_ } from './menu';
+import { newCoinSheet_, formatSheet_, calculateFIFO_ } from './menu';
 import { CompleteDataRow, CompleteDataRowAsStrings } from '../types';
 
 export function loadCostBasisExample_(): GoogleAppsScript.Spreadsheet.Sheet | null {
@@ -16,10 +17,22 @@ export function loadCostBasisExample_(): GoogleAppsScript.Spreadsheet.Sheet | nu
         newCategorySheet();
     }
 
-    const newSheet = newCurrencySheet_();
+    const newSheet = newCoinSheet_();
     if (newSheet !== null) {
         costBasisExample(newSheet);
     }
+
+    // if no Totals sheet previously exists, create one
+    if ((typeof ScriptApp !== 'undefined') && (newSheet !== null) && (SpreadsheetApp.getActiveSpreadsheet().getSheetByName('HODL Totals') == null)) {
+        var newCoinName = newSheet.getName().replace(/ *\([^)]*\) */g, '');
+        if (newCoinName === undefined) { 
+            newCoinName = "";
+        }
+        const ssUrl = SpreadsheetApp.getActiveSpreadsheet().getUrl();
+        const newCoinSheetUrl = `${ssUrl}#gid=${newSheet.getSheetId()}`;
+        newTotalsSheet(newCoinName, newCoinSheetUrl);
+    }
+
     return newSheet;
 }
 
@@ -53,10 +66,22 @@ export function loadFMVExample_(): GoogleAppsScript.Spreadsheet.Sheet | null {
         newCategorySheet();
     }
 
-    const newSheet = newCurrencySheet_();
+    const newSheet = newCoinSheet_();
     if (newSheet !== null) {
         fmvExample(newSheet);
     }
+
+    // if no Totals sheet previously exists, create one
+    if ((typeof ScriptApp !== 'undefined') && (newSheet !== null) && (SpreadsheetApp.getActiveSpreadsheet().getSheetByName('HODL Totals') == null)) {
+        var newCoinName = newSheet.getName().replace(/ *\([^)]*\) */g, '');
+        if (newCoinName === undefined) { 
+            newCoinName = "";
+        }
+        const ssUrl = SpreadsheetApp.getActiveSpreadsheet().getUrl();
+        const newCoinSheetUrl = `${ssUrl}#gid=${newSheet?.getSheetId()}`;
+        newTotalsSheet(newCoinName, newCoinSheetUrl);
+    }
+
     return newSheet;
 }
 
