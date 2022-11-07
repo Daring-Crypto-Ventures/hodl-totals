@@ -18,19 +18,29 @@ export function formatSheet(): GoogleAppsScript.Spreadsheet.Sheet | null {
         const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
         const desiredCurrency = sheet.getName().replace(/ *\([^)]*\) */g, '');
 
-        // populate the two-row-tall header cells
-        const header1 = [' ↩ Totals ', 'All Wallets & Accounts','', `${desiredCurrency} balance on `, '<unknown date>','was off by','0.000',
-        `${desiredCurrency}`, 'Inflow', '', 'Outflow', '',
-        'Fair Mkt Value', '','',
-        'Last', 'FIFO Method', 'Calculation on','','', 'Income or Gain/Loss'];
+        // populate the sheet header
+        const headerRow1p1 = [' ↩ Totals ', 'All Wallets & Accounts' ];
+        // leave ONE cell gap to prevent overwriting user value: calculated coin total from Wallets/Accounts page
+        const headerRow1p2 = `${desiredCurrency} balance on `;
+        // leave ONE cell gap to prevent overwriting user value: date of this coin's last reconciliation from Wallets/Accounts page
+        const headerRow1p3 = 'was off by';
+        // leave ONE cell gap to prevent overwriting user provided value: subtotal of the Net Change column
+        const headerRow1p4 = [`${desiredCurrency}`, 'Inflow', '', 'Outflow', '', 'Fair Mkt Value', '', '', 'Last Gain/Loss Calculation (FIFO Method)', '', ''];
+        // leave TWO cell gaps to prevent overwriting user provided value: Date and Succeeded/Failed Status of the last gain/loss calculation
+        const headerRow1p5 = 'Income or Gain/Loss';
         // NOTE: spaces are hard coded around header text that help autosizecolumns behave correctly
-        const header2 = ['   Tx ✔   ','    All Wallet & Accounts    ', '    Transaction ID    ', '   Description   ', '    Date & Time    ', '       Category       ', '    Net Change    ',
+        const headerRow2 = ['   Tx ✔   ','    All Wallet & Accounts    ', '    Transaction ID    ', '   Description   ', '    Date & Time    ', '       Category       ', '    Net Change    ',
         '        Valuation Strategy        ', `   ${desiredCurrency} Acquired   `, '    Value (USD)    ', `   ${desiredCurrency} Disposed   `, '    Value (USD)    ',
         `   ${desiredCurrency} High   `, `     ${desiredCurrency} Low     `, `    ${desiredCurrency} Price    `,
         '     Lot ID     ','    Date Acquired    ','   Status   ','        Cost Basis        ', '    Gain (Loss)    ', '   Summarized In   '];
 
-        sheet.getRange('A1:U1').setValues([header1]).setFontWeight('bold').setHorizontalAlignment('center');
-        sheet.getRange('A2:U2').setValues([header2]).setFontWeight('bold').setHorizontalAlignment('center');
+        sheet.getRange('A1:B1').setValues([headerRow1p1]);
+        sheet.getRange('D1').setValue(headerRow1p2);
+        sheet.getRange('F1').setValue(headerRow1p3);
+        sheet.getRange('H1:R1').setValues([headerRow1p4]);
+        sheet.getRange('U1').setValue(headerRow1p5);
+        sheet.getRange('A2:U2').setValues([headerRow2]);
+        sheet.getRange('A1:U2').setFontWeight('bold').setHorizontalAlignment('center');
 
         // see if any row data exists beyond the header we just added
         const lastRow = getLastRowWithDataPresent(sheet.getRange('E:E').getValues());
@@ -38,17 +48,21 @@ export function formatSheet(): GoogleAppsScript.Spreadsheet.Sheet | null {
         // set up row 1 cells for reconcilation
         sheet.getRange('1:1').addDeveloperMetadata('version', version);
         sheet.getRange('B1:H1').setBorder(false, true, false, true, false, false);
-        sheet.getRange('G1').setValue('=$C$1-SUBTOTAL(109,$G$3:G)').setNumberFormat('+0.000;-0.000;0.000')
+        sheet.getRange('G1').setValue('=$C$1-SUBTOTAL(109,$G$3:G)').setNumberFormat('0.000');
         sheet.getRange('H1').setHorizontalAlignment('left');
 
         // add borders to demarcate the row 1 headers into logical groups
         sheet.getRange('M1:O1').setBorder(false, true, false, true, false, false);
-        sheet.getRange('T1').setFontWeight('normal').setBorder(false, true, false, true, false, false);
+        sheet.getRange('T1').setFontWeight('normal').setBorder(false, false, false, true, false, false);
+
+        // set conditional formatting rules on row 1 cells
+        setConditionalFormattingRules(sheet);
 
         // merge 1st row cell headers
         sheet.getRange('I1:J1').merge();
         sheet.getRange('K1:L1').merge();
         sheet.getRange('M1:O1').merge();
+        sheet.getRange('P1:R1').merge();
 
         // color background and freeze the header rows
         sheet.getRange('A1:U1').setBackground('#DDDDEE');
@@ -126,6 +140,56 @@ export function formatSheet(): GoogleAppsScript.Spreadsheet.Sheet | null {
         return sheet;
     }
     return null;
+}
+
+function setConditionalFormattingRules(sheet: GoogleAppsScript.Spreadsheet.Sheet): void {
+    // Color the cell that displays diff of wallet/account balance and sheet totals
+    // to help users see if their sheet calculations are reasonably accurate
+    const subtotalRange = sheet.getRange('G1');
+    // and Color the success/failure cell to indicate health of the last calculation
+    const calcStatusRange = sheet.getRange('T1');
+
+    // extract the conditional rules set on all other cells on this sheet
+    var rules = SpreadsheetApp.getActiveSheet().getConditionalFormatRules();
+    var newRules = new Array() as [GoogleAppsScript.Spreadsheet.ConditionalFormatRule];
+    for (var i = 0; i < rules.length; i++) {
+        const ruleRange = rules[i].getRanges()?.[0].getA1Notation();
+        if ((ruleRange !== subtotalRange.getA1Notation()) && (ruleRange !== calcStatusRange.getA1Notation())) {
+            newRules.push(rules[i]);
+        }
+    }
+    // add back the rules for the cells we are formatting
+    newRules.push(SpreadsheetApp.newConditionalFormatRule()
+        .whenNumberBetween(-0.001, 0.001)
+        .setBackground("#B7E1CD")  // green success
+        .setRanges([subtotalRange])
+        .build());
+    newRules.push(SpreadsheetApp.newConditionalFormatRule()
+        .whenNumberNotBetween(-0.001, 0.001)
+        .setBackground("#FFFF00")  // yellow success
+        .setRanges([subtotalRange])
+        .build());
+    newRules.push(SpreadsheetApp.newConditionalFormatRule()
+        .whenFormulaSatisfied("=1")
+        .setBackground("#F4C7C3")  // red failure
+        .setRanges([subtotalRange])
+        .build());
+    newRules.push(SpreadsheetApp.newConditionalFormatRule()
+        .whenTextStartsWith("Succeeded")
+        .setBackground("#B7E1CD")  // green success
+        .setRanges([calcStatusRange])
+        .build());
+    newRules.push(SpreadsheetApp.newConditionalFormatRule()
+        .whenTextStartsWith("Failed")
+        .setBackground("#F4C7C3")  // red failure
+        .setRanges([calcStatusRange])
+        .build());
+    newRules.push(SpreadsheetApp.newConditionalFormatRule()
+        .whenFormulaSatisfied("=1")
+        .setBackground("#F4C7C3")  // red failure
+        .setRanges([calcStatusRange])
+        .build());
+    sheet.setConditionalFormatRules(newRules);
 }
 
 function setValidationRules(sheet: GoogleAppsScript.Spreadsheet.Sheet, categoriesList): void {
