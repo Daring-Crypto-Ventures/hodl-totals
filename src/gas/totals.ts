@@ -4,6 +4,7 @@
  * Create & manage categories which are used in individual coin sheets
  *
  */
+import { version } from '../version';
 
 /**
  * A function that adds columns and headers to the spreadsheet.
@@ -18,6 +19,7 @@ export default function newTotalsSheet(newCoinName: string | null, newCoinSheetU
         const sheet = SpreadsheetApp.getActiveSpreadsheet().insertSheet('HODL Totals', 0);
 
         // populate the header cells
+        sheet.getRange('1:1').addDeveloperMetadata('version', version);
         sheet.getRange('A1:G1').setValues([header]).setFontWeight('bold').setHorizontalAlignment('center');
         sheet.getRange('A1:G1').setBackground('#DDDDEE');
 

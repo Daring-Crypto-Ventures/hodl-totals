@@ -4,6 +4,7 @@
  * Create & manage categories which are used in individual coin sheets
  *
  */
+import { version } from '../version';
 
 /**
  * A function that adds columns and headers to the spreadsheet.
@@ -74,6 +75,7 @@ export default function newCategorySheet(): GoogleAppsScript.Spreadsheet.Sheet |
         const sheet = SpreadsheetApp.getActiveSpreadsheet().insertSheet('Categories');
 
         // populate the header cells
+        sheet.getRange('1:1').addDeveloperMetadata('version', version);
         sheet.getRange('A1:D1').setValues([header]).setFontWeight('bold');
 
         // fill in the raw data

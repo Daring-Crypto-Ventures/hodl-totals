@@ -18,6 +18,11 @@ export function formatSheet(): GoogleAppsScript.Spreadsheet.Sheet | null {
         const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
         const desiredCurrency = sheet.getName().replace(/ *\([^)]*\) */g, '');
 
+        // Code to check the previously saved sheet version to see if mutation is required
+        // const sheet = SpreadsheetApp.getActiveSheet();
+        // const mdFinder = sheet.getRange('1:1').createDeveloperMetadataFinder();
+        // const version = mdFinder.withKey('version').find()[0].getValue();
+
         // calculate URL to nav user back to the Totals sheet
         const totalsSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('HODL Totals');
         var totalsSheetUrl = '';
