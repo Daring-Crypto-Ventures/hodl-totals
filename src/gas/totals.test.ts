@@ -1,6 +1,6 @@
 // import { expect, test } from '@jest/globals';
 import { UnitTestWrapper } from '../../tests/utils.test';
-import newTotalsSheet from './totals';
+import resetTotalSheet from './totals';
 
 /**
  * jest unit tests for the category sheet
@@ -13,7 +13,7 @@ function testTotals(): UnitTestWrapper {
         if (typeof ScriptApp === 'undefined') {
             // jest unit test
             it('Test new totals sheet fails during local execution', () => {
-                expect(newTotalsSheet("", null)).toBe(null);
+                expect(resetTotalSheet()).toBe(null);
             });
         }
     };

@@ -2,7 +2,7 @@
  * @NotOnlyCurrentDoc Limits the script to only accessing the current sheet.
  *
  */
-import newTotalsSheet from './totals';
+import resetTotalSheet from './totals';
 import newCategorySheet from './categories';
 import showNewCoinPrompt from './new-coin';
 import { formatSheet } from './format';
@@ -34,8 +34,9 @@ export function onOpen(e: GoogleAppsScript.Events.AppsScriptEvent): void {
     const ui = SpreadsheetApp.getUi();
     const menu = ui.createAddonMenu(); // createsMenu('HODL Totals')
 
-    menu.addItem('Track new coin...', 'newCoinSheet_')
+    menu.addItem('Reset totals sheet', 'resetTotalSheet_')
         .addSeparator()
+        .addItem('Track new coin...', 'newCoinSheet_')
         .addItem('Apply formatting', 'formatSheet_')
         .addItem('Calculate (FIFO method)', 'calculateFIFO_')
         .addSeparator()
@@ -47,6 +48,15 @@ export function onOpen(e: GoogleAppsScript.Events.AppsScriptEvent): void {
         .addItem('About HODL Totals', 'showAboutDialog_');
 
     menu.addToUi();
+}
+
+/**
+ * A function that deletes, repopulates & formats the Totals page based on the coin sheets that already exist.
+ *
+ * @return the newly created sheet, for function chaining purposes.
+ */
+ export function resetTotalSheet_(): GoogleAppsScript.Spreadsheet.Sheet | null {
+    return resetTotalSheet();
 }
 
 /**
@@ -66,14 +76,8 @@ export function newCoinSheet_(): GoogleAppsScript.Spreadsheet.Sheet | null {
         newCategorySheet();
     }
     const newCoinSheet = SpreadsheetApp.getActiveSpreadsheet().insertSheet(newCoinName);
-    const ssUrl = SpreadsheetApp.getActiveSpreadsheet().getUrl();
-    const newCoinSheetUrl = `${ssUrl}#gid=${newCoinSheet.getSheetId()}`;
-
-    // if no Totals sheet previously exists, create one
-    if (SpreadsheetApp.getActiveSpreadsheet().getSheetByName('HODL Totals') == null) {
-        newTotalsSheet(newCoinName, newCoinSheetUrl);
-        SpreadsheetApp.setActiveSheet(newCoinSheet);
-    }
+    resetTotalSheet();
+    SpreadsheetApp.setActiveSheet(newCoinSheet);
 
     return formatSheet_();
 }

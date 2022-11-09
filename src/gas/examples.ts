@@ -6,7 +6,7 @@
  *
  */
 /* global SpreadsheetApp */
-import newTotalsSheet from './totals';
+import resetTotalSheet from './totals';
 import newCategorySheet from './categories';
 import { newCoinSheet_, formatSheet_, calculateFIFO_ } from './menu';
 import { CompleteDataRow, CompleteDataRowAsStrings } from '../types';
@@ -22,16 +22,7 @@ export function loadCostBasisExample_(): GoogleAppsScript.Spreadsheet.Sheet | nu
         costBasisExample(newSheet);
     }
 
-    // if no Totals sheet previously exists, create one
-    if ((typeof ScriptApp !== 'undefined') && (newSheet !== null) && (SpreadsheetApp.getActiveSpreadsheet().getSheetByName('HODL Totals') == null)) {
-        var newCoinName = newSheet.getName().replace(/ *\([^)]*\) */g, '');
-        if (newCoinName === undefined) { 
-            newCoinName = "";
-        }
-        const ssUrl = SpreadsheetApp.getActiveSpreadsheet().getUrl();
-        const newCoinSheetUrl = `${ssUrl}#gid=${newSheet.getSheetId()}`;
-        newTotalsSheet(newCoinName, newCoinSheetUrl);
-    }
+    resetTotalSheet();
 
     return newSheet;
 }
@@ -71,16 +62,7 @@ export function loadFMVExample_(): GoogleAppsScript.Spreadsheet.Sheet | null {
         fmvExample(newSheet);
     }
 
-    // if no Totals sheet previously exists, create one
-    if ((typeof ScriptApp !== 'undefined') && (newSheet !== null) && (SpreadsheetApp.getActiveSpreadsheet().getSheetByName('HODL Totals') == null)) {
-        var newCoinName = newSheet.getName().replace(/ *\([^)]*\) */g, '');
-        if (newCoinName === undefined) { 
-            newCoinName = "";
-        }
-        const ssUrl = SpreadsheetApp.getActiveSpreadsheet().getUrl();
-        const newCoinSheetUrl = `${ssUrl}#gid=${newSheet?.getSheetId()}`;
-        newTotalsSheet(newCoinName, newCoinSheetUrl);
-    }
+    resetTotalSheet();
 
     return newSheet;
 }
