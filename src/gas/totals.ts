@@ -23,7 +23,7 @@ export default function resetTotalSheet(): GoogleAppsScript.Spreadsheet.Sheet | 
         }
 
         // Initial set of categories provided out of the box
-        const header = ['      ↩ Sheet     ', '     Holdings     ', '      Coin      ', '    Last Reconciliation    ', '       Off By       ', '    Last Calculation    ', '     Calc Status     '];
+        const header = ['      ↩ Sheet     ', '     Holdings     ', '=CONCATENATE(COUNT(B2:B)," Coins")', '    Last Reconciliation    ', '       Off By       ', '    Last Calculation    ', '     Calc Status     '];
 
         // populate the header cells
         sheet.getRange('1:1').addDeveloperMetadata('version', version);
