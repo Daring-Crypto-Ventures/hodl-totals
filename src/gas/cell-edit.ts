@@ -7,6 +7,8 @@ import { setFMVStrategyOnRow } from './fmv';
 import { CompleteDataRow } from '../types';
 import getLastRowWithDataPresent from '../last-row';
 
+/* global GoogleAppsScript */
+
 /**
  * A special function that runs when a user changes the value of any cell in a spreadsheet
  */

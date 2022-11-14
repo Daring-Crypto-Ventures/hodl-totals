@@ -3,6 +3,8 @@
  *
  */
 
+/* global SpreadsheetApp */
+
 export default function showNewCoinPrompt(): string | null {
     if (typeof ScriptApp !== 'undefined') {
         const ui = SpreadsheetApp.getUi();

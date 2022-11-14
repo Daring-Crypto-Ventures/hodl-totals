@@ -4,6 +4,8 @@
  */
 import { CompleteDataRow } from '../types';
 
+/* global GoogleAppsScript */
+
 export function setFMVformulasOnSheet(
     sheet: GoogleAppsScript.Spreadsheet.Sheet | null,
     data: CompleteDataRow[] | null,

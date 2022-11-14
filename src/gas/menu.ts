@@ -12,6 +12,11 @@ import validate from '../validate';
 import getLastRowWithDataPresent from '../last-row';
 import { CompleteDataRow, CompleteDataRowAsStrings, LooselyTypedDataValidationRow } from '../types';
 
+/* global GoogleAppsScript */
+/* global SpreadsheetApp */
+/* global Logger */
+/* global Utilities */
+/* global Browser */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 /**
@@ -55,7 +60,7 @@ export function onOpen(e: GoogleAppsScript.Events.AppsScriptEvent): void {
  *
  * @return the newly created sheet, for function chaining purposes.
  */
- export function resetTotalSheet_(): GoogleAppsScript.Spreadsheet.Sheet | null {
+export function resetTotalSheet_(): GoogleAppsScript.Spreadsheet.Sheet | null {
     return resetTotalSheet();
 }
 

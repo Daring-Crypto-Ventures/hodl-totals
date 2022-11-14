@@ -6,6 +6,9 @@ import { version } from '../version';
 import { setFMVformulasOnSheet } from './fmv';
 import getLastRowWithDataPresent from '../last-row';
 
+/* global GoogleAppsScript */
+/* global SpreadsheetApp */
+
 /**
  * A function that formats the columns and headers of the active spreadsheet.
  *
@@ -25,14 +28,14 @@ export function formatSheet(): GoogleAppsScript.Spreadsheet.Sheet | null {
 
         // calculate URL to nav user back to the Totals sheet
         const totalsSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('HODL Totals');
-        var totalsSheetUrl = '';
+        let totalsSheetUrl = '';
         if (totalsSheet != null) {
             const ssUrl = SpreadsheetApp.getActiveSpreadsheet().getUrl();
             totalsSheetUrl = `${ssUrl}#gid=${totalsSheet.getSheetId()}`;
         }
 
         // populate the sheet header
-        const headerRow1p1 = [`=HYPERLINK("${totalsSheetUrl}"," ↩ Totals ")`, 'All Wallets & Accounts' ];
+        const headerRow1p1 = [`=HYPERLINK("${totalsSheetUrl}"," ↩ Totals ")`, 'All Wallets & Accounts'];
         // leave ONE cell gap to prevent overwriting user value: calculated coin total from Wallets/Accounts page
         const headerRow1p2 = `${desiredCurrency} balance on `;
         // leave ONE cell gap to prevent overwriting user value: date of this coin's last reconciliation from Wallets/Accounts page
@@ -42,10 +45,10 @@ export function formatSheet(): GoogleAppsScript.Spreadsheet.Sheet | null {
         // leave TWO cell gaps to prevent overwriting user provided value: Date and Succeeded/Failed Status of the last gain/loss calculation
         const headerRow1p5 = 'Income or Gain/Loss';
         // NOTE: spaces are hard coded around header text that help autosizecolumns behave correctly
-        const headerRow2 = ['   Tx ✔   ','    All Wallet & Accounts    ', '    Transaction ID    ', '   Description   ', '    Date & Time    ', '       Category       ', '    Net Change    ',
-        '        Valuation Strategy        ', `   ${desiredCurrency} Acquired   `, '    Value (USD)    ', `   ${desiredCurrency} Disposed   `, '    Value (USD)    ',
-        `   ${desiredCurrency} High   `, `     ${desiredCurrency} Low     `, `    ${desiredCurrency} Price    `,
-        '     Lot ID     ','    Date Acquired    ','   Status   ','        Cost Basis        ', '    Gain (Loss)    ', '   Summarized In   '];
+        const headerRow2 = ['   Tx ✔   ', '    All Wallet & Accounts    ', '    Transaction ID    ', '   Description   ', '    Date & Time    ', '       Category       ', '    Net Change    ',
+            '        Valuation Strategy        ', `   ${desiredCurrency} Acquired   `, '    Value (USD)    ', `   ${desiredCurrency} Disposed   `, '    Value (USD)    ',
+            `   ${desiredCurrency} High   `, `     ${desiredCurrency} Low     `, `    ${desiredCurrency} Price    `,
+            '     Lot ID     ', '    Date Acquired    ', '   Status   ', '        Cost Basis        ', '    Gain (Loss)    ', '   Summarized In   '];
 
         sheet.getRange('A1:B1').setValues([headerRow1p1]);
         sheet.getRange('D1').setValue(headerRow1p2);
@@ -163,9 +166,9 @@ function setConditionalFormattingRules(sheet: GoogleAppsScript.Spreadsheet.Sheet
     const calcStatusRange = sheet.getRange('T1');
 
     // extract the conditional rules set on all other cells on this sheet
-    var rules = SpreadsheetApp.getActiveSheet().getConditionalFormatRules();
-    var newRules = new Array() as [GoogleAppsScript.Spreadsheet.ConditionalFormatRule];
-    for (var i = 0; i < rules.length; i++) {
+    const rules = SpreadsheetApp.getActiveSheet().getConditionalFormatRules();
+    const newRules = [] as GoogleAppsScript.Spreadsheet.ConditionalFormatRule [];
+    for (let i = 0; i < rules.length; i++) {
         const ruleRange = rules[i].getRanges()?.[0].getA1Notation();
         if ((ruleRange !== subtotalRange.getA1Notation()) && (ruleRange !== calcStatusRange.getA1Notation())) {
             newRules.push(rules[i]);
@@ -174,32 +177,32 @@ function setConditionalFormattingRules(sheet: GoogleAppsScript.Spreadsheet.Sheet
     // add back the rules for the cells we are formatting
     newRules.push(SpreadsheetApp.newConditionalFormatRule()
         .whenNumberBetween(-0.001, 0.001)
-        .setBackground("#B7E1CD")  // green success
+        .setBackground('#B7E1CD') // green success
         .setRanges([subtotalRange])
         .build());
     newRules.push(SpreadsheetApp.newConditionalFormatRule()
         .whenNumberNotBetween(-0.001, 0.001)
-        .setBackground("#FFFF00")  // yellow success
+        .setBackground('#FFFF00') // yellow success
         .setRanges([subtotalRange])
         .build());
     newRules.push(SpreadsheetApp.newConditionalFormatRule()
-        .whenFormulaSatisfied("=1")
-        .setBackground("#F4C7C3")  // red failure
+        .whenFormulaSatisfied('=1')
+        .setBackground('#F4C7C3') // red failure
         .setRanges([subtotalRange])
         .build());
     newRules.push(SpreadsheetApp.newConditionalFormatRule()
-        .whenTextStartsWith("Succeeded")
-        .setBackground("#B7E1CD")  // green success
+        .whenTextStartsWith('Succeeded')
+        .setBackground('#B7E1CD') // green success
         .setRanges([calcStatusRange])
         .build());
     newRules.push(SpreadsheetApp.newConditionalFormatRule()
-        .whenTextStartsWith("Failed")
-        .setBackground("#F4C7C3")  // red failure
+        .whenTextStartsWith('Failed')
+        .setBackground('#F4C7C3') // red failure
         .setRanges([calcStatusRange])
         .build());
     newRules.push(SpreadsheetApp.newConditionalFormatRule()
-        .whenFormulaSatisfied("=1")
-        .setBackground("#F4C7C3")  // red failure
+        .whenFormulaSatisfied('=1')
+        .setBackground('#F4C7C3') // red failure
         .setRanges([calcStatusRange])
         .build());
     sheet.setConditionalFormatRules(newRules);

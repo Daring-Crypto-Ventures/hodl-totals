@@ -5,6 +5,9 @@
  *
  */
 
+/* global SpreadsheetApp */
+/* global HtmlService */
+
 export default function openDiscordLink_(): void {
     // Invite link to the HODL Totals Discord that never expires
     if (typeof ScriptApp !== 'undefined') {

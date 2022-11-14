@@ -6,6 +6,9 @@
  */
 import { version } from '../version';
 
+/* global GoogleAppsScript */
+/* global SpreadsheetApp */
+
 /**
  * A function that adds columns and headers to the spreadsheet.
  *

@@ -6,6 +6,9 @@
  */
 import { version } from '../version';
 
+/* global SpreadsheetApp */
+/* global HtmlService */
+
 export default function showAboutDialog_(): void {
     if (typeof ScriptApp !== 'undefined') {
         const html = HtmlService.createHtmlOutputFromFile('assets/About')
