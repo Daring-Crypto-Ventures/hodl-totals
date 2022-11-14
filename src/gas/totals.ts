@@ -42,7 +42,7 @@ export default function resetTotalSheet(): GoogleAppsScript.Spreadsheet.Sheet | 
             const coinSheet = allSheets[s];
 
             // Stop iteration execution if the condition is meet.
-            if (excludedSheetNames.indexOf(coinSheet.getName()) === -1) {
+            if (!excludedSheetNames.includes(coinSheet.getName())) {
                 const newCoinName = coinSheet.getName().replace(/ *\([^)]*\) */g, '');
                 const newCoinSheetUrl = `${ssUrl}#gid=${coinSheet.getSheetId()}`;
                 rowCount += 1;

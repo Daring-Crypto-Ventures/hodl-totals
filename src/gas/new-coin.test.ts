@@ -2,6 +2,8 @@
 import { UnitTestWrapper } from '../../tests/utils.test';
 import showNewCoinPrompt from './new-coin';
 
+/* eslint-disable jest/valid-describe-callback */
+
 /**
  * jest unit tests for the New Coin Prompt
  *

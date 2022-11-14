@@ -2,6 +2,8 @@
 import { UnitTestWrapper } from '../../tests/utils.test';
 import resetTotalSheet from './totals';
 
+/* eslint-disable jest/valid-describe-callback */
+
 /**
  * jest unit tests for the category sheet
  *
