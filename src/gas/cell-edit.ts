@@ -17,11 +17,11 @@ export default function onEdit(e: GoogleAppsScript.Events.SheetsOnEdit): void {
     const currency = sheet.getName().replace(/ *\([^)]*\) */g, '');
 
     // simple check to verify that onEdit actions only happen on coin tracking sheets
-    if (sheet.getRange('H1').getValue().trim() === currency) {
+    if ((sheet.getRange('H1').getValue() as string).trim() === currency) {
         const editedRow = e.range.getRow();
         // edit events triggered by the Tx column
         if ((e.range.getColumn() === 1) && (editedRow >= 3)) {
-            const lastRow = getLastRowWithDataPresent(sheet.getRange('E:E').getValues());
+            const lastRow = getLastRowWithDataPresent(sheet.getRange('E:E').getValues() as string[][]);
             if (editedRow > lastRow) {
                 // create filter around all transactions
                 sheet.getFilter()?.remove();
@@ -34,8 +34,8 @@ export default function onEdit(e: GoogleAppsScript.Events.SheetsOnEdit): void {
             const newStrategy = e.value;
             const oldStrategy = e.oldValue;
             const data = sheet.getRange('A:U').getValues() as CompleteDataRow[];
-            const acquired = sheet.getRange(`I${editedRow}`).getValue();
-            const disposed = sheet.getRange(`K${editedRow}`).getValue();
+            const acquired = sheet.getRange(`I${editedRow}`).getValue() as string;
+            const disposed = sheet.getRange(`K${editedRow}`).getValue() as string;
             setFMVStrategyOnRow(sheet, editedRow - 1, data, newStrategy, acquired, disposed, oldStrategy);
         }
     }

@@ -10,7 +10,7 @@ module.exports = {
     },
     plugins: ['@typescript-eslint', 'jest'],
     parserOptions: {
-        ecmaVersion: 2019,
+        ecmaVersion: 2020,
         sourceType: 'module',
         project: 'tsconfig.json'
     },
@@ -20,7 +20,7 @@ module.exports = {
     },
     settings: {
         jest: {
-            version: 26
+            version: 28
         }
     }
 };

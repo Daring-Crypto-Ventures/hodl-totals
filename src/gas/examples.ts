@@ -44,7 +44,7 @@ function costBasisExample(sheet: GoogleAppsScript.Spreadsheet.Sheet): void {
         ['FALSE', '', '', '', '2018/03/05', 'Tx Fee', -0.1, 'Value Known', 0, 0, 0.10000000, 500.00, '', '', '', '', '', '', 0, 0, ''],
         ['FALSE', '', '', 'Create a copy of the blank spreadsheet for each coin you trade', '2018/03/06', 'Spent', -0.1, 'Value Known', 0, 0, 0.10000000, 1000.00, '', '', '', '', '', '', 0, 0, ''],
         ['FALSE', '', '', 'Use the notes column to keep track of fees, trades details, etc.', '2018/03/07', 'Spent', -0.1, 'Value Known', 0, 0, 0.10000000, 2000.00, '', '', '', '', '', '', 0, 0, '']];
-    const initialData = data as any as string[][];
+    const initialData = data as string[][];
 
     for (let i = 0; i < initialData.length; i++) {
         sheet.getRange(`A${i + 3}:U${i + 3}`).setValues([initialData[i]]);

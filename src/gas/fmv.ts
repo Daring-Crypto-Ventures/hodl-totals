@@ -59,7 +59,15 @@ export function setFMVStrategyOnRow(
     }
 }
 
-function setFormulasInAcquiredDisposedCells(acquired: string, oldStrategy: string | undefined, sheet: GoogleAppsScript.Spreadsheet.Sheet | null, data: CompleteDataRow[] | null, row: number, errorValues: string[], disposed: string) {
+function setFormulasInAcquiredDisposedCells(
+    acquired: string,
+    oldStrategy: string | undefined,
+    sheet: GoogleAppsScript.Spreadsheet.Sheet | null,
+    data: CompleteDataRow[] | null,
+    row: number,
+    errorValues: string[],
+    disposed: string
+): void {
     if (acquired) {
         if ((typeof oldStrategy !== 'undefined') && (oldStrategy === 'Value Known')) {
             const oldVal = getCellValue(sheet, data, row, 9);
@@ -88,7 +96,7 @@ function getCellValue(sheet: GoogleAppsScript.Spreadsheet.Sheet | null, data: Co
         return `${data[posX][posY]}`;
     }
     if (sheet !== null) {
-        const val = sheet.getRange(posX + 1, posY + 1).getValue();
+        const val = sheet.getRange(posX + 1, posY + 1).getValue() as string;
         const formula = sheet.getRange(posX + 1, posY + 1).getFormula();
         if (formula !== '') {
             return formula;
@@ -153,7 +161,7 @@ function associateValueWithStrategy(sheet: GoogleAppsScript.Spreadsheet.Sheet | 
     } else if (sheet !== null) {
         const range = sheet.getRange(posX + 1, posY + 1);
         const rowRange = sheet.getRange(`${posX + 1}:${posX + 1}`);
-        const val = range.getValue();
+        const val = range.getValue() as string;
         const formula = range.getFormula();
         if (formula !== '') {
             rowRange.addDeveloperMetadata(strategy, `${posY},${formula}`);

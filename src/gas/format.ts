@@ -59,7 +59,7 @@ export function formatSheet(): GoogleAppsScript.Spreadsheet.Sheet | null {
         sheet.getRange('A1:U2').setFontWeight('bold').setHorizontalAlignment('center');
 
         // see if any row data exists beyond the header we just added
-        const lastRow = getLastRowWithDataPresent(sheet.getRange('E:E').getValues());
+        const lastRow = getLastRowWithDataPresent(sheet.getRange('E:E').getValues() as string[][]);
 
         // set up row 1 cells for reconcilation
         sheet.getRange('1:1').addDeveloperMetadata('version', version);
@@ -125,9 +125,9 @@ export function formatSheet(): GoogleAppsScript.Spreadsheet.Sheet | null {
 
         // iterate through the rows in the sheet to
         // set col {Fiat Cost} and col {Fiat Received} to be calculated based on other cells in the sheet
-        const strategyCol = sheet.getRange('H:H').getValues();
-        const acquiredCol = sheet.getRange('I:I').getValues();
-        const disposedCol = sheet.getRange('K:K').getValues();
+        const strategyCol = sheet.getRange('H:H').getValues() as string[][];
+        const acquiredCol = sheet.getRange('I:I').getValues() as string[][];
+        const disposedCol = sheet.getRange('K:K').getValues() as string[][];
         setFMVformulasOnSheet(sheet, null, strategyCol, acquiredCol, disposedCol, lastRow);
 
         // set cols {COIN High, Low, Price} to be formatted into USD value but to 6 decimal places
@@ -140,7 +140,7 @@ export function formatSheet(): GoogleAppsScript.Spreadsheet.Sheet | null {
         sheet.getRange('P3:R').setFontColor('#424250').setHorizontalAlignment('center');
 
         // lookup allowed categories from the "Categories sheet" to avoid hard-coding them
-        const categoriesList = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Categories')?.getRange('A2:A35').getValues();
+        const categoriesList = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Categories')?.getRange('A2:A35').getValues() as unknown as string[];
 
         // Prevent the user from entering bad inputs in the first place which removes
         // the need to check data in the validate() function during a calculation
@@ -208,7 +208,7 @@ function setConditionalFormattingRules(sheet: GoogleAppsScript.Spreadsheet.Sheet
     sheet.setConditionalFormatRules(newRules);
 }
 
-function setValidationRules(sheet: GoogleAppsScript.Spreadsheet.Sheet, categoriesList): void {
+function setValidationRules(sheet: GoogleAppsScript.Spreadsheet.Sheet, categoriesList: string[]): void {
     // ensure we only accept valid date values
     const dateRule = SpreadsheetApp.newDataValidation()
         .requireDate()
