@@ -38,9 +38,7 @@ export default function resetTotalSheet(): GoogleAppsScript.Spreadsheet.Sheet | 
         const ssUrl = SpreadsheetApp.getActiveSpreadsheet().getUrl();
         const excludedSheetNames = ['HODL Totals', 'Wallets/Accounts', 'Categories', 'NFT Categories'];
         let rowCount = 1;
-        for (const s in allSheets) {
-            const coinSheet = allSheets[s];
-
+        for (const coinSheet of allSheets) {
             // Stop iteration execution if the condition is meet.
             if (!excludedSheetNames.includes(coinSheet.getName())) {
                 const newCoinName = coinSheet.getName().replace(/ *\([^)]*\) */g, '');
@@ -80,10 +78,10 @@ function setConditionalFormattingRules(sheet: GoogleAppsScript.Spreadsheet.Sheet
     // extract the conditional rules set on all other cells on this sheet
     const rules = SpreadsheetApp.getActiveSheet().getConditionalFormatRules();
     const newRules = [] as GoogleAppsScript.Spreadsheet.ConditionalFormatRule [];
-    for (let i = 0; i < rules.length; i++) {
-        const ruleRange = rules[i].getRanges()?.[0].getA1Notation();
+    for (const rule of rules) {
+        const ruleRange = rule.getRanges()?.[0].getA1Notation();
         if ((ruleRange !== lastRecRange.getA1Notation()) && (ruleRange !== offByRange.getA1Notation()) && (ruleRange !== calcStatusRange.getA1Notation())) {
-            newRules.push(rules[i]);
+            newRules.push(rule);
         }
     }
     // add back the rules for the cells we are formatting

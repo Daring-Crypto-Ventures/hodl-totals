@@ -168,10 +168,10 @@ function setConditionalFormattingRules(sheet: GoogleAppsScript.Spreadsheet.Sheet
     // extract the conditional rules set on all other cells on this sheet
     const rules = SpreadsheetApp.getActiveSheet().getConditionalFormatRules();
     const newRules = [] as GoogleAppsScript.Spreadsheet.ConditionalFormatRule [];
-    for (let i = 0; i < rules.length; i++) {
-        const ruleRange = rules[i].getRanges()?.[0].getA1Notation();
+    for (const rule of rules) {
+        const ruleRange = rule.getRanges()?.[0].getA1Notation();
         if ((ruleRange !== subtotalRange.getA1Notation()) && (ruleRange !== calcStatusRange.getA1Notation())) {
-            newRules.push(rules[i]);
+            newRules.push(rule);
         }
     }
     // add back the rules for the cells we are formatting
