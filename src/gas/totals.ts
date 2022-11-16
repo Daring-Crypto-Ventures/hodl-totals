@@ -50,16 +50,18 @@ export default function resetTotalSheet(): GoogleAppsScript.Spreadsheet.Sheet | 
             }
         }
 
-        // format all populated coin rows
-        sheet.getRange(`D2:D${rowCount}`).setNumberFormat('yyyy-mm-dd');
-        sheet.getRange(`F2:F${rowCount}`).setNumberFormat('yyyy-mm-dd h:mm:ss').setHorizontalAlignment('right');
+        if (rowCount > 1) {
+            // format all populated coin rows
+            sheet.getRange(`D2:D${rowCount}`).setNumberFormat('yyyy-mm-dd');
+            sheet.getRange(`F2:F${rowCount}`).setNumberFormat('yyyy-mm-dd h:mm:ss').setHorizontalAlignment('right');
 
-        // create filter around all populated coin rows
-        sheet.getRange(`A1:G${rowCount}`).createFilter();
+            // create filter around all populated coin rows
+            sheet.getRange(`A1:G${rowCount}`).createFilter();
+        }
 
         // autosize the columns' widths, add conditional formatting
         sheet.autoResizeColumns(1, 7);
-        setConditionalFormattingRules(sheet, rowCount);
+        setTotalsSheetCFRules(sheet, rowCount);
         SpreadsheetApp.flush();
 
         return sheet;
@@ -67,7 +69,12 @@ export default function resetTotalSheet(): GoogleAppsScript.Spreadsheet.Sheet | 
     return null;
 }
 
-function setConditionalFormattingRules(sheet: GoogleAppsScript.Spreadsheet.Sheet, rowCount: number): void {
+/**
+ *
+ * @param sheet
+ * @param rowCount assumes that rowCount >= 1
+ */
+function setTotalsSheetCFRules(sheet: GoogleAppsScript.Spreadsheet.Sheet, rowCount: number): void {
     // Color the cell that displays last reconciliation date, off by and calc status
     // to help users see if their sheet totals overall are in a healthy state
     const lastRecRange = sheet.getRange(`D2:D${rowCount}`);
@@ -76,7 +83,7 @@ function setConditionalFormattingRules(sheet: GoogleAppsScript.Spreadsheet.Sheet
     const calcStatusRange = sheet.getRange(`G2:G${rowCount}`);
 
     // extract the conditional rules set on all other cells on this sheet
-    const rules = SpreadsheetApp.getActiveSheet().getConditionalFormatRules();
+    const rules = sheet.getConditionalFormatRules();
     const newRules = [] as GoogleAppsScript.Spreadsheet.ConditionalFormatRule [];
     for (const rule of rules) {
         const ruleRange = rule.getRanges()?.[0].getA1Notation();

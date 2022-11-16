@@ -11,6 +11,7 @@
 
 import resetTotalSheet from './totals';
 import newCategorySheet from './categories';
+import newWalletsSheet from './wallets';
 import { newCoinSheet_, formatSheet_, calculateFIFO_ } from './menu';
 import { CompleteDataRow } from '../types';
 
@@ -26,6 +27,11 @@ export function loadCostBasisExample_(): GoogleAppsScript.Spreadsheet.Sheet | nu
     }
 
     resetTotalSheet();
+
+    // if no Wallets/Accounts sheet previously exists, create one
+    if ((typeof ScriptApp !== 'undefined') && (SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Wallets/Accounts') == null)) {
+        newWalletsSheet();
+    }
 
     return newSheet;
 }
@@ -55,6 +61,11 @@ function costBasisExample(sheet: GoogleAppsScript.Spreadsheet.Sheet): void {
 }
 
 export function loadFMVExample_(): GoogleAppsScript.Spreadsheet.Sheet | null {
+    // if no Wallets/Accounts sheet previously exists, create one
+    if ((typeof ScriptApp !== 'undefined') && (SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Wallets/Accounts') == null)) {
+        newWalletsSheet();
+    }
+
     // if no Categories sheet previously exists, create one
     if ((typeof ScriptApp !== 'undefined') && (SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Categories') == null)) {
         newCategorySheet();

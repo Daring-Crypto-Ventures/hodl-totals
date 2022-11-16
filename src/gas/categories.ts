@@ -10,7 +10,7 @@ import { version } from '../version';
 /* global SpreadsheetApp */
 
 /**
- * A function that adds columns and headers to the spreadsheet.
+ * A function that adds Categories data and headers to the spreadsheet.
  *
  * @return the newly created sheet, for function chaining purposes.
  */

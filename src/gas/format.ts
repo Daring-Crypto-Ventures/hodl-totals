@@ -72,7 +72,7 @@ export function formatSheet(): GoogleAppsScript.Spreadsheet.Sheet | null {
         sheet.getRange('T1').setFontWeight('normal').setBorder(false, false, false, true, false, false);
 
         // set conditional formatting rules on row 1 cells
-        setConditionalFormattingRules(sheet);
+        setFormatSheetCFRules(sheet);
 
         // merge 1st row cell headers
         sheet.getRange('I1:J1').merge();
@@ -158,7 +158,7 @@ export function formatSheet(): GoogleAppsScript.Spreadsheet.Sheet | null {
     return null;
 }
 
-function setConditionalFormattingRules(sheet: GoogleAppsScript.Spreadsheet.Sheet): void {
+function setFormatSheetCFRules(sheet: GoogleAppsScript.Spreadsheet.Sheet): void {
     // Color the cell that displays diff of wallet/account balance and sheet totals
     // to help users see if their sheet calculations are reasonably accurate
     const subtotalRange = sheet.getRange('G1');
