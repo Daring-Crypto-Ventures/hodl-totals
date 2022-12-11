@@ -28,14 +28,16 @@ export default function newWalletsSheet(): GoogleAppsScript.Spreadsheet.Sheet | 
 
         // walk through all sheets in workbook to pick out the coin names & links
         const allSheets = SpreadsheetApp.getActiveSpreadsheet().getSheets();
+        const ssUrl = SpreadsheetApp.getActiveSpreadsheet().getUrl();
         const excludedSheetNames = ['HODL Totals', 'Wallets/Accounts', 'Categories', 'NFT Categories'];
         let rowCount = 1;
         for (const coinSheet of allSheets) {
             // Stop iteration execution if the condition is meet.
             if (!excludedSheetNames.includes(coinSheet.getName())) {
                 const newCoinName = coinSheet.getName().replace(/ *\([^)]*\) */g, '');
+                const newCoinSheetUrl = `${ssUrl}#gid=${coinSheet.getSheetId()}`;
                 rowCount += 1;
-                const data = [`Wallet Name ${rowCount-1}`, '', newCoinName, '2009-01-03', `=IF(A2>0,CONCATENATE(A${rowCount}," (",C${rowCount},")"), "")`, `=SUMIF($C$${rowCount}:$C,$C${rowCount},$B$${rowCount}:$B)`];
+                const data = [`Wallet Name ${rowCount - 1}`, '', `=HYPERLINK("${newCoinSheetUrl}","${newCoinName}")`, '2009-01-03', `=IF(A2>0,CONCATENATE(A${rowCount}," (",C${rowCount},")"), "")`, `=SUMIF($C$${rowCount}:$C,$C${rowCount},$B$${rowCount}:$B)`];
                 sheet.appendRow(data);
             }
         }
