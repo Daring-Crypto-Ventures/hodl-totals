@@ -167,12 +167,14 @@ function resetVersionMetadata(sheet: GoogleAppsScript.Spreadsheet.Sheet | null, 
     if (typeof ScriptApp === 'undefined') {
         // no data table representation of this
     } else if (sheet !== null) {
-        const metadata = sheet.getRange('1:1').getDeveloperMetadata();
+        const sheetMetadata = sheet.getDeveloperMetadata();
+        const row1metadata = sheet.getRange('1:1').getDeveloperMetadata(); // can remove this once dev versions with version no longer present
+        const metadata = sheetMetadata.concat(row1metadata);
         const matchingMetadata = metadata.filter(x => x.getKey() === 'version');
         matchingMetadata.forEach(match => {
             match.remove();
         });
-        sheet.getRange('1:1').addDeveloperMetadata('version', newVersion);
+        sheet.addDeveloperMetadata('version', newVersion);
     }
 }
 

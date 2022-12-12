@@ -11,13 +11,13 @@
       width: 100%;
       box-sizing: border-box;
     }
-    #sidebar-value-block {
+    #sidebar-row-metadata {
       background-color: #eee;
       border-color: #eee;
       border-width: 5px;
       border-style: solid;
     }
-    #sidebar-failure-bar,
+    #sidebar-failures,
     #sidebar-polling-status {
       margin-bottom: 10px;
     }
@@ -73,7 +73,7 @@
           .withSuccessHandler(showRecord)
           .withFailureHandler(
             function(msg, element) {
-              showStatus(msg, $('#sidebar-failure-bar'));
+              showStatus(msg, $('#sidebar-failures'));
               element.disabled = false;
             })
           .pullDataFromActiveSheet();
@@ -81,15 +81,14 @@
     };
 
     /**
-     * Callback function to display a "record", or row of the spreadsheet.
+     * Callback function to display metadata from the spreadsheet.
      *
      * https://stackoverflow.com/questions/30628894/how-do-i-make-a-sidebar-display-values-from-cells
      *
      * @param {object[]}  Array of field headings & cell values
      */
     function showRecord(record) {
-      // Clear out all previous records
-      $('#sidebar-record-block').empty();
+      $('#sidebar-row-metadata').empty();
 
       if (record.length) {
         for (var i = 0; i < record.length; i++) {
@@ -100,7 +99,7 @@
           // If this field # doesn't already exist on the page, create it
           if (!$('#'+fieldId).length) {
             var newField = $($.parseHTML('<div id="'+fieldId+'"></div>'));
-            $('#sidebar-record-block').append(newField);
+            $('#sidebar-row-metadata').append(newField);
           }
 
           // Replace content of the field div with new record
@@ -132,32 +131,19 @@
   
   <body>
   <div class="column">
-    <h4>Daring Crypto Ventures LLC provided this to save you a tax prep <i>headache</i></h4>
-    <hr />
     <p>Commands</p>
     <input type="button" value="Apply Formatting" onclick="google.script.run.formatSheet()" />
     <!-- Calculate oesn't work for some reason when called this way?
     <input type="button" value="Calculate (FIFO Method)" onclick="google.script.run.calculateFIFO()" /> -->
     <hr />
 
-    <!--
-    <p>Please type in your Wallet or Account Name</p>
-    <input type="text" id="wallet-name">
-    <input type="button" value="Scan Wallet" onclick="displayToast();" />
-    <br />
-    <div class="secondary">
-      Your COIN Wallet, Address or Account
-    </div>
-    -->
 
-    <br />
     <p>
-    Row 1 Metadata on this sheet:
+    Metadata attached this sheet:
     </p>
-    <!-- The div-table class is used to make a group of divs behave like a table. -->
-    <div class="block div-table" id="sidebar-record-block">
+    <div class="block div-table" id="sidebar-row-metadata">
     </div>
-    <div class="block" id="sidebar-failure-bar">
+    <div class="block" id="sidebar-failures">
     </div>
     <div id="sidebar-polling-status">
     </div>

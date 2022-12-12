@@ -42,7 +42,6 @@ export function onOpen(e: GoogleAppsScript.Events.AppsScriptEvent): void {
     const menu = ui.createAddonMenu(); // createsMenu('HODL Totals')
 
     menu.addItem('Reset totals sheet', 'resetTotalSheet_')
-        .addItem('Show sidebar', 'showSheetActionsSidebar_')
         .addSeparator()
         .addItem('Track new coin...', 'newCoinSheet_')
         .addItem('Apply formatting', 'formatSheet_')
@@ -53,8 +52,8 @@ export function onOpen(e: GoogleAppsScript.Events.AppsScriptEvent): void {
             .addItem('Fair market value', 'loadFMVExample_'))
         .addSeparator()
         .addItem('Join our Discord Server', 'openDiscordLink_')
-        .addItem('About HODL Totals', 'showAboutDialog_');
-
+        .addItem('About HODL Totals', 'showAboutDialog_')
+        .addItem('Show debug sidebar', 'showSheetActionsSidebar_');
     menu.addToUi();
 }
 
@@ -65,17 +64,9 @@ export function onOpen(e: GoogleAppsScript.Events.AppsScriptEvent): void {
 export function showSheetActionsSidebar_(): void {
     const sidebarUi = HtmlService.createHtmlOutputFromFile('assets/CoinSidebar')
         .setSandboxMode(HtmlService.SandboxMode.IFRAME)
-        .setTitle('HODL Totals Sidebar');
+        .setTitle('HODL Totals Debugging Tools');
     SpreadsheetApp.getUi().showSidebar(sidebarUi);
 }
-
-/**
- * A function that does TODO
- *
- */
-/* export function scanWallet(name: string): void {
-    SpreadsheetApp.getActive().toast(`Scanned ${name} successfully.`);
-} */
 
 /**
  * Returns the active row.
@@ -85,13 +76,17 @@ export function showSheetActionsSidebar_(): void {
 export function pullDataFromActiveSheet(): unknown[] {
     // Retrieve and return the information requested by the sidebar.
     const sheet = SpreadsheetApp.getActiveSheet();
-    const coinName = sheet.getName().replace(/ *\([^)]*\) */g, '');
+    // const coinName = sheet.getName().replace(/ *\([^)]*\) */g, '');
     const record = new Array(0);
+    const sheetMetadata = sheet.getDeveloperMetadata();
     const metadata = sheet.getRange('1:1').getDeveloperMetadata();
 
-    record.push({ heading: 'coin', cellval: coinName });
-    metadata.forEach(md => {
+    // record.push({ heading: 'coin', cellval: coinName });
+    sheetMetadata.forEach(md => {
         record.push({ heading: md.getKey(), cellval: md.getValue() });
+    });
+    metadata.forEach(md => {
+        record.push({ heading: `Row 1:${md.getKey()}`, cellval: md.getValue() });
     });
 
     return record;

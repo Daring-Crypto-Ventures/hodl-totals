@@ -17,12 +17,10 @@ import { version } from '../version';
 export default function newWalletsSheet(): GoogleAppsScript.Spreadsheet.Sheet | null {
     if (typeof ScriptApp !== 'undefined') {
         const sheet = SpreadsheetApp.getActiveSpreadsheet().insertSheet('Wallets/Accounts');
+        sheet.addDeveloperMetadata('version', version);
 
         // Format of the Wallets/Accounts page
         const header = ['      Wallet/Account     ', '     Balance     ', '       Coin       ', '       on Date       ', '   Unique Wallet/Account Name   ', '    Coin Total    '];
-
-        // populate the header cells
-        sheet.getRange('1:1').addDeveloperMetadata('version', version);
         sheet.getRange('A1:F1').setValues([header]).setFontWeight('bold').setHorizontalAlignment('center');
         sheet.getRange('A1:F1').setBackground('#DDDDEE');
 

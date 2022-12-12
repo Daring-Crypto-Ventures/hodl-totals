@@ -21,16 +21,16 @@ export default function resetTotalSheet(): GoogleAppsScript.Spreadsheet.Sheet | 
         if (sheet != null) {
             sheet.clear();
             sheet.getFilter()?.remove();
+            sheet.getDeveloperMetadata().forEach(x => x.remove());
             sheet.getRange('1:1').getDeveloperMetadata().forEach(x => x.remove());
         } else {
             sheet = SpreadsheetApp.getActiveSpreadsheet().insertSheet('HODL Totals', 0);
         }
 
+        sheet.addDeveloperMetadata('version', version);
+
         // Initial set of categories provided out of the box
         const header = ['      ↩ Sheet     ', '     Holdings     ', '=CONCATENATE(COUNT(B2:B)," Coins")', '    Last Reconciliation    ', '       Off By       ', '    Last Calculation    ', '     Calc Status     '];
-
-        // populate the header cells
-        sheet.getRange('1:1').addDeveloperMetadata('version', version);
         sheet.getRange('A1:G1').setValues([header]).setFontWeight('bold').setHorizontalAlignment('center');
         sheet.getRange('A1:G1').setBackground('#DDDDEE');
 
