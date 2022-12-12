@@ -22,9 +22,11 @@ export function formatSheet(): GoogleAppsScript.Spreadsheet.Sheet | null {
         const desiredCurrency = sheet.getName().replace(/ *\([^)]*\) */g, '');
 
         // Code to check the previously saved sheet version to see if mutation is required
+        // should pop a yes/no confirmation dialog in this event as formatting could be destructive
         // const sheet = SpreadsheetApp.getActiveSheet();
         // const mdFinder = sheet.getRange('1:1').createDeveloperMetadataFinder();
         // const version = mdFinder.withKey('version').find()[0].getValue();
+        resetVersionMetadata(sheet, version);
 
         // calculate URL to nav user back to the Totals sheet
         const totalsSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('HODL Totals');
@@ -62,7 +64,6 @@ export function formatSheet(): GoogleAppsScript.Spreadsheet.Sheet | null {
         const lastRow = getLastRowWithDataPresent(sheet.getRange('E:E').getValues() as string[][]);
 
         // set up row 1 cells for reconcilation
-        sheet.getRange('1:1').addDeveloperMetadata('version', version);
         sheet.getRange('B1:H1').setBorder(false, true, false, true, false, false);
         sheet.getRange('G1').setValue('=$C$1-SUBTOTAL(109,$G$3:G)').setNumberFormat('0.000');
         sheet.getRange('H1').setHorizontalAlignment('left');
@@ -156,6 +157,23 @@ export function formatSheet(): GoogleAppsScript.Spreadsheet.Sheet | null {
         return sheet;
     }
     return null;
+}
+
+/**
+ * wrapper for removing all metadata from a row
+ *
+ */
+function resetVersionMetadata(sheet: GoogleAppsScript.Spreadsheet.Sheet | null, newVersion: string): void {
+    if (typeof ScriptApp === 'undefined') {
+        // no data table representation of this
+    } else if (sheet !== null) {
+        const metadata = sheet.getRange('1:1').getDeveloperMetadata();
+        const matchingMetadata = metadata.filter(x => x.getKey() === 'version');
+        matchingMetadata.forEach(match => {
+            match.remove();
+        });
+        sheet.getRange('1:1').addDeveloperMetadata('version', newVersion);
+    }
 }
 
 function setFormatSheetCFRules(sheet: GoogleAppsScript.Spreadsheet.Sheet): void {

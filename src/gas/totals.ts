@@ -21,6 +21,7 @@ export default function resetTotalSheet(): GoogleAppsScript.Spreadsheet.Sheet | 
         if (sheet != null) {
             sheet.clear();
             sheet.getFilter()?.remove();
+            sheet.getRange('1:1').getDeveloperMetadata().forEach(x => x.remove());
         } else {
             sheet = SpreadsheetApp.getActiveSpreadsheet().insertSheet('HODL Totals', 0);
         }
