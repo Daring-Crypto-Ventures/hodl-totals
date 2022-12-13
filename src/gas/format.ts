@@ -147,7 +147,7 @@ export function formatSheet(): GoogleAppsScript.Spreadsheet.Sheet | null {
         // the need to check data in the validate() function during a calculation
         setValidationRules(sheet, categoriesList);
 
-        // set cols {Status, Cost Basis, Gain(Loss)} to be grayed background
+        // set calculated columns to be grayed background
         sheet.getRange('P3:T').setBackground('#EEEEEE');
 
         // autosize columns' widths to fit content

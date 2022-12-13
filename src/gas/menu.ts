@@ -4,7 +4,6 @@
  */
 import resetTotalSheet from './totals';
 import newCategorySheet from './categories';
-import newWalletsSheet from './wallets';
 import showNewCoinPrompt from './new-coin';
 import { formatSheet } from './format';
 import calculateFIFO from '../calc-fifo';
@@ -119,10 +118,6 @@ export function newCoinSheet_(): GoogleAppsScript.Spreadsheet.Sheet | null {
     }
     const newCoinSheet = SpreadsheetApp.getActiveSpreadsheet().insertSheet(newCoinName);
     resetTotalSheet();
-    // if no Wallets/Accounts sheet previously exists, create one
-    if (SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Wallets/Accounts') == null) {
-        newWalletsSheet();
-    }
     SpreadsheetApp.setActiveSheet(newCoinSheet);
 
     return formatSheet_();
