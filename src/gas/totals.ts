@@ -30,10 +30,10 @@ export default function resetTotalSheet(): GoogleAppsScript.Spreadsheet.Sheet | 
         sheet.addDeveloperMetadata('version', version);
 
         // Initial set of categories provided out of the box
-        const header = ['   Unique Wallet/Account Name   ', '     Balance     ', '       Coin       ', '       on Date       ', '=CONCATENATE(COUNT(E2:E)," Coins")',
+        const header = ['       #       ', '   Unique Wallet/Account Name   ', '     Balance     ', '       Coin       ', '       on Date       ', '=CONCATENATE(COUNT(E2:E)," Coins")',
             '      ↩ Sheet     ', '   Recorded Holdings   ', '       Off By       ', '    Last Calculation    ', '     Calc Status     ', '    Last Reconciliation    '];
-        sheet.getRange('A1:K1').setValues([header]).setFontWeight('bold').setHorizontalAlignment('center');
-        sheet.getRange('A1:K1').setBackground('#DDDDEE');
+        sheet.getRange('A1:L1').setValues([header]).setFontWeight('bold').setHorizontalAlignment('center');
+        sheet.getRange('A1:L1').setBackground('#DDDDEE');
 
         // walk through all sheets in workbook to pick out the coin names & links
         const allSheets = SpreadsheetApp.getActiveSpreadsheet().getSheets();
@@ -48,7 +48,7 @@ export default function resetTotalSheet(): GoogleAppsScript.Spreadsheet.Sheet | 
                 rowCount += 1;
 
                 // pull out wallet names from each coins sheet, if they exist
-                const walletData: string[][] = coinSheet.getRange('B3:B').getValues() as string[][];
+                const walletData: string[][] = coinSheet.getRange('B3:B').getValues().filter(String) as string[][];
                 const uniqueWallets: string[] = [];
                 walletData.forEach(wallet => {
                     if (!uniqueWallets.includes(wallet[0])) {
@@ -60,39 +60,49 @@ export default function resetTotalSheet(): GoogleAppsScript.Spreadsheet.Sheet | 
                     uniqueWallets.push('Wallets/Accounts Not Set');
                 }
 
-                const data = [`${uniqueWallets?.[0]} (${newCoinName})`, '', newCoinName, '', `=SUMIF($C$${rowCount}:$C,$C${rowCount},$B$${rowCount}:$B)`, `=HYPERLINK("${newCoinSheetUrl}","${newCoinName}")`,
-                    `=SUM(INDIRECT("'"&$F${rowCount}&"'!$G$3:G"))`, `=$G${rowCount}-$E${rowCount}`, `=INDIRECT("'"&$C${rowCount}&"'!$S$1")`, `=INDIRECT("'"&$C${rowCount}&"'!$T$1")`, ''];
+                const data = [`${rowCount - 1}`, `${uniqueWallets?.[0]} (${newCoinName})`, '', newCoinName, '', `=SUMIF($D$2:$D,$D${rowCount},$C$2:$C)`, `=HYPERLINK("${newCoinSheetUrl}","${newCoinName}")`,
+                    `=SUM(INDIRECT("'"&$D${rowCount}&"'!$G$3:G"))`, `=$H${rowCount}-$F${rowCount}`, `=INDIRECT("'"&$D${rowCount}&"'!$S$1")`, `=INDIRECT("'"&$D${rowCount}&"'!$T$1")`, ''];
                 sheet.appendRow(data);
-                /*
+
+                // Account for secondary wallets/accounts for a given coin
                 if (uniqueWallets.length > 1) {
                     // skip past the one we've already dealt with
                     uniqueWallets.shift();
 
                     // insert mostly empty rows to account for the other detected uniqueWallets holding that same coin
-                    uniqueWallets.forEach(wallet => {
-                        const walletOnlydata = [`${wallet} (${newCoinName})`, '', newCoinName, '', '', '', '', '', '', '', ''];
+                    uniqueWallets.forEach((wallet, index) => { // eslint-disable-line @typescript-eslint/no-loop-func
+                        const walletOnlydata = [`${rowCount + index}`, `${wallet} (${newCoinName})`, '', newCoinName, '', '', '', '', '', '', '', ''];
                         sheet?.appendRow(walletOnlydata);
                     });
+
+                    // merge across for the mostly empty rows, also prevents conditional formatting from being applied on these rows
+                    sheet.getRange(rowCount + 1, 6, uniqueWallets.length, 6).mergeAcross();
+
+                    // update the rowcount for any secondary wallets added
                     rowCount += uniqueWallets.length;
                 }
-                */
             }
         }
 
         if (rowCount > 1) {
             // format all populated coin rows
-            sheet.getRange(`D2:D${rowCount}`).setNumberFormat('yyyy-mm-dd');
-            sheet.getRange(`I2:I${rowCount}`).setNumberFormat('yyyy-mm-dd h:mm:ss').setHorizontalAlignment('right');
+            sheet.getRange(`E2:E${rowCount}`).setNumberFormat('yyyy-mm-dd');
+            sheet.getRange(`J2:J${rowCount}`).setNumberFormat('yyyy-mm-dd h:mm:ss').setHorizontalAlignment('right');
 
             // create filter around all populated coin rows
-            sheet.getRange(`A1:K${rowCount}`).createFilter();
+            sheet.getRange(`A1:L${rowCount}`).createFilter();
         }
 
-        // set calculated columns to be grayed background
-        sheet.getRange('E2:J').setBackground('#EEEEEE');
+        // apply other formatting to the filled columns
+        sheet.getRange('A2:A').setHorizontalAlignment('center');
+        sheet.getRange('F2:K').setBackground('#EEEEEE');
+        sheet.getRange('F2:F').setNumberFormat('0.00000000').setFontColor(null).setFontStyle(null)
+            .setFontSize(11);
+        sheet.getRange('H2:I').setNumberFormat('+0.00000000;-0.00000000;0.00000000').setFontColor(null).setFontStyle(null)
+            .setFontSize(11);
 
         // autosize the columns' widths, add conditional formatting
-        sheet.autoResizeColumns(1, 11);
+        sheet.autoResizeColumns(1, 12);
         setTotalsSheetCFRules(sheet, rowCount);
         SpreadsheetApp.flush();
 
@@ -109,9 +119,9 @@ export default function resetTotalSheet(): GoogleAppsScript.Spreadsheet.Sheet | 
 function setTotalsSheetCFRules(sheet: GoogleAppsScript.Spreadsheet.Sheet, rowCount: number): void {
     // Color the cell that displays the off by amount
     // to help users see if their sheet totals overall are in a healthy state
-    const offByRange = sheet.getRange(`H2:H${rowCount}`);
+    const offByRange = sheet.getRange(`I2:I${rowCount}`);
     // and Color the success/failure cell to indicate health of the last calculation
-    const calcStatusRange = sheet.getRange(`J2:J${rowCount}`);
+    const calcStatusRange = sheet.getRange(`K2:K${rowCount}`);
 
     // extract the conditional rules set on all other cells on this sheet
     const rules = sheet.getConditionalFormatRules();
