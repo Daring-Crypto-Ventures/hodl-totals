@@ -30,7 +30,7 @@ export default function resetTotalSheet(): GoogleAppsScript.Spreadsheet.Sheet | 
         sheet.addDeveloperMetadata('version', version);
 
         // Initial set of categories provided out of the box
-        const header = ['       #       ', '   Unique Wallet/Account Name   ', '     Balance     ', '       Coin       ', '       on Date       ', '=CONCATENATE(COUNT(E2:E)," Coins")',
+        const header = ['       #       ', '   Unique Wallet/Account Name   ', '     Balance     ', '       Coin       ', '       on Date       ', '=CONCATENATE(COUNT(F2:F)," Coins")',
             '      ↩ Sheet     ', '   Recorded Holdings   ', '       Off By       ', '    Last Calculation    ', '     Calc Status     ', '    Last Reconciliation    '];
         sheet.getRange('A1:L1').setValues([header]).setFontWeight('bold').setHorizontalAlignment('center');
         sheet.getRange('A1:L1').setBackground('#DDDDEE');
@@ -96,10 +96,8 @@ export default function resetTotalSheet(): GoogleAppsScript.Spreadsheet.Sheet | 
         // apply other formatting to the filled columns
         sheet.getRange('A2:A').setHorizontalAlignment('center');
         sheet.getRange('F2:K').setBackground('#EEEEEE');
-        sheet.getRange('F2:F').setNumberFormat('0.00000000').setFontColor(null).setFontStyle(null)
-            .setFontSize(11);
-        sheet.getRange('H2:I').setNumberFormat('+0.00000000;-0.00000000;0.00000000').setFontColor(null).setFontStyle(null)
-            .setFontSize(11);
+        sheet.getRange('F2:F').setNumberFormat('0.00000000').setFontColor(null).setFontStyle(null);
+        sheet.getRange('H2:I').setNumberFormat('+0.00000000;-0.00000000;0.00000000').setFontColor(null).setFontStyle(null);
 
         // autosize the columns' widths, add conditional formatting
         sheet.autoResizeColumns(1, 12);
