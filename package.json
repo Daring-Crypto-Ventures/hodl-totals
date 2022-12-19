@@ -42,7 +42,7 @@
     "@types/google-apps-script": "^1.0.56",
     "@types/jest": "^28.1.6",
     "@typescript-eslint/eslint-plugin": "^5.42.0",
-    "@typescript-eslint/parser": "^5.38.1",
+    "@typescript-eslint/parser": "^5.46.1",
     "browserslist": "^4.21.4",
     "coveralls": "^3.1.1",
     "eslint": "^8.20.0",
