@@ -8,6 +8,8 @@ import { version } from '../version';
 
 /* global GoogleAppsScript */
 /* global SpreadsheetApp */
+/* global Utilities */
+/* global Browser */
 
 /**
  * A function that deletes, repopulates & formats the Totals page based on the coin sheets that already exist.
@@ -17,8 +19,20 @@ import { version } from '../version';
 export default function resetTotalSheet(): GoogleAppsScript.Spreadsheet.Sheet | null {
     if (typeof ScriptApp !== 'undefined') {
         // delete the previous HODL Totals sheet, if any
-        let sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('HODL Totals')?.clear();
+        let sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('HODL Totals');
+        let prevUserData: [string, string, string, string][] = [['', '', '', '']];
         if (sheet != null) {
+            // save off any user entered data before clearing the sheet
+            const prevWallets = sheet.getRange('B2:B').getValues().filter(String) as string[][];
+            const prevBalances = sheet.getRange('C2:C').getValues() as string[][];
+            const prevOnDates = sheet.getRange('E2:E').getValues() as string[][];
+            const prevNotes = sheet.getRange('L2:L').getValues() as string[][];
+            if ((prevWallets.length > prevBalances.length) || (prevWallets.length > prevOnDates.length) || (prevWallets.length > prevNotes.length)) {
+                const msg = Utilities.formatString('User-provided data in HODL Totals not formatted as expected. Aborting to prevent losing user data.');
+                Browser.msgBox('', msg, Browser.Buttons.OK);
+                return null;
+            }
+            prevUserData = prevWallets.map((item, index) => { return [item?.[0], prevBalances[index]?.[0], prevOnDates[index]?.[0], prevNotes[index]?.[0]] as [string, string, string, string]; });
             sheet.clear();
             sheet.getFilter()?.remove();
             sheet.getDeveloperMetadata().forEach(x => x.remove());
@@ -31,7 +45,7 @@ export default function resetTotalSheet(): GoogleAppsScript.Spreadsheet.Sheet | 
 
         // Initial set of categories provided out of the box
         const header = ['       #       ', '   Unique Wallet/Account Name   ', '     Balance     ', '       Coin       ', '       on Date       ', '=CONCATENATE(COUNT(F2:F)," Coins")',
-            '      ↩ Sheet     ', '   Recorded Holdings   ', '       Off By       ', '    Last Calculation    ', '     Calc Status     ', '    Last Reconciliation    '];
+            '      ↩ Sheet     ', '   Recorded Holdings   ', '       Off By       ', '    Last Calculation    ', '     Calc Status     ', '        Notes        '];
         sheet.getRange('A1:L1').setValues([header]).setFontWeight('bold').setHorizontalAlignment('center');
         sheet.getRange('A1:L1').setBackground('#DDDDEE');
 
@@ -84,6 +98,31 @@ export default function resetTotalSheet(): GoogleAppsScript.Spreadsheet.Sheet | 
             }
         }
 
+        // calculate a list of the wallets currently in the sheet to use for comparison
+        const walletList: string[][] = sheet?.getRange('B2:B').getValues().filter(String) as string[][];
+        const flatWalletList = ([] as string[]).concat(...walletList);
+
+        // restore user entered data to the correct row if it still exists
+        prevUserData?.forEach(entry => {
+            const prevWalletName = entry[0]; // prevUserData[index][0] is Unique Wallet Name and goes into B2:B
+            const prevBalance = entry[1]; // prevUserData[index][1] is the Balance and goes into C2:C
+            const prevOnDate = entry[2]; // prevUserData[index][2] is the Last Balance Date and goes into E2:E
+            const prevNotes = entry[3]; // prevUserData[index][3] is the User Notes that go into L2:L
+
+            // search for match of prevWallet in the sheet
+            const foundRowIdx = flatWalletList.indexOf(prevWalletName);
+            if (foundRowIdx === -1) {
+                // restore the the wallet, balance, on date and user data to the last row of the sheet
+                const unmatchedUserdata = ['', prevWalletName, prevBalance, '', prevOnDate, '', '', '', '', '', '', prevNotes];
+                sheet?.appendRow(unmatchedUserdata);
+            } else {
+                // restore balance, on date and user data to that matching row
+                sheet?.getRange(`C${foundRowIdx + 2}`).setValue(prevBalance);
+                sheet?.getRange(`E${foundRowIdx + 2}`).setValue(prevOnDate);
+                sheet?.getRange(`L${foundRowIdx + 2}`).setValue(prevNotes);
+            }
+        });
+
         if (rowCount > 1) {
             // format all populated coin rows
             sheet.getRange(`E2:E${rowCount}`).setNumberFormat('yyyy-mm-dd');
@@ -94,7 +133,9 @@ export default function resetTotalSheet(): GoogleAppsScript.Spreadsheet.Sheet | 
         }
 
         // apply other formatting to the filled columns
+        sheet.getRange('A2:B').setBackground('#EEEEEE');
         sheet.getRange('A2:A').setHorizontalAlignment('center');
+        sheet.getRange('D2:D').setBackground('#EEEEEE');
         sheet.getRange('F2:K').setBackground('#EEEEEE');
         sheet.getRange('F2:F').setNumberFormat('0.00000000').setFontColor(null).setFontStyle(null);
         sheet.getRange('H2:I').setNumberFormat('+0.00000000;-0.00000000;0.00000000').setFontColor(null).setFontStyle(null);
