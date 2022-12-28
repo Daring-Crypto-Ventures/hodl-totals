@@ -140,12 +140,23 @@ export function formatSheet(): GoogleAppsScript.Spreadsheet.Sheet | null {
         // set col styles for {Lot IDs}, {Date Acquired} and {Status}
         sheet.getRange('P3:R').setFontColor('#424250').setHorizontalAlignment('center');
 
-        // lookup allowed categories from the "Categories sheet" to avoid hard-coding them
-        const categoriesList = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Categories')?.getRange('A2:A35').getValues() as unknown as string[];
-
         // Prevent the user from entering bad inputs in the first place which removes
         // the need to check data in the validate() function during a calculation
-        setValidationRules(sheet, categoriesList);
+        setValidationRules(sheet);
+
+        // lookup allowed categories from the "Categories sheet" to avoid hard-coding them
+        const categoriesList = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Categories')?.getRange('A2:A35').getValues() as unknown as string[];
+        // lookup matching wallet entries from the totals sheet to show in the reconciliation header
+        const allWallets = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('HODL Totals')?.getRange('B:B').getValues()
+            .filter(String) as string[][];
+        const matchingWalletsList: string[] = [];
+        allWallets.forEach(walletData => {
+            const walletName = walletData[0];
+            if (walletName.endsWith(` (${desiredCurrency})`) || (walletName.trim() === 'All Wallets & Accounts')) {
+                matchingWalletsList.push(walletName);
+            }
+        });
+        setDropdownOptions(sheet, categoriesList, matchingWalletsList);
 
         // set calculated columns to be grayed background
         sheet.getRange('P3:T').setBackground('#EEEEEE');
@@ -228,7 +239,7 @@ function setFormatSheetCFRules(sheet: GoogleAppsScript.Spreadsheet.Sheet): void 
     sheet.setConditionalFormatRules(newRules);
 }
 
-function setValidationRules(sheet: GoogleAppsScript.Spreadsheet.Sheet, categoriesList: string[]): void {
+function setValidationRules(sheet: GoogleAppsScript.Spreadsheet.Sheet): void {
     // ensure we only accept valid date values
     const dateRule = SpreadsheetApp.newDataValidation()
         .requireDate()
@@ -236,6 +247,23 @@ function setValidationRules(sheet: GoogleAppsScript.Spreadsheet.Sheet, categorie
     // .setHelpText('Must be a valid date.')
         .build();
     sheet.getRange('E3:E').setDataValidation(dateRule);
+
+    // ensure we only accept positive Coin/Fiat amounts
+    const notNegativeRule = SpreadsheetApp.newDataValidation()
+        .requireNumberGreaterThanOrEqualTo(0)
+        .setAllowInvalid(false)
+    // .setHelpText('Value cannot be negative.')
+        .build();
+    sheet.getRange('I3:L').setDataValidation(notNegativeRule);
+}
+
+function setDropdownOptions(sheet: GoogleAppsScript.Spreadsheet.Sheet, categoriesList: string[], walletList: string[]): void {
+    // limit Category entries to loosely adhere to known categories
+    const walletFromTotalsRule = SpreadsheetApp.newDataValidation()
+        .requireValueInList(walletList)
+        .setAllowInvalid(true)
+        .build();
+    sheet.getRange('B1').setDataValidation(walletFromTotalsRule);
 
     // limit Category entries to loosely adhere to known categories
     const categoriesRule = SpreadsheetApp.newDataValidation()
@@ -250,12 +278,4 @@ function setValidationRules(sheet: GoogleAppsScript.Spreadsheet.Sheet, categorie
         .setAllowInvalid(true)
         .build();
     sheet.getRange('H3:H').setDataValidation(fmvStrategyRule);
-
-    // ensure we only accept positive Coin/Fiat amounts
-    const notNegativeRule = SpreadsheetApp.newDataValidation()
-        .requireNumberGreaterThanOrEqualTo(0)
-        .setAllowInvalid(false)
-    // .setHelpText('Value cannot be negative.')
-        .build();
-    sheet.getRange('I3:L').setDataValidation(notNegativeRule);
 }

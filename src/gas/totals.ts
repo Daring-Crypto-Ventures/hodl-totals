@@ -44,7 +44,7 @@ export default function resetTotalSheet(): GoogleAppsScript.Spreadsheet.Sheet | 
         sheet.addDeveloperMetadata('version', version);
 
         // Initial set of categories provided out of the box
-        const header = ['       #       ', '   Unique Wallet/Account Name   ', '     Balance     ', '       Coin       ', '       on Date       ', '=CONCATENATE(COUNT(F2:F)," Coins")',
+        const header = ['       #       ', '      All Wallets & Accounts      ', '     Balance     ', '       Coin       ', '       on Date       ', '=CONCATENATE(COUNT(F2:F)," Coins")',
             '      ↩ Sheet     ', '   Recorded Holdings   ', '       Off By       ', '    Last Calculation    ', '     Calc Status     ', '        Notes        '];
         sheet.getRange('A1:L1').setValues([header]).setFontWeight('bold').setHorizontalAlignment('center');
         sheet.getRange('A1:L1').setBackground('#DDDDEE');
@@ -113,7 +113,7 @@ export default function resetTotalSheet(): GoogleAppsScript.Spreadsheet.Sheet | 
             const foundRowIdx = flatWalletList.indexOf(prevWalletName);
             if (foundRowIdx === -1) {
                 // restore the the wallet, balance, on date and user data to the last row of the sheet
-                const unmatchedUserdata = ['', prevWalletName, prevBalance, '', prevOnDate, '', '', '', '', '', '', prevNotes];
+                const unmatchedUserdata = ['UNTRACKED', prevWalletName, prevBalance, '', prevOnDate, '', '', '', '', '', '', prevNotes];
                 sheet?.appendRow(unmatchedUserdata);
             } else {
                 // restore balance, on date and user data to that matching row
@@ -133,7 +133,7 @@ export default function resetTotalSheet(): GoogleAppsScript.Spreadsheet.Sheet | 
         }
 
         // apply other formatting to the filled columns
-        sheet.getRange('A2:B').setBackground('#EEEEEE');
+        sheet.getRange('A2:A').setBackground('#EEEEEE');
         sheet.getRange('A2:A').setHorizontalAlignment('center');
         sheet.getRange('D2:D').setBackground('#EEEEEE');
         sheet.getRange('F2:K').setBackground('#EEEEEE');
