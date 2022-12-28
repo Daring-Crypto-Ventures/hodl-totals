@@ -56,6 +56,9 @@ export function setFMVStrategyOnRow(
         }
         fillInCell(sheet, data, row, 14, `=AVERAGE(M${row + 1},N${row + 1})`);
         // no need to restore values for Avg Daily Price Variation, since fields are filled in
+        drawCellDisabled(sheet, data, row, 12, false);
+        drawCellDisabled(sheet, data, row, 13, false);
+        drawCellDisabled(sheet, data, row, 14, false);
     }
 }
 
