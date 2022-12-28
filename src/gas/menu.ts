@@ -41,9 +41,9 @@ export function onOpen(e: GoogleAppsScript.Events.AppsScriptEvent): void {
     const menu = ui.createAddonMenu(); // createsMenu('HODL Totals')
 
     menu.addItem('Reset totals sheet', 'resetTotalSheet_')
+        .addItem('Format coin sheet', 'formatSheet_')
         .addSeparator()
         .addItem('Track new coin...', 'newCoinSheet_')
-        .addItem('Apply formatting', 'formatSheet_')
         .addItem('Calculate (FIFO method)', 'calculateFIFO_')
         .addSeparator()
         .addSubMenu(ui.createMenu('Examples')

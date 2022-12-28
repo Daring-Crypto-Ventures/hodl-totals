@@ -8,6 +8,7 @@ import getLastRowWithDataPresent from '../last-row';
 
 /* global GoogleAppsScript */
 /* global SpreadsheetApp */
+/* global Browser */
 
 /**
  * A function that formats the columns and headers of the active spreadsheet.
@@ -20,6 +21,12 @@ export function formatSheet(): GoogleAppsScript.Spreadsheet.Sheet | null {
     if (typeof ScriptApp !== 'undefined') {
         const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
         const desiredCurrency = sheet.getName().replace(/ *\([^)]*\) */g, '');
+
+        // simple check to verify that formatting actions only happen on coin tracking sheets
+        if ((sheet.getRange('H1').getValue() as string).trim() !== desiredCurrency) {
+            Browser.msgBox('Formatting Error', 'The active sheet does not look like a coin tracking sheet, only format existing sheets that were created via Track New Coin', Browser.Buttons.OK);
+            return null;
+        }
 
         // Code to check the previously saved sheet version to see if mutation is required
         // should pop a yes/no confirmation dialog in this event as formatting could be destructive
@@ -38,9 +45,9 @@ export function formatSheet(): GoogleAppsScript.Spreadsheet.Sheet | null {
 
         // populate the sheet header
         const headerRow1p1 = [`=HYPERLINK("${totalsSheetUrl}"," ↩ Totals ")`, 'All Wallets & Accounts'];
-        // leave ONE cell gap to prevent overwriting user value: calculated coin total from Wallets/Accounts page
+        const coinTotalFormula = '=INDIRECT("\'HODL Totals\'!$"&IF(ISNA(MATCH($B$1,\'HODL Totals\'!$B$2:B, 0)),"F$"&IFNA(MATCH(LEFT(TRIM($I$2),FIND(" ",TRIM($I$2))-1),\'HODL Totals\'!$D$2:$D,0),0)+1,"C$"&MATCH($B$1,\'HODL Totals\'!$B$2:B, 0)+1))';
         const headerRow1p2 = `${desiredCurrency} balance on `;
-        // leave ONE cell gap to prevent overwriting user value: date of this coin's last reconciliation from Wallets/Accounts page
+        const onDateFormula = '=INDIRECT("\'HODL Totals\'!$"&IF(ISNA(MATCH($B$1,\'HODL Totals\'!$B$2:B, 0)),"E$"&IFNA(MATCH(LEFT(TRIM($I$2),FIND(" ",TRIM($I$2))-1),\'HODL Totals\'!$D$2:$D,0),0)+1,"E$"&MATCH($B$1,\'HODL Totals\'!$B$2:B, 0)+1))';
         const headerRow1p3 = 'was off by';
         // leave ONE cell gap to prevent overwriting user provided value: subtotal of the Net Change column
         const headerRow1p4 = [`${desiredCurrency}`, 'Inflow', '', 'Outflow', '', 'Fair Mkt Value', '', '', 'Last Gain/Loss Calculation (FIFO Method)', '', ''];
@@ -53,7 +60,9 @@ export function formatSheet(): GoogleAppsScript.Spreadsheet.Sheet | null {
             '     Lot ID     ', '    Date Acquired    ', '   Status   ', '        Cost Basis        ', '    Gain (Loss)    ', '   Summarized In   '];
 
         sheet.getRange('A1:B1').setValues([headerRow1p1]);
+        sheet.getRange('C1').setValue(coinTotalFormula);
         sheet.getRange('D1').setValue(headerRow1p2);
+        sheet.getRange('E1').setValue(onDateFormula);
         sheet.getRange('F1').setValue(headerRow1p3);
         sheet.getRange('H1:R1').setValues([headerRow1p4]);
         sheet.getRange('U1').setValue(headerRow1p5);
