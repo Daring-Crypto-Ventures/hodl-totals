@@ -42,7 +42,7 @@ export function onOpen(e: GoogleAppsScript.Events.AppsScriptEvent): void {
         .addItem('Insert example "pretendCOINs"', 'loadExample_')
         .addSeparator()
         .addItem('-- FOR THIS SHEET --', 'dummyMenuItem_')
-        .addItem('Format as a coin sheet', 'formatSheet_')
+        .addItem('Format coin sheet', 'formatSheet_')
         .addItem('Update FMV formulas', 'updateFMVFormulas_')
         .addItem('Calculate gain/loss (FIFO method)', 'calculateCoinGainLoss_')
         .addSeparator()

@@ -5,7 +5,6 @@
 
 import newCategorySheet from './categories';
 import { formatSheet } from './format';
-import resetTotalSheet from './totals';
 
 /* global SpreadsheetApp */
 /* global GoogleAppsScript */
@@ -55,7 +54,6 @@ export function newCoinSheet(coinName = ''): GoogleAppsScript.Spreadsheet.Sheet 
         }
 
         const newSheet = SpreadsheetApp.getActiveSpreadsheet().insertSheet(newCoinName);
-        resetTotalSheet();
         SpreadsheetApp.setActiveSheet(newSheet);
         newSheet.getRange('H1').setValue(newCoinName);
 
