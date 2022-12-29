@@ -3,7 +3,6 @@
  *
  */
 import { version } from '../version';
-import { setFMVformulasOnSheet } from './fmv';
 import getLastRowWithDataPresent from '../last-row';
 
 /* global GoogleAppsScript */
@@ -24,7 +23,7 @@ export function formatSheet(): GoogleAppsScript.Spreadsheet.Sheet | null {
 
         // simple check to verify that formatting actions only happen on coin tracking sheets
         if ((sheet.getRange('H1').getValue() as string).trim() !== desiredCurrency) {
-            Browser.msgBox('Formatting Error', 'The active sheet does not look like a coin tracking sheet, only format existing sheets that were created via Track New Coin', Browser.Buttons.OK);
+            Browser.msgBox('Formatting Error', 'The active sheet does not look like a coin tracking sheet, only format existing coin sheets originally created using HODL Totals commands', Browser.Buttons.OK);
             return null;
         }
 
@@ -132,13 +131,6 @@ export function formatSheet(): GoogleAppsScript.Spreadsheet.Sheet | null {
         // create filter around all transactions
         sheet.getFilter()?.remove();
         sheet.getRange(`A2:U${lastRow}`).createFilter();
-
-        // iterate through the rows in the sheet to
-        // set col {Fiat Cost} and col {Fiat Received} to be calculated based on other cells in the sheet
-        const strategyCol = sheet.getRange('H:H').getValues() as string[][];
-        const acquiredCol = sheet.getRange('I:I').getValues() as string[][];
-        const disposedCol = sheet.getRange('K:K').getValues() as string[][];
-        setFMVformulasOnSheet(sheet, null, strategyCol, acquiredCol, disposedCol, lastRow);
 
         // set cols {COIN High, Low, Price} to be formatted into USD value but to 6 decimal places
         sheet.getRange('M3:O').setNumberFormat('$#,######0.000000;$(#,######0.000000)').setFontColor(null).setFontStyle(null)

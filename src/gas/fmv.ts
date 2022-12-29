@@ -3,8 +3,40 @@
  *
  */
 import { CompleteDataRow } from '../types';
+import getLastRowWithDataPresent from '../last-row';
 
 /* global GoogleAppsScript */
+/* global SpreadsheetApp */
+/* global Browser */
+
+/**
+ * iterate through the rows in the sheet to
+ * set Cost Fiat Received based on other cells in the sheet
+ *
+ * @return the newly created sheet, for function chaining purposes.
+ */
+export function updateFMVFormulas(): GoogleAppsScript.Spreadsheet.Sheet | null {
+    if (typeof ScriptApp !== 'undefined') {
+        const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+        const desiredCurrency = sheet.getName().replace(/ *\([^)]*\) */g, '');
+
+        // simple check to verify that formatting actions only happen on coin tracking sheets
+        if ((sheet.getRange('H1').getValue() as string).trim() !== desiredCurrency) {
+            Browser.msgBox('Fair Market Value Formula Update Error', 'The active sheet does not look like a coin tracking sheet, only update the Fair Market Value Formulas on existing coin sheets originally created using HODL Totals commands', Browser.Buttons.OK);
+            return null;
+        }
+
+        const lastRow = getLastRowWithDataPresent(sheet.getRange('E:E').getValues() as string[][]);
+
+        // code split out into its own function from fromat() because it can take awhile to run
+        const strategyCol = sheet.getRange('H:H').getValues() as string[][];
+        const acquiredCol = sheet.getRange('I:I').getValues() as string[][];
+        const disposedCol = sheet.getRange('K:K').getValues() as string[][];
+        setFMVformulasOnSheet(sheet, null, strategyCol, acquiredCol, disposedCol, lastRow);
+        return sheet;
+    }
+    return null;
+}
 
 export function setFMVformulasOnSheet(
     sheet: GoogleAppsScript.Spreadsheet.Sheet | null,

@@ -6,6 +6,7 @@ import resetTotalSheet from './totals';
 import newCategorySheet from './categories';
 import showNewCoinPrompt from './new-coin';
 import { formatSheet } from './format';
+import { updateFMVFormulas } from './fmv';
 import calculateFIFO from '../calc-fifo';
 import getOrderList from '../orders';
 import validate from '../validate';
@@ -41,17 +42,18 @@ export function onOpen(e: GoogleAppsScript.Events.AppsScriptEvent): void {
     const menu = ui.createAddonMenu(); // createsMenu('HODL Totals')
 
     menu.addItem('Reset totals sheet', 'resetTotalSheet_')
-        .addItem('Format coin sheet', 'formatSheet_')
-        .addSeparator()
         .addItem('Track new coin...', 'newCoinSheet_')
-        .addItem('Calculate (FIFO method)', 'calculateFIFO_')
-        .addSeparator()
-        .addSubMenu(ui.createMenu('Examples')
+        .addSubMenu(ui.createMenu('Generate example coin')
             .addItem('Cost basis', 'loadCostBasisExample_')
             .addItem('Fair market value', 'loadFMVExample_'))
         .addSeparator()
-        .addItem('Join our Discord Server', 'openDiscordLink_')
+        .addItem('-- FOR THIS SHEET --', 'dummyMenuItem_')
+        .addItem('Format as a coin sheet', 'formatSheet_')
+        .addItem('Update FMV formulas', 'updateFMVFormulas_')
+        .addItem('Calculate Gains/Losses (FIFO method)', 'calculateFIFO_')
+        .addSeparator()
         .addItem('About HODL Totals', 'showAboutDialog_')
+        .addItem('Join our Discord Server', 'openDiscordLink_')
         .addItem('Show debug sidebar', 'showSheetActionsSidebar_');
     menu.addToUi();
 }
@@ -89,6 +91,15 @@ export function pullDataFromActiveSheet(): unknown[] {
     });
 
     return record;
+}
+
+/**
+ * A no-op function that is required to show a dummy Menu Item
+ * best I can do since Google Apps Script Menus don't support header text
+ *
+ */
+export function dummyMenuItem_(): null {
+    return null;
 }
 
 /**
@@ -135,6 +146,17 @@ export function formatSheet_(): GoogleAppsScript.Spreadsheet.Sheet | null {
 }
 
 /**
+ * A function that formats the FMV Value Rows of the active spreadsheet.
+ *
+ * Assumption: Not configurable to pick Fiat Currency to use for all sheets, assuming USD since this is related to US Tax calc
+ *
+ * @return the newly created sheet, for function chaining purposes.
+ */
+export function updateFMVFormulas_(): GoogleAppsScript.Spreadsheet.Sheet | null {
+    return updateFMVFormulas();
+}
+
+/**
  * Creates a new sheet containing step-by-step directions between the two
  * addresses on the "Settings" sheet that the user selected.
  *
@@ -142,6 +164,12 @@ export function formatSheet_(): GoogleAppsScript.Spreadsheet.Sheet | null {
 export function calculateFIFO_(): void {
     const sheet = SpreadsheetApp.getActive().getActiveSheet();
     const coinName = sheet.getName().replace(/ *\([^)]*\) */g, '');
+
+    // simple check to verify that formatting actions only happen on coin tracking sheets
+    if ((sheet.getRange('H1').getValue() as string).trim() !== coinName) {
+        Browser.msgBox('Formatting Error', 'The active sheet does not look like a coin tracking sheet, can only only calculate gains or losses on well-formatted coin sheets originally created using HODL Totals commands', Browser.Buttons.OK);
+        return;
+    }
 
     // sanity check the data in the sheet. only proceed if data is good
     Logger.log('Validating the data before starting calculations.');
