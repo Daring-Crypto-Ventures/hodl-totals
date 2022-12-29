@@ -6,7 +6,6 @@ import { CompleteDataRow } from '../types';
 import getLastRowWithDataPresent from '../last-row';
 
 /* global GoogleAppsScript */
-/* global SpreadsheetApp */
 /* global Browser */
 
 /**
@@ -15,9 +14,8 @@ import getLastRowWithDataPresent from '../last-row';
  *
  * @return the newly created sheet, for function chaining purposes.
  */
-export function updateFMVFormulas(): GoogleAppsScript.Spreadsheet.Sheet | null {
-    if (typeof ScriptApp !== 'undefined') {
-        const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+export function updateFMVFormulas(sheet: GoogleAppsScript.Spreadsheet.Sheet | null): GoogleAppsScript.Spreadsheet.Sheet | null {
+    if ((sheet !== null) && (typeof ScriptApp !== 'undefined')) {
         const desiredCurrency = sheet.getName().replace(/ *\([^)]*\) */g, '');
 
         // simple check to verify that formatting actions only happen on coin tracking sheets

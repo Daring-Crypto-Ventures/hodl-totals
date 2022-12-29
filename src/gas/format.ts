@@ -16,9 +16,8 @@ import getLastRowWithDataPresent from '../last-row';
  *
  * @return the newly created sheet, for function chaining purposes.
  */
-export function formatSheet(): GoogleAppsScript.Spreadsheet.Sheet | null {
-    if (typeof ScriptApp !== 'undefined') {
-        const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+export function formatSheet(sheet: GoogleAppsScript.Spreadsheet.Sheet | null): GoogleAppsScript.Spreadsheet.Sheet | null {
+    if ((sheet !== null) && (typeof ScriptApp !== 'undefined')) {
         const desiredCurrency = sheet.getName().replace(/ *\([^)]*\) */g, '');
 
         // simple check to verify that formatting actions only happen on coin tracking sheets
@@ -56,7 +55,7 @@ export function formatSheet(): GoogleAppsScript.Spreadsheet.Sheet | null {
         const headerRow2 = ['   Tx ✔   ', '    All Wallet & Accounts    ', '    Transaction ID    ', '   Description   ', '    Date & Time    ', '       Category       ', '    Net Change    ',
             '        Valuation Strategy        ', `   ${desiredCurrency} Acquired   `, '    Value (USD)    ', `   ${desiredCurrency} Disposed   `, '    Value (USD)    ',
             `   ${desiredCurrency} High   `, `     ${desiredCurrency} Low     `, `    ${desiredCurrency} Price    `,
-            '     Lot ID     ', '    Date Acquired    ', '   Status   ', '        Cost Basis        ', '    Gain (Loss)    ', '   Summarized In   '];
+            '     Lot ID     ', '    Date Acquired    ', '   Status   ', '        Cost Basis        ', '    Gain (Loss)    ', '      Notes      '];
 
         sheet.getRange('A1:B1').setValues([headerRow1p1]);
         sheet.getRange('C1').setValue(coinTotalFormula);

@@ -75,7 +75,7 @@ export default function newCategorySheet(): GoogleAppsScript.Spreadsheet.Sheet |
     ];
 
     if (typeof ScriptApp !== 'undefined') {
-        const sheet = SpreadsheetApp.getActiveSpreadsheet().insertSheet('Categories');
+        const sheet = SpreadsheetApp.getActiveSpreadsheet().insertSheet('Categories').hideSheet();
         sheet.addDeveloperMetadata('version', version);
 
         // populate the header cells

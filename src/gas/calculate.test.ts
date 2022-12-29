@@ -1,21 +1,21 @@
 // import { expect, test } from '@jest/globals';
 import { UnitTestWrapper } from '../../tests/utils.test';
-import { formatSheet } from './format';
+import { calculateCoinGainLoss } from './calculate';
 
 /* eslint-disable jest/valid-describe-callback */
 
 /**
- * jest unit tests for formatting
+ * jest unit tests for calculating cost basis
  *
  */
-describe('Formatting UI unit tests', testFormat());
+describe('Formatting UI unit tests', testCalculate());
 
-function testFormat(): UnitTestWrapper {
+function testCalculate(): UnitTestWrapper {
     return (): void => {
         if (typeof ScriptApp === 'undefined') {
             // jest unit test
             it('Expecting Google Sheet formatting to fail during local execution', () => {
-                expect(formatSheet(null)).toBe(null);
+                expect(calculateCoinGainLoss(null)).toBe(null);
             });
         }
     };

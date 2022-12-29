@@ -1,6 +1,6 @@
 // import { expect, test } from '@jest/globals';
 import { UnitTestWrapper } from '../../tests/utils.test';
-import showNewCoinPrompt from './new-coin';
+import { showNewCoinPrompt } from './new-coin';
 
 /* eslint-disable jest/valid-describe-callback */
 
