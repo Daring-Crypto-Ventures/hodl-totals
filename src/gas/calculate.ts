@@ -73,18 +73,18 @@ export function calculateCoinGainLoss(sheet: GoogleAppsScript.Spreadsheet.Sheet 
             }
 
             // output the current date and time as the time last completed
-            const now = Utilities.formatDate(new Date(), 'CST', 'yyyy-mm-dd HH:mm');
+            const now = Utilities.formatDate(new Date(), SpreadsheetApp.getActiveSpreadsheet().getSpreadsheetTimeZone(), 'yyyy-MM-dd HH:mm');
             sheet.getRange('S1').setValue(`${now}`);
             sheet.getRange('T1').setValue('Succeeded');
             Logger.log(`Last calculation succeeded ${now}`);
         } else {
             // notify the user of the data validation error
-            const msgPrefix = validationErrMsg.substr(0, validationErrMsg.indexOf(':'));
+            const msgPrefix = validationErrMsg.substring(0, validationErrMsg.indexOf(':'));
             const msg = Utilities.formatString(validationErrMsg);
             Browser.msgBox(msgPrefix, msg, Browser.Buttons.OK);
 
             // record the failure in the sheet as well
-            const now = Utilities.formatDate(new Date(), 'CST', 'yyyy-mm-dd HH:mm');
+            const now = Utilities.formatDate(new Date(), SpreadsheetApp.getActiveSpreadsheet().getSpreadsheetTimeZone(), 'yyyy-MM-dd HH:mm');
             sheet.getRange('S1').setValue(`${now}`);
             sheet.getRange('T1').setValue('Failed');
             Logger.log(`Data validation failed ${now}`);

@@ -145,6 +145,7 @@ export default function calculateFIFO(
                     originalCost = Number(data[sellRow + shift][11]);
 
                     // post the long-term split
+                    data[sellRow + shift][6] = -originalCoin * splitFactor;
                     data[sellRow + shift][10] = originalCoin * splitFactor;
                     data[sellRow + shift][11] = originalCost * splitFactor;
                     data[sellRow + shift][17] = 'Long-term';
@@ -172,6 +173,7 @@ export default function calculateFIFO(
                         // Row numbers are based on the Google Sheet row which includes a +3 offset
                         annotations.push([`E${sellRow + shift + 1}`, splitNoteText]);
                         data[sellRow + shift][4] = originalDate as unknown as string; // TODO clean this TS mess up
+                        data[sellRow + shift][6] = -originalCoin * (1 - splitFactor);
                         data[sellRow + shift][10] = originalCoin * (1 - splitFactor);
                         data[sellRow + shift][11] = originalCost * (1 - splitFactor);
                         data[sellRow + shift][17] = 'Short-term';

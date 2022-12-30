@@ -10,7 +10,6 @@ import resetTotalSheet from './totals';
 import newCategorySheet from './categories';
 import { formatSheet } from './format';
 import { newCoinSheet_ } from './menu';
-import { calculateCoinGainLoss } from './calculate';
 import { updateFMVFormulas } from './fmv';
 
 /**
@@ -80,7 +79,7 @@ function coin1Example(sheet: GoogleAppsScript.Spreadsheet.Sheet): void {
     }
 
     updateFMVFormulas(sheet);
-    calculateCoinGainLoss(sheet);
+    // calculateCoinGainLoss(sheet);
 }
 
 /**
@@ -110,7 +109,7 @@ function coin2Example(sheet: GoogleAppsScript.Spreadsheet.Sheet): void {
     }
 
     updateFMVFormulas(sheet);
-    calculateCoinGainLoss(sheet);
+    // calculateCoinGainLoss(sheet);
 }
 
 /**
