@@ -64,7 +64,7 @@ export function showSheetActionsSidebar_(): void {
 }
 
 /**
- * Returns the active row.
+ * callback from the sidebar UI code that accesses data from the active sheet
  *
  * @return {Object[]} The headers & values of all cells in row.
  */
