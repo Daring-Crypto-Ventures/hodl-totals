@@ -28,8 +28,12 @@ export default function calculateFIFO(
     shift = 0;
     lotCnt = 0;
 
-    // start with num coins that were necessarily bought in "lot 0'
-    lotCoinRemain = lots[0][1];
+    if (lots.length > 0) {
+        // start with num coins that were necessarily bought in "lot 0'
+        lotCoinRemain = lots[0][1];
+    } else {
+        lotCoinRemain = 0;
+    }
 
     // if no sales yet, mark the status of the first lot as 0% sold
     if (sales.length === 0) {
