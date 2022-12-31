@@ -2,6 +2,7 @@
  * @NotOnlyCurrentDoc Limits the script to only accessing the current sheet.
  *
  */
+import { getCoinFromSheetName } from './sheet';
 import { version } from '../version';
 import getLastRowWithDataPresent from '../last-row';
 
@@ -18,7 +19,7 @@ import getLastRowWithDataPresent from '../last-row';
  */
 export function formatSheet(sheet: GoogleAppsScript.Spreadsheet.Sheet | null): GoogleAppsScript.Spreadsheet.Sheet | null {
     if ((sheet !== null) && (typeof ScriptApp !== 'undefined')) {
-        const desiredCurrency = sheet.getName().replace(/ *\([^)]*\) */g, '');
+        const desiredCurrency = getCoinFromSheetName(sheet);
 
         // simple check to verify that formatting actions only happen on coin tracking sheets
         if ((sheet.getRange('H1').getValue() as string).trim() !== desiredCurrency) {

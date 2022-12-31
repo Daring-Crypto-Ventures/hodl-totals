@@ -2,6 +2,7 @@
  * @NotOnlyCurrentDoc Limits the script to only accessing the current sheet.
  *
  */
+import { getCoinFromSheetName } from './sheet';
 import { CompleteDataRow, CompleteDataRowAsStrings, LooselyTypedDataValidationRow } from '../types';
 import getLastRowWithDataPresent from '../last-row';
 import calculateFIFO from '../calc-fifo';
@@ -21,7 +22,7 @@ import validate from '../validate';
  */
 export function calculateCoinGainLoss(sheet: GoogleAppsScript.Spreadsheet.Sheet | null): GoogleAppsScript.Spreadsheet.Sheet | null {
     if ((sheet !== null) && (typeof ScriptApp !== 'undefined')) {
-        const coinName = sheet.getName().replace(/ *\([^)]*\) */g, '');
+        const coinName = getCoinFromSheetName(sheet);
 
         // simple check to verify that formatting actions only happen on coin tracking sheets
         if ((sheet.getRange('H1').getValue() as string).trim() !== coinName) {

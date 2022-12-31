@@ -4,6 +4,7 @@
  * Create & manage categories which are used in individual coin sheets
  *
  */
+import { getCoinFromSheetName } from './sheet';
 import { version } from '../version';
 
 /* global GoogleAppsScript */
@@ -57,7 +58,7 @@ export default function resetTotalSheet(): GoogleAppsScript.Spreadsheet.Sheet | 
         for (const coinSheet of allSheets) {
             // Stop iteration execution if the condition is meet.
             if (!excludedSheetNames.includes(coinSheet.getName())) {
-                const newCoinName = coinSheet.getName().replace(/ *\([^)]*\) */g, '');
+                const newCoinName = getCoinFromSheetName(coinSheet);
                 const newCoinSheetUrl = `${ssUrl}#gid=${coinSheet.getSheetId()}`;
                 rowCount += 1;
 

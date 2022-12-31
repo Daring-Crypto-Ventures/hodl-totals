@@ -14,8 +14,8 @@ export function showNewCoinPrompt(): string | null {
         const ui = SpreadsheetApp.getUi();
 
         const result = ui.prompt(
-            'New Currency',
-            'Please enter the coin\'s trading symbol ("BTC", "ETH", "XRP"):',
+            'Track New Coin',
+            'Enter the coin\'s trading symbol ("BTC", "ETH", "XRP"):',
             ui.ButtonSet.OK_CANCEL
         );
 
@@ -23,6 +23,27 @@ export function showNewCoinPrompt(): string | null {
         const button = result.getSelectedButton();
         const text = result.getResponseText();
         if (button === ui.Button.OK) {
+            // show alerts and cancel the command if the user provided text has issues
+            if (text === '') {
+                ui.alert('Invalid Coin Name', 'The new coin\'s trading symbol cannot be left blank.', ui.ButtonSet.OK);
+                return null;
+            }
+            if (/ *\([^)]*\) */g.test(text)) {
+                ui.alert('Invalid Coin Name', 'The new coin name cannot end with text in parenthesis.', ui.ButtonSet.OK);
+                return null;
+            }
+            if (/Copy of */g.test(text)) {
+                ui.alert('Invalid Coin Name', 'The new coin name cannot start with "Copy of ".', ui.ButtonSet.OK);
+                return null;
+            }
+            if (/ * [1234567890]+/g.test(text)) {
+                ui.alert('Invalid Coin Name', 'The new coin name cannot end with space followed by a number.', ui.ButtonSet.OK);
+                return null;
+            }
+            if (SpreadsheetApp.getActiveSpreadsheet().getSheetByName(text) !== null) {
+                ui.alert('Coin Name Conflict', `A sheet named ${text} already exists.`, ui.ButtonSet.OK);
+                return null;
+            }
             return text;
         }
         // if ((button === ui.Button.CANCEL) || (button === ui.Button.CLOSE))

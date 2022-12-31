@@ -64,30 +64,6 @@ export function showSheetActionsSidebar_(): void {
 }
 
 /**
- * Returns the active row.
- *
- * @return {Object[]} The headers & values of all cells in row.
- */
-export function pullDataFromActiveSheet(): unknown[] {
-    // Retrieve and return the information requested by the sidebar.
-    const sheet = SpreadsheetApp.getActiveSheet();
-    // const coinName = sheet.getName().replace(/ *\([^)]*\) */g, '');
-    const record = new Array(0);
-    const sheetMetadata = sheet.getDeveloperMetadata();
-    const metadata = sheet.getRange('1:1').getDeveloperMetadata();
-
-    // record.push({ heading: 'coin', cellval: coinName });
-    sheetMetadata.forEach(md => {
-        record.push({ heading: md.getKey(), cellval: md.getValue() });
-    });
-    metadata.forEach(md => {
-        record.push({ heading: `Row 1:${md.getKey()}`, cellval: md.getValue() });
-    });
-
-    return record;
-}
-
-/**
  * A no-op function that is required to show a dummy Menu Item
  * best I can do since Google Apps Script Menus don't support header text
  *
