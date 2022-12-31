@@ -5,6 +5,7 @@
 
 import newCategorySheet from './categories';
 import { formatSheet } from './format';
+import { getCoinFromSheetName } from './sheet';
 
 /* global SpreadsheetApp */
 /* global GoogleAppsScript */
@@ -40,11 +41,13 @@ export function showNewCoinPrompt(): string | null {
                 ui.alert('Invalid Coin Name', 'The new coin name cannot end with space followed by a number.', ui.ButtonSet.OK);
                 return null;
             }
-            if (SpreadsheetApp.getActiveSpreadsheet().getSheetByName(text) !== null) {
-                ui.alert('Coin Name Conflict', `A sheet named ${text} already exists.`, ui.ButtonSet.OK);
-                return null;
+            // walk through all sheets in workbook to compare suggested new coin name with existing sheet names
+            const allSheets = SpreadsheetApp.getActiveSpreadsheet().getSheets();
+            if (allSheets.every(sheet => text !== getCoinFromSheetName(sheet))) {
+                return text;
             }
-            return text;
+            ui.alert('Coin Name Conflict', `A sheet named ${text} already exists.`, ui.ButtonSet.OK);
+            return null;
         }
         // if ((button === ui.Button.CANCEL) || (button === ui.Button.CLOSE))
     }

@@ -20,6 +20,19 @@ export function getCoinFromSheetName(sheet: GoogleAppsScript.Spreadsheet.Sheet |
 }
 
 /**
+ * parse the coin name + any trailing "(user-added-text)" from the sheet title
+ * but ignore decorations like "Copy of" prefixes, " ###" suffixes
+ *
+ * @return string The coin name parsed from the sheet title
+ */
+export function getAdornedCoinFromSheetName(sheet: GoogleAppsScript.Spreadsheet.Sheet | null): string {
+    if ((sheet !== null) && (typeof ScriptApp !== 'undefined')) {
+        return sheet.getName().replace(/Copy of */g, '').replace(/ * [1234567890]+/g, '');
+    }
+    return '';
+}
+
+/**
  * callback from the sidebar UI code that accesses data from the active sheet
  *
  * @return {Object[]} The headers & values of all cells in row.

@@ -4,7 +4,7 @@
  * Create & manage categories which are used in individual coin sheets
  *
  */
-import { getCoinFromSheetName } from './sheet';
+import { getCoinFromSheetName, getAdornedCoinFromSheetName } from './sheet';
 import { version } from '../version';
 
 /* global GoogleAppsScript */
@@ -14,6 +14,7 @@ import { version } from '../version';
 
 /**
  * A function that deletes, repopulates & formats the Totals page based on the coin sheets that already exist.
+ * NOTE: Any sheets that start with "Copy of" or end with space + number will not show up in the totals sheet
  *
  * @return the newly created sheet, for function chaining purposes.
  */
@@ -57,8 +58,10 @@ export default function resetTotalSheet(): GoogleAppsScript.Spreadsheet.Sheet | 
         let rowCount = 1;
         for (const coinSheet of allSheets) {
             // Stop iteration execution if the condition is meet.
-            if (!excludedSheetNames.includes(coinSheet.getName())) {
+            const sheetName = coinSheet.getName();
+            if ((!excludedSheetNames.includes(sheetName)) && !(/Copy of */g.test(sheetName)) && !(/ * [1234567890]+/g.test(sheetName))) {
                 const newCoinName = getCoinFromSheetName(coinSheet);
+                const newCoinNameAdorned = getAdornedCoinFromSheetName(coinSheet);
                 const newCoinSheetUrl = `${ssUrl}#gid=${coinSheet.getSheetId()}`;
                 rowCount += 1;
 
@@ -75,7 +78,7 @@ export default function resetTotalSheet(): GoogleAppsScript.Spreadsheet.Sheet | 
                     uniqueWallets.push('Wallets/Accounts Not Set');
                 }
 
-                const data = [`${rowCount - 1}`, `${uniqueWallets?.[0]} (${newCoinName})`, '', newCoinName, '', `=SUMIF($D$2:$D,$D${rowCount},$C$2:$C)`, `=HYPERLINK("${newCoinSheetUrl}","${newCoinName}")`,
+                const data = [`${rowCount - 1}`, `${uniqueWallets?.[0]} (${newCoinName})`, '', newCoinNameAdorned, '', `=SUMIF($D$2:$D,$D${rowCount},$C$2:$C)`, `=HYPERLINK("${newCoinSheetUrl}","${newCoinName}")`,
                     `=SUM(INDIRECT("'"&$D${rowCount}&"'!$G$3:G"))`, `=$H${rowCount}-$F${rowCount}`, `=INDIRECT("'"&$D${rowCount}&"'!$S$1")`, `=INDIRECT("'"&$D${rowCount}&"'!$T$1")`, ''];
                 sheet.appendRow(data);
 
