@@ -40,7 +40,10 @@ export default function calculateFIFO(
         if (data.length === 2) {
             data.push(['FALSE', '', '', '', '', '', 0, '', 0, 0, 0, 0, '', '', '', '', '', '', 0, 0, '']);
         }
-        data[2][17] = '0% Sold';
+        if (lots.length > 0) {
+            data[2][15] = 'Lot 1';
+            data[2][17] = '0% Sold';
+        }
     }
 
     for (const sale of sales) {
@@ -79,6 +82,7 @@ export default function calculateFIFO(
             if ((sellCoinRemain <= lotCoinRemain) || (Math.abs(sellCoinRemain - lotCoinRemain) <= ONE_SATOSHI)) {
                 if (Math.abs(sellCoinRemain - lotCoinRemain) <= ONE_SATOSHI) {
                     // all of this lot was sold
+                    data[lotRow][15] = `Lot ${lot + 1}`;
                     data[lotRow][17] = '100% Sold';
 
                     // if there are more lots to process, advance the lot count before breaking out
@@ -91,6 +95,7 @@ export default function calculateFIFO(
                     lotCoinRemain -= sellCoinRemain;
                     const percentSold = 1 - (lotCoinRemain / lotCoin);
 
+                    data[lotRow][15] = `Lot ${lot + 1}`;
                     data[lotRow][17] = `${(percentSold * 100).toFixed(0)}% Sold`;
                 }
 
@@ -112,10 +117,10 @@ export default function calculateFIFO(
 
                     data[sellRow + shift][8] = 0;
                     data[sellRow + shift][9] = 0;
+                    data[sellRow + shift][15] = soldLotsString(stLotCnt, lot);
+                    data[sellRow + shift][16] = soldLotDatesString(lots[stLotCnt][0], lots[lot][0]);
                     data[sellRow + shift][18] = costBasis;
                     data[sellRow + shift][19] = gainLoss;
-                    // Row numbers are based on the Google Sheet row which includes a +1 offset
-                    annotations.push([`K${sellRow + shift + 1}`, soldNoteString(lots[stLotCnt][3], lots[stLotCnt][0], lots[lot][3], lots[lot][0])]);
                 }
 
                 break; // Exit the inner for loop
@@ -152,11 +157,11 @@ export default function calculateFIFO(
                     data[sellRow + shift][6] = -originalCoin * splitFactor;
                     data[sellRow + shift][10] = originalCoin * splitFactor;
                     data[sellRow + shift][11] = originalCost * splitFactor;
+                    data[sellRow + shift][15] = soldLotsString(stLotCnt, lot);
+                    data[sellRow + shift][16] = soldLotDatesString(lots[stLotCnt][0], lots[lot][0]);
                     data[sellRow + shift][17] = 'Long-term';
                     data[sellRow + shift][18] = costBasis;
                     data[sellRow + shift][19] = gainLoss;
-                    // Row numbers are based on the Google Sheet row which includes a +1 offset
-                    annotations.push([`K${sellRow + shift + 1}`, soldNoteString(lots[stLotCnt][3], lots[stLotCnt][0], lots[lot][3], lots[lot][0])]);
 
                     // Don't create note/new row if there is negligable value left in the short-term part
                     // likely caused by rounding errors repeating the cost basis calc on the same sheet
@@ -207,6 +212,7 @@ export default function calculateFIFO(
                 // subtract the lot amount from the remaining coin to be sold,
                 // and set up variables for the next lot, since this lot is completely used up
                 sellCoinRemain -= lotCoinRemain;
+                data[lotRow][15] = `Lot ${lot + 1}`;
                 data[lotRow][17] = '100% Sold';
                 lotCnt += 1;
                 if (lotCnt < lots.length) {
@@ -235,14 +241,23 @@ function dateFromString(dateStr: string, incYear: number): Date {
 }
 
 /**
-* Helper function to create the text telling the user which lots were sold
-* Row numbers are based on the Google Sheet row which includes a +1 offset
-*    because Sheets are not zero index based, like the data array
+* Helper function to create text telling the user which lots were sold
 *
 * @return string
 */
-function soldNoteString(rowStart: number, rowStartDate: string, rowEnd: number, rowEndDate: string): string {
-    // denote which lots were sold on the date they were sold
-    const fromStr = (rowStart === rowEnd) ? ' from' : `s from row ${rowStart + 1} on ${rowStartDate.substring(0, 10)} to`;
-    return `Sold lot${fromStr} row ${rowEnd + 1} on ${rowEndDate.substring(0, 10)}.`;
+function soldLotsString(lotIdStart: number, lotIdEnd: number): string {
+    // denote which lots were sold
+    const fromStr = (lotIdStart === lotIdEnd) ? ' ' : `s ${lotIdStart + 1} thru `;
+    return `Sold from Lot${fromStr}${lotIdEnd + 1}`;
+}
+
+/**
+* Helper function to create text telling the user when the sold lots were first acquired
+*
+* @return string
+*/
+function soldLotDatesString(lotIdStartDate: string, lotIdEndDate: string): string {
+    // denote the date range of the lots that were sold
+    const fromStr = (lotIdStartDate === lotIdEndDate) ? '' : `${lotIdStartDate.substring(0, 10)} to `;
+    return `${fromStr}${lotIdEndDate.substring(0, 10)}`;
 }

@@ -51,12 +51,12 @@ export function formatSheet(sheet: GoogleAppsScript.Spreadsheet.Sheet | null): G
         // leave ONE cell gap to prevent overwriting user provided value: subtotal of the Net Change column
         const headerRow1p4 = [`${desiredCurrency}`, 'Inflow', '', 'Outflow', '', 'Fair Mkt Value', '', '', 'Last Gain/Loss Calculation (FIFO Method)', '', ''];
         // leave TWO cell gaps to prevent overwriting user provided value: Date and Succeeded/Failed Status of the last gain/loss calculation
-        const headerRow1p5 = 'Income or Gain/Loss';
+        const headerRow1p5 = '';
         // NOTE: spaces are hard coded around header text that help autosizecolumns behave correctly
         const headerRow2 = ['   Tx ✔   ', '    All Wallet & Accounts    ', '    Transaction ID    ', '   Description   ', '    Date & Time    ', '       Category       ', '    Net Change    ',
             '        Valuation Strategy        ', `   ${desiredCurrency} Acquired   `, '    Value (USD)    ', `   ${desiredCurrency} Disposed   `, '    Value (USD)    ',
             `   ${desiredCurrency} High   `, `     ${desiredCurrency} Low     `, `    ${desiredCurrency} Price    `,
-            '     Lot ID     ', '    Date Acquired    ', '   Status   ', '        Cost Basis        ', '    Gain (Loss)    ', '      Notes      '];
+            '   Assigned Lot ID   ', '    Date Acquired    ', '   Status   ', '        Cost Basis        ', '    Gain (Loss)    ', '      Notes      '];
 
         sheet.getRange('A1:B1').setValues([headerRow1p1]);
         sheet.getRange('C1').setValue(coinTotalFormula);

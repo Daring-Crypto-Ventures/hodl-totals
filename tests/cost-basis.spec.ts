@@ -24,14 +24,16 @@ export function test1CostBasis(): UnitTestWrapper {
         const testRun = function (round: number): void {
             const annotations = callCalculateFIFO(sheet, coinName, data, round);
 
-            assertCell(sheet, data as string[][], 2, 17, '50% Sold', `Round ${round} Test for Partial Short-Term Sale : Row 3 lot half sold`);
-            assertCell(sheet, data as string[][], 2, 18, 0, `Round ${round} Test for Partial Short-Term Sale : Row 3 Cost Basis has no cost basis`);
-            assertCell(sheet, data as string[][], 2, 19, 0, `Round ${round} Test for Partial Short-Term Sale : Row 3 Gain(Loss) has no gain`);
-            assert(annotations[0]?.[0], 'K4', `Round ${round} Test for Lot Sold Hint : Hint Anchor point on row 4`);
-            assert(annotations[0]?.[1], 'Sold lot from row 3 on 2017-01-01.', `Round ${round} Test for Lot Sold Hint : Row 4 Sold from row 3 lot`);
-            assertCell(sheet, data as string[][], 3, 17, 'Short-term', `Round ${round} Test for Partial Short-Term Sale : Row 4 Status short-term cost basis`);
-            assertCell(sheet, data as string[][], 3, 18, '500.00', `Round ${round} Test for Partial Short-Term Sale : Row 4 Cost Basis is 500.00`, 2);
-            assertCell(sheet, data as string[][], 3, 19, '500.00', `Round ${round} Test for Partial Short-Term Sale : Row 4 Gain(Loss) is 500.00`, 2);
+            assertCell(sheet, data as string[][], 2, 15, 'Lot 1', `Round ${round} Test1 : Row 3 Lot ID : expected Lot 1`);
+            assertCell(sheet, data as string[][], 2, 17, '50% Sold', `Round ${round} Test1 : Row 3 lot half sold`);
+            assertCell(sheet, data as string[][], 2, 18, '0.00', `Round ${round} Test1 : Row 3 Cost Basis has no cost basis`, 2);
+            assertCell(sheet, data as string[][], 2, 19, '0.00', `Round ${round} Test1 : Row 3 Gain(Loss) has no gain`, 2);
+            assertCell(sheet, data as string[][], 3, 15, 'Sold from Lot 1', `Round ${round} Test1 : Row 4 Lot ID : expected Sold from Lot 1`);
+            assertCell(sheet, data as string[][], 3, 16, '2017-01-01', `Round ${round} Test1 : Row 4 Date Acquired : expected 2017-01-01`);
+            assertCell(sheet, data as string[][], 3, 17, 'Short-term', `Round ${round} Test1 : Row 4 Status short-term cost basis`);
+            assertCell(sheet, data as string[][], 3, 18, '500.00', `Round ${round} Test1 : Row 4 Cost Basis is 500.00`, 2);
+            assertCell(sheet, data as string[][], 3, 19, '500.00', `Round ${round} Test1 : Row 4 Gain(Loss) is 500.00`, 2);
+            assert(annotations.length, 0, `Round ${round} Test1 : Annotations : expected no annotations`);
         };
 
         fillInTempSheet(sheet, data as string[][]);
@@ -57,14 +59,17 @@ export function test2CostBasis(): UnitTestWrapper {
 
         const testRun = function (round: number): void {
             const annotations = callCalculateFIFO(sheet, coinName, data, round);
-            assertCell(sheet, data as string[][], 2, 17, '100% Sold', `Round ${round} Test for Whole Long-Term Sale : Row 3 Status : expected all coin sold`);
-            assertCell(sheet, data as string[][], 2, 18, 0, `Round ${round} Test for Whole Long-Term Sale : Row 3 Cost Basis : expected no cost basis`);
-            assertCell(sheet, data as string[][], 2, 19, 0, `Round ${round} Test for Whole Long-Term Sale : Row 3 Gain(Loss) : expected no gain`);
-            assert(annotations[0]?.[0], 'K4', `Round ${round} Test for Lot Sold Hint : Hint Anchor point on row 4`);
-            assert(annotations[0]?.[1], 'Sold lot from row 3 on 2017-01-01.', `Round ${round} Test for Lot Sold Hint : Row 4 Sold : expected sold from row 3`);
-            assertCell(sheet, data as string[][], 3, 17, 'Long-term', `Round ${round} Test for Whole Long-Term Sale : Row 4 Status : expected long-term cost basis`);
-            assertCell(sheet, data as string[][], 3, 18, '1000.00', `Round ${round} Test for Whole Long-Term Sale : Row 4 Cost Basis : expected 1000 cost basis`, 2);
-            assertCell(sheet, data as string[][], 3, 19, '1000.00', `Round ${round} Test for Whole Long-Term Sale : Row 4 Gain(Loss) : expected 1000 gain`, 2);
+
+            assertCell(sheet, data as string[][], 2, 15, 'Lot 1', `Round ${round} Test2 : Row 3 Lot ID : expected Lot 1`);
+            assertCell(sheet, data as string[][], 2, 17, '100% Sold', `Round ${round} Test2 : Row 3 Status : expected all coin sold`);
+            assertCell(sheet, data as string[][], 2, 18, '0.00', `Round ${round} Test2 : Row 3 Cost Basis : expected no cost basis`, 2);
+            assertCell(sheet, data as string[][], 2, 19, '0.00', `Round ${round} Test2 : Row 3 Gain(Loss) : expected no gain`, 2);
+            assertCell(sheet, data as string[][], 3, 15, 'Sold from Lot 1', `Round ${round} Test2 : Row 4 Lot ID : expected Sold from Lot 1`);
+            assertCell(sheet, data as string[][], 3, 16, '2017-01-01', `Round ${round} Test2 : Row 4 Date Acquired : expected 2017-01-01`);
+            assertCell(sheet, data as string[][], 3, 17, 'Long-term', `Round ${round} Test2 : Row 4 Status : expected long-term cost basis`);
+            assertCell(sheet, data as string[][], 3, 18, '1000.00', `Round ${round} Test2 : Row 4 Cost Basis : expected 1000 cost basis`, 2);
+            assertCell(sheet, data as string[][], 3, 19, '1000.00', `Round ${round} Test2 : Row 4 Gain(Loss) : expected 1000 gain`, 2);
+            assert(annotations.length, 0, `Round ${round} Test2 : Annotations : expected no annotations`);
         };
 
         fillInTempSheet(sheet, data as string[][]);
@@ -92,35 +97,35 @@ export function test3CostBasis(): UnitTestWrapper {
         const testRun = function (round: number): void {
             const annotations = callCalculateFIFO(sheet, coinName, data, round);
 
-            assertCell(sheet, data as string[][], 2, 17, '100% Sold', `Round ${round} Test for Lot Sold In Full Later : Row 3 Status : expected 100% sold`);
-            assertCell(sheet, data as string[][], 2, 18, 0, `Round ${round} Test for Lot Sold In Full Later : Row 3 Cost Basis : expected no cost basis`);
-            assertCell(sheet, data as string[][], 2, 19, 0, `Round ${round} Test for Lot Sold In Full Later : Row 3 Gain(Loss) : expected no gain`);
-            assertCell(sheet, data as string[][], 3, 17, '100% Sold', `Round ${round} Test for Lot Sold In Full Later : Row 4 Status : expected 100% sold`);
-            assertCell(sheet, data as string[][], 3, 18, 0, `Round ${round} Test for Lot Sold In Full Later : Row 4 Cost Basis : expected no cost basis`);
-            assertCell(sheet, data as string[][], 3, 19, 0, `Round ${round} Test for Lot Sold In Full Later : Row 4 Gain(Loss) : expected no gain`);
-            assertCell(sheet, data as string[][], 4, 17, 'Long-term', `Round ${round} Test for Split into Long-Term Sale : Row 5 Status : expected long-term cost basis`);
-            assertCell(sheet, data as string[][], 4, 18, '1000.00', `Round ${round} Test for Split into Long-Term Sale : Row 5 Cost Basis : expected 1000 cost basis`, 2);
-            assertCell(sheet, data as string[][], 4, 19, '1000.00', `Round ${round} Test for Split into Long-Term Sale : Row 5 Gain(Loss) : expected 1000 gain`, 2);
-            assertCell(sheet, data as string[][], 5, 17, 'Short-term', `Round ${round} Test for Split into Short-Term Sale : Row 6 Status : expected short-term cost basis`);
-            assertCell(sheet, data as string[][], 5, 18, '1000.00', `Round ${round} Test for Split into Short-Term Sale : Row 6 Cost Basis : expected 1000 cost basis`, 2);
-            assertCell(sheet, data as string[][], 5, 19, '1000.00', `Round ${round} Test for Split into Short-Term Sale : Row 6 Gain(Loss) : expected 1000 gain`, 2);
+            assertCell(sheet, data as string[][], 2, 15, 'Lot 1', `Round ${round} Test3 : Row 3 Lot ID : expected Lot 1`);
+            assertCell(sheet, data as string[][], 2, 17, '100% Sold', `Round ${round} Test3 : Row 3 Status : expected 100% sold`);
+            assertCell(sheet, data as string[][], 2, 18, '0.00', `Round ${round} Test3 : Row 3 Cost Basis : expected no cost basis`, 2);
+            assertCell(sheet, data as string[][], 2, 19, '0.00', `Round ${round} Test3 : Row 3 Gain(Loss) : expected no gain`, 2);
+            assertCell(sheet, data as string[][], 3, 15, 'Lot 2', `Round ${round} Test3 : Row 4 Lot ID : expected Lot 2`);
+            assertCell(sheet, data as string[][], 3, 17, '100% Sold', `Round ${round} Test3 : Row 4 Status : expected 100% sold`);
+            assertCell(sheet, data as string[][], 3, 18, '0.00', `Round ${round} Test3 : Row 4 Cost Basis : expected no cost basis`, 2);
+            assertCell(sheet, data as string[][], 3, 19, '0.00', `Round ${round} Test3 : Row 4 Gain(Loss) : expected no gain`, 2);
+            assertCell(sheet, data as string[][], 4, 15, 'Sold from Lot 1', `Round ${round} Test3 : Row 5 Lot ID : expected Sold from Lot 1`);
+            assertCell(sheet, data as string[][], 4, 16, '2017-01-01', `Round ${round} Test3 : Row 5 Date Acquired : expected 2017-01-01`);
+            assertCell(sheet, data as string[][], 4, 17, 'Long-term', `Round ${round} Test3 : Row 5 Status : expected long-term cost basis`);
+            assertCell(sheet, data as string[][], 4, 18, '1000.00', `Round ${round} Test3 : Row 5 Cost Basis : expected 1000 cost basis`, 2);
+            assertCell(sheet, data as string[][], 4, 19, '1000.00', `Round ${round} Test3 : Row 5 Gain(Loss) : expected 1000 gain`, 2);
+            assertCell(sheet, data as string[][], 5, 15, 'Sold from Lot 2', `Round ${round} Test3 : Row 6 Lot ID : expected Sold from Lot 2`);
+            assertCell(sheet, data as string[][], 5, 16, '2018-01-01', `Round ${round} Test3 : Row 6 Date Acquired : expected 2018-01-01`);
+            assertCell(sheet, data as string[][], 5, 17, 'Short-term', `Round ${round} Test3 : Row 6 Status : expected short-term cost basis`);
+            assertCell(sheet, data as string[][], 5, 18, '1000.00', `Round ${round} Test3 : Row 6 Cost Basis : expected 1000 cost basis`, 2);
+            assertCell(sheet, data as string[][], 5, 19, '1000.00', `Round ${round} Test3 : Row 6 Gain(Loss) : expected 1000 gain`, 2);
 
             if (round === 1) { // Will not see split tx notes on subsequent calculations
                 const splitNotePart1 = annotations?.shift() ?? '';
-                assert(splitNotePart1?.[0], 'E5', 'Round 1 Test for Original Data Before Split Hint : Hint Anchor point on row 5');
+                assert(splitNotePart1?.[0], 'E5', 'Round 1 Test3 : Hint Anchor point on row 5');
                 assert(splitNotePart1?.[1]?.replace(/ *\([^)]*\) */g, ' '), `Originally 2.00000000 ${coinName} was sold for $4000.00 and split into rows 5 and 6.`,
-                    `Round ${round} Test for Term Split Note : Row 5 Date : expected split into rows 5 and 6`);
+                    `Round ${round} Test3 : Row 5 Date Note : expected split into rows 5 and 6`);
                 const splitNotePart2 = annotations?.shift() ?? '';
-                assert(splitNotePart2?.[0], 'E6', 'Round 1 Test for Original Data Before Split Hint : Hint Anchor point on row 6');
+                assert(splitNotePart2?.[0], 'E6', 'Round 1 Test3 : Hint Anchor point on row 6');
                 assert(splitNotePart2?.[1]?.replace(/ *\([^)]*\) */g, ' '), `Originally 2.00000000 ${coinName} was sold for $4000.00 and split into rows 5 and 6.`,
-                    `Round ${round} Test for Term Split Note : Row 6 Date : expected split into rows 5 and 6`);
+                    `Round ${round} Test3 : Row 6 Date Note : expected split into rows 5 and 6`);
             }
-            const soldNote1 = annotations?.shift() ?? '';
-            assert(soldNote1?.[0], 'K5', `Round ${round} Test for Lot Sold Hint : Hint Anchor point on row 5`);
-            assert(soldNote1?.[1], 'Sold lot from row 3 on 2017-01-01.', `Round ${round} Test for Lot Sold Hint : Row 5 Sold : expected sold from row 3`);
-            const soldNote2 = annotations?.shift() ?? '';
-            assert(soldNote2?.[0], 'K6', `Round ${round} Test for Lot Sold Hint : Hint Anchor point on row 6`);
-            assert(soldNote2?.[1], 'Sold lot from row 4 on 2018-01-01.', `Round ${round} Test for Lot Sold Hint : Row 6 Sold : expected sold from row 4`);
         };
 
         fillInTempSheet(sheet, data as string[][]);
@@ -146,10 +151,11 @@ export function test4CostBasis(): UnitTestWrapper {
         const testRun = function (round: number): void {
             const annotations = callCalculateFIFO(sheet, coinName, data, round);
 
-            assert(annotations.length, 0, `Round ${round} No annotations.`);
-            assertCell(sheet, data as string[][], 2, 17, '0% Sold', `Round ${round} Test for No Sale : Row 3 Status : expected no coin sold`);
-            assertCell(sheet, data as string[][], 2, 18, 0, `Round ${round} Test for No Sale : Row 3 Cost Basis : expected no cost basis`);
-            assertCell(sheet, data as string[][], 2, 19, 0, `Round ${round} Test for No Sale : Row 3 Gain(Loss) : expected no gain`);
+            assertCell(sheet, data as string[][], 2, 15, 'Lot 1', `Round ${round} Test4 : Row 3 Lot ID : expected Lot 1`);
+            assertCell(sheet, data as string[][], 2, 17, '0% Sold', `Round ${round} Test4 : Row 3 Status : expected no coin sold`);
+            assertCell(sheet, data as string[][], 2, 18, '0.00', `Round ${round} Test4 : Row 3 Cost Basis : expected no cost basis`, 2);
+            assertCell(sheet, data as string[][], 2, 19, '0.00', `Round ${round} Test4 : Row 3 Gain(Loss) : expected no gain`, 2);
+            assert(annotations.length, 0, `Round ${round} Test4 : Annotations : expected no annotations`);
         };
 
         fillInTempSheet(sheet, data as string[][]);
@@ -184,69 +190,64 @@ export function test5CostBasis(): UnitTestWrapper {
         const testRun = function (round: number): void {
             const annotations = callCalculateFIFO(sheet, coinName, data, round);
 
-            assertCell(sheet, data as string[][], 2, 17, '100% Sold', `Round ${round} Test for Lot Sold In Full Later : Row 3 Status : expected 100% sold`);
-            assertCell(sheet, data as string[][], 2, 18, 0, `Round ${round} Test for Lot Sold In Full Later : Row 3 Cost Basis : expected no cost basis`);
-            assertCell(sheet, data as string[][], 2, 19, 0, `Round ${round} Test for Lot Sold In Full Later : Row 3 Gain(Loss) : expected no gain`);
-            assertCell(sheet, data as string[][], 3, 17, '100% Sold', `Round ${round} Test for Lot Sold In Full Later : Row 4 Status : expected 100% sold`);
-            assertCell(sheet, data as string[][], 3, 18, 0, `Round ${round} Test for Lot Sold In Full Later : Row 4 Cost Basis : expected no cost basis`);
-            assertCell(sheet, data as string[][], 3, 19, 0, `Round ${round} Test for Lot Sold In Full Later : Row 4 Gain(Loss) : expected no gain`);
-            assertCell(sheet, data as string[][], 4, 17, 'Long-term', `Round ${round} Test for Long-Term Sale : Row 5 Status : expected long-term cost basis`);
-            assertCell(sheet, data as string[][], 4, 18, '1000.00', `Round ${round} Test for Long-Term Sale : Row 5 Cost Basis : expected 1000 cost basis`, 2);
-            assertCell(sheet, data as string[][], 4, 19, '1000.00', `Round ${round} Test for Long-Term Sale : Row 5 Gain(Loss) : expected 1000 gain`, 2);
-            assertCell(sheet, data as string[][], 5, 17, 'Long-term', `Round ${round} Test for Split into Long-Term Sale : Row 6 Status : expected long-term cost basis`);
-            assertCell(sheet, data as string[][], 5, 18, '1000.00', `Round ${round} Test for Split into Long-Term Sale : Row 6 Cost Basis : expected 1000 cost basis`, 2);
-            assertCell(sheet, data as string[][], 5, 19, '1000.00', `Round ${round} Test for Split into Long-Term Sale : Row 6 Gain(Loss) : expected 1000 gain`, 2);
-            assertCell(sheet, data as string[][], 6, 17, 'Short-term', `Round ${round} Test for Split into Short-Term Sale : Row 7 Status : expected short-term cost basis`);
-            assertCell(sheet, data as string[][], 6, 18, '3000.00', `Round ${round} Test for Split into Short-Term Sale : Row 7 Cost Basis : expected 3000 cost basis`, 2);
-            assertCell(sheet, data as string[][], 6, 19, '3000.00', `Round ${round} Test for Split into Short-Term Sale : Row 7 Gain(Loss) : expected 3000 gain`, 2);
-            assertCell(sheet, data as string[][], 7, 17, '', `Round ${round} Test for First Unsold Lot : Row 8 Status : expected no message`);
-            assertCell(sheet, data as string[][], 7, 18, 0, `Round ${round} Test for First Unsold Lot : Row 8 Cost Basis : expected no cost basis`);
-            assertCell(sheet, data as string[][], 7, 19, 0, `Round ${round} Test for First Unsold Lot : Row 8 Gain(Loss) : expected no gain`);
-            assertCell(sheet, data as string[][], 8, 17, '', `Round ${round} Test for Second...Nth Unsold Lot : Row 9 Status : expected no message`);
-            assertCell(sheet, data as string[][], 8, 18, 0, `Round ${round} Test for Second...Nth Unsold Lot : Row 9 Cost Basis : expected no cost basis`);
-            assertCell(sheet, data as string[][], 8, 19, 0, `Round ${round} Test for Second...Nth Unsold Lot : Row 9 Gain(Loss) : expected no gain`);
-            assertCell(sheet, data as string[][], 9, 17, '', `Round ${round} Test for Second...Nth Unsold Lot : Row 10 Status : expected no message`);
-            assertCell(sheet, data as string[][], 9, 18, 0, `Round ${round} Test for Second...Nth Unsold Lot : Row 10 Cost Basis : expected no cost basis`);
-            assertCell(sheet, data as string[][], 9, 19, 0, `Round ${round} Test for Second...Nth Unsold Lot : Row 10 Gain(Loss) : expected no gain`);
-            assertCell(sheet, data as string[][], 10, 17, 'Short-term', `Round ${round} Test for Short-Term Sale : Row 11 Status : expected short-term cost basis`);
-            assertCell(sheet, data as string[][], 10, 18, '1000.00', `Round ${round} Test for Short-Term Sale : Row 11 Cost Basis : expected 1000 cost basis`, 2);
-            assertCell(sheet, data as string[][], 10, 19, '-500.00', `Round ${round} Test for Short-Term Sale : Row 11 Gain(Loss) : expected 500 loss`, 2);
-            assertCell(sheet, data as string[][], 11, 17, 'Short-term', `Round ${round} Test for Short-Term Sale : Row 12 Status : expected short-term cost basis`);
-            assertCell(sheet, data as string[][], 11, 18, '1000.00', `Round ${round} Test for Short-Term Sale : Row 12 Cost Basis : expected 1000 cost basis`, 2);
-            assertCell(sheet, data as string[][], 11, 19, '0.00', `Round ${round} Test for Short-Term Sale : Row 12 Gain(Loss) : expected 0 gain`, 2);
-            assertCell(sheet, data as string[][], 12, 17, 'Short-term', `Round ${round} Test for Short-Term Sale : Row 13 Status : expected short-term cost basis`);
-            assertCell(sheet, data as string[][], 12, 18, '1000.00', `Round ${round} Test for Short-Term Sale : Row 13 Cost Basis : expected 1000 cost basis`, 2);
-            assertCell(sheet, data as string[][], 12, 19, '1000.00', `Round ${round} Test for Short-Term Sale : Row 13 Gain(Loss) : expected 1000 gain`, 2);
+            assertCell(sheet, data as string[][], 2, 15, 'Lot 1', `Round ${round} Test5 : Row 3 Lot ID : expected Lot 1`);
+            assertCell(sheet, data as string[][], 2, 17, '100% Sold', `Round ${round} Test5 : Row 3 Status : expected 100% sold`);
+            assertCell(sheet, data as string[][], 2, 18, '0.00', `Round ${round} Test5 : Row 3 Cost Basis : expected no cost basis`, 2);
+            assertCell(sheet, data as string[][], 2, 19, '0.00', `Round ${round} Test5 : Row 3 Gain(Loss) : expected no gain`, 2);
+            assertCell(sheet, data as string[][], 3, 15, 'Lot 2', `Round ${round} Test5 : Row 4 Lot ID : expected Lot 2`);
+            assertCell(sheet, data as string[][], 3, 17, '100% Sold', `Round ${round} Test5 : Row 4 Status : expected 100% sold`);
+            assertCell(sheet, data as string[][], 3, 18, '0.00', `Round ${round} Test5 : Row 4 Cost Basis : expected no cost basis`, 2);
+            assertCell(sheet, data as string[][], 3, 19, '0.00', `Round ${round} Test5 : Row 4 Gain(Loss) : expected no gain`, 2);
+            assertCell(sheet, data as string[][], 4, 15, 'Sold from Lot 1', `Round ${round} Test5 : Row 5 Lot ID : expected Sold from Lot 1`);
+            assertCell(sheet, data as string[][], 4, 16, '2017-01-01', `Round ${round} Test5 : Row 5 Date Acquired : expected 2017-01-01`);
+            assertCell(sheet, data as string[][], 4, 17, 'Long-term', `Round ${round} Test5 : Row 5 Status : expected long-term cost basis`);
+            assertCell(sheet, data as string[][], 4, 18, '1000.00', `Round ${round} Test5 : Row 5 Cost Basis : expected 1000 cost basis`, 2);
+            assertCell(sheet, data as string[][], 4, 19, '1000.00', `Round ${round} Test5 : Row 5 Gain(Loss) : expected 1000 gain`, 2);
+            assertCell(sheet, data as string[][], 5, 15, 'Sold from Lot 1', `Round ${round} Test5 : Row 6 Lot ID : expected Sold from Lot 1`);
+            assertCell(sheet, data as string[][], 5, 16, '2017-01-01', `Round ${round} Test5 : Row 6 Date Acquired : expected 2017-01-01`);
+            assertCell(sheet, data as string[][], 5, 17, 'Long-term', `Round ${round} Test5 : Row 6 Status : expected long-term cost basis`);
+            assertCell(sheet, data as string[][], 5, 18, '1000.00', `Round ${round} Test5 : Row 6 Cost Basis : expected 1000 cost basis`, 2);
+            assertCell(sheet, data as string[][], 5, 19, '1000.00', `Round ${round} Test5 : Row 6 Gain(Loss) : expected 1000 gain`, 2);
+            assertCell(sheet, data as string[][], 6, 15, 'Sold from Lot 2', `Round ${round} Test5 : Row 7 Lot ID : expected Sold from Lot 2`);
+            assertCell(sheet, data as string[][], 6, 16, '2018-02-01', `Round ${round} Test5 : Row 7 Date Acquired : expected 2018-02-01`);
+            assertCell(sheet, data as string[][], 6, 17, 'Short-term', `Round ${round} Test5 : Row 7 Status : expected short-term cost basis`);
+            assertCell(sheet, data as string[][], 6, 18, '3000.00', `Round ${round} Test5 : Row 7 Cost Basis : expected 3000 cost basis`, 2);
+            assertCell(sheet, data as string[][], 6, 19, '3000.00', `Round ${round} Test5 : Row 7 Gain(Loss) : expected 3000 gain`, 2);
+            assertCell(sheet, data as string[][], 7, 17, '', `Round ${round} Test5 : Row 8 Status : expected no message`);
+            assertCell(sheet, data as string[][], 7, 18, '0.00', `Round ${round} Test5 : Row 8 Cost Basis : expected no cost basis`, 2);
+            assertCell(sheet, data as string[][], 7, 19, '0.00', `Round ${round} Test5 : Row 8 Gain(Loss) : expected no gain`, 2);
+            assertCell(sheet, data as string[][], 8, 17, '', `Round ${round} Test5 : Row 9 Status : expected no message`);
+            assertCell(sheet, data as string[][], 8, 18, '0.00', `Round ${round} Test5 : Row 9 Cost Basis : expected no cost basis`, 2);
+            assertCell(sheet, data as string[][], 8, 19, '0.00', `Round ${round} Test5 : Row 9 Gain(Loss) : expected no gain`, 2);
+            assertCell(sheet, data as string[][], 9, 17, '', `Round ${round} Test5 : Row 10 Status : expected no message`);
+            assertCell(sheet, data as string[][], 9, 18, '0.00', `Round ${round} Test5 : Row 10 Cost Basis : expected no cost basis`, 2);
+            assertCell(sheet, data as string[][], 9, 19, '0.00', `Round ${round} Test5 : Row 10 Gain(Loss) : expected no gain`, 2);
+            assertCell(sheet, data as string[][], 10, 15, 'Sold from Lot 2', `Round ${round} Test5 : Row 11 Lot ID : expected Sold from Lot 2`);
+            assertCell(sheet, data as string[][], 10, 16, '2018-02-01', `Round ${round} Test5 : Row 11 Date Acquired : expected 2018-02-01`);
+            assertCell(sheet, data as string[][], 10, 17, 'Short-term', `Round ${round} Test5 : Row 11 Status : expected short-term cost basis`);
+            assertCell(sheet, data as string[][], 10, 18, '1000.00', `Round ${round} Test5 : Row 11 Cost Basis : expected 1000 cost basis`, 2);
+            assertCell(sheet, data as string[][], 10, 19, '-500.00', `Round ${round} Test5 : Row 11 Gain(Loss) : expected 500 loss`, 2);
+            assertCell(sheet, data as string[][], 11, 15, 'Sold from Lot 2', `Round ${round} Test5 : Row 12 Lot ID : expected Sold from Lot 2`);
+            assertCell(sheet, data as string[][], 11, 16, '2018-02-01', `Round ${round} Test5 : Row 12 Date Acquired : expected 2018-02-01`);
+            assertCell(sheet, data as string[][], 11, 17, 'Short-term', `Round ${round} Test5 : Row 12 Status : expected short-term cost basis`);
+            assertCell(sheet, data as string[][], 11, 18, '1000.00', `Round ${round} Test5 : Row 12 Cost Basis : expected 1000 cost basis`, 2);
+            assertCell(sheet, data as string[][], 11, 19, '0.00', `Round ${round} Test5 : Row 12 Gain(Loss) : expected 0 gain`, 2);
+            assertCell(sheet, data as string[][], 12, 15, 'Sold from Lot 2', `Round ${round} Test5 : Row 13 Lot ID : expected Sold from Lot 2`);
+            assertCell(sheet, data as string[][], 12, 16, '2018-02-01', `Round ${round} Test5 : Row 13 Date Acquired : expected 2018-02-01`);
+            assertCell(sheet, data as string[][], 12, 17, 'Short-term', `Round ${round} Test5 : Row 13 Status : expected short-term cost basis`);
+            assertCell(sheet, data as string[][], 12, 18, '1000.00', `Round ${round} Test5 : Row 13 Cost Basis : expected 1000 cost basis`, 2);
+            assertCell(sheet, data as string[][], 12, 19, '1000.00', `Round ${round} Test5 : Row 13 Gain(Loss) : expected 1000 gain`, 2);
 
             if (round === 1) { // Will not see split tx notes on subsequent calculations
                 const splitNotePart1 = annotations?.shift() ?? '';
-                assert(splitNotePart1?.[0], 'E6', `Round ${round} Test for Original Data Before Split Hint : Hint Anchor point on row 6`);
+                assert(splitNotePart1?.[0], 'E6', `Round ${round} Test5 : Hint Anchor point on row 6`);
                 assert(splitNotePart1?.[1]?.replace(/ *\([^)]*\) */g, ' '), `Originally 0.40000000 ${coinName} was sold for $8000.00 and split into rows 6 and 7.`,
-                    `Round ${round} Test for Term Split Note : Row 6 Date : expected split into rows 6 and 7`);
+                    `Round ${round} Test5 : Row 6 Date Note : expected split into rows 6 and 7`);
                 const splitNotePart2 = annotations?.shift() ?? '';
-                assert(splitNotePart2?.[0], 'E7', `Round ${round} Test for Original Data Before Split Hint : Hint Anchor point on row 7`);
+                assert(splitNotePart2?.[0], 'E7', `Round ${round} Test5 : Hint Anchor point on row 7`);
                 assert(splitNotePart2?.[1]?.replace(/ *\([^)]*\) */g, ' '), `Originally 0.40000000 ${coinName} was sold for $8000.00 and split into rows 6 and 7.`,
-                    `Round ${round} Test for Term Split Note : Row 7 Date : expected split into rows 6 and 7`);
+                    `Round ${round} Test5 : Row 7 Date Note : expected split into rows 6 and 7`);
             }
-            // Because annotations are sorted as strings, hints for rows 11..13 come before rows 5..7
-            const soldNote1 = annotations?.shift() ?? '';
-            assert(soldNote1?.[0], 'K11', `Round ${round} Test for Lot Sold Hint : Hint Anchor point on row 11`);
-            assert(soldNote1?.[1], 'Sold lot from row 4 on 2018-02-01.', `Round ${round} Test for Lot Sold Hint : Row 11 Sold : expected sold from row 4`);
-            const soldNote2 = annotations?.shift() ?? '';
-            assert(soldNote2?.[0], 'K12', `Round ${round} Test for Lot Sold Hint : Hint Anchor point on row 12`);
-            assert(soldNote2?.[1], 'Sold lot from row 4 on 2018-02-01.', `Round ${round} Test for Lot Sold Hint : Row 12 Sold : expected sold from row 4`);
-            const soldNote3 = annotations?.shift() ?? '';
-            assert(soldNote3?.[0], 'K13', `Round ${round} Test for Lot Sold Hint : Hint Anchor point on row 13`);
-            assert(soldNote3?.[1], 'Sold lot from row 4 on 2018-02-01.', `Round ${round} Test for Lot Sold Hint : Row 13 Sold : expected sold from row 4`);
-            const soldNote4 = annotations?.shift() ?? '';
-            assert(soldNote4?.[0], 'K5', `Round ${round} Test for Lot Sold Hint : Hint Anchor point on row 5`);
-            assert(soldNote4?.[1], 'Sold lot from row 3 on 2017-01-01.', `Round ${round} Test for Lot Sold Hint : Row 5 Sold : expected sold from row 3`);
-            const soldNote5 = annotations?.shift() ?? '';
-            assert(soldNote5?.[0], 'K6', `Round ${round} Test for Lot Sold Hint : Hint Anchor point on row 6`);
-            assert(soldNote5?.[1], 'Sold lot from row 3 on 2017-01-01.', `Round ${round} Test for Lot Sold Hint : Row 6 Sold : expected sold from row 3`);
-            const soldNote6 = annotations?.shift() ?? '';
-            assert(soldNote6?.[0], 'K7', `Round ${round} Test for Lot Sold Hint : Hint Anchor point on row 7`);
-            assert(soldNote6?.[1], 'Sold lot from row 4 on 2018-02-01.', `Round ${round} Test for Lot Sold Hint : Row 7 Sold : expected sold from row 4`);
         };
 
         fillInTempSheet(sheet, data as string[][]);
@@ -303,38 +304,37 @@ export function test6CostBasis(): UnitTestWrapper {
             const annotations = callCalculateFIFO(sheet, coinName, data, round);
 
             for (let j = 2; j < 27; j++) {
-                assertCell(sheet, data as string[][], j, 17, '100% Sold', `Round ${round} Test for Lot Sold In Full Later : Row ${j} Status : expected 100% sold`);
-                assertCell(sheet, data as string[][], j, 18, '0.00', `Round ${round} Test for Lot Sold In Full Later : Row ${j} Cost Basis : expected no cost basis`, 2);
-                assertCell(sheet, data as string[][], j, 19, '0.00', `Round ${round} Test for Lot Sold In Full Later : Row ${j} Gain(Loss) : expected no gain`, 2);
+                assertCell(sheet, data as string[][], j, 15, `Lot ${j - 1}`, `Round ${round} Test6 : Row ${j} Lot ID : expected Lot ${j - 1}`);
+                assertCell(sheet, data as string[][], j, 17, '100% Sold', `Round ${round} Test6 : Row ${j} Status : expected 100% sold`);
+                assertCell(sheet, data as string[][], j, 18, '0.00', `Round ${round} Test6 : Row ${j} Cost Basis : expected no cost basis`, 2);
+                assertCell(sheet, data as string[][], j, 19, '0.00', `Round ${round} Test6 : Row ${j} Gain(Loss) : expected no gain`, 2);
             }
-            assertCell(sheet, data as string[][], 27, 17, 'Long-term', `Round ${round} Test for Split into Long-Term Sale : Row 28 Status : expected long-term cost basis`);
-            assertCell(sheet, data as string[][], 27, 18, '69.67', `Round ${round} Test for Split into Long-Term Sale : Row 28 Cost Basis : expected $69.67 cost basis`, 2);
-            assertCell(sheet, data as string[][], 27, 19, '5.46', `Round ${round} Test for Split into Long-Term Sale : Row 28 Gain(Loss) : expected $5.46 gain`, 2);
-            assertCell(sheet, data as string[][], 28, 17, 'Short-term', `Round ${round} Test for Split into Short-Term Sale : Row 29 Status : expected short-term cost basis`);
-            assertCell(sheet, data as string[][], 28, 18, '90.54', `Round ${round} Test for Split into Short-Term Sale : Row 29 Cost Basis : expected $90.54 cost basis`, 2);
-            assertCell(sheet, data as string[][], 28, 19, '-14.41', `Round ${round} Test for Split into Short-Term Sale : Row 29 Gain(Loss) : expected $(14.41) gain`, 2);
+            assertCell(sheet, data as string[][], 27, 15, 'Sold from Lots 1 thru 11', `Round ${round} Test6 : Row 28 Lot ID : expected Sold from Lots 1 thru 11`);
+            assertCell(sheet, data as string[][], 27, 16, '2019-02-14 to 2019-04-09', `Round ${round} Test6 : Row 28 Date Acquired : expected 2019-02-14 to 2019-04-09`);
+            assertCell(sheet, data as string[][], 27, 17, 'Long-term', `Round ${round} Test6 : Row 28 Status : expected long-term cost basis`);
+            assertCell(sheet, data as string[][], 27, 18, '69.67', `Round ${round} Test6 : Row 28 Cost Basis : expected $69.67 cost basis`, 2);
+            assertCell(sheet, data as string[][], 27, 19, '5.46', `Round ${round} Test6 : Row 28 Gain(Loss) : expected $5.46 gain`, 2);
+            assertCell(sheet, data as string[][], 28, 15, 'Sold from Lots 12 thru 25', `Round ${round} Test6 : Row 29 Lot ID : expected Sold from Lots 12 thru 25`);
+            assertCell(sheet, data as string[][], 28, 16, '2019-05-09 to 2020-04-08', `Round ${round} Test6 : Row 29 Date Acquired : expected 2019-05-09 to 2020-04-08`);
+            assertCell(sheet, data as string[][], 28, 17, 'Short-term', `Round ${round} Test6 : Row 29 Status : expected short-term cost basis`);
+            assertCell(sheet, data as string[][], 28, 18, '90.54', `Round ${round} Test6 : Row 29 Cost Basis : expected $90.54 cost basis`, 2);
+            assertCell(sheet, data as string[][], 28, 19, '-14.41', `Round ${round} Test6 : Row 29 Gain(Loss) : expected $(14.41) gain`, 2);
             for (let k = 29; k < 34; k++) {
-                assertCell(sheet, data as string[][], k, 17, '', `Round ${round} Test for Unsold Lot : Row ${k} Status : expected no message`);
-                assertCell(sheet, data as string[][], k, 18, '0.00', `Round ${round} Test for Unsold Lot : Row ${k} Cost Basis : expected no cost basis`, 2);
-                assertCell(sheet, data as string[][], k, 19, '0.00', `Round ${round} Test for Unsold Lot : Row ${k} Gain(Loss) : expected no gain`, 2);
+                assertCell(sheet, data as string[][], k, 17, '', `Round ${round} Test6 : Row ${k} Status : expected no message`);
+                assertCell(sheet, data as string[][], k, 18, '0.00', `Round ${round} Test6 : Row ${k} Cost Basis : expected no cost basis`, 2);
+                assertCell(sheet, data as string[][], k, 19, '0.00', `Round ${round} Test6 : Row ${k} Gain(Loss) : expected no gain`, 2);
             }
 
             if (round === 1) { // Will not see split tx notes on subsequent calculations
                 const splitNotePart1 = annotations?.shift() ?? '';
-                assert(splitNotePart1?.[0], 'E28', `Round ${round} Test for Original Data Before Split Hint : Hint Anchor point on row 28`);
+                assert(splitNotePart1?.[0], 'E28', `Round ${round} Test6 : Hint Anchor point on row 28`);
                 assert(splitNotePart1?.[1]?.replace(/ *\([^)]*\) */g, ' '), `Originally 829.14000000 ${coinName} was sold for $151.26 and split into rows 28 and 29.`,
-                    `Round ${round} Test for Term Split Note : Row 28 Date : expected split into rows 28 and 29`);
+                    `Round ${round} Test6 : Row 28 Date Note : expected split into rows 28 and 29`);
                 const splitNotePart2 = annotations?.shift() ?? '';
-                assert(splitNotePart2?.[0], 'E29', `Round ${round} Test for Original Data Before Split Hint : Hint Anchor point on row 29`);
+                assert(splitNotePart2?.[0], 'E29', `Round ${round} Test6 : Hint Anchor point on row 29`);
                 assert(splitNotePart2?.[1]?.replace(/ *\([^)]*\) */g, ' '), `Originally 829.14000000 ${coinName} was sold for $151.26 and split into rows 28 and 29.`,
-                    `Round ${round} Test for Term Split Note : Row 29 Date : expected split into rows 28 and 29`);
+                    `Round ${round} Test6 : Row 29 Date Note : expected split into rows 28 and 29`);
             }
-            const soldNote1 = annotations?.shift() ?? '';
-            assert(soldNote1?.[0], 'K28', `Round ${round} Test for Lot Sold Hint : Hint Anchor point on row 28`);
-            assert(soldNote1?.[1], 'Sold lots from row 3 on 2019-02-14 to row 13 on 2019-04-09.', `Round ${round} Test for Lot Sold Hint : Row 28 Sold : expected sold from row 3 to 13`);
-            const soldNote2 = annotations?.shift() ?? '';
-            assert(soldNote2?.[0], 'K29', `Round ${round} Test for Lot Sold Hint : Hint Anchor point on row 29`);
-            assert(soldNote2?.[1], 'Sold lots from row 14 on 2019-05-09 to row 27 on 2020-04-08.', `Round ${round} Test for Lot Sold Hint : Row 29 Sold : expected sold from row 14 to 27`);
         };
 
         fillInTempSheet(sheet, data as string[][]);
@@ -372,20 +372,20 @@ export function test7CostBasis(): UnitTestWrapper {
             const annotations = callCalculateFIFO(sheet, coinName, data, round);
 
             for (let j = 2; j < 12; j++) {
-                assertCell(sheet, data as string[][], j, 17, '100% Sold', `Round ${round} Test for Lot Sold In Full Later : Row ${j} Status : expected 100% sold`);
-                assertCell(sheet, data as string[][], j, 18, '0.00', `Round ${round} Test for Lot Sold In Full Later : Row ${j} Cost Basis : expected no cost basis`, 2);
-                assertCell(sheet, data as string[][], j, 19, '0.00', `Round ${round} Test for Lot Sold In Full Later : Row ${j} Gain(Loss) : expected no gain`, 2);
+                assertCell(sheet, data as string[][], j, 15, `Lot ${j - 1}`, `Round ${round} Test7 : Row ${j} Lot ID : expected Lot ${j - 1}`);
+                assertCell(sheet, data as string[][], j, 17, '100% Sold', `Round ${round} Test7 : Row ${j} Status : expected 100% sold`);
+                assertCell(sheet, data as string[][], j, 18, '0.00', `Round ${round} Test7 : Row ${j} Cost Basis : expected no cost basis`, 2);
+                assertCell(sheet, data as string[][], j, 19, '0.00', `Round ${round} Test7 : Row ${j} Gain(Loss) : expected no gain`, 2);
             }
-            assertCell(sheet, data as string[][], 12, 17, 'Long-term', `Round ${round} Test for Split into Long-Term Sale : Row 28 Status : expected long-term cost basis`);
-            assertCell(sheet, data as string[][], 12, 18, '1.44', `Round ${round} Test for Split into Long-Term Sale : Row 28 Cost Basis : expected $1.44 cost basis`, 2);
-            assertCell(sheet, data as string[][], 12, 19, '-1.35', `Round ${round} Test for Split into Long-Term Sale : Row 28 Gain(Loss) : expected $(1.35) loss`, 2);
-            assertCell(sheet, data as string[][], 13, 17, 'Long-term', `Round ${round} Test for Split into Short-Term Sale : Row 29 Status : expected short-term cost basis`);
-            assertCell(sheet, data as string[][], 13, 18, '0.00', `Round ${round} Test for Split into Short-Term Sale : Row 29 Cost Basis : expected no cost basis`, 2);
-            assertCell(sheet, data as string[][], 13, 19, '-0.00', `Round ${round} Test for Split into Short-Term Sale : Row 29 Gain(Loss) : expected no gain`, 2);
-
-            const soldNote1 = annotations?.shift() ?? '';
-            assert(soldNote1?.[0], 'K13', `Round ${round} Test for Lot Sold Hint : Hint Anchor point on row 13`);
-            assert(soldNote1?.[1], 'Sold lots from row 3 on 2018-10-27 to row 12 on 2018-11-18.', `Round ${round} Test for Lot Sold Hint : Row 5 Sold : expected sold from row 3 thru row 12`);
+            assertCell(sheet, data as string[][], 12, 15, 'Sold from Lots 1 thru 10', `Round ${round} Test7 : Row 28 Lot ID : expected Sold from Lots 1 thru 10`);
+            assertCell(sheet, data as string[][], 12, 16, '2018-10-27 to 2018-11-18', `Round ${round} Test7 : Row 28 Date Acquired : expected 2018-10-27 to 2018-11-18`);
+            assertCell(sheet, data as string[][], 12, 17, 'Long-term', `Round ${round} Test7 : Row 28 Status : expected long-term cost basis`);
+            assertCell(sheet, data as string[][], 12, 18, '1.44', `Round ${round} Test7 : Row 28 Cost Basis : expected $1.44 cost basis`, 2);
+            assertCell(sheet, data as string[][], 12, 19, '-1.35', `Round ${round} Test7 : Row 28 Gain(Loss) : expected $(1.35) loss`, 2);
+            assertCell(sheet, data as string[][], 13, 17, 'Long-term', `Round ${round} Test7 : Row 29 Status : expected short-term cost basis`);
+            assertCell(sheet, data as string[][], 13, 18, '0.00', `Round ${round} Test7 : Row 29 Cost Basis : expected no cost basis`, 2);
+            assertCell(sheet, data as string[][], 13, 19, '-0.00', `Round ${round} Test7 : Row 29 Gain(Loss) : expected no gain`, 2);
+            assert(annotations.length, 0, `Round ${round} Test7 : Annotations : expected no annotations`);
         };
 
         fillInTempSheet(sheet, data as string[][]);
