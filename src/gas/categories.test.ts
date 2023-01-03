@@ -1,6 +1,6 @@
 // import { expect, test } from '@jest/globals';
 import { UnitTestWrapper } from '../../tests/utils.test';
-import newCategorySheet from './categories';
+import { newCategorySheet, newNFTCategorySheet } from './categories';
 
 /* eslint-disable jest/valid-describe-callback */
 
@@ -16,6 +16,9 @@ function testCategories(): UnitTestWrapper {
             // jest unit test
             it('Test new category sheet fails during local execution', () => {
                 expect(newCategorySheet()).toBe(null);
+            });
+            it('Test new NFT category sheet fails during local execution', () => {
+                expect(newNFTCategorySheet()).toBe(null);
             });
         }
     };

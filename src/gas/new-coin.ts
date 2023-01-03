@@ -3,7 +3,7 @@
  *
  */
 
-import newCategorySheet from './categories';
+import { newCategorySheet, newNFTCategorySheet } from './categories';
 import { formatSheet } from './format';
 import { getCoinFromSheetName } from './sheet';
 
@@ -75,6 +75,9 @@ export function newCoinSheet(coinName = ''): GoogleAppsScript.Spreadsheet.Sheet 
         // if no Categories sheet previously exists, create one
         if (SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Categories') == null) {
             newCategorySheet();
+        }
+        if (SpreadsheetApp.getActiveSpreadsheet().getSheetByName('NFT Categories') == null) {
+            newNFTCategorySheet();
         }
 
         const newSheet = SpreadsheetApp.getActiveSpreadsheet().insertSheet(newCoinName);
