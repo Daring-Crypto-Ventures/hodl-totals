@@ -2,6 +2,8 @@
 import { UnitTestWrapper } from '../../tests/utils.test';
 import showAboutDialog_ from './about';
 
+/* eslint-disable jest/valid-describe-callback */
+
 /**
  * jest unit tests for menus
  *

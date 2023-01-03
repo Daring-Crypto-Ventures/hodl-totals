@@ -2,6 +2,8 @@
 import { UnitTestWrapper } from '../../tests/utils.test';
 import openDiscordLink_ from './discord';
 
+/* eslint-disable jest/valid-describe-callback */
+
 /**
  * jest unit tests for menus
  *

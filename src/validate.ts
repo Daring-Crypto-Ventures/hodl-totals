@@ -1,4 +1,4 @@
-import { SevenPackLooselyTypedDataRow } from './types';
+import { LooselyTypedDataValidationRow } from './types';
 import getLastRowWithDataPresent from './last-row';
 
 /**
@@ -7,7 +7,7 @@ import getLastRowWithDataPresent from './last-row';
  * @param dateLotAndSaleValues data from Google Sheet to validate, rows are 1-based and include space for 2 row header
  * @return empty string if sheet validated successfully, non-empty string describing the validation error if validation failed
  */
-export default function validate(dateLotAndSaleValues: SevenPackLooselyTypedDataRow[]): string {
+export default function validate(dateLotAndSaleValues: LooselyTypedDataValidationRow[]): string {
     let lastDate;
     let coinCheck;
     lastDate = 0;
@@ -27,10 +27,10 @@ export default function validate(dateLotAndSaleValues: SevenPackLooselyTypedData
     // Iterate thru the rows to ensure there are enough inflows to support the outflows
     // and that there is no extra data in the row that doesn't belong
     for (let row = 2; row < lastRow; row++) {
-        const bought = Number(dateLotAndSaleValues[row][3]);
-        const boughtPrice = Number(dateLotAndSaleValues[row][4]);
-        const sold = Number(dateLotAndSaleValues[row][5]);
-        const soldPrice = Number(dateLotAndSaleValues[row][6]);
+        const bought = Number(dateLotAndSaleValues[row][4]);
+        const boughtPrice = Number(dateLotAndSaleValues[row][5]);
+        const sold = Number(dateLotAndSaleValues[row][6]);
+        const soldPrice = Number(dateLotAndSaleValues[row][7]);
 
         if ((bought > 0) || (sold > 0)) {
             if ((coinCheck - sold) < 0) {

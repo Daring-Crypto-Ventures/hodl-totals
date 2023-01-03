@@ -1,10 +1,10 @@
 {
   "name": "hodl-totals",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Collection of various cryptocurrency tracking tools and scripts for Google Sheets.",
   "main": "index.js",
   "scripts": {
-    "compile": "rollup -c",
+    "compile": "genversion --es6 --semi src/version.ts && replace-in-file \"export const\" \"const\" src/version.ts && replace-in-file \";\" \"; export { version };\" src/version.ts && rollup -c",
     "lint": "eslint -c .eslintrc.js .",
     "test:e2e": "npm run deploy && clasp open --webapp",
     "test:debug": "node --experimental-specifier-resolution=node --inspect node_modules/.bin/jest --runInBand",
@@ -47,6 +47,7 @@
     "coveralls": "^3.1.1",
     "eslint": "^8.20.0",
     "eslint-plugin-import": "^2.26.0",
+    "genversion": "^3.1.1",
     "eslint-plugin-jest": "^27.1.3",
     "inquirer-autocomplete-prompt": "^3.0.0",
     "jest": "^28.1.3",

@@ -5,6 +5,9 @@
  *
  */
 
+/* global SpreadsheetApp */
+/* global HtmlService */
+
 export default function openDiscordLink_(): void {
     // Invite link to the HODL Totals Discord that never expires
     if (typeof ScriptApp !== 'undefined') {
@@ -15,7 +18,7 @@ export default function openDiscordLink_(): void {
 /**
  * Open a URL in a new tab.
  */
-function openUrlFromGoogleSheet(url): void {
+function openUrlFromGoogleSheet(url: string): void {
     const html = HtmlService.createHtmlOutput(`${'<html><script>'
       + 'window.close = function(){window.setTimeout(function(){google.script.host.close()},9)};'
       + 'var a = document.createElement("a"); a.href="'}${url}"; a.target="_blank";`

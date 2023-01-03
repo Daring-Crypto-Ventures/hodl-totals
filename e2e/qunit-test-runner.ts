@@ -9,6 +9,7 @@ import {
     test7CostBasis
 } from '../tests/cost-basis.spec';
 import { test1FMV, test2FMV } from '../tests/fmv.spec';
+import { version } from '../src/version';
 
 /**
  * First make sure the deploymentId for your script is set correclty in package.json
@@ -76,7 +77,7 @@ function testFairMktValueFunctions() {
  *
  */
 function doGet(request) {
-    const suiteTitle = 'E2E Test Suite for HODL Totals';
+    const suiteTitle = `v${version} HODL Totals E2E Test Suite`;
     // @ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
     QUnit.urlParams(request.parameter);
     // @ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS

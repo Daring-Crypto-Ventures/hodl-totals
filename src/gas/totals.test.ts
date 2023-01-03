@@ -1,6 +1,6 @@
 // import { expect, test } from '@jest/globals';
 import { UnitTestWrapper } from '../../tests/utils.test';
-import newCategorySheet from './categories';
+import resetTotalSheet from './totals';
 
 /* eslint-disable jest/valid-describe-callback */
 
@@ -8,14 +8,14 @@ import newCategorySheet from './categories';
  * jest unit tests for the category sheet
  *
  */
-describe('Category sheet unit tests', testCategories());
+describe('Totals sheet unit tests', testTotals());
 
-function testCategories(): UnitTestWrapper {
+function testTotals(): UnitTestWrapper {
     return (): void => {
         if (typeof ScriptApp === 'undefined') {
             // jest unit test
-            it('Test new category sheet fails during local execution', () => {
-                expect(newCategorySheet()).toBe(null);
+            it('Test new totals sheet fails during local execution', () => {
+                expect(resetTotalSheet()).toBe(null);
             });
         }
     };

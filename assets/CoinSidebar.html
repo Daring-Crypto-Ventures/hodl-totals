@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons1.css">
+  <base target="_top">
+  <style>
+    .column {
+      padding: 10px;
+    }
+    .width-100 {
+      width: 100%;
+      box-sizing: border-box;
+    }
+    #sidebar-row-metadata {
+      background-color: #eee;
+      border-color: #eee;
+      border-width: 5px;
+      border-style: solid;
+    }
+    #sidebar-failures,
+    #sidebar-polling-status {
+      margin-bottom: 10px;
+    }
+    .div-table{
+      display: table;
+      width: auto;
+      border-spacing: 5px;
+    }
+    .div-table-row{
+      display: table-row;
+      width: auto;
+      clear: both;
+    }
+    .div-table-td, .div-table-th {
+      display: table-cell;
+      width: 200px;
+      background-color:rgb(230, 230, 230);  
+    }
+    .div-table-th {
+      font-weight: bold;
+    }
+  </style>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+  <script>
+    /*
+    function displayToast() {
+      const name = document.getElementById('wallet-name').value;
+      google.script.run.scanWallet(name);
+    }
+    */
+    function formatSheet() {
+      // TODO figure out how to show Status when the command runs from this button
+      google.script.run.formatSheet_();
+    }
+
+    $(function() {
+      poll();
+    });
+
+    /**
+     * Poll a server-side function at the given interval, to have
+     * results passed to a successHandler callback.
+     *
+     * https://stackoverflow.com/a/24773178/1677912
+     *
+     * @param {Number} interval   (optional) Time in ms between polls.
+     *                            Default is 2s (2000ms)
+     */
+    function poll(interval) {
+      interval = interval || 1000;
+      setTimeout(function() {
+        google.script.run
+          .withSuccessHandler(showRecord)
+          .withFailureHandler(
+            function(msg, element) {
+              showStatus(msg, $('#sidebar-failures'));
+              element.disabled = false;
+            })
+          .pullDataFromActiveSheet();
+      }, interval);
+    };
+
+    /**
+     * Callback function to display metadata from the spreadsheet.
+     *
+     * https://stackoverflow.com/questions/30628894/how-do-i-make-a-sidebar-display-values-from-cells
+     *
+     * @param {object[]}  Array of field headings & cell values
+     */
+    function showRecord(record) {
+      $('#sidebar-row-metadata').empty();
+
+      if (record.length) {
+        for (var i = 0; i < record.length; i++) {
+          // build field name on the fly, formatted field-1234
+          var str = '' + i;
+          var fieldId = 'field-' + ('0000' + str).substring(str.length)
+
+          // If this field # doesn't already exist on the page, create it
+          if (!$('#'+fieldId).length) {
+            var newField = $($.parseHTML('<div id="'+fieldId+'"></div>'));
+            $('#sidebar-row-metadata').append(newField);
+          }
+
+          // Replace content of the field div with new record
+          $('#'+fieldId).replaceWith('<div id="'+fieldId+'" class="div-table-row"></div>');
+          $('#'+fieldId).append($('<div class="div-table-th">' + record[i].heading + '</div>'))
+                        .append('<div class="div-table-td">' + record[i].cellval + '</div>');
+        }
+      }
+
+      //Setup the next poll
+      poll();
+    }
+
+    /**
+     * Displays the given status message in the sidebar.
+     *
+     * @param {String} msg The status message to display.
+     * @param {String} classId The message type (class id) that the message
+     *   should be displayed as.
+     */
+    function showStatus(msg, classId) {
+      $('#sidebar-polling-status').removeClass().html(msg);
+      if (classId) {
+        $('#sidebar-polling-status').addClass(classId);
+      }
+    }
+   </script>
+  </head>
+  
+  <body>
+  <div class="column">
+    <p>Commands</p>
+    <input type="button" value="Apply Formatting" onclick="google.script.run.formatSheet()" />
+    <!-- Calculate oesn't work for some reason when called this way?
+    <input type="button" value="Calculate (FIFO Method)" onclick="google.script.run.calculateFIFO()" /> -->
+    <hr />
+
+
+    <p>
+    Metadata attached this sheet:
+    </p>
+    <div class="block div-table" id="sidebar-row-metadata">
+    </div>
+    <div class="block" id="sidebar-failures">
+    </div>
+    <div id="sidebar-polling-status">
+    </div>
+    <div class="bottom">
+      <input type="button" value="Close" onclick="google.script.host.close();" class="right" />
+    </div>
+  </div>
+</body>
+</html>
