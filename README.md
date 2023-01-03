@@ -71,7 +71,7 @@ Installation options can be found in the #💻setup channel within the [HODL Tot
 - Publish changes to your google sheet [using clasp](https://developers.google.com/apps-script/guides/clasp) from the command line
 
 ## Changelog
-- 07-16-22 - Upgraded stale dependendencies and added support for Node.js 16.x LTS.
+- 07-16-22 - Added support for Node.js 16.x LTS.
 - 08-22-21 - Added a dropdown column to explicitly specify the Fair Market Value calculation strategy.
 - 06-03-21 - Ported JS to TypeScript. Tests runs locally, can be debugged using Node.js as well as on Google Servers as Google Apps Script. Code coverage stats published on [coveralls.io](https://coveralls.io/github/dogracer/hodl-totals). Integreated npm script commands for common tasks. Added Continuous Integration, code analysis, and dependabot.
 - 04-25-21 - Links out to Policies + Discord. Fixed a wave of Apply Formatting bugs, halfway through my Blocker list for submission to the Google Marketplace.
