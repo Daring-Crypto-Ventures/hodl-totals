@@ -3,6 +3,8 @@
  *
  */
 
+import { version } from '../version';
+
 /* global SpreadsheetApp */
 /* global GoogleAppsScript */
 
@@ -14,7 +16,27 @@
  */
 export function getCoinFromSheetName(sheet: GoogleAppsScript.Spreadsheet.Sheet | null): string {
     if ((sheet !== null) && (typeof ScriptApp !== 'undefined')) {
-        return sheet.getName().replace(/ *\([^)]*\) */g, '').replace(/Copy of */g, '').replace(/ * [1234567890]+/g, '');
+        return sheet.getName()
+            .replace(/ *\([^)]*\) */g, '')
+            .replace(/Copy of */g, '')
+            .replace(/ * [1234567890]+/g, '');
+    }
+    return '';
+}
+
+/**
+ * parse the address out from the sheet title which is often decorated by things like
+ * "Copy of" prefixes, " ###" suffixes and "(user-added-text)"" suffixes,
+ *
+ * @return string The address parsed from the sheet title
+ */
+export function getAddressFromSheetName(sheet: GoogleAppsScript.Spreadsheet.Sheet | null): string {
+    if ((sheet !== null) && (typeof ScriptApp !== 'undefined')) {
+        return sheet.getName()
+            .replace(/ *\([^)]*\) */g, '')
+            .replace(/Copy of */g, '')
+            .replace(/ * [1234567890]+/g, '')
+            .replace(/ * NFTs/g, '');
     }
     return '';
 }
@@ -27,9 +49,30 @@ export function getCoinFromSheetName(sheet: GoogleAppsScript.Spreadsheet.Sheet |
  */
 export function getAdornedCoinFromSheetName(sheet: GoogleAppsScript.Spreadsheet.Sheet | null): string {
     if ((sheet !== null) && (typeof ScriptApp !== 'undefined')) {
-        return sheet.getName().replace(/Copy of */g, '').replace(/ * [1234567890]+/g, '');
+        return sheet.getName()
+            .replace(/Copy of */g, '')
+            .replace(/ * [1234567890]+/g, '');
     }
     return '';
+}
+
+/**
+ * wrapper for removing all metadata from a row
+ *
+ */
+export function resetVersionMetadata(sheet: GoogleAppsScript.Spreadsheet.Sheet | null): void {
+    if (typeof ScriptApp === 'undefined') {
+        // no data table representation of this
+    } else if (sheet !== null) {
+        const sheetMetadata = sheet.getDeveloperMetadata();
+        const row1metadata = sheet.getRange('1:1').getDeveloperMetadata(); // can remove this once dev versions with version no longer present
+        const metadata = sheetMetadata.concat(row1metadata);
+        const matchingMetadata = metadata.filter(x => x.getKey() === 'version');
+        matchingMetadata.forEach(match => {
+            match.remove();
+        });
+        sheet.addDeveloperMetadata('version', version);
+    }
 }
 
 /**

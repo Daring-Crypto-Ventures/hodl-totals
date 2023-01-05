@@ -4,7 +4,7 @@
  */
 
 import { newNFTCategorySheet } from './categories';
-import { formatSheet } from './format';
+import { formatNFTSheet } from './format-nft';
 import { getCoinFromSheetName } from './sheet';
 
 /* global SpreadsheetApp */
@@ -81,7 +81,7 @@ export function newNFTSheet(address = ''): GoogleAppsScript.Spreadsheet.Sheet | 
         SpreadsheetApp.setActiveSheet(newSheet);
         newSheet.getRange('B1').setValue(`Address ${newNFTAddress}`);
 
-        return newSheet; // formatNFTSheet(newSheet);
+        return formatNFTSheet(newSheet);
     }
     return null;
 }

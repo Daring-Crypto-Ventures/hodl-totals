@@ -2,8 +2,7 @@
  * @NotOnlyCurrentDoc Limits the script to only accessing the current sheet.
  *
  */
-import { getCoinFromSheetName } from './sheet';
-import { version } from '../version';
+import { getCoinFromSheetName, resetVersionMetadata } from './sheet';
 import getLastRowWithDataPresent from '../last-row';
 
 /* global GoogleAppsScript */
@@ -32,7 +31,7 @@ export function formatSheet(sheet: GoogleAppsScript.Spreadsheet.Sheet | null): G
         // const sheet = SpreadsheetApp.getActiveSheet();
         // const mdFinder = sheet.getRange('1:1').createDeveloperMetadataFinder();
         // const version = mdFinder.withKey('version').find()[0].getValue();
-        resetVersionMetadata(sheet, version);
+        resetVersionMetadata(sheet);
 
         // calculate URL to nav user back to the Totals sheet
         const totalsSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('HODL Totals');
@@ -169,25 +168,6 @@ export function formatSheet(sheet: GoogleAppsScript.Spreadsheet.Sheet | null): G
         return sheet;
     }
     return null;
-}
-
-/**
- * wrapper for removing all metadata from a row
- *
- */
-function resetVersionMetadata(sheet: GoogleAppsScript.Spreadsheet.Sheet | null, newVersion: string): void {
-    if (typeof ScriptApp === 'undefined') {
-        // no data table representation of this
-    } else if (sheet !== null) {
-        const sheetMetadata = sheet.getDeveloperMetadata();
-        const row1metadata = sheet.getRange('1:1').getDeveloperMetadata(); // can remove this once dev versions with version no longer present
-        const metadata = sheetMetadata.concat(row1metadata);
-        const matchingMetadata = metadata.filter(x => x.getKey() === 'version');
-        matchingMetadata.forEach(match => {
-            match.remove();
-        });
-        sheet.addDeveloperMetadata('version', newVersion);
-    }
 }
 
 function setFormatSheetCFRules(sheet: GoogleAppsScript.Spreadsheet.Sheet): void {
