@@ -4,6 +4,7 @@
  */
 import resetTotalSheet from './totals';
 import { newCoinSheet } from './new-coin';
+import { newNFTSheet } from './new-nft';
 import { formatSheet } from './format';
 import { updateFMVFormulas } from './fmv';
 import { calculateCoinGainLoss } from './calculate';
@@ -40,6 +41,7 @@ export function onOpen(e: GoogleAppsScript.Events.AppsScriptEvent): void {
     menu.addItem('Reset totals sheet', 'resetTotalSheet_')
         .addItem('Track new coin...', 'newCoinSheet_')
         .addItem('Insert example "pretendCOINs"', 'loadExample_')
+        .addItem('Track NFTs...', 'newNFTSheet_')
         .addSeparator()
         .addItem('-- FOR THIS SHEET --', 'dummyMenuItem_')
         .addItem('Format coin sheet', 'formatSheet_')
@@ -82,12 +84,21 @@ export function resetTotalSheet_(): GoogleAppsScript.Spreadsheet.Sheet | null {
 }
 
 /**
- * A function that adds columns and headers to the spreadsheet.
+ * A function that adds a coin tracking spreadsheet.
  *
  * @return the newly created sheet, for function chaining purposes.
  */
 export function newCoinSheet_(coinName?: string): GoogleAppsScript.Spreadsheet.Sheet | null {
     return newCoinSheet(coinName);
+}
+
+/**
+ * A function that adds a sheet to track the NFTs held in a given address
+ *
+ * @return the newly created sheet, for function chaining purposes.
+ */
+export function newNFTSheet_(address?: string): GoogleAppsScript.Spreadsheet.Sheet | null {
+    return newNFTSheet(address);
 }
 
 /**

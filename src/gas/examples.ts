@@ -7,7 +7,7 @@
 /* global SpreadsheetApp */
 
 import resetTotalSheet from './totals';
-import { newCategorySheet, newNFTCategorySheet } from './categories';
+import { newCategorySheet } from './categories';
 import { formatSheet } from './format';
 import { newCoinSheet_ } from './menu';
 import { updateFMVFormulas } from './fmv';
@@ -21,10 +21,6 @@ export function loadExample_(): GoogleAppsScript.Spreadsheet.Sheet | null {
     // if no Categories sheet previously exists, create one
     if ((typeof ScriptApp !== 'undefined') && (SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Categories') == null)) {
         newCategorySheet();
-    }
-
-    if ((typeof ScriptApp !== 'undefined') && (SpreadsheetApp.getActiveSpreadsheet().getSheetByName('NFT Categories') == null)) {
-        newNFTCategorySheet();
     }
 
     // delete any pre-existing pretendCOIN example sheets
