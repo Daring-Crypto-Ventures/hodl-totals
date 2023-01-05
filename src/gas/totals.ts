@@ -50,6 +50,7 @@ export default function resetTotalSheet(): GoogleAppsScript.Spreadsheet.Sheet | 
             '      ↩ Sheet     ', '   Recorded Holdings   ', '       Off By       ', '    Last Calculation    ', '     Calc Status     ', '        Notes        '];
         sheet.getRange('A1:L1').setValues([header]).setFontWeight('bold').setHorizontalAlignment('center');
         sheet.getRange('A1:L1').setBackground('#DDDDEE');
+        sheet.setFrozenRows(1);
 
         // walk through all sheets in workbook to pick out the coin names & links
         const allSheets = SpreadsheetApp.getActiveSpreadsheet().getSheets();

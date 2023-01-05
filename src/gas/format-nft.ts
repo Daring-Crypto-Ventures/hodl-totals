@@ -85,6 +85,7 @@ export function formatNFTSheet(sheet: GoogleAppsScript.Spreadsheet.Sheet | null)
         sheet.getRange('A1:AG1').setBackground('#DDDDEE');
         sheet.getRange('A2:AG2').setBackground('#EEEEEE');
         sheet.setFrozenRows(2);
+        sheet.setFrozenColumns(3);
 
         // create filter around all transactions
         sheet.getFilter()?.remove();
