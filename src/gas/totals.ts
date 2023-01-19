@@ -55,7 +55,7 @@ export default function resetTotalSheet(): GoogleAppsScript.Spreadsheet.Sheet | 
         // walk through all sheets in workbook to pick out the coin names & links
         const allSheets = SpreadsheetApp.getActiveSpreadsheet().getSheets();
         const ssUrl = SpreadsheetApp.getActiveSpreadsheet().getUrl();
-        const excludedSheetNames = ['HODL Totals', 'Categories'];
+        const excludedSheetNames = ['HODL Totals', 'Categories', 'NFT Categories'];
         let rowCount = 1;
         for (const coinSheet of allSheets) {
             // Stop iteration execution if the condition is meet.
