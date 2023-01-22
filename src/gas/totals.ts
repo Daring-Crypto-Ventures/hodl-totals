@@ -46,7 +46,7 @@ export default function resetTotalSheet(): GoogleAppsScript.Spreadsheet.Sheet | 
         sheet.addDeveloperMetadata('version', version);
 
         // Initial set of categories provided out of the box
-        const header = ['       #       ', '      All Wallets & Accounts      ', '     Balance     ', '       Coin       ', '       on Date       ', '=CONCATENATE(COUNT(F2:F)," Coins")',
+        const header = ['       #       ', '      All Wallets & Accounts      ', '     Balance     ', '=CONCATENATE(COUNT(F2:F)," Coins")', '       on Date       ', '   Total Reported   ',
             '      ↩ Sheet     ', '   Recorded Holdings   ', '       Off By       ', '    Last Calculation    ', '     Calc Status     ', '        Notes        '];
         sheet.getRange('A1:L1').setValues([header]).setFontWeight('bold').setHorizontalAlignment('center');
         sheet.getRange('A1:L1').setBackground('#DDDDEE');
