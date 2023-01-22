@@ -9,7 +9,7 @@
 import resetTotalSheet from './totals';
 import { newCategorySheet } from './categories';
 import { formatSheet } from './format';
-import { newCoinSheet_ } from './menu';
+import { newCoinSheet } from './new-coin';
 import { updateFMVFormulas } from './fmv';
 
 /**
@@ -35,8 +35,8 @@ export function loadExample_(): GoogleAppsScript.Spreadsheet.Sheet | null {
         }
     }
 
-    const newSheet1 = newCoinSheet_('pretendCOIN1');
-    const newSheet2 = newCoinSheet_('pretendCOIN2');
+    const newSheet1 = newCoinSheet('pretendCOIN1');
+    const newSheet2 = newCoinSheet('pretendCOIN2');
     if (newSheet1 !== null) {
         coin1Example(newSheet1);
     }
