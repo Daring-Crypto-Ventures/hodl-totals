@@ -33,26 +33,19 @@ export function formatNFTSheet(sheet: GoogleAppsScript.Spreadsheet.Sheet | null)
         // populate the sheet header
         const headerRow1p1 = `=HYPERLINK("${totalsSheetUrl}"," ↩ Totals ")`;
         const coinTotalFormula = '=CONCATENATE(COUNTA($C$3:C)-COUNTA($U$3:U)," NFT(s)")';
-        // const headerRow1p2 = `${desiredCurrency} balance on `;
-        // const onDateFormula = '=INDIRECT("\'HODL Totals\'!$"&IF(ISNA(MATCH($B$1,\'HODL Totals\'!$B$2:B, 0)),"E$"&IFNA(MATCH(LEFT(TRIM($I$2),FIND(" ",TRIM($I$2))-1),\'HODL Totals\'!$D$2:$D,0),0)+1,"E$"&MATCH($B$1,\'HODL Totals\'!$B$2:B, 0)+1))';
-        // const headerRow1p3 = 'was off by';
-        // const headerRow1p4 = [`${desiredCurrency}`, 'Inflow', '', 'Outflow', '', 'Fair Mkt Value', '', '', 'Last Gain/Loss Calculation (FIFO Method)', '', ''];
-        // const headerRow1p5 = '';
+        const headerRow1p2 = ['Acquisition Information', '', '', '', '', '', '', '', '', '', 'Cost Basis for Tax Purposes', '', '', '  |  ',
+            'Disposal Information', '', '', '', '', '', '', '', '', '', '', '', '', 'Tax Impact on Disposal', '', ''];
         // NOTE: spaces are hard coded around header text that help autosizecolumns behave correctly
-        const headerRow2 = ['   In Tx ✔   ', '    Collection    ', '    NFT ID    ', '    NFT In Tx(s)    ', '   NFT In Description   ', '    Date & Time    ', '       Inflow Category       ',
-            '    Acq Price    ', '    Acq Price (USD)    ', '    Tx Fees    ', '    Tx Fees (USD)    ', '    Cost Basis Adj   ', '    Cost Basis Adj (USD)    ',
-            '    Cost Basis    ', '    Cost Basis (USD)    ', '    NFT In Notes    ', ' ',
+        const headerRow2 = ['   In Tx ✔   ', '    Collection    ', '    NFT ID    ', '    NFT In Tx(s)    ', '   NFT In Description   ', '    Date & Time    ',
+            '       Inflow Category       ', '    Acq Price    ', '    Acq Price (USD)    ', '    Tx Fees    ', '    Tx Fees (USD)    ', '    Cost Basis Adj   ',
+            '    Cost Basis Adj (USD)    ', '    Cost Basis    ', '    Cost Basis (USD)    ', '    NFT In Notes    ', '  |  ',
             '   Out Tx ✔   ', '    NFT Out Tx(s)    ', '   NFT Out Description   ', '       Outflow Category       ', '    Date & Time    ',
             '    Sale Price    ', '    Sale Price (USD)    ', '    Tx Fees    ', '    Tx Fees (USD)    ', '    Selling Fees   ', '    Selling Fees (USD)    ',
-            '    Proceeds    ', '    Proceeds (USD)    ', '    Gain (Loss)    ', '    Status    ', '    NFT Out Notes    '];
+            '    Proceeds    ', '    Proceeds (USD)    ', '    Gain (Loss)    ', '    Status    ', '       NFT Out Notes       '];
 
         sheet.getRange('A1').setValue(headerRow1p1);
         sheet.getRange('C1').setValue(coinTotalFormula);
-        // sheet.getRange('D1').setValue(headerRow1p2);
-        // sheet.getRange('E1').setValue(onDateFormula);
-        // sheet.getRange('F1').setValue(headerRow1p3);
-        // sheet.getRange('H1:R1').setValues([headerRow1p4]);
-        // sheet.getRange('U1').setValue(headerRow1p5);
+        sheet.getRange('D1:AG1').setValues([headerRow1p2]);
         sheet.getRange('A2:AG2').setValues([headerRow2]);
         sheet.getRange('A1:AG2').setFontWeight('bold').setHorizontalAlignment('center');
 
@@ -60,17 +53,14 @@ export function formatNFTSheet(sheet: GoogleAppsScript.Spreadsheet.Sheet | null)
         const lastRow = getLastRowWithDataPresent(sheet.getRange('F:F').getValues() as string[][]);
 
         // add borders to demarcate the row 1 headers into logical groups
-        // sheet.getRange('M1:O1').setBorder(false, true, false, true, false, false);
-        // sheet.getRange('T1').setFontWeight('normal').setBorder(false, false, false, true, false, false);
-
-        // set conditional formatting rules on row 1 cells
-        // setFormatSheetCFRules(sheet);
+        sheet.getRange('N1:O1').setBorder(false, true, false, true, false, false);
+        sheet.getRange('AE1:AF1').setBorder(false, true, false, true, false, false);
 
         // merge 1st row cell headers
-        // sheet.getRange('I1:J1').merge();
-        // sheet.getRange('K1:L1').merge();
-        // sheet.getRange('M1:O1').merge();
-        // sheet.getRange('P1:R1').merge();
+        sheet.getRange('D1:M1').merge();
+        sheet.getRange('N1:O1').merge();
+        sheet.getRange('R1:AD1').merge();
+        sheet.getRange('AE1:AF1').merge();
 
         // color background and freeze the header rows
         sheet.getRange('A1:AG1').setBackground('#DDDDEE');
@@ -78,32 +68,77 @@ export function formatNFTSheet(sheet: GoogleAppsScript.Spreadsheet.Sheet | null)
         sheet.setFrozenRows(2);
         sheet.setFrozenColumns(3);
 
+        // set Frozen Left + Tx In Col formats as described here: https://developers.google.com/sheets/api/guides/formats
+        sheet.getRange('A3:A').setHorizontalAlignment('center').insertCheckboxes();
+        sheet.getRange('B3:D').setFontColor(null).setFontStyle(null);
+        sheet.getRange('B3:B').setHorizontalAlignment('right');
+        sheet.getRange('C3:C').setHorizontalAlignment('center');
+        sheet.getRange('D3:D').setHorizontalAlignment('left');
+        sheet.getRange('E3:E').setFontColor('#424250').setFontStyle('italic').setHorizontalAlignment('left');
+        sheet.getRange('F3:F').setNumberFormat('yyyy-mm-dd h:mm:ss').setFontColor(null).setFontStyle(null)
+            .setFontFamily('Arial')
+            .setFontSize(10)
+            .setHorizontalAlignment('center');
+        sheet.getRange('G3:G').setFontColor('#424250').setFontStyle('italic').setHorizontalAlignment('center');
+
+        // set common properties across ranges of numeric columns
+        sheet.getRange('H3:O').setFontColor(null).setFontStyle(null)
+            .setFontFamily('Calibri')
+            .setFontSize(11);
+        sheet.getRange('W3:AE').setFontColor(null).setFontStyle(null)
+            .setFontFamily('Calibri')
+            .setFontSize(11);
+
+        // set COIN cols visible numeric persicion to have 8 satoshis showing by default
+        sheet.getRange('H3:H').setNumberFormat('0.00000000');
+        sheet.getRange('J3:J').setNumberFormat('0.00000000');
+        sheet.getRange('L3:L').setNumberFormat('0.00000000');
+        sheet.getRange('N3:N').setNumberFormat('0.00000000');
+        sheet.getRange('W3:W').setNumberFormat('0.00000000');
+        sheet.getRange('Y3:Y').setNumberFormat('0.00000000');
+        sheet.getRange('AA3:AA').setNumberFormat('0.00000000');
+        sheet.getRange('AC3:AC').setNumberFormat('0.00000000');
+
+        // set USD cols to be formatted into USD value to 2 decimal places
+        sheet.getRange('I3:I').setNumberFormat('$#,##0.00;$(#,##0.00)');
+        sheet.getRange('K3:K').setNumberFormat('$#,##0.00;$(#,##0.00)');
+        sheet.getRange('M3:M').setNumberFormat('$#,##0.00;$(#,##0.00)');
+        sheet.getRange('O3:O').setNumberFormat('$#,##0.00;$(#,##0.00)');
+        sheet.getRange('X3:X').setNumberFormat('$#,##0.00;$(#,##0.00)');
+        sheet.getRange('Z3:Z').setNumberFormat('$#,##0.00;$(#,##0.00)');
+        sheet.getRange('AB3:AB').setNumberFormat('$#,##0.00;$(#,##0.00)');
+        sheet.getRange('AD3:AE').setNumberFormat('$#,##0.00;$(#,##0.00)');
+
+        // set Tx Out Col formats as described here: https://developers.google.com/sheets/api/guides/formats
+        sheet.getRange('R3:R').setHorizontalAlignment('center').insertCheckboxes();
+        sheet.getRange('S3:S').setFontColor(null).setFontStyle(null).setHorizontalAlignment('left');
+        sheet.getRange('T3:U').setFontColor('#424250').setFontStyle('italic');
+        sheet.getRange('T3:T').setHorizontalAlignment('left');
+        sheet.getRange('U3:U').setHorizontalAlignment('center');
+        sheet.getRange('V3:V').setNumberFormat('yyyy-mm-dd h:mm:ss').setFontColor(null).setFontStyle(null)
+            .setFontFamily('Arial')
+            .setFontSize(10)
+            .setHorizontalAlignment('center');
+
+        // set col styles for calculated columns and separator columns
+        sheet.getRange('N3:O').setBackground('#EEEEEE');
+        sheet.getRange('Q3:Q').setBackground('#CCCCCC');
+        sheet.getRange('AC3:AF').setBackground('#EEEEEE');
+        sheet.getRange('AF3:AF').setHorizontalAlignment('center');
+
         // create filter around all transactions
         sheet.getFilter()?.remove();
         sheet.getRange(`A2:AG${lastRow}`).createFilter();
 
-        // set cols {COIN High, Low, Price} to be formatted into USD value but to 6 decimal places
-        // sheet.getRange('M3:O').setNumberFormat('$#,######0.000000;$(#,######0.000000)').setFontColor(null).setFontStyle(null)
-        //    .setHorizontalAlignment('right')
-        //    .setFontFamily('Calibri')
-        //    .setFontSize(11);
-
-        // set col styles for calculated columns {Cost Basis}, {Proceeds}, {Gain (Loss)} and {Status}
-        sheet.getRange('N3:O').setFontColor('#424250').setBackground('#EEEEEE');
-        sheet.getRange('AC3:AF').setFontColor('#424250').setBackground('#EEEEEE');
-        sheet.getRange('AF3:AF').setHorizontalAlignment('center');
-
-        // Prevent the user from entering bad inputs in the first place which removes
-        // the need to check data in the validate() function during a calculation
-        // setValidationRules(sheet);
-
         // lookup allowed categories from the "Categories sheet" to avoid hard-coding them
-        const categoriesList = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('NFT Categories')?.getRange('A2:A35').getValues() as unknown as string[];
+        const categoriesInList = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('NFT Categories')?.getRange('A2:A20').getValues() as unknown as string[];
+        const categoriesOutList = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('NFT Categories')?.getRange('A21:A35').getValues() as unknown as string[];
+        setNFTDropdownOptions(sheet, categoriesInList, categoriesOutList);
 
-        setNFTDropdownOptions(sheet, categoriesList);
-
-        // autosize columns' widths to fit content
-        sheet.autoResizeColumns(1, 32);
+        // autosize columns' widths to fit content, but ignore tx ID & descrip columns
+        sheet.autoResizeColumns(1, 3);
+        sheet.autoResizeColumns(6, 12);
+        sheet.autoResizeColumns(21, 11);
         SpreadsheetApp.flush();
 
         return sheet;
@@ -111,12 +146,16 @@ export function formatNFTSheet(sheet: GoogleAppsScript.Spreadsheet.Sheet | null)
     return null;
 }
 
-function setNFTDropdownOptions(sheet: GoogleAppsScript.Spreadsheet.Sheet, categoriesList: string[]): void {
+function setNFTDropdownOptions(sheet: GoogleAppsScript.Spreadsheet.Sheet, categoriesInList: string[], categoriesOutList: string[]): void {
     // limit Category entries to loosely adhere to known categories
-    const categoriesRule = SpreadsheetApp.newDataValidation()
-        .requireValueInList(categoriesList)
+    const categoriesInRule = SpreadsheetApp.newDataValidation()
+        .requireValueInList(categoriesInList)
         .setAllowInvalid(true)
         .build();
-    sheet.getRange('G3:G').setDataValidation(categoriesRule);
-    sheet.getRange('U3:U').setDataValidation(categoriesRule);
+    const categoriesOutRule = SpreadsheetApp.newDataValidation()
+        .requireValueInList(categoriesOutList)
+        .setAllowInvalid(true)
+        .build();
+    sheet.getRange('G3:G').setDataValidation(categoriesInRule);
+    sheet.getRange('U3:U').setDataValidation(categoriesOutRule);
 }

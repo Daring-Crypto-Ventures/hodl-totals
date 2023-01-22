@@ -16,7 +16,7 @@ import { version } from '../version';
  */
 export function newCategorySheet(): GoogleAppsScript.Spreadsheet.Sheet | null {
     // Initial set of categories provided out of the box
-    const header = ['Categories', 'Type', 'Tax Status', 'Tax Status Justification'];
+    const header = ['Categories', 'Type', 'Tax Status', 'Sample Tax Status Justification (DYOR: Do Your Own Research!)'];
     const data = [
         ['USD Deposit', 'Cash In', 'Not Taxable'],
         ['USD Withdrawal', 'Cash Out', 'Taxable'],
@@ -74,7 +74,10 @@ export function newCategorySheet(): GoogleAppsScript.Spreadsheet.Sheet | null {
         ['Taking a conservative position, you can treat the wrapped or bridged token as two separate assets. With this position, it is a taxable transaction, subject to capital gains taxes, as you are disposing one token for another.']
     ];
 
-    return makeCategoriesSheet('Categories', header, data, justificationLinks);
+    const sheet = makeCategoriesSheet('Categories', header, data, justificationLinks);
+    // draw border around the rows that will fed into dropdowns in other sheets
+    sheet?.getRange('A2:C35').setBorder(true, true, true, true, false, false);
+    return sheet;
 }
 
 /**
@@ -84,7 +87,7 @@ export function newCategorySheet(): GoogleAppsScript.Spreadsheet.Sheet | null {
  */
 export function newNFTCategorySheet(): GoogleAppsScript.Spreadsheet.Sheet | null {
     // Initial set of categories provided out of the box
-    const header = ['Categories', 'Type', 'Tax Status', 'Tax Status Justification'];
+    const header = ['Categories', 'Type', 'Tax Status', 'Sample Tax Status Justification (DYOR: Do Your Own Research!)'];
     const data = [
         ['Deposit (USD)', 'Cash In', 'Not Taxable'],
         ['Purchase (Fixed Price)', 'Inflow', 'Taxable (on Crypto Disposition)'],
@@ -100,6 +103,11 @@ export function newNFTCategorySheet(): GoogleAppsScript.Spreadsheet.Sheet | null
         ['Transfer In', 'Inflow', 'Not Taxable'],
         ['Product of Breeding', 'Inflow', 'Not Taxable'],
         ['Created from Scratch', 'Inflow', 'Not Taxable'],
+        ['', '', ''],
+        ['', '', ''],
+        ['', '', ''],
+        ['', '', ''],
+        ['', '', ''],
         ['Sold for USD', 'Outflow', 'Taxable (on NFT Value)'],
         ['Sold for Crypto', 'Outflow', 'Taxable (on NFT Value)'],
         ['Given Away', 'Outflow', 'Not Taxable'],
@@ -125,6 +133,11 @@ export function newNFTCategorySheet(): GoogleAppsScript.Spreadsheet.Sheet | null
         ['If you are an artist or creator minting NFTs, you will be subject to income taxes on the revenue from the sale of your NFT(s). If you are selling NFTs as a trade or business, you can deduct related business expenses.', ''],
         ['Creators of NFTs are taxed in a different way compared to NFT investors. Creating the NFT does not trigger a taxable event.', ''],
         ['', ''],
+        ['', ''],
+        ['', ''],
+        ['', ''],
+        ['', ''],
+        ['', ''],
         ['IRS 1040 Instructions: ...A [taxable] transaction involving virtual currency includes...A sale of virtual currency', 'https://www.irs.gov/instructions/i1040gi'],
         ['IRS FAQ Q34. If I donate virtual currency to a charity, will I have to recognize income, gain, or loss?', 'https://www.irs.gov/individuals/international-taxpayers/frequently-asked-questions-on-virtual-currency-transactions#collapseCollapsible1622820578248'],
         ['If an NFT is sold for crypto such as ETH, or swapped for another NFT, this would trigger a new capital gain/loss taxable event.', ''],
@@ -147,7 +160,11 @@ export function newNFTCategorySheet(): GoogleAppsScript.Spreadsheet.Sheet | null
         ['"The IRS defines a collectible as:\n\nAny work of art,\nAny rug or antique,\nAny metal or gem,\nAny stamp or coin,\nAny alcoholic beverage, or\nAny other tangible personal property that the IRS determines is a ""collectible"" under IRC Section 408(m)."', '']
     ];
 
-    return makeCategoriesSheet('NFT Categories', header, data, justificationLinks);
+    const sheet = makeCategoriesSheet('NFT Categories', header, data, justificationLinks);
+    // draw border around the rows that will fed into dropdowns in other sheets
+    sheet?.getRange('A2:C20').setBorder(true, true, true, true, false, false);
+    sheet?.getRange('A21:C35').setBorder(true, true, true, true, false, false);
+    return sheet;
 }
 
 function makeCategoriesSheet(sheetTitle: string, header: string[], data: string[][], justificationLinks: string[][]): GoogleAppsScript.Spreadsheet.Sheet | null {
@@ -156,7 +173,7 @@ function makeCategoriesSheet(sheetTitle: string, header: string[], data: string[
         sheet.addDeveloperMetadata('version', version);
 
         // populate the header cells
-        sheet.getRange('A1:D1').setValues([header]).setFontWeight('bold');
+        sheet.getRange('A1:D1').setValues([header]).setFontWeight('bold').setBackground('#DDDDEE');
 
         // fill in the raw data
         for (let i = 0; i < data.length; i++) {
@@ -175,9 +192,6 @@ function makeCategoriesSheet(sheetTitle: string, header: string[], data: string[
 
         // autosize the 5 columns' widths to fit content
         sheet.autoResizeColumns(1, 4);
-
-        // draw border around the rows that will fed into dropdowns in other sheets
-        sheet.getRange('A2:C35').setBorder(true, true, true, true, false, false);
 
         SpreadsheetApp.flush();
         return sheet;

@@ -2,7 +2,7 @@
  * @NotOnlyCurrentDoc Limits the script to only accessing the current sheet.
  *
  */
-import { sheetContainsCoinData } from './sheet';
+import { sheetContainsCoinData, sheetContainsNFTData } from './sheet';
 import { setFMVStrategyOnRow } from './fmv';
 import { CompleteDataRow } from '../types';
 import getLastRowWithDataPresent from '../last-row';
@@ -66,6 +66,18 @@ export default function onEdit(e: GoogleAppsScript.Events.SheetsOnEdit): void {
             const disposed = sheet.getRange(`K${editedRow}`).getValue() as string;
             setFMVStrategyOnRow(sheet, editedRow - 1, data, newStrategy, acquired, disposed, oldStrategy);
             SpreadsheetApp.flush();
+        }
+    } else if (sheetContainsNFTData(sheet)) {
+        const editedRow = e.range.getRow();
+        // edit events triggered by the Tx column
+        if ((e.range.getColumn() === 1) && (editedRow >= 3)) {
+            const lastRow = getLastRowWithDataPresent(sheet.getRange('F:F').getValues() as string[][]);
+            if (editedRow > lastRow) {
+                // create filter around all transactions
+                sheet.getFilter()?.remove();
+                sheet.getRange(`A2:AG${editedRow}`).createFilter();
+                SpreadsheetApp.flush();
+            }
         }
     }
 }

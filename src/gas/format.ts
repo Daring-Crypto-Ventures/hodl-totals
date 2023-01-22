@@ -154,8 +154,9 @@ export function formatSheet(sheet: GoogleAppsScript.Spreadsheet.Sheet | null): G
         // set calculated columns to be grayed background
         sheet.getRange('P3:T').setBackground('#EEEEEE');
 
-        // autosize columns' widths to fit content
-        sheet.autoResizeColumns(1, 21);
+        // autosize columns' widths to fit content, but ignore tx ID columns
+        sheet.autoResizeColumns(1, 2);
+        sheet.autoResizeColumns(4, 17);
         SpreadsheetApp.flush();
 
         return sheet;
