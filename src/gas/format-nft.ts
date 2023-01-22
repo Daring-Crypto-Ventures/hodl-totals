@@ -2,7 +2,7 @@
  * @NotOnlyCurrentDoc Limits the script to only accessing the current sheet.
  *
  */
-import { getAddressFromSheetName, resetVersionMetadata } from './sheet';
+import { getAddressFromSheetName, resetVersionMetadata, sheetContainsNFTData } from './sheet';
 import getLastRowWithDataPresent from '../last-row';
 
 /* global GoogleAppsScript */
@@ -18,8 +18,8 @@ export function formatNFTSheet(sheet: GoogleAppsScript.Spreadsheet.Sheet | null)
     if ((sheet !== null) && (typeof ScriptApp !== 'undefined')) {
         const desiredAddr = getAddressFromSheetName(sheet);
 
-        // simple check to verify that formatting actions only happen on coin tracking sheets
-        if ((sheet.getRange('B1').getValue() as string).trim() !== `Address ${desiredAddr}`) {
+        // simple check to verify that NFT formatting actions only happen on NFT tracking sheets
+        if (!sheetContainsNFTData(sheet, desiredAddr)) {
             Browser.msgBox('Formatting Error', 'The active sheet does not look like an NFT tracking sheet, only format existing NFT tracking sheets originally created using HODL Totals commands', Browser.Buttons.OK);
             return null;
         }
@@ -41,7 +41,7 @@ export function formatNFTSheet(sheet: GoogleAppsScript.Spreadsheet.Sheet | null)
 
         // populate the sheet header
         const headerRow1p1 = `=HYPERLINK("${totalsSheetUrl}"," ↩ Totals ")`;
-        // const coinTotalFormula = '=INDIRECT("\'HODL Totals\'!$"&IF(ISNA(MATCH($B$1,\'HODL Totals\'!$B$2:B, 0)),"F$"&IFNA(MATCH(LEFT(TRIM($I$2),FIND(" ",TRIM($I$2))-1),\'HODL Totals\'!$D$2:$D,0),0)+1,"C$"&MATCH($B$1,\'HODL Totals\'!$B$2:B, 0)+1))';
+        const coinTotalFormula = '=CONCATENATE(COUNTA($C$3:C)-COUNTA($U$3:U)," NFT(s)")';
         // const headerRow1p2 = `${desiredCurrency} balance on `;
         // const onDateFormula = '=INDIRECT("\'HODL Totals\'!$"&IF(ISNA(MATCH($B$1,\'HODL Totals\'!$B$2:B, 0)),"E$"&IFNA(MATCH(LEFT(TRIM($I$2),FIND(" ",TRIM($I$2))-1),\'HODL Totals\'!$D$2:$D,0),0)+1,"E$"&MATCH($B$1,\'HODL Totals\'!$B$2:B, 0)+1))';
         // const headerRow1p3 = 'was off by';
@@ -56,7 +56,7 @@ export function formatNFTSheet(sheet: GoogleAppsScript.Spreadsheet.Sheet | null)
             '    Proceeds    ', '    Proceeds (USD)    ', '    Gain (Loss)    ', '    Status    ', '    NFT Out Notes    '];
 
         sheet.getRange('A1').setValue(headerRow1p1);
-        // sheet.getRange('C1').setValue(coinTotalFormula);
+        sheet.getRange('C1').setValue(coinTotalFormula);
         // sheet.getRange('D1').setValue(headerRow1p2);
         // sheet.getRange('E1').setValue(onDateFormula);
         // sheet.getRange('F1').setValue(headerRow1p3);

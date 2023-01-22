@@ -9,6 +9,30 @@ import { version } from '../version';
 /* global GoogleAppsScript */
 
 /**
+ * check sheet content ensure its content matches expected HODL Totals coin tracking format
+ *
+ * @return boolean if content matches the requested HODL Totals format
+ */
+export function sheetContainsCoinData(sheet: GoogleAppsScript.Spreadsheet.Sheet | null, coin: string): boolean {
+    if ((sheet !== null) && (typeof ScriptApp !== 'undefined')) {
+        return ((sheet.getRange('H1').getValue() as string).trim() === coin);
+    }
+    return false;
+}
+
+/**
+ * check sheet content ensure its content matches expected HODL Totals NFT tracking format
+ *
+ * @return boolean if content matches the requested HODL Totals format
+ */
+export function sheetContainsNFTData(sheet: GoogleAppsScript.Spreadsheet.Sheet | null, address: string): boolean {
+    if ((sheet !== null) && (typeof ScriptApp !== 'undefined')) {
+        return ((sheet.getRange('B1').getValue() as string).trim() === `Address ${address}`);
+    }
+    return false;
+}
+
+/**
  * parse the coin name out from the sheet title which is often decorated by things like
  * "Copy of" prefixes, " ###" suffixes and "(user-added-text)"" suffixes,
  *

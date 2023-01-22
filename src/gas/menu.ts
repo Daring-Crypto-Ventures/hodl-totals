@@ -8,6 +8,8 @@ import { newNFTSheet } from './new-nft';
 import { formatSheet } from './format';
 import { updateFMVFormulas } from './fmv';
 import { calculateCoinGainLoss } from './calculate';
+import { formatNFTSheet } from './format-nft';
+import { sheetContainsNFTData, getAddressFromSheetName } from './sheet';
 
 /* global GoogleAppsScript */
 /* global SpreadsheetApp */
@@ -44,7 +46,7 @@ export function onOpen(e: GoogleAppsScript.Events.AppsScriptEvent): void {
         .addItem('Track NFTs...', 'newNFTSheet_')
         .addSeparator()
         .addItem('-- FOR THIS SHEET --', 'dummyMenuItem_')
-        .addItem('Format coin sheet', 'formatSheet_')
+        .addItem('Format sheet', 'formatSheet_')
         .addItem('Update FMV formulas', 'updateFMVFormulas_')
         .addItem('Calculate gain/loss (FIFO method)', 'calculateCoinGainLoss_')
         .addSeparator()
@@ -106,10 +108,17 @@ export function newNFTSheet_(address?: string): GoogleAppsScript.Spreadsheet.She
  *
  * Assumption: Not configurable to pick Fiat Currency to use for all sheets, assuming USD since this is related to US Tax calc
  *
- * @return the newly created sheet, for function chaining purposes.
+ * @return the sheet that was formatted, for function chaining purposes.
  */
-export function formatSheet_(): GoogleAppsScript.Spreadsheet.Sheet | null {
-    return formatSheet(SpreadsheetApp.getActiveSpreadsheet().getActiveSheet());
+export function formatSheet_(): GoogleAppsScript.Spreadsheet.Sheet {
+    const sheet: GoogleAppsScript.Spreadsheet.Sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+    const addr = getAddressFromSheetName(sheet);
+    if (sheetContainsNFTData(sheet, addr)) {
+        formatNFTSheet(sheet);
+    } else {
+        formatSheet(sheet);
+    }
+    return sheet;
 }
 
 /**
@@ -117,7 +126,7 @@ export function formatSheet_(): GoogleAppsScript.Spreadsheet.Sheet | null {
  *
  * Assumption: Not configurable to pick Fiat Currency to use for all sheets, assuming USD since this is related to US Tax calc
  *
- * @return the newly created sheet, for function chaining purposes.
+ * @return the sheet that was updated, for function chaining purposes.
  */
 export function updateFMVFormulas_(): GoogleAppsScript.Spreadsheet.Sheet | null {
     return updateFMVFormulas(SpreadsheetApp.getActiveSpreadsheet().getActiveSheet());

@@ -2,7 +2,7 @@
  * @NotOnlyCurrentDoc Limits the script to only accessing the current sheet.
  *
  */
-import { getCoinFromSheetName, resetVersionMetadata } from './sheet';
+import { getCoinFromSheetName, resetVersionMetadata, sheetContainsCoinData } from './sheet';
 import getLastRowWithDataPresent from '../last-row';
 
 /* global GoogleAppsScript */
@@ -21,7 +21,7 @@ export function formatSheet(sheet: GoogleAppsScript.Spreadsheet.Sheet | null): G
         const desiredCurrency = getCoinFromSheetName(sheet);
 
         // simple check to verify that formatting actions only happen on coin tracking sheets
-        if ((sheet.getRange('H1').getValue() as string).trim() !== desiredCurrency) {
+        if (!sheetContainsCoinData(sheet, desiredCurrency)) {
             Browser.msgBox('Formatting Error', 'The active sheet does not look like a coin tracking sheet, only format existing coin sheets originally created using HODL Totals commands', Browser.Buttons.OK);
             return null;
         }

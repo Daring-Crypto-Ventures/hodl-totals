@@ -2,7 +2,7 @@
  * @NotOnlyCurrentDoc Limits the script to only accessing the current sheet.
  *
  */
-import { getCoinFromSheetName } from './sheet';
+import { getCoinFromSheetName, sheetContainsCoinData } from './sheet';
 import { setFMVStrategyOnRow } from './fmv';
 import { CompleteDataRow } from '../types';
 import getLastRowWithDataPresent from '../last-row';
@@ -18,7 +18,7 @@ export default function onEdit(e: GoogleAppsScript.Events.SheetsOnEdit): void {
     const currency = getCoinFromSheetName(sheet);
 
     // simple check to verify that onEdit actions only happen on coin tracking sheets
-    if ((sheet.getRange('H1').getValue() as string).trim() === currency) {
+    if (sheetContainsCoinData(sheet, currency)) {
         const editedRow = e.range.getRow();
         // edit events triggered by users using the B1 dropdown
         if ((e.range.getColumn() === 2) && (editedRow === 1)) {
