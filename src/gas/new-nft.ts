@@ -15,8 +15,8 @@ export function showNewNFTAddrPrompt(): string | null {
         const ui = SpreadsheetApp.getUi();
 
         const result = ui.prompt(
-            'Track NFTs per Address',
-            'Enter the address or shortened address ("0xa1b2...y25z26", "Yourname.eth", etc.):',
+            'Track NFTs',
+            'Enter the address or shortened address ("0xa1b2...y25z26", "Yourname.eth", etc). If your address holds NFTs on multiple networks consider appending a network name to the adddress ("0xe5d4... Polygon").',
             ui.ButtonSet.OK_CANCEL
         );
 

@@ -2,12 +2,11 @@
  * @NotOnlyCurrentDoc Limits the script to only accessing the current sheet.
  *
  */
-import { resetVersionMetadata, sheetContainsNFTData } from './sheet';
+import { resetVersionMetadata } from './sheet';
 import getLastRowWithDataPresent from '../last-row';
 
 /* global GoogleAppsScript */
 /* global SpreadsheetApp */
-/* global Browser */
 
 /**
  * A function that formats the columns and headers of the active spreadsheet as an NFT tracking sheet.
@@ -16,12 +15,6 @@ import getLastRowWithDataPresent from '../last-row';
  */
 export function formatNFTSheet(sheet: GoogleAppsScript.Spreadsheet.Sheet | null): GoogleAppsScript.Spreadsheet.Sheet | null {
     if ((sheet !== null) && (typeof ScriptApp !== 'undefined')) {
-        // simple check to verify that NFT formatting actions only happen on NFT tracking sheets
-        if (!sheetContainsNFTData(sheet)) {
-            Browser.msgBox('Formatting Error', 'The active sheet does not look like an NFT tracking sheet, only format existing NFT tracking sheets originally created using HODL Totals commands', Browser.Buttons.OK);
-            return null;
-        }
-
         // Code to check the previously saved sheet version to see if mutation is required
         // should pop a yes/no confirmation dialog in this event as formatting could be destructive
         // const sheet = SpreadsheetApp.getActiveSheet();

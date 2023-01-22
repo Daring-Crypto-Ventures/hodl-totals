@@ -47,11 +47,11 @@ export function onOpen(e: GoogleAppsScript.Events.AppsScriptEvent): void {
             .addItem('Example "pretendCOINs"', 'loadExample_')
             .addItem('Coin (FIFO method)', 'newCoinTrackedByFIFOMethod_')
             .addItem('Coin (Specific ID method)', 'newCoinTrackedBySpecIDMethod_')
-            .addItem('Address\'s NFTs', 'newNFTSheet_'))
+            .addItem('NFTs (per Address)', 'newNFTSheet_'))
         .addSeparator()
         .addItem('-- ON THE ACTIVE SHEET --', 'dummyMenuItem_')
-        .addItem('Format', 'formatSheet_')
-        .addItem('Update FMV formulas', 'updateFMVFormulas_')
+        .addItem('Format columns', 'formatSheet_')
+        .addItem('Update formulas', 'updateFormulas_')
         .addItem('Calculate gain/loss', 'calculateCoinGainLoss_')
         .addSeparator()
         .addItem('About HODL Totals', 'showAboutDialog_')
@@ -128,25 +128,30 @@ function formatSheet_(): GoogleAppsScript.Spreadsheet.Sheet {
     const sheet: GoogleAppsScript.Spreadsheet.Sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
     if (sheetContainsNFTData(sheet)) {
         formatNFTSheet(sheet);
-    } else {
+    } else if (sheetContainsCoinData(sheet)) {
         formatSheet(sheet);
+    } else {
+        Browser.msgBox('Active Sheet Does Not Support Formatting', `The active sheet "${sheet.getName()}" does not look like a tracking sheet that can have its column formatting updated using this command.  HODL Totals can only format sheets originally created using HODL Totals commands.`, Browser.Buttons.OK);
     }
     return sheet;
 }
 
 /**
- * A function that formats the FMV Value Rows of the active spreadsheet.
+ * A function that updates all of the formuala cells of the active spreadsheet.
  *
  * Assumption: Not configurable to pick Fiat Currency to use for all sheets, assuming USD since this is related to US Tax calc
  *
  * @return the sheet that was updated, for function chaining purposes.
  */
-function updateFMVFormulas_(): GoogleAppsScript.Spreadsheet.Sheet | null {
+function updateFormulas_(): GoogleAppsScript.Spreadsheet.Sheet | null {
     const sheet: GoogleAppsScript.Spreadsheet.Sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
     if (sheetContainsCoinData(sheet)) {
         updateFMVFormulas(sheet);
+    } else if (sheetContainsNFTData(sheet)) {
+        Browser.msgBox('NFT Update Formulas', 'TODO', Browser.Buttons.OK);
+        // updateNFTFormulas(sheet);
     } else {
-        Browser.msgBox('FMV Formulas Not Supported', 'The active sheet does not have any Fair Market Value Formulas to update', Browser.Buttons.OK);
+        Browser.msgBox('Active Sheet Does Not Support Updating Formulas', `The active sheet "${sheet.getName()}" does not look like a tracking sheet with Formulas that can be updated using this command. HODL Totals can only only update formulas on well-formatted sheets originally created using HODL Totals commands.`, Browser.Buttons.OK);
     }
     return sheet;
 }
@@ -159,8 +164,10 @@ function calculateCoinGainLoss_(): GoogleAppsScript.Spreadsheet.Sheet | null {
     const sheet: GoogleAppsScript.Spreadsheet.Sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
     if (sheetContainsCoinData(sheet)) {
         calculateCoinGainLoss(sheet);
+    } else if (sheetContainsNFTData(sheet)) {
+        Browser.msgBox('NFT Gain/Loss Calc', 'TODO', Browser.Buttons.OK);
     } else {
-        Browser.msgBox('NFT Gain/Loss Calc Not Supported', 'TODO', Browser.Buttons.OK);
+        Browser.msgBox('Active Sheet Does Not Support Gain/Loss Calculation', `The active sheet "${sheet.getName()}" does not look like a tracking sheet that supports Gain/Loss Calculation. HODL Totals can only only calculate gains or losses on well-formatted sheets originally created using HODL Totals commands.`, Browser.Buttons.OK);
     }
     return sheet;
 }

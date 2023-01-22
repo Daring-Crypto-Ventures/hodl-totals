@@ -2,7 +2,7 @@
  * @NotOnlyCurrentDoc Limits the script to only accessing the current sheet.
  *
  */
-import { getCoinFromSheetName, sheetContainsCoinData } from './sheet';
+import { getCoinFromSheetName } from './sheet';
 import { CompleteDataRow, CompleteDataRowAsStrings, LooselyTypedDataValidationRow } from '../types';
 import getLastRowWithDataPresent from '../last-row';
 import calculateFIFO from '../calc-fifo';
@@ -23,12 +23,6 @@ import validate from '../validate';
 export function calculateCoinGainLoss(sheet: GoogleAppsScript.Spreadsheet.Sheet | null): GoogleAppsScript.Spreadsheet.Sheet | null {
     if ((sheet !== null) && (typeof ScriptApp !== 'undefined')) {
         const coinName = getCoinFromSheetName(sheet);
-
-        // simple check to verify that formatting actions only happen on coin tracking sheets
-        if (!sheetContainsCoinData(sheet)) {
-            Browser.msgBox('Formatting Error', 'The active sheet does not look like a coin tracking sheet, can only only calculate gains or losses on well-formatted coin sheets originally created using HODL Totals commands', Browser.Buttons.OK);
-            return null;
-        }
 
         // sanity check the data in the sheet. only proceed if data is good
         Logger.log('Validating the data before starting calculations.');

@@ -2,12 +2,11 @@
  * @NotOnlyCurrentDoc Limits the script to only accessing the current sheet.
  *
  */
-import { getCoinFromSheetName, resetVersionMetadata, sheetContainsCoinData } from './sheet';
+import { getCoinFromSheetName, resetVersionMetadata } from './sheet';
 import getLastRowWithDataPresent from '../last-row';
 
 /* global GoogleAppsScript */
 /* global SpreadsheetApp */
-/* global Browser */
 
 /**
  * A function that formats the columns and headers of the active spreadsheet.
@@ -19,12 +18,6 @@ import getLastRowWithDataPresent from '../last-row';
 export function formatSheet(sheet: GoogleAppsScript.Spreadsheet.Sheet | null): GoogleAppsScript.Spreadsheet.Sheet | null {
     if ((sheet !== null) && (typeof ScriptApp !== 'undefined')) {
         const desiredCurrency = getCoinFromSheetName(sheet);
-
-        // simple check to verify that formatting actions only happen on coin tracking sheets
-        if (!sheetContainsCoinData(sheet)) {
-            Browser.msgBox('Formatting Error', 'The active sheet does not look like a coin tracking sheet, only format existing coin sheets originally created using HODL Totals commands', Browser.Buttons.OK);
-            return null;
-        }
 
         // Code to check the previously saved sheet version to see if mutation is required
         // should pop a yes/no confirmation dialog in this event as formatting could be destructive
