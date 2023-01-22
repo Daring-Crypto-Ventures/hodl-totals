@@ -2,7 +2,7 @@
  * @NotOnlyCurrentDoc Limits the script to only accessing the current sheet.
  *
  */
-import { getCoinFromSheetName, sheetContainsCoinData } from './sheet';
+import { sheetContainsCoinData } from './sheet';
 import { CompleteDataRow } from '../types';
 import getLastRowWithDataPresent from '../last-row';
 
@@ -17,10 +17,8 @@ import getLastRowWithDataPresent from '../last-row';
  */
 export function updateFMVFormulas(sheet: GoogleAppsScript.Spreadsheet.Sheet | null): GoogleAppsScript.Spreadsheet.Sheet | null {
     if ((sheet !== null) && (typeof ScriptApp !== 'undefined')) {
-        const desiredCurrency = getCoinFromSheetName(sheet);
-
         // simple check to verify that formatting actions only happen on coin tracking sheets
-        if (!sheetContainsCoinData(sheet, desiredCurrency)) {
+        if (!sheetContainsCoinData(sheet)) {
             Browser.msgBox('Fair Market Value Formula Update Error', 'The active sheet does not look like a coin tracking sheet, only update the Fair Market Value Formulas on existing coin sheets originally created using HODL Totals commands', Browser.Buttons.OK);
             return null;
         }

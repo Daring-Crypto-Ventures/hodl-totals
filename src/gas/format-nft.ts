@@ -2,7 +2,7 @@
  * @NotOnlyCurrentDoc Limits the script to only accessing the current sheet.
  *
  */
-import { getAddressFromSheetName, resetVersionMetadata, sheetContainsNFTData } from './sheet';
+import { resetVersionMetadata, sheetContainsNFTData } from './sheet';
 import getLastRowWithDataPresent from '../last-row';
 
 /* global GoogleAppsScript */
@@ -16,10 +16,8 @@ import getLastRowWithDataPresent from '../last-row';
  */
 export function formatNFTSheet(sheet: GoogleAppsScript.Spreadsheet.Sheet | null): GoogleAppsScript.Spreadsheet.Sheet | null {
     if ((sheet !== null) && (typeof ScriptApp !== 'undefined')) {
-        const desiredAddr = getAddressFromSheetName(sheet);
-
         // simple check to verify that NFT formatting actions only happen on NFT tracking sheets
-        if (!sheetContainsNFTData(sheet, desiredAddr)) {
+        if (!sheetContainsNFTData(sheet)) {
             Browser.msgBox('Formatting Error', 'The active sheet does not look like an NFT tracking sheet, only format existing NFT tracking sheets originally created using HODL Totals commands', Browser.Buttons.OK);
             return null;
         }

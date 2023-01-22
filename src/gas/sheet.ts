@@ -13,7 +13,8 @@ import { version } from '../version';
  *
  * @return boolean if content matches the requested HODL Totals format
  */
-export function sheetContainsCoinData(sheet: GoogleAppsScript.Spreadsheet.Sheet | null, coin: string): boolean {
+export function sheetContainsCoinData(sheet: GoogleAppsScript.Spreadsheet.Sheet | null): boolean {
+    const coin = getCoinFromSheetName(sheet);
     if ((sheet !== null) && (typeof ScriptApp !== 'undefined')) {
         return ((sheet.getRange('H1').getValue() as string).trim() === coin);
     }
@@ -25,9 +26,10 @@ export function sheetContainsCoinData(sheet: GoogleAppsScript.Spreadsheet.Sheet 
  *
  * @return boolean if content matches the requested HODL Totals format
  */
-export function sheetContainsNFTData(sheet: GoogleAppsScript.Spreadsheet.Sheet | null, address: string): boolean {
+export function sheetContainsNFTData(sheet: GoogleAppsScript.Spreadsheet.Sheet | null): boolean {
+    const addr = getAddressFromSheetName(sheet);
     if ((sheet !== null) && (typeof ScriptApp !== 'undefined')) {
-        return ((sheet.getRange('B1').getValue() as string).trim() === `Address ${address}`);
+        return ((sheet.getRange('B1').getValue() as string).trim() === `Address ${addr}`);
     }
     return false;
 }

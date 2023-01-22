@@ -9,7 +9,7 @@ import { formatSheet } from './format';
 import { updateFMVFormulas } from './fmv';
 import { calculateCoinGainLoss } from './calculate';
 import { formatNFTSheet } from './format-nft';
-import { sheetContainsNFTData, getAddressFromSheetName, sheetContainsCoinData, getCoinFromSheetName } from './sheet';
+import { sheetContainsNFTData, sheetContainsCoinData } from './sheet';
 
 /* global GoogleAppsScript */
 /* global SpreadsheetApp */
@@ -113,8 +113,7 @@ export function newNFTSheet_(address?: string): GoogleAppsScript.Spreadsheet.She
  */
 export function formatSheet_(): GoogleAppsScript.Spreadsheet.Sheet {
     const sheet: GoogleAppsScript.Spreadsheet.Sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-    const addr = getAddressFromSheetName(sheet);
-    if (sheetContainsNFTData(sheet, addr)) {
+    if (sheetContainsNFTData(sheet)) {
         formatNFTSheet(sheet);
     } else {
         formatSheet(sheet);
@@ -131,8 +130,7 @@ export function formatSheet_(): GoogleAppsScript.Spreadsheet.Sheet {
  */
 export function updateFMVFormulas_(): GoogleAppsScript.Spreadsheet.Sheet | null {
     const sheet: GoogleAppsScript.Spreadsheet.Sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-    const coin = getCoinFromSheetName(sheet);
-    if (sheetContainsCoinData(sheet, coin)) {
+    if (sheetContainsCoinData(sheet)) {
         updateFMVFormulas(SpreadsheetApp.getActiveSpreadsheet().getActiveSheet());
     } else {
         Browser.msgBox('FMV Formulas Not Supported', 'The active sheet does not have any Fair Market Value Formulas to update', Browser.Buttons.OK);
