@@ -131,7 +131,7 @@ function formatSheet_(): GoogleAppsScript.Spreadsheet.Sheet {
     } else if (sheetContainsCoinData(sheet)) {
         formatSheet(sheet);
     } else {
-        Browser.msgBox('Active Sheet Does Not Support Formatting', `The active sheet "${sheet.getName()}" does not look like a tracking sheet that can have its column formatting updated using this command.  HODL Totals can only format sheets originally created using HODL Totals commands.`, Browser.Buttons.OK);
+        Browser.msgBox('Active Sheet Does Not Support Formatting', `The active sheet "${sheet.getName()}" does not look like a tracking sheet that can have its column formatting updated using this command.  HODL Totals can only format tracking sheets originally created using HODL Totals commands.`, Browser.Buttons.OK);
     }
     return sheet;
 }
@@ -151,7 +151,7 @@ function updateFormulas_(): GoogleAppsScript.Spreadsheet.Sheet | null {
         Browser.msgBox('NFT Update Formulas', 'TODO', Browser.Buttons.OK);
         // updateNFTFormulas(sheet);
     } else {
-        Browser.msgBox('Active Sheet Does Not Support Updating Formulas', `The active sheet "${sheet.getName()}" does not look like a tracking sheet with Formulas that can be updated using this command. HODL Totals can only only update formulas on well-formatted sheets originally created using HODL Totals commands.`, Browser.Buttons.OK);
+        Browser.msgBox('Active Sheet Does Not Support Updating Formulas', `The active sheet "${sheet.getName()}" does not look like a tracking sheet with Formulas that can be updated using this command. HODL Totals can only only update formulas on tracking sheets originally created using HODL Totals commands.`, Browser.Buttons.OK);
     }
     return sheet;
 }
@@ -167,7 +167,7 @@ function calculateCoinGainLoss_(): GoogleAppsScript.Spreadsheet.Sheet | null {
     } else if (sheetContainsNFTData(sheet)) {
         Browser.msgBox('NFT Gain/Loss Calc', 'TODO', Browser.Buttons.OK);
     } else {
-        Browser.msgBox('Active Sheet Does Not Support Gain/Loss Calculation', `The active sheet "${sheet.getName()}" does not look like a tracking sheet that supports Gain/Loss Calculation. HODL Totals can only only calculate gains or losses on well-formatted sheets originally created using HODL Totals commands.`, Browser.Buttons.OK);
+        Browser.msgBox('Active Sheet Does Not Support Gain/Loss Calculation', `The active sheet "${sheet.getName()}" does not look like a tracking sheet that supports Gain/Loss Calculation. HODL Totals can only only calculate gains or losses on tracking sheets originally created using HODL Totals commands.`, Browser.Buttons.OK);
     }
     return sheet;
 }
