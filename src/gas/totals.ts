@@ -104,7 +104,7 @@ export default function resetTotalSheet(): GoogleAppsScript.Spreadsheet.Sheet | 
                 } else if (sheetContainsNFTData(coinSheet)) {
                     rowCount += 1;
                     const data = [`${rowCount - 1}`, `${newCoinName}`, '', newCoinNameAdorned, '', '', `=HYPERLINK("${newCoinSheetUrl}","${newCoinName}")`,
-                        `=COUNT(INDIRECT("'"&$D${rowCount}&"'!$F$3:F"))-COUNT(INDIRECT("'"&$D${rowCount}&"'!$V$3:V"))`, `=$H${rowCount}-$C${rowCount}`, `=INDIRECT("'"&$D${rowCount}&"'!$AE$1")`, `=INDIRECT("'"&$D${rowCount}&"'!$AF$1")`, ''];
+                        `=INDIRECT("'"&$D${rowCount}&"'!$C$1")`, `=LEFT($H${rowCount})-LEFT($C${rowCount})`, `=INDIRECT("'"&$D${rowCount}&"'!$AE$1")`, `=INDIRECT("'"&$D${rowCount}&"'!$AF$1")`, ''];
                     sheet.appendRow(data);
                 }
             }
@@ -147,10 +147,12 @@ export default function resetTotalSheet(): GoogleAppsScript.Spreadsheet.Sheet | 
         // apply other formatting to the filled columns
         sheet.getRange('A2:A').setBackground('#EEEEEE');
         sheet.getRange('A2:A').setHorizontalAlignment('center');
+        sheet.getRange('C2:C').setHorizontalAlignment('right');
         sheet.getRange('D2:D').setBackground('#EEEEEE');
         sheet.getRange('F2:K').setBackground('#EEEEEE');
         sheet.getRange('F2:F').setNumberFormat('0.00000000').setFontColor(null).setFontStyle(null);
-        sheet.getRange('H2:I').setNumberFormat('+0.00000000;-0.00000000;0.00000000').setFontColor(null).setFontStyle(null);
+        sheet.getRange('H2:I').setNumberFormat('+0.00000000;-0.00000000;0.00000000').setFontColor(null).setFontStyle(null)
+            .setHorizontalAlignment('right');
 
         // autosize the columns' widths, add conditional formatting
         sheet.autoResizeColumns(1, 12);
