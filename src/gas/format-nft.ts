@@ -34,7 +34,7 @@ export function formatNFTSheet(sheet: GoogleAppsScript.Spreadsheet.Sheet | null)
         const headerRow1p1 = `=HYPERLINK("${totalsSheetUrl}"," ↩ Totals ")`;
         const coinTotalFormula = '=CONCATENATE(COUNTA($C$3:C)-COUNTA($U$3:U)," NFT(s)")';
         const headerRow1p2 = ['Acquisition Information', '', '', '', '', '', '', '', '', '', 'Cost Basis for Tax Purposes', '', '', '  |  ',
-            'Disposal Information', '', '', '', '', '', '', '', '', '', '', '', '', 'Tax Impact on Disposal', '', ''];
+            'Disposal Information', '', '', '', '', '', '', '', '', '', '', '    Last Calculation    ', '', '', '', ''];
         // NOTE: spaces are hard coded around header text that help autosizecolumns behave correctly
         const headerRow2 = ['   In Tx ✔   ', '    Collection    ', '    NFT ID    ', '    NFT In Tx(s)    ', '   NFT In Description   ', '    Date & Time    ',
             '       Inflow Category       ', '    Acq Price    ', '    Acq Price (USD)    ', '    Tx Fees    ', '    Tx Fees (USD)    ', '    Cost Basis Adj   ',
@@ -54,13 +54,17 @@ export function formatNFTSheet(sheet: GoogleAppsScript.Spreadsheet.Sheet | null)
 
         // add borders to demarcate the row 1 headers into logical groups
         sheet.getRange('N1:O1').setBorder(false, true, false, true, false, false);
-        sheet.getRange('AE1:AF1').setBorder(false, true, false, true, false, false);
+        sheet.getRange('AC1:AF1').setBorder(false, true, false, true, false, false);
+
+        // set conditional formatting rules on row 1 cells
+        setNFTSheetCFRules(sheet);
 
         // merge 1st row cell headers
+        sheet.getRange('A1:AG1').breakApart();
         sheet.getRange('D1:M1').merge();
         sheet.getRange('N1:O1').merge();
-        sheet.getRange('R1:AD1').merge();
-        sheet.getRange('AE1:AF1').merge();
+        sheet.getRange('R1:AB1').merge();
+        sheet.getRange('AC1:AD1').merge();
 
         // color background and freeze the header rows
         sheet.getRange('A1:AG1').setBackground('#DDDDEE');
@@ -125,6 +129,7 @@ export function formatNFTSheet(sheet: GoogleAppsScript.Spreadsheet.Sheet | null)
         sheet.getRange('Q3:Q').setBackground('#CCCCCC');
         sheet.getRange('AC3:AF').setBackground('#EEEEEE');
         sheet.getRange('AF3:AF').setHorizontalAlignment('center');
+        sheet.getRange('AF1').setFontWeight('normal');
 
         // create filter around all transactions
         sheet.getFilter()?.remove();
@@ -158,4 +163,36 @@ function setNFTDropdownOptions(sheet: GoogleAppsScript.Spreadsheet.Sheet, catego
         .build();
     sheet.getRange('G3:G').setDataValidation(categoriesInRule);
     sheet.getRange('U3:U').setDataValidation(categoriesOutRule);
+}
+
+function setNFTSheetCFRules(sheet: GoogleAppsScript.Spreadsheet.Sheet): void {
+    // Color the success/failure cell to indicate health of the last calculation
+    const calcStatusRange = sheet.getRange('AF1');
+
+    // extract the conditional rules set on all other cells on this sheet
+    const rules = SpreadsheetApp.getActiveSheet().getConditionalFormatRules();
+    const newRules = [] as GoogleAppsScript.Spreadsheet.ConditionalFormatRule [];
+    for (const rule of rules) {
+        const ruleRange = rule.getRanges()?.[0].getA1Notation();
+        if (ruleRange !== calcStatusRange.getA1Notation()) {
+            newRules.push(rule);
+        }
+    }
+    // add back the rules for the cells we are formatting
+    newRules.push(SpreadsheetApp.newConditionalFormatRule()
+        .whenTextStartsWith('Succeeded')
+        .setBackground('#B7E1CD') // green success
+        .setRanges([calcStatusRange])
+        .build());
+    newRules.push(SpreadsheetApp.newConditionalFormatRule()
+        .whenTextStartsWith('Failed')
+        .setBackground('#F4C7C3') // red failure
+        .setRanges([calcStatusRange])
+        .build());
+    newRules.push(SpreadsheetApp.newConditionalFormatRule()
+        .whenFormulaSatisfied('=1')
+        .setBackground('#F4C7C3') // red failure
+        .setRanges([calcStatusRange])
+        .build());
+    sheet.setConditionalFormatRules(newRules);
 }

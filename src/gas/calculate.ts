@@ -88,3 +88,29 @@ export function calculateCoinGainLoss(sheet: GoogleAppsScript.Spreadsheet.Sheet 
     }
     return null;
 }
+
+/**
+ * iterate through the rows in the sheet to determine short-term or long-term gains status for each disposed NFT
+ *
+ * @return the sheet, for function chaining purposes.
+ */
+export function calculateNFTGainLossStatus(sheet: GoogleAppsScript.Spreadsheet.Sheet | null): GoogleAppsScript.Spreadsheet.Sheet | null {
+    if ((sheet !== null) && (typeof ScriptApp !== 'undefined')) {
+        const sheetReady = false;
+        // TODO set sheetReady after doing some data validation
+        if (sheetReady) {
+            // TODO perform the calculation
+            const now = Utilities.formatDate(new Date(), SpreadsheetApp.getActiveSpreadsheet().getSpreadsheetTimeZone(), 'yyyy-MM-dd HH:mm');
+            sheet.getRange('AE1').setValue(`${now}`);
+            sheet.getRange('AF1').setValue('Succeeded');
+            Logger.log(`Last NFT calculation succeeded ${now}`);
+        } else {
+            const now = Utilities.formatDate(new Date(), SpreadsheetApp.getActiveSpreadsheet().getSpreadsheetTimeZone(), 'yyyy-MM-dd HH:mm');
+            sheet.getRange('AE1').setValue(`${now}`);
+            sheet.getRange('AF1').setValue('Failed');
+            Logger.log(`NFT Data validation failed ${now}`);
+        }
+        return sheet;
+    }
+    return null;
+}

@@ -73,9 +73,10 @@ export function formatSheet(sheet: GoogleAppsScript.Spreadsheet.Sheet | null): G
         sheet.getRange('T1').setFontWeight('normal').setBorder(false, false, false, true, false, false);
 
         // set conditional formatting rules on row 1 cells
-        setFormatSheetCFRules(sheet);
+        setCoinSheetCFRules(sheet);
 
         // merge 1st row cell headers
+        sheet.getRange('A1:U1').breakApart();
         sheet.getRange('I1:J1').merge();
         sheet.getRange('K1:L1').merge();
         sheet.getRange('M1:O1').merge();
@@ -164,7 +165,7 @@ export function formatSheet(sheet: GoogleAppsScript.Spreadsheet.Sheet | null): G
     return null;
 }
 
-function setFormatSheetCFRules(sheet: GoogleAppsScript.Spreadsheet.Sheet): void {
+function setCoinSheetCFRules(sheet: GoogleAppsScript.Spreadsheet.Sheet): void {
     // Color the cell that displays diff of wallet/account balance and sheet totals
     // to help users see if their sheet calculations are reasonably accurate
     const subtotalRange = sheet.getRange('G1');

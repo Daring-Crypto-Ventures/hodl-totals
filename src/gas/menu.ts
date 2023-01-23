@@ -7,7 +7,7 @@ import { newCoinSheet } from './new-coin';
 import { newNFTSheet } from './new-nft';
 import { formatSheet } from './format';
 import { updateFMVFormulas } from './fmv';
-import { calculateCoinGainLoss } from './calculate';
+import { calculateCoinGainLoss, calculateNFTGainLossStatus } from './calculate';
 import { formatNFTSheet } from './format-nft';
 import { sheetContainsNFTData, sheetContainsCoinData } from './sheet';
 
@@ -165,7 +165,7 @@ function calculateCoinGainLoss_(): GoogleAppsScript.Spreadsheet.Sheet | null {
     if (sheetContainsCoinData(sheet)) {
         calculateCoinGainLoss(sheet);
     } else if (sheetContainsNFTData(sheet)) {
-        Browser.msgBox('NFT Gain/Loss Calc', 'TODO', Browser.Buttons.OK);
+        calculateNFTGainLossStatus(sheet);
     } else {
         Browser.msgBox('Active Sheet Does Not Support Gain/Loss Calculation', `The active sheet "${sheet.getName()}" does not look like a tracking sheet that supports Gain/Loss Calculation. HODL Totals can only only calculate gains or losses on tracking sheets originally created using HODL Totals commands.`, Browser.Buttons.OK);
     }
