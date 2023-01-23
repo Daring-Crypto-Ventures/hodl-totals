@@ -107,6 +107,13 @@ export function calculateNFTGainLossStatus(sheet: GoogleAppsScript.Spreadsheet.S
             const lastTxOutRow = getLastRowWithDataPresent(sheet.getRange('V:V').getValues() as string[][]);
             const lastRow = lastTxInRow > lastTxOutRow ? lastTxInRow : lastTxOutRow;
 
+            // Create tax status lookup table for categories from the Categories sheet
+            const nftCategoriesSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('NFT Categories');
+            let txOutCategoryRows: string[][] = [];
+            if (nftCategoriesSheet !== null) {
+                txOutCategoryRows = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('NFT Categories')?.getRange('A21:C35').getValues() as string[][];
+            }
+
             // clear previously filled-in values
             sheet.getRange('AF3:AF').setValue('');
 
@@ -120,10 +127,28 @@ export function calculateNFTGainLossStatus(sheet: GoogleAppsScript.Spreadsheet.S
                     const dispositionDate = dateFromString(dispositionDateString, 0);
                     const oneYrAfterAcquisitionDate = dateFromString(acquisitionDateString, 1);
 
-                    if ((dispositionDate.getTime() - oneYrAfterAcquisitionDate.getTime()) / MILLIS_PER_DAY > 0) {
-                        sheet.getRange(`AF${i}`).setValue('Long-term');
-                    } else {
-                        sheet.getRange(`AF${i}`).setValue('Short-term');
+                    // Check to see if row's Tx Out category is a Not Taxable thing, if yes set as such and move on
+                    const txOutCategory = sheet.getRange(`U${i}`).getValue() as string;
+                    let isTaxable = true;
+                    txOutCategoryRows.every(categoryRow => {
+                        const taxableStatus = (categoryRow?.[0] === txOutCategory) ? categoryRow?.[2] : '';
+                        if (taxableStatus.startsWith('Not Taxable')) {
+                            sheet.getRange(`AF${i}`).setValue(taxableStatus);
+                            isTaxable = false;
+                            return false; // stop iterating thru categories list if found not taxable status
+                        }
+                        if (taxableStatus.startsWith('Taxable')) {
+                            return false; // stop iterating thru categories list if found taxable status
+                        }
+                        return true; // continue iterating thru categories list looking for a match
+                    });
+
+                    if (isTaxable) {
+                        if ((dispositionDate.getTime() - oneYrAfterAcquisitionDate.getTime()) / MILLIS_PER_DAY > 0) {
+                            sheet.getRange(`AF${i}`).setValue('Long-term');
+                        } else {
+                            sheet.getRange(`AF${i}`).setValue('Short-term');
+                        }
                     }
                 }
             }
