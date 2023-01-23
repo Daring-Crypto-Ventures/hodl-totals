@@ -50,7 +50,9 @@ export function formatNFTSheet(sheet: GoogleAppsScript.Spreadsheet.Sheet | null)
         sheet.getRange('A1:AG2').setFontWeight('bold').setHorizontalAlignment('center');
 
         // see if any row data exists beyond the header we just added
-        const lastRow = getLastRowWithDataPresent(sheet.getRange('F:F').getValues() as string[][]);
+        const lastTxInRow = getLastRowWithDataPresent(sheet.getRange('F:F').getValues() as string[][]);
+        const lastTxOutRow = getLastRowWithDataPresent(sheet.getRange('V:V').getValues() as string[][]);
+        const lastRow = lastTxInRow > lastTxOutRow ? lastTxInRow : lastTxOutRow;
 
         // add borders to demarcate the row 1 headers into logical groups
         sheet.getRange('N1:O1').setBorder(false, true, false, true, false, false);

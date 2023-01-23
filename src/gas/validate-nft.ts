@@ -15,7 +15,9 @@ import getLastRowWithDataPresent from '../last-row';
  * @return empty string if sheet validated successfully, non-empty string describing the validation error if validation failed
  */
 export default function validateNFTSheet(sheet: GoogleAppsScript.Spreadsheet.Sheet | null): string {
-    const lastRow = getLastRowWithDataPresent(sheet?.getRange('A3:A').getValues() as string[][]);
+    const lastTxInRow = getLastRowWithDataPresent(sheet?.getRange('F3:F').getValues() as string[][]);
+    const lastTxOutRow = getLastRowWithDataPresent(sheet?.getRange('V3:V').getValues() as string[][]);
+    const lastRow = lastTxInRow > lastTxOutRow ? lastTxInRow : lastTxOutRow;
     const inflowDates = sheet?.getRange(`F1:F${lastRow + 1}`).getValues() as string[][];
     const outflowDates = sheet?.getRange(`V1:V${lastRow + 1}`).getValues() as string[][];
 
