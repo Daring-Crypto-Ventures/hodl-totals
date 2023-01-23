@@ -13,6 +13,10 @@ import getLastRowWithDataPresent from '../last-row';
  */
 export function updateNFTFormulas(sheet: GoogleAppsScript.Spreadsheet.Sheet | null): GoogleAppsScript.Spreadsheet.Sheet | null {
     if ((sheet !== null) && (typeof ScriptApp !== 'undefined')) {
+        // clear previously filled-in values
+        sheet.getRange('N3:O').setValue('');
+        sheet.getRange('AC3:AE').setValue('');
+
         const txInCostBasisFormulas = ['=SUM(H3, J3, L3)', '=SUM(I3, K3, M3)'];
         const txOutProceedsFormulas = ['=IF(ISNUMBER(V3),IF(ISNUMBER(W3),W3,0)-SUM(Y3,AA3),)', '=IF(ISNUMBER(V3),X3-SUM(Z3,AB3),)', '=IF(ISNUMBER(V3),AD3-O3,)'];
 

@@ -107,6 +107,9 @@ export function calculateNFTGainLossStatus(sheet: GoogleAppsScript.Spreadsheet.S
             const lastTxOutRow = getLastRowWithDataPresent(sheet.getRange('V:V').getValues() as string[][]);
             const lastRow = lastTxInRow > lastTxOutRow ? lastTxInRow : lastTxOutRow;
 
+            // clear previously filled-in values
+            sheet.getRange('AF3:AF').setValue('');
+
             // walk through all rows and fill in Status
             for (let i = 3; i <= lastRow; i++) {
                 const acquisitionDateString = sheet.getRange(`F${i}`).getDisplayValue();
