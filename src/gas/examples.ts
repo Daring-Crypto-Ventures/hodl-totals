@@ -10,7 +10,7 @@ import resetTotalSheet from './totals';
 import { newCategorySheet } from './categories';
 import { formatSheet } from './format';
 import { newCoinSheet } from './new-coin';
-import { updateFMVFormulas } from './fmv';
+import { updateFMVFormulas } from './formulas-coin';
 
 /**
  * Creates example coins with data showing how HODL Totals works

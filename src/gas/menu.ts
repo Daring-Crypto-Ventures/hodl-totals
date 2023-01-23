@@ -6,7 +6,8 @@ import resetTotalSheet from './totals';
 import { newCoinSheet } from './new-coin';
 import { newNFTSheet } from './new-nft';
 import { formatSheet } from './format';
-import { updateFMVFormulas } from './fmv';
+import { updateFMVFormulas } from './formulas-coin';
+import { updateNFTFormulas } from './formulas-nft';
 import { calculateCoinGainLoss, calculateNFTGainLossStatus } from './calculate';
 import { formatNFTSheet } from './format-nft';
 import { sheetContainsNFTData, sheetContainsCoinData } from './sheet';
@@ -148,8 +149,7 @@ function updateFormulas_(): GoogleAppsScript.Spreadsheet.Sheet | null {
     if (sheetContainsCoinData(sheet)) {
         updateFMVFormulas(sheet);
     } else if (sheetContainsNFTData(sheet)) {
-        Browser.msgBox('NFT Update Formulas', 'TODO', Browser.Buttons.OK);
-        // updateNFTFormulas(sheet);
+        updateNFTFormulas(sheet);
     } else {
         Browser.msgBox('Active Sheet Does Not Support Updating Formulas', `The active sheet "${sheet.getName()}" does not look like a tracking sheet with Formulas that can be updated using this command. HODL Totals can only only update formulas on tracking sheets originally created using HODL Totals commands.`, Browser.Buttons.OK);
     }

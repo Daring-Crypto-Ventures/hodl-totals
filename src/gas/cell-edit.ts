@@ -3,7 +3,7 @@
  *
  */
 import { sheetContainsCoinData, sheetContainsNFTData } from './sheet';
-import { setFMVStrategyOnRow } from './fmv';
+import { setFMVStrategyOnRow } from './formulas-coin';
 import { CompleteDataRow } from '../types';
 import getLastRowWithDataPresent from '../last-row';
 
