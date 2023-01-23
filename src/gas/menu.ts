@@ -52,7 +52,7 @@ export function onOpen(e: GoogleAppsScript.Events.AppsScriptEvent): void {
         .addItem('-- ON THE ACTIVE SHEET --', 'dummyMenuItem_')
         .addItem('Format columns', 'formatSheet_')
         .addItem('Update formulas', 'updateFormulas_')
-        .addItem('Calculate gain/loss', 'calculateCoinGainLoss_')
+        .addItem('Calculate gain/loss', 'calculateGainLoss_')
         .addSeparator()
         .addItem('About HODL Totals', 'showAboutDialog_')
         .addItem('Join our Discord server', 'openDiscordLink_')
@@ -160,7 +160,7 @@ function updateFormulas_(): GoogleAppsScript.Spreadsheet.Sheet | null {
  * Triggers the cost basis calculation
  *
  */
-function calculateCoinGainLoss_(): GoogleAppsScript.Spreadsheet.Sheet | null {
+function calculateGainLoss_(): GoogleAppsScript.Spreadsheet.Sheet | null {
     const sheet: GoogleAppsScript.Spreadsheet.Sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
     if (sheetContainsCoinData(sheet)) {
         calculateCoinGainLoss(sheet);

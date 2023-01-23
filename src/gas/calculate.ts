@@ -3,6 +3,7 @@
  *
  */
 import { getCoinFromSheetName } from './sheet';
+import validateNFTSheet from './validate-nft';
 import { CompleteDataRow, CompleteDataRowAsStrings, LooselyTypedDataValidationRow } from '../types';
 import getLastRowWithDataPresent from '../last-row';
 import calculateFIFO from '../calc-fifo';
@@ -96,15 +97,22 @@ export function calculateCoinGainLoss(sheet: GoogleAppsScript.Spreadsheet.Sheet 
  */
 export function calculateNFTGainLossStatus(sheet: GoogleAppsScript.Spreadsheet.Sheet | null): GoogleAppsScript.Spreadsheet.Sheet | null {
     if ((sheet !== null) && (typeof ScriptApp !== 'undefined')) {
-        const sheetReady = false;
-        // TODO set sheetReady after doing some data validation
-        if (sheetReady) {
+        // sanity check the data in the sheet. only proceed if data is good
+        Logger.log('Validating the NFT data before starting calculation.');
+        const validationErrMsg = validateNFTSheet(sheet);
+
+        if (validationErrMsg === '') {
             // TODO perform the calculation
             const now = Utilities.formatDate(new Date(), SpreadsheetApp.getActiveSpreadsheet().getSpreadsheetTimeZone(), 'yyyy-MM-dd HH:mm');
             sheet.getRange('AE1').setValue(`${now}`);
             sheet.getRange('AF1').setValue('Succeeded');
             Logger.log(`Last NFT calculation succeeded ${now}`);
         } else {
+            // notify the user of the data validation error
+            const msgPrefix = validationErrMsg.substring(0, validationErrMsg.indexOf(':'));
+            const msg = Utilities.formatString(validationErrMsg);
+            Browser.msgBox(msgPrefix, msg, Browser.Buttons.OK);
+
             const now = Utilities.formatDate(new Date(), SpreadsheetApp.getActiveSpreadsheet().getSpreadsheetTimeZone(), 'yyyy-MM-dd HH:mm');
             sheet.getRange('AE1').setValue(`${now}`);
             sheet.getRange('AF1').setValue('Failed');
