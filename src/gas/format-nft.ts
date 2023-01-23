@@ -32,7 +32,7 @@ export function formatNFTSheet(sheet: GoogleAppsScript.Spreadsheet.Sheet | null)
 
         // populate the sheet header
         const headerRow1p1 = `=HYPERLINK("${totalsSheetUrl}"," ↩ Totals ")`;
-        const coinTotalFormula = '=CONCATENATE(COUNTA($C$3:C)-COUNTA($U$3:U)," NFT(s)")';
+        const coinTotalFormula = '=CONCATENATE(COUNTA($F$3:F)-COUNTA($V$3:V)," NFT(s)")';
         const headerRow1p2 = ['Acquisition Information', '', '', '', '', '', '', '', '', '', 'Cost Basis for Tax Purposes', '', '', '  |  ',
             'Disposal Information', '', '', '', '', '', '', '', '', '', '', '    Last Calculation    ', '', '', '', ''];
         // NOTE: spaces are hard coded around header text that help autosizecolumns behave correctly
