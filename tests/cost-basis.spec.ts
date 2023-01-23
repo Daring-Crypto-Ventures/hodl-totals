@@ -1,6 +1,6 @@
 import { UnitTestWrapper, assert, assertCell, createTempSheet, fillInTempSheet, deleteTempSheet } from './utils.test';
 import { DataValidationRow, CompleteDataRow, CompleteDataRowAsStrings } from '../src/types';
-import calculateFIFO from '../src/calc-fifo';
+import { calculateFIFO } from '../src/calc-fifo';
 import getOrderList from '../src/orders';
 import validate from '../src/validate';
 import getLastRowWithDataPresent from '../src/last-row';

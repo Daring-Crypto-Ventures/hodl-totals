@@ -6,7 +6,7 @@ import { getCoinFromSheetName } from './sheet';
 import validateNFTSheet from './validate-nft';
 import { CompleteDataRow, CompleteDataRowAsStrings, LooselyTypedDataValidationRow } from '../types';
 import getLastRowWithDataPresent from '../last-row';
-import calculateFIFO from '../calc-fifo';
+import { calculateFIFO, dateFromString } from '../calc-fifo';
 import getOrderList from '../orders';
 import validate from '../validate';
 
@@ -102,7 +102,29 @@ export function calculateNFTGainLossStatus(sheet: GoogleAppsScript.Spreadsheet.S
         const validationErrMsg = validateNFTSheet(sheet);
 
         if (validationErrMsg === '') {
-            // TODO perform the calculation
+            const MILLIS_PER_DAY = 1000 * 60 * 60 * 24;
+            const lastTxInRow = getLastRowWithDataPresent(sheet.getRange('F:F').getValues() as string[][]);
+            const lastTxOutRow = getLastRowWithDataPresent(sheet.getRange('V:V').getValues() as string[][]);
+            const lastRow = lastTxInRow > lastTxOutRow ? lastTxInRow : lastTxOutRow;
+
+            // walk through all rows and fill in Status
+            for (let i = 3; i <= lastRow; i++) {
+                const acquisitionDateString = sheet.getRange(`F${i}`).getDisplayValue();
+                const dispositionDateString = sheet.getRange(`V${i}`).getDisplayValue();
+                if (dispositionDateString === '') {
+                    sheet.getRange(`AF${i}`).setValue('Unsold');
+                } else {
+                    const dispositionDate = dateFromString(dispositionDateString, 0);
+                    const oneYrAfterAcquisitionDate = dateFromString(acquisitionDateString, 1);
+
+                    if ((dispositionDate.getTime() - oneYrAfterAcquisitionDate.getTime()) / MILLIS_PER_DAY > 0) {
+                        sheet.getRange(`AF${i}`).setValue('Long-term');
+                    } else {
+                        sheet.getRange(`AF${i}`).setValue('Short-term');
+                    }
+                }
+            }
+
             const now = Utilities.formatDate(new Date(), SpreadsheetApp.getActiveSpreadsheet().getSpreadsheetTimeZone(), 'yyyy-MM-dd HH:mm');
             sheet.getRange('AE1').setValue(`${now}`);
             sheet.getRange('AF1').setValue('Succeeded');

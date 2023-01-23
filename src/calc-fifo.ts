@@ -1,10 +1,14 @@
+/**
+ * @NotOnlyCurrentDoc Limits the script to only accessing the current sheet.
+ *
+ */
 import { CompleteDataRow, CompleteDataRowAsStrings } from './types';
 
 /**
  * Using the FIFO method calculate short and long term gains from the data.
  *
  */
-export default function calculateFIFO(
+export function calculateFIFO(
     coinname: string,
     data: CompleteDataRow[],
     formulaData: CompleteDataRowAsStrings[], // TODO don't pass this in, find a better way for caller to track what rows got added
@@ -232,7 +236,7 @@ export default function calculateFIFO(
  *
  * @return Date object corresponding to that string input.
  */
-function dateFromString(dateStr: string, incYear: number): Date {
+export function dateFromString(dateStr: string, incYear: number): Date {
     const year = Number(dateStr.substring(0, 4));
     const month = Number(dateStr.substring(5, 7));
     const day = Number(dateStr.substring(8, 10));
