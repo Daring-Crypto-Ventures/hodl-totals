@@ -88,7 +88,7 @@ export function formatNFTSheet(sheet: GoogleAppsScript.Spreadsheet.Sheet | null)
         sheet.getRange('G3:G').setFontColor('#424250').setFontStyle('italic').setHorizontalAlignment('center');
 
         // set common properties across ranges of numeric columns
-        sheet.getRange('H3:P').setFontColor(null).setFontStyle(null)
+        sheet.getRange('H3:O').setFontColor(null).setFontStyle(null)
             .setFontFamily('Calibri')
             .setFontSize(11);
         sheet.getRange('W3:AE').setFontColor(null).setFontStyle(null)
