@@ -133,7 +133,6 @@ function instructionData(): string[][] {
         ['FALSE', '', '', 'Use the Tx ✔ columnn to track your progress while updating/reconciling each transaction.', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
         ['FALSE', '', '', 'Reset the HODL Totals sheet at any time to refresh the summary of your holdings.', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
         ['FALSE', '', '', 'Enter your holdings on the HODL Totals sheet periodically to reconcile your records with reality.', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
-        ['FALSE', '', '', 'Use the notes column to record details about your wallet, address or account.', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
         ['FALSE', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
         ['FALSE', '', '', 'DETERMINE FAIR MARKET VALUE', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
         ['FALSE', '', '', 'Grab High/Lows from historical values tab on https://coinmarketcap.com', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
@@ -146,7 +145,7 @@ function instructionData(): string[][] {
         ['FALSE', '', '', 'The transactions must be sorted into chronological order before a calculation can run.', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
         ['FALSE', '', '', 'The status column provides useful information for each transaction.', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
         ['FALSE', '', '', 'If a sale includes short and long-term components, it is split.', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
-        ['FALSE', '', '', 'Use the notes column to store links to any other sheets that summarize the gain/loss', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '']
+        ['FALSE', '', '', 'Use the Tax Doc Link column to store links to any other sheets that list or summarize the gain/loss', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '']
     ];
     return instructionsData;
 }
