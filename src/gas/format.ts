@@ -157,7 +157,7 @@ export function formatSheet(sheet: GoogleAppsScript.Spreadsheet.Sheet | null): G
 
         // autosize columns' widths to fit content, but ignore tx ID columns
         sheet.autoResizeColumns(1, 2);
-        sheet.autoResizeColumns(5, 17);
+        sheet.autoResizeColumns(4, 18);
         SpreadsheetApp.flush();
 
         return sheet;

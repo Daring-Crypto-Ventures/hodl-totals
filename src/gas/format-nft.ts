@@ -145,8 +145,8 @@ export function formatNFTSheet(sheet: GoogleAppsScript.Spreadsheet.Sheet | null)
 
         // autosize columns' widths to fit content, but ignore tx ID & descrip columns
         sheet.autoResizeColumns(1, 3);
-        sheet.autoResizeColumns(6, 12);
-        sheet.autoResizeColumns(21, 13);
+        sheet.autoResizeColumns(5, 13);
+        sheet.autoResizeColumns(20, 14);
         SpreadsheetApp.flush();
 
         return sheet;
