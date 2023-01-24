@@ -43,12 +43,12 @@ export function formatSheet(sheet: GoogleAppsScript.Spreadsheet.Sheet | null): G
         // leave ONE cell gap to prevent overwriting user provided value: subtotal of the Net Change column
         const headerRow1p4 = [`${desiredCurrency}`, 'Inflow', '', 'Outflow', '', 'Fair Mkt Value', '', '', 'Last Gain/Loss Calculation (FIFO Method)', '', ''];
         // leave TWO cell gaps to prevent overwriting user provided value: Date and Succeeded/Failed Status of the last gain/loss calculation
-        const headerRow1p5 = '';
+        const headerRow1p5 = 'Documentation';
         // NOTE: spaces are hard coded around header text that help autosizecolumns behave correctly
-        const headerRow2 = ['   Tx ✔   ', '    All Wallet & Accounts    ', '    Transaction ID    ', '   Description   ', '    Date & Time    ', '       Category       ', '    Net Change    ',
+        const headerRow2 = ['   Tx ✔   ', '      All Wallet & Accounts      ', '    Transaction ID    ', '   Description   ', '    Date & Time    ', '       Category       ', '    Net Change    ',
             '        Valuation Strategy        ', `   ${desiredCurrency} Acquired   `, '    Value (USD)    ', `   ${desiredCurrency} Disposed   `, '    Value (USD)    ',
             `   ${desiredCurrency} High   `, `     ${desiredCurrency} Low     `, `    ${desiredCurrency} Price    `,
-            '   Assigned Lot ID   ', '    Date Acquired    ', '   Status   ', '        Cost Basis        ', '    Gain (Loss)    ', '      Notes      '];
+            '   Assigned Lot ID   ', '    Date Acquired    ', '   Status   ', '        Cost Basis        ', '    Gain (Loss)    ', '       Tax Doc Link       '];
 
         sheet.getRange('A1:B1').setValues([headerRow1p1]);
         sheet.getRange('C1').setValue(coinTotalFormula);
@@ -157,7 +157,7 @@ export function formatSheet(sheet: GoogleAppsScript.Spreadsheet.Sheet | null): G
 
         // autosize columns' widths to fit content, but ignore tx ID columns
         sheet.autoResizeColumns(1, 2);
-        sheet.autoResizeColumns(4, 17);
+        sheet.autoResizeColumns(5, 17);
         SpreadsheetApp.flush();
 
         return sheet;

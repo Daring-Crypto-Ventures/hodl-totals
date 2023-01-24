@@ -109,17 +109,38 @@ export function calculateNFTGainLossStatus(sheet: GoogleAppsScript.Spreadsheet.S
 
             // Create tax status lookup table for categories from the Categories sheet
             const nftCategoriesSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('NFT Categories');
+            let txInCategoryRows: string[][] = [];
             let txOutCategoryRows: string[][] = [];
             if (nftCategoriesSheet !== null) {
+                txInCategoryRows = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('NFT Categories')?.getRange('A2:C20').getValues() as string[][];
                 txOutCategoryRows = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('NFT Categories')?.getRange('A21:C35').getValues() as string[][];
             }
 
             // clear previously filled-in values
+            sheet.getRange('P3:P').setValue('');
             sheet.getRange('AF3:AF').setValue('');
 
             // walk through all rows and fill in Status
             for (let i = 3; i <= lastRow; i++) {
+                // Set Status on Tx In
                 const acquisitionDateString = sheet.getRange(`F${i}`).getDisplayValue();
+
+                // Check to see if row's Tx In category is Taxable or Not Taxable thing, list that and move on
+                const txInCategory = sheet.getRange(`G${i}`).getValue() as string;
+                txInCategoryRows.every(categoryRow => {
+                    const taxableStatus = (categoryRow?.[0] === txInCategory) ? categoryRow?.[2] : '';
+                    if (taxableStatus.startsWith('Not Taxable')) {
+                        sheet.getRange(`P${i}`).setValue('Not Taxable');
+                        return false; // stop iterating thru categories list if found a taxable/not taxable status
+                    }
+                    if (taxableStatus.startsWith('Taxable')) {
+                        sheet.getRange(`P${i}`).setValue('Taxable');
+                        return false; // stop iterating thru categories list if found a taxable/not taxable status
+                    }
+                    return true; // continue iterating thru categories list looking for a match
+                });
+
+                // Set status on Tx Out
                 const dispositionDateString = sheet.getRange(`V${i}`).getDisplayValue();
                 if (dispositionDateString === '') {
                     sheet.getRange(`AF${i}`).setValue('Unsold');
@@ -129,12 +150,12 @@ export function calculateNFTGainLossStatus(sheet: GoogleAppsScript.Spreadsheet.S
 
                     // Check to see if row's Tx Out category is a Not Taxable thing, if yes set as such and move on
                     const txOutCategory = sheet.getRange(`U${i}`).getValue() as string;
-                    let isTaxable = true;
+                    let txOutIsTaxable = true;
                     txOutCategoryRows.every(categoryRow => {
                         const taxableStatus = (categoryRow?.[0] === txOutCategory) ? categoryRow?.[2] : '';
                         if (taxableStatus.startsWith('Not Taxable')) {
-                            sheet.getRange(`AF${i}`).setValue(taxableStatus);
-                            isTaxable = false;
+                            sheet.getRange(`AF${i}`).setValue('Not Taxable');
+                            txOutIsTaxable = false;
                             return false; // stop iterating thru categories list if found not taxable status
                         }
                         if (taxableStatus.startsWith('Taxable')) {
@@ -143,7 +164,7 @@ export function calculateNFTGainLossStatus(sheet: GoogleAppsScript.Spreadsheet.S
                         return true; // continue iterating thru categories list looking for a match
                     });
 
-                    if (isTaxable) {
+                    if (txOutIsTaxable) {
                         if ((dispositionDate.getTime() - oneYrAfterAcquisitionDate.getTime()) / MILLIS_PER_DAY > 0) {
                             sheet.getRange(`AF${i}`).setValue('Long-term');
                         } else {

@@ -33,15 +33,15 @@ export function formatNFTSheet(sheet: GoogleAppsScript.Spreadsheet.Sheet | null)
         // populate the sheet header
         const headerRow1p1 = `=HYPERLINK("${totalsSheetUrl}"," ↩ Totals ")`;
         const coinTotalFormula = '=CONCATENATE(COUNTA($F$3:F)-COUNTA($V$3:V)," NFT(s)")';
-        const headerRow1p2 = ['Acquisition Information', '', '', '', '', '', '', '', '', '', 'Cost Basis for Tax Purposes', '', '', '  |  ',
-            'Disposal Information', '', '', '', '', '', '', '', '', '', '', '    Last Calculation    ', '', '', '', ''];
+        const headerRow1p2 = ['Acquisition Information', '', '', '', '', '', '', '', '', '', 'Cost Basis', '', '', 'Documentation',
+            'Disposal Information', '', '', '', '', '', '', '', '', '', '', '    Last Calculation    ', '', '', '', 'Documentation'];
         // NOTE: spaces are hard coded around header text that help autosizecolumns behave correctly
-        const headerRow2 = ['   In Tx ✔   ', '    Collection    ', '    NFT ID    ', '    NFT In Tx(s)    ', '   NFT In Description   ', '    Date & Time    ',
+        const headerRow2 = ['      In Tx ✔      ', '    Collection    ', '     NFT ID     ', '    NFT In Tx(s)    ', '   NFT In Description   ', '    Date & Time    ',
             '       Inflow Category       ', '    Acq Price    ', '    Acq Price (USD)    ', '    Tx Fees    ', '    Tx Fees (USD)    ', '    Cost Basis Adj   ',
-            '    Cost Basis Adj (USD)    ', '    Cost Basis    ', '    Cost Basis (USD)    ', '    NFT In Notes    ', '  |  ',
-            '   Out Tx ✔   ', '    NFT Out Tx(s)    ', '   NFT Out Description   ', '       Outflow Category       ', '    Date & Time    ',
+            '    Cost Basis Adj (USD)    ', '    Cost Basis    ', '    Cost Basis (USD)    ', '    In Tx Status    ', '      In Tx Tax Doc Link      ',
+            '  Out Tx ✔  ', '    NFT Out Tx(s)    ', '   NFT Out Description   ', '       Outflow Category       ', '    Date & Time    ',
             '    Sale Price    ', '    Sale Price (USD)    ', '    Tx Fees    ', '    Tx Fees (USD)    ', '    Selling Fees   ', '    Selling Fees (USD)    ',
-            '    Proceeds    ', '    Proceeds (USD)    ', '    Gain (Loss)    ', '    Status    ', '       NFT Out Notes       '];
+            '    Proceeds    ', '    Proceeds (USD)    ', '     Gain (Loss)     ', '       Out Tx Status       ', '      Out Tx Tax Doc Link      '];
 
         sheet.getRange('A1').setValue(headerRow1p1);
         sheet.getRange('C1').setValue(coinTotalFormula);
@@ -55,7 +55,7 @@ export function formatNFTSheet(sheet: GoogleAppsScript.Spreadsheet.Sheet | null)
         const lastRow = lastTxInRow > lastTxOutRow ? lastTxInRow : lastTxOutRow;
 
         // add borders to demarcate the row 1 headers into logical groups
-        sheet.getRange('N1:O1').setBorder(false, true, false, true, false, false);
+        sheet.getRange('N1:P1').setBorder(false, true, false, true, false, false);
         sheet.getRange('AC1:AF1').setBorder(false, true, false, true, false, false);
 
         // set conditional formatting rules on row 1 cells
@@ -64,7 +64,7 @@ export function formatNFTSheet(sheet: GoogleAppsScript.Spreadsheet.Sheet | null)
         // merge 1st row cell headers
         sheet.getRange('A1:AG1').breakApart();
         sheet.getRange('D1:M1').merge();
-        sheet.getRange('N1:O1').merge();
+        sheet.getRange('N1:P1').merge();
         sheet.getRange('R1:AB1').merge();
         sheet.getRange('AC1:AD1').merge();
 
@@ -88,7 +88,7 @@ export function formatNFTSheet(sheet: GoogleAppsScript.Spreadsheet.Sheet | null)
         sheet.getRange('G3:G').setFontColor('#424250').setFontStyle('italic').setHorizontalAlignment('center');
 
         // set common properties across ranges of numeric columns
-        sheet.getRange('H3:O').setFontColor(null).setFontStyle(null)
+        sheet.getRange('H3:P').setFontColor(null).setFontStyle(null)
             .setFontFamily('Calibri')
             .setFontSize(11);
         sheet.getRange('W3:AE').setFontColor(null).setFontStyle(null)
@@ -127,8 +127,9 @@ export function formatNFTSheet(sheet: GoogleAppsScript.Spreadsheet.Sheet | null)
             .setHorizontalAlignment('center');
 
         // set col styles for calculated columns and separator columns
-        sheet.getRange('N3:O').setBackground('#EEEEEE');
-        sheet.getRange('Q3:Q').setBackground('#CCCCCC');
+        sheet.getRange('N3:P').setBackground('#EEEEEE');
+        sheet.getRange('P3:P').setHorizontalAlignment('center');
+        sheet.getRange('Q1:Q').setBorder(false, false, false, true, false, false, 'dark gray 3', SpreadsheetApp.BorderStyle.SOLID_THICK);
         sheet.getRange('AC3:AF').setBackground('#EEEEEE');
         sheet.getRange('AF3:AF').setHorizontalAlignment('center');
         sheet.getRange('AF1').setFontWeight('normal');
@@ -145,7 +146,7 @@ export function formatNFTSheet(sheet: GoogleAppsScript.Spreadsheet.Sheet | null)
         // autosize columns' widths to fit content, but ignore tx ID & descrip columns
         sheet.autoResizeColumns(1, 3);
         sheet.autoResizeColumns(6, 12);
-        sheet.autoResizeColumns(21, 11);
+        sheet.autoResizeColumns(21, 13);
         SpreadsheetApp.flush();
 
         return sheet;
