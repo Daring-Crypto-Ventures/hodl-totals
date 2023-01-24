@@ -68,6 +68,34 @@ export function calculateCoinGainLoss(sheet: GoogleAppsScript.Spreadsheet.Sheet 
                 sheet.getRange(`${annotation[0]}`).setNote(annotation[1]);
             }
 
+            // Create tax status lookup table for categories from the Categories sheet
+            const categoriesSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Categories');
+            let txCategoryRows: string[][] = [];
+            if (categoriesSheet !== null) {
+                txCategoryRows = categoriesSheet.getRange('A2:C35').getValues() as string[][];
+            }
+
+            // iterate thru the new sheet contents to lookup and potentially set Not Taxable Status
+            const newLastRow = getLastRowWithDataPresent(sheet.getRange('E:E').getValues() as string[][]);
+            for (let i = 3; i <= newLastRow; i++) {
+                // Check to see if row's Tx category is a Not Taxable thing, if yes append that and move on
+                const txCategory = sheet.getRange(`F${i}`).getValue() as string;
+                const txStatus = sheet.getRange(`R${i}`).getValue() as string;
+                if ((txStatus === 'Short-term') || (txStatus === 'Long-term')) {
+                    txCategoryRows.every(categoryRow => {
+                        const taxableStatus = (categoryRow?.[0] === txCategory) ? categoryRow?.[2] : '';
+                        if (taxableStatus.startsWith('Not Taxable')) {
+                            sheet.getRange(`R${i}`).setValue('Not Taxable');
+                            return false; // stop iterating thru categories list if found not taxable status
+                        }
+                        if (taxableStatus.startsWith('Taxable')) {
+                            return false; // stop iterating thru categories list if found taxable status
+                        }
+                        return true; // continue iterating thru categories list looking for a match
+                    });
+                }
+            }
+
             // output the current date and time as the time last completed
             const now = Utilities.formatDate(new Date(), SpreadsheetApp.getActiveSpreadsheet().getSpreadsheetTimeZone(), 'yyyy-MM-dd HH:mm');
             sheet.getRange('S1').setValue(`${now}`);
@@ -112,13 +140,16 @@ export function calculateNFTGainLossStatus(sheet: GoogleAppsScript.Spreadsheet.S
             let txInCategoryRows: string[][] = [];
             let txOutCategoryRows: string[][] = [];
             if (nftCategoriesSheet !== null) {
-                txInCategoryRows = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('NFT Categories')?.getRange('A2:C20').getValues() as string[][];
-                txOutCategoryRows = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('NFT Categories')?.getRange('A21:C35').getValues() as string[][];
+                txInCategoryRows = nftCategoriesSheet.getRange('A2:C20').getValues() as string[][];
+                txOutCategoryRows = nftCategoriesSheet.getRange('A21:C35').getValues() as string[][];
             }
 
             // clear previously filled-in values
             sheet.getRange('P3:P').setValue('');
             sheet.getRange('AF3:AF').setValue('');
+
+            // TODO performance fix for this section: calculate arrays for txInStatus and txOutStatus
+            // and then call setValues in twice given each array; much more performant operation
 
             // walk through all rows and fill in Status
             for (let i = 3; i <= lastRow; i++) {
