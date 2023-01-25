@@ -75,25 +75,28 @@ export function calculateCoinGainLoss(sheet: GoogleAppsScript.Spreadsheet.Sheet 
                 txCategoryRows = categoriesSheet.getRange('A2:C35').getValues() as string[][];
             }
 
-            // iterate thru the new sheet contents to lookup and potentially set Not Taxable Status
+            // iterate thru the new sheet contents to set Taxable or Not Taxable Status if not previously set
             const newLastRow = getLastRowWithDataPresent(sheet.getRange('E:E').getValues() as string[][]);
-            for (let i = 3; i <= newLastRow; i++) {
-                // Check to see if row's Tx category is a Not Taxable thing, if yes append that and move on
-                const txCategory = sheet.getRange(`F${i}`).getValue() as string;
-                const txStatus = sheet.getRange(`R${i}`).getValue() as string;
-                if ((txStatus === 'Short-term') || (txStatus === 'Long-term')) {
-                    txCategoryRows.every(categoryRow => {
-                        const taxableStatus = (categoryRow?.[0] === txCategory) ? categoryRow?.[2] : '';
-                        if (taxableStatus.startsWith('Not Taxable')) {
-                            sheet.getRange(`R${i}`).setValue('Not Taxable');
-                            return false; // stop iterating thru categories list if found not taxable status
-                        }
-                        if (taxableStatus.startsWith('Taxable')) {
-                            return false; // stop iterating thru categories list if found taxable status
-                        }
-                        return true; // continue iterating thru categories list looking for a match
-                    });
-                }
+            const txCategoryCol = sheet.getRange(`F1:F${newLastRow}`).getValues() as string[][];
+            const txLotInfoCol = sheet.getRange(`P1:P${newLastRow}`).getValues() as string[][];
+            for (let i = 2; i < newLastRow; i++) {
+                // Check the row's Tx category's Taxable status, append that and move on
+                const txCategory = txCategoryCol[i][0];
+                const txLotInfo = txLotInfoCol[i][0];
+                txCategoryRows.every(categoryRow => {
+                    const taxableStatus = (categoryRow?.[0] === txCategory) ? categoryRow?.[2] : '';
+                    if (taxableStatus.startsWith('Not Taxable')) {
+                        sheet.getRange(`R${i + 1}`).setValue('Not Taxable');
+                        return false; // stop iterating thru categories list if found not taxable status
+                    }
+                    if (taxableStatus.startsWith('Taxable') && !(txLotInfo.startsWith('Sold'))) {
+                        sheet.getRange(`Q${i + 1}`).setValue(sheet.getRange(`E${i + 1}`).getDisplayValue().substring(0, 10));
+                        sheet.getRange(`R${i + 1}`).setValue('Taxable');
+                        sheet.getRange(`T${i + 1}`).setValue(sheet.getRange(`J${i + 1}`).getDisplayValue());
+                        return false; // stop iterating thru categories list if found taxable status
+                    }
+                    return true; // continue iterating thru categories list looking for a match
+                });
             }
 
             // output the current date and time as the time last completed

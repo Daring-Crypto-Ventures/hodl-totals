@@ -79,7 +79,7 @@ export function newNFTSheet(address = ''): GoogleAppsScript.Spreadsheet.Sheet | 
 
         const newSheet = SpreadsheetApp.getActiveSpreadsheet().insertSheet(`${newNFTAddress} NFTs`);
         SpreadsheetApp.setActiveSheet(newSheet);
-        newSheet.getRange('B1').setValue(`Address ${newNFTAddress}`);
+        newSheet.getRange('B1').setValue(`${newNFTAddress}`);
 
         return formatNFTSheet(newSheet);
     }

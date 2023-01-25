@@ -24,8 +24,7 @@ export function test1CostBasis(): UnitTestWrapper {
         const testRun = function (round: number): void {
             const annotations = callCalculateFIFO(sheet, coinName, data, round);
 
-            assertCell(sheet, data as string[][], 2, 15, 'Lot 1', `Round ${round} Test1 : Row 3 Lot ID : expected Lot 1`);
-            assertCell(sheet, data as string[][], 2, 17, '50% Sold', `Round ${round} Test1 : Row 3 lot half sold`);
+            assertCell(sheet, data as string[][], 2, 15, 'Lot 1 - 50% Sold', `Round ${round} Test1 : Row 3 Lot ID : expected Lot 1 half sold`);
             assertCell(sheet, data as string[][], 2, 18, '0.00', `Round ${round} Test1 : Row 3 Cost Basis has no cost basis`, 2);
             assertCell(sheet, data as string[][], 2, 19, '0.00', `Round ${round} Test1 : Row 3 Gain(Loss) has no gain`, 2);
             assertCell(sheet, data as string[][], 3, 15, 'Sold from Lot 1', `Round ${round} Test1 : Row 4 Lot ID : expected Sold from Lot 1`);
@@ -60,8 +59,7 @@ export function test2CostBasis(): UnitTestWrapper {
         const testRun = function (round: number): void {
             const annotations = callCalculateFIFO(sheet, coinName, data, round);
 
-            assertCell(sheet, data as string[][], 2, 15, 'Lot 1', `Round ${round} Test2 : Row 3 Lot ID : expected Lot 1`);
-            assertCell(sheet, data as string[][], 2, 17, '100% Sold', `Round ${round} Test2 : Row 3 Status : expected all coin sold`);
+            assertCell(sheet, data as string[][], 2, 15, 'Lot 1 - 100% Sold', `Round ${round} Test2 : Row 3 Lot ID : expected Lot 1`);
             assertCell(sheet, data as string[][], 2, 18, '0.00', `Round ${round} Test2 : Row 3 Cost Basis : expected no cost basis`, 2);
             assertCell(sheet, data as string[][], 2, 19, '0.00', `Round ${round} Test2 : Row 3 Gain(Loss) : expected no gain`, 2);
             assertCell(sheet, data as string[][], 3, 15, 'Sold from Lot 1', `Round ${round} Test2 : Row 4 Lot ID : expected Sold from Lot 1`);
@@ -97,12 +95,10 @@ export function test3CostBasis(): UnitTestWrapper {
         const testRun = function (round: number): void {
             const annotations = callCalculateFIFO(sheet, coinName, data, round);
 
-            assertCell(sheet, data as string[][], 2, 15, 'Lot 1', `Round ${round} Test3 : Row 3 Lot ID : expected Lot 1`);
-            assertCell(sheet, data as string[][], 2, 17, '100% Sold', `Round ${round} Test3 : Row 3 Status : expected 100% sold`);
+            assertCell(sheet, data as string[][], 2, 15, 'Lot 1 - 100% Sold', `Round ${round} Test3 : Row 3 Lot ID : expected Lot 1`);
             assertCell(sheet, data as string[][], 2, 18, '0.00', `Round ${round} Test3 : Row 3 Cost Basis : expected no cost basis`, 2);
             assertCell(sheet, data as string[][], 2, 19, '0.00', `Round ${round} Test3 : Row 3 Gain(Loss) : expected no gain`, 2);
-            assertCell(sheet, data as string[][], 3, 15, 'Lot 2', `Round ${round} Test3 : Row 4 Lot ID : expected Lot 2`);
-            assertCell(sheet, data as string[][], 3, 17, '100% Sold', `Round ${round} Test3 : Row 4 Status : expected 100% sold`);
+            assertCell(sheet, data as string[][], 3, 15, 'Lot 2 - 100% Sold', `Round ${round} Test3 : Row 4 Lot ID : expected Lot 2`);
             assertCell(sheet, data as string[][], 3, 18, '0.00', `Round ${round} Test3 : Row 4 Cost Basis : expected no cost basis`, 2);
             assertCell(sheet, data as string[][], 3, 19, '0.00', `Round ${round} Test3 : Row 4 Gain(Loss) : expected no gain`, 2);
             assertCell(sheet, data as string[][], 4, 15, 'Sold from Lot 1', `Round ${round} Test3 : Row 5 Lot ID : expected Sold from Lot 1`);
@@ -151,8 +147,7 @@ export function test4CostBasis(): UnitTestWrapper {
         const testRun = function (round: number): void {
             const annotations = callCalculateFIFO(sheet, coinName, data, round);
 
-            assertCell(sheet, data as string[][], 2, 15, 'Lot 1', `Round ${round} Test4 : Row 3 Lot ID : expected Lot 1`);
-            assertCell(sheet, data as string[][], 2, 17, '0% Sold', `Round ${round} Test4 : Row 3 Status : expected no coin sold`);
+            assertCell(sheet, data as string[][], 2, 15, 'Lot 1 - 0% Sold', `Round ${round} Test4 : Row 3 Lot ID : expected Lot 1`);
             assertCell(sheet, data as string[][], 2, 18, '0.00', `Round ${round} Test4 : Row 3 Cost Basis : expected no cost basis`, 2);
             assertCell(sheet, data as string[][], 2, 19, '0.00', `Round ${round} Test4 : Row 3 Gain(Loss) : expected no gain`, 2);
             assert(annotations.length, 0, `Round ${round} Test4 : Annotations : expected no annotations`);
@@ -190,12 +185,10 @@ export function test5CostBasis(): UnitTestWrapper {
         const testRun = function (round: number): void {
             const annotations = callCalculateFIFO(sheet, coinName, data, round);
 
-            assertCell(sheet, data as string[][], 2, 15, 'Lot 1', `Round ${round} Test5 : Row 3 Lot ID : expected Lot 1`);
-            assertCell(sheet, data as string[][], 2, 17, '100% Sold', `Round ${round} Test5 : Row 3 Status : expected 100% sold`);
+            assertCell(sheet, data as string[][], 2, 15, 'Lot 1 - 100% Sold', `Round ${round} Test5 : Row 3 Lot ID : expected Lot 1`);
             assertCell(sheet, data as string[][], 2, 18, '0.00', `Round ${round} Test5 : Row 3 Cost Basis : expected no cost basis`, 2);
             assertCell(sheet, data as string[][], 2, 19, '0.00', `Round ${round} Test5 : Row 3 Gain(Loss) : expected no gain`, 2);
-            assertCell(sheet, data as string[][], 3, 15, 'Lot 2', `Round ${round} Test5 : Row 4 Lot ID : expected Lot 2`);
-            assertCell(sheet, data as string[][], 3, 17, '100% Sold', `Round ${round} Test5 : Row 4 Status : expected 100% sold`);
+            assertCell(sheet, data as string[][], 3, 15, 'Lot 2 - 100% Sold', `Round ${round} Test5 : Row 4 Lot ID : expected Lot 2`);
             assertCell(sheet, data as string[][], 3, 18, '0.00', `Round ${round} Test5 : Row 4 Cost Basis : expected no cost basis`, 2);
             assertCell(sheet, data as string[][], 3, 19, '0.00', `Round ${round} Test5 : Row 4 Gain(Loss) : expected no gain`, 2);
             assertCell(sheet, data as string[][], 4, 15, 'Sold from Lot 1', `Round ${round} Test5 : Row 5 Lot ID : expected Sold from Lot 1`);
@@ -304,8 +297,7 @@ export function test6CostBasis(): UnitTestWrapper {
             const annotations = callCalculateFIFO(sheet, coinName, data, round);
 
             for (let j = 2; j < 27; j++) {
-                assertCell(sheet, data as string[][], j, 15, `Lot ${j - 1}`, `Round ${round} Test6 : Row ${j} Lot ID : expected Lot ${j - 1}`);
-                assertCell(sheet, data as string[][], j, 17, '100% Sold', `Round ${round} Test6 : Row ${j} Status : expected 100% sold`);
+                assertCell(sheet, data as string[][], j, 15, `Lot ${j - 1} - 100% Sold`, `Round ${round} Test6 : Row ${j} Lot ID : expected Lot ${j - 1}`);
                 assertCell(sheet, data as string[][], j, 18, '0.00', `Round ${round} Test6 : Row ${j} Cost Basis : expected no cost basis`, 2);
                 assertCell(sheet, data as string[][], j, 19, '0.00', `Round ${round} Test6 : Row ${j} Gain(Loss) : expected no gain`, 2);
             }
@@ -372,8 +364,7 @@ export function test7CostBasis(): UnitTestWrapper {
             const annotations = callCalculateFIFO(sheet, coinName, data, round);
 
             for (let j = 2; j < 12; j++) {
-                assertCell(sheet, data as string[][], j, 15, `Lot ${j - 1}`, `Round ${round} Test7 : Row ${j} Lot ID : expected Lot ${j - 1}`);
-                assertCell(sheet, data as string[][], j, 17, '100% Sold', `Round ${round} Test7 : Row ${j} Status : expected 100% sold`);
+                assertCell(sheet, data as string[][], j, 15, `Lot ${j - 1} - 100% Sold`, `Round ${round} Test7 : Row ${j} Lot ID : expected Lot ${j - 1}`);
                 assertCell(sheet, data as string[][], j, 18, '0.00', `Round ${round} Test7 : Row ${j} Cost Basis : expected no cost basis`, 2);
                 assertCell(sheet, data as string[][], j, 19, '0.00', `Round ${round} Test7 : Row ${j} Gain(Loss) : expected no gain`, 2);
             }

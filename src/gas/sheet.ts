@@ -29,7 +29,7 @@ export function sheetContainsCoinData(sheet: GoogleAppsScript.Spreadsheet.Sheet 
 export function sheetContainsNFTData(sheet: GoogleAppsScript.Spreadsheet.Sheet | null): boolean {
     const addr = getAddressFromSheetName(sheet);
     if ((sheet !== null) && (typeof ScriptApp !== 'undefined')) {
-        return ((sheet.getRange('B1').getValue() as string).trim() === `Address ${addr}`);
+        return ((sheet.getRange('B1').getValue() as string).trim() === `${addr}`);
     }
     return false;
 }

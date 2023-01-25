@@ -45,8 +45,7 @@ export function calculateFIFO(
             data.push(['FALSE', '', '', '', '', '', 0, '', 0, 0, 0, 0, '', '', '', '', '', '', 0, 0, '']);
         }
         if (lots.length > 0) {
-            data[2][15] = 'Lot 1';
-            data[2][17] = '0% Sold';
+            data[2][15] = 'Lot 1 - 0% Sold';
         }
     }
 
@@ -86,8 +85,7 @@ export function calculateFIFO(
             if ((sellCoinRemain <= lotCoinRemain) || (Math.abs(sellCoinRemain - lotCoinRemain) <= ONE_SATOSHI)) {
                 if (Math.abs(sellCoinRemain - lotCoinRemain) <= ONE_SATOSHI) {
                     // all of this lot was sold
-                    data[lotRow][15] = `Lot ${lot + 1}`;
-                    data[lotRow][17] = '100% Sold';
+                    data[lotRow][15] = `Lot ${lot + 1} - 100% Sold`;
 
                     // if there are more lots to process, advance the lot count before breaking out
                     if ((lotCnt + 1) < lots.length) {
@@ -99,8 +97,7 @@ export function calculateFIFO(
                     lotCoinRemain -= sellCoinRemain;
                     const percentSold = 1 - (lotCoinRemain / lotCoin);
 
-                    data[lotRow][15] = `Lot ${lot + 1}`;
-                    data[lotRow][17] = `${(percentSold * 100).toFixed(0)}% Sold`;
+                    data[lotRow][15] = `Lot ${lot + 1} - ${(percentSold * 100).toFixed(0)}% Sold`;
                 }
 
                 // if sale more than 1 year and 1 day from purchase date mark as long-term gains
@@ -216,8 +213,7 @@ export function calculateFIFO(
                 // subtract the lot amount from the remaining coin to be sold,
                 // and set up variables for the next lot, since this lot is completely used up
                 sellCoinRemain -= lotCoinRemain;
-                data[lotRow][15] = `Lot ${lot + 1}`;
-                data[lotRow][17] = '100% Sold';
+                data[lotRow][15] = `Lot ${lot + 1} - 100% Sold`;
                 lotCnt += 1;
                 if (lotCnt < lots.length) {
                     lotCoinRemain = lots[lotCnt][1];

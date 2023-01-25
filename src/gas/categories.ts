@@ -33,18 +33,19 @@ export function newCategorySheet(): GoogleAppsScript.Spreadsheet.Sheet | null {
         ['Sales Revenue', 'Inflow', 'Taxable'],
         ['Staking', 'Inflow', 'Taxable'],
         ['Tip Income', 'Inflow', 'Not Taxable'],
+        ['Trade Inflow', 'Inflow', 'Not Taxable'],
         ['Unknown Inflow', 'Inflow', 'Taxable'],
-        ['Transfer', 'Inflow', 'Not Taxable'],
-        ['Transfer', 'Outflow', 'Not Taxable'],
+        ['Transfer In', 'Inflow', 'Not Taxable'],
+        ['Transfer Out', 'Outflow', 'Not Taxable'],
         ['Lost/Stolen', 'Outflow', 'Taxable'],
         ['Given Away', 'Outflow', 'Not Taxable'],
         ['Project Ended', 'Outflow', 'Taxable'],
         ['Sold for Goods', 'Outflow', 'Taxable'],
         ['Spent', 'Outflow', 'Taxable'],
-        ['Traded', 'Outflow', 'Taxable'],
+        ['Trade Outflow', 'Outflow', 'Taxable'],
         ['Tx Fee', 'Outflow', 'Taxable'],
         ['Unknown Outflow', 'Outflow', 'Taxable'],
-        ['Bridged', 'Outflow', 'Taxable']
+        ['Bridge Outflow', 'Outflow', 'Taxable']
     ];
     const justificationLinks = [
         ['IRS 1040 Instructions: ...A [taxable] transaction does not include the holding of virtual currency in a wallet or account', 'https://www.irs.gov/instructions/i1040gi'],
@@ -58,10 +59,11 @@ export function newCategorySheet(): GoogleAppsScript.Spreadsheet.Sheet | null {
         ['IRS Notice 2014-21: Q-8. Does a taxpayer who “mines” virtual currency realize gross income upon receipt of the virtual currency resulting from those activities?', 'https://www.irs.gov/irb/2014-16_IRB#NOT-2014-21'],
         ['IRS Pub 525 Other Income... Prizes or awards in goods or services must be included in your income at their FMV', 'https://www.irs.gov/publications/p525#en_US_2020_publink1000229578'],
         ['IRS Pub 550: Gift for opening an account: If you receive noncash gifts or services for making deposits/opening an account...you may have to report it', 'https://www.irs.gov/publications/p550#en_US_2020_publink10009869'],
-        ['NFT Sales Revenue are not taxable on coin sheets, assuming the NFT was tracked with HODL totals sheets, because the gain or loss on the NFT sale will get taxed once already as a Collectible sale.', ''],
+        ['NFT Sales Revenue is not taxable from the HODL Totals perspective, assuming the NFT was tracked with HODL totals sheets, because the gain/loss on the NFT sale is captured on the NFT tracking sheet as a Collectible sale.', ''],
         ['IRS FAQ Q17. How do I calculate my gain or loss when I exchange my virtual currency for other property?', 'https://www.irs.gov/individuals/international-taxpayers/frequently-asked-questions-on-virtual-currency-transactions#collapseCollapsible1622820578638'],
         ['IRS NOTICE 2014-21: Q-8. Does a taxpayer who “mines” virtual currency realize gross income upon receipt of the virtual currency resulting from those activities?', 'https://www.irs.gov/irb/2014-16_IRB#NOT-2014-21'],
         ['GRAY AREA: If not received for a service rendered, nothing was actively done to receive the coins like passive airdrop ', ''],
+        ['The Inflow side of the trade is not taxable from the HODL Totals perspective because the gain/loss on the trade is captured on the Trade Outflow side of the trade.', ''],
         ['IRS Pub 525: Undocumentable Income spans from Bribes to Illegal Activity to Stolen Property: all taxable', 'https://www.irs.gov/publications/p525#en_US_2020_publink1000229492'],
         ['Just like you can move dollar bills from one pocket of your pants to another, a transfer between addresses you control is not taxable.'],
         ['Just like you can move dollar bills from one pocket of your pants to another, a transfer between addresses you control is not taxable.'],
@@ -103,6 +105,7 @@ export function newNFTCategorySheet(): GoogleAppsScript.Spreadsheet.Sheet | null
         ['Mint', 'Inflow', 'Taxable (on Crypto Disposition)'],
         ['Free Mint', 'Inflow', 'Taxable (on Crypto Tx Fees)'],
         ['Transfer In', 'Inflow', 'Not Taxable'],
+        ['Trade Inflow', 'Inflow', 'Not Taxable'],
         ['Product of Breeding', 'Inflow', 'Not Taxable'],
         ['Created from Scratch', 'Inflow', 'Not Taxable'],
         ['', '', ''],
@@ -113,11 +116,11 @@ export function newNFTCategorySheet(): GoogleAppsScript.Spreadsheet.Sheet | null
         ['Sold for USD', 'Outflow', 'Taxable (on NFT Value)'],
         ['Sold for Crypto', 'Outflow', 'Taxable (on NFT Value)'],
         ['Given Away', 'Outflow', 'Not Taxable'],
-        ['Trade', 'Outflow', 'Taxable (on NFT Value)'],
+        ['Trade Outflow', 'Outflow', 'Taxable (on NFT Value)'],
         ['Sold for Goods', 'Outflow', 'Taxable (on NFT Value)'],
         ['Lost/Stolen', 'Outflow', 'Taxable (on Lost NFT Value)'],
         ['Transfer Out', 'Outflow', 'Not Taxable'],
-        ['Transfer Out (to Bridge)', 'Outflow', 'Taxable (on NFT Value)']
+        ['Bridge Outflow', 'Outflow', 'Taxable (on NFT Value)']
     ];
     const justificationLinks = [
         ['IRS 1040 Instructions: ...A [taxable] transaction does not include the holding of virtual currency in a wallet or account', 'https://www.irs.gov/instructions/i1040gi'],
@@ -133,6 +136,7 @@ export function newNFTCategorySheet(): GoogleAppsScript.Spreadsheet.Sheet | null
         ['', ''],
         ['Just like you can move dollar bills from one pocket of your pants to another, a transfer between addresses you control is not taxable.'],
         ['If you are an artist or creator minting NFTs, you will be subject to income taxes on the revenue from the sale of your NFT(s). If you are selling NFTs as a trade or business, you can deduct related business expenses.', ''],
+        ['The Inflow side of an NFT-for-NFT trade is not taxable from the HODL Totals perspective because the gain/loss on the NFT trade is captured on the Trade Outflow side of the trade.', ''],
         ['Creators of NFTs are taxed in a different way compared to NFT investors. Creating the NFT does not trigger a taxable event.', ''],
         ['', ''],
         ['', ''],
