@@ -3,9 +3,10 @@
  *
  */
 import { getCoinFromSheetName } from './sheet';
+import validateNFTSheet from './validate-nft';
 import { CompleteDataRow, CompleteDataRowAsStrings, LooselyTypedDataValidationRow } from '../types';
 import getLastRowWithDataPresent from '../last-row';
-import calculateFIFO from '../calc-fifo';
+import { calculateFIFO, dateFromString } from '../calc-fifo';
 import getOrderList from '../orders';
 import validate from '../validate';
 
@@ -23,12 +24,6 @@ import validate from '../validate';
 export function calculateCoinGainLoss(sheet: GoogleAppsScript.Spreadsheet.Sheet | null): GoogleAppsScript.Spreadsheet.Sheet | null {
     if ((sheet !== null) && (typeof ScriptApp !== 'undefined')) {
         const coinName = getCoinFromSheetName(sheet);
-
-        // simple check to verify that formatting actions only happen on coin tracking sheets
-        if ((sheet.getRange('H1').getValue() as string).trim() !== coinName) {
-            Browser.msgBox('Formatting Error', 'The active sheet does not look like a coin tracking sheet, can only only calculate gains or losses on well-formatted coin sheets originally created using HODL Totals commands', Browser.Buttons.OK);
-            return null;
-        }
 
         // sanity check the data in the sheet. only proceed if data is good
         Logger.log('Validating the data before starting calculations.');
@@ -73,6 +68,37 @@ export function calculateCoinGainLoss(sheet: GoogleAppsScript.Spreadsheet.Sheet 
                 sheet.getRange(`${annotation[0]}`).setNote(annotation[1]);
             }
 
+            // Create tax status lookup table for categories from the Categories sheet
+            const categoriesSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Categories');
+            let txCategoryRows: string[][] = [];
+            if (categoriesSheet !== null) {
+                txCategoryRows = categoriesSheet.getRange('A2:C35').getValues() as string[][];
+            }
+
+            // iterate thru the new sheet contents to set Taxable or Not Taxable Status if not previously set
+            const newLastRow = getLastRowWithDataPresent(sheet.getRange('E:E').getValues() as string[][]);
+            const txCategoryCol = sheet.getRange(`F1:F${newLastRow}`).getValues() as string[][];
+            const txLotInfoCol = sheet.getRange(`P1:P${newLastRow}`).getValues() as string[][];
+            for (let i = 2; i < newLastRow; i++) {
+                // Check the row's Tx category's Taxable status, append that and move on
+                const txCategory = txCategoryCol[i][0];
+                const txLotInfo = txLotInfoCol[i][0];
+                txCategoryRows.every(categoryRow => {
+                    const taxableStatus = (categoryRow?.[0] === txCategory) ? categoryRow?.[2] : '';
+                    if (taxableStatus.startsWith('Not Taxable')) {
+                        sheet.getRange(`R${i + 1}`).setValue('Not Taxable');
+                        return false; // stop iterating thru categories list if found not taxable status
+                    }
+                    if (taxableStatus.startsWith('Taxable') && !(txLotInfo.startsWith('Sold'))) {
+                        sheet.getRange(`Q${i + 1}`).setValue(sheet.getRange(`E${i + 1}`).getDisplayValue().substring(0, 10));
+                        sheet.getRange(`R${i + 1}`).setValue('Taxable');
+                        sheet.getRange(`T${i + 1}`).setValue(sheet.getRange(`J${i + 1}`).getDisplayValue());
+                        return false; // stop iterating thru categories list if found taxable status
+                    }
+                    return true; // continue iterating thru categories list looking for a match
+                });
+            }
+
             // output the current date and time as the time last completed
             const now = Utilities.formatDate(new Date(), SpreadsheetApp.getActiveSpreadsheet().getSpreadsheetTimeZone(), 'yyyy-MM-dd HH:mm');
             sheet.getRange('S1').setValue(`${now}`);
@@ -89,6 +115,113 @@ export function calculateCoinGainLoss(sheet: GoogleAppsScript.Spreadsheet.Sheet 
             sheet.getRange('S1').setValue(`${now}`);
             sheet.getRange('T1').setValue('Failed');
             Logger.log(`Data validation failed ${now}`);
+        }
+        return sheet;
+    }
+    return null;
+}
+
+/**
+ * iterate through the rows in the sheet to determine short-term or long-term gains status for each disposed NFT
+ *
+ * @return the sheet, for function chaining purposes.
+ */
+export function calculateNFTGainLossStatus(sheet: GoogleAppsScript.Spreadsheet.Sheet | null): GoogleAppsScript.Spreadsheet.Sheet | null {
+    if ((sheet !== null) && (typeof ScriptApp !== 'undefined')) {
+        // sanity check the data in the sheet. only proceed if data is good
+        Logger.log('Validating the NFT data before starting calculation.');
+        const validationErrMsg = validateNFTSheet(sheet);
+
+        if (validationErrMsg === '') {
+            const MILLIS_PER_DAY = 1000 * 60 * 60 * 24;
+            const lastTxInRow = getLastRowWithDataPresent(sheet.getRange('F:F').getValues() as string[][]);
+            const lastTxOutRow = getLastRowWithDataPresent(sheet.getRange('V:V').getValues() as string[][]);
+            const lastRow = lastTxInRow > lastTxOutRow ? lastTxInRow : lastTxOutRow;
+
+            // Create tax status lookup table for categories from the Categories sheet
+            const nftCategoriesSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('NFT Categories');
+            let txInCategoryRows: string[][] = [];
+            let txOutCategoryRows: string[][] = [];
+            if (nftCategoriesSheet !== null) {
+                txInCategoryRows = nftCategoriesSheet.getRange('A2:C20').getValues() as string[][];
+                txOutCategoryRows = nftCategoriesSheet.getRange('A21:C35').getValues() as string[][];
+            }
+
+            // clear previously filled-in values
+            sheet.getRange('P3:P').setValue('');
+            sheet.getRange('AF3:AF').setValue('');
+
+            // TODO performance fix for this section: calculate arrays for txInStatus and txOutStatus
+            // and then call setValues in twice given each array; much more performant operation
+
+            // walk through all rows and fill in Status
+            for (let i = 3; i <= lastRow; i++) {
+                // Set Status on Tx In
+                const acquisitionDateString = sheet.getRange(`F${i}`).getDisplayValue();
+
+                // Check to see if row's Tx In category is Taxable or Not Taxable thing, list that and move on
+                const txInCategory = sheet.getRange(`G${i}`).getValue() as string;
+                txInCategoryRows.every(categoryRow => {
+                    const taxableStatus = (categoryRow?.[0] === txInCategory) ? categoryRow?.[2] : '';
+                    if (taxableStatus.startsWith('Not Taxable')) {
+                        sheet.getRange(`P${i}`).setValue('Not Taxable');
+                        return false; // stop iterating thru categories list if found a taxable/not taxable status
+                    }
+                    if (taxableStatus.startsWith('Taxable')) {
+                        sheet.getRange(`P${i}`).setValue('Taxable');
+                        return false; // stop iterating thru categories list if found a taxable/not taxable status
+                    }
+                    return true; // continue iterating thru categories list looking for a match
+                });
+
+                // Set status on Tx Out
+                const dispositionDateString = sheet.getRange(`V${i}`).getDisplayValue();
+                if (dispositionDateString === '') {
+                    sheet.getRange(`AF${i}`).setValue('Unsold');
+                } else {
+                    const dispositionDate = dateFromString(dispositionDateString, 0);
+                    const oneYrAfterAcquisitionDate = dateFromString(acquisitionDateString, 1);
+
+                    // Check to see if row's Tx Out category is a Not Taxable thing, if yes set as such and move on
+                    const txOutCategory = sheet.getRange(`U${i}`).getValue() as string;
+                    let txOutIsTaxable = true;
+                    txOutCategoryRows.every(categoryRow => {
+                        const taxableStatus = (categoryRow?.[0] === txOutCategory) ? categoryRow?.[2] : '';
+                        if (taxableStatus.startsWith('Not Taxable')) {
+                            sheet.getRange(`AF${i}`).setValue('Not Taxable');
+                            txOutIsTaxable = false;
+                            return false; // stop iterating thru categories list if found not taxable status
+                        }
+                        if (taxableStatus.startsWith('Taxable')) {
+                            return false; // stop iterating thru categories list if found taxable status
+                        }
+                        return true; // continue iterating thru categories list looking for a match
+                    });
+
+                    if (txOutIsTaxable) {
+                        if ((dispositionDate.getTime() - oneYrAfterAcquisitionDate.getTime()) / MILLIS_PER_DAY > 0) {
+                            sheet.getRange(`AF${i}`).setValue('Long-term');
+                        } else {
+                            sheet.getRange(`AF${i}`).setValue('Short-term');
+                        }
+                    }
+                }
+            }
+
+            const now = Utilities.formatDate(new Date(), SpreadsheetApp.getActiveSpreadsheet().getSpreadsheetTimeZone(), 'yyyy-MM-dd HH:mm');
+            sheet.getRange('AE1').setValue(`${now}`);
+            sheet.getRange('AF1').setValue('Succeeded');
+            Logger.log(`Last NFT calculation succeeded ${now}`);
+        } else {
+            // notify the user of the data validation error
+            const msgPrefix = validationErrMsg.substring(0, validationErrMsg.indexOf(':'));
+            const msg = Utilities.formatString(validationErrMsg);
+            Browser.msgBox(msgPrefix, msg, Browser.Buttons.OK);
+
+            const now = Utilities.formatDate(new Date(), SpreadsheetApp.getActiveSpreadsheet().getSpreadsheetTimeZone(), 'yyyy-MM-dd HH:mm');
+            sheet.getRange('AE1').setValue(`${now}`);
+            sheet.getRange('AF1').setValue('Failed');
+            Logger.log(`NFT Data validation failed ${now}`);
         }
         return sheet;
     }

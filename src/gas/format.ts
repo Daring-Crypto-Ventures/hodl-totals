@@ -2,13 +2,11 @@
  * @NotOnlyCurrentDoc Limits the script to only accessing the current sheet.
  *
  */
-import { getCoinFromSheetName } from './sheet';
-import { version } from '../version';
+import { getCoinFromSheetName, resetVersionMetadata } from './sheet';
 import getLastRowWithDataPresent from '../last-row';
 
 /* global GoogleAppsScript */
 /* global SpreadsheetApp */
-/* global Browser */
 
 /**
  * A function that formats the columns and headers of the active spreadsheet.
@@ -21,18 +19,12 @@ export function formatSheet(sheet: GoogleAppsScript.Spreadsheet.Sheet | null): G
     if ((sheet !== null) && (typeof ScriptApp !== 'undefined')) {
         const desiredCurrency = getCoinFromSheetName(sheet);
 
-        // simple check to verify that formatting actions only happen on coin tracking sheets
-        if ((sheet.getRange('H1').getValue() as string).trim() !== desiredCurrency) {
-            Browser.msgBox('Formatting Error', 'The active sheet does not look like a coin tracking sheet, only format existing coin sheets originally created using HODL Totals commands', Browser.Buttons.OK);
-            return null;
-        }
-
         // Code to check the previously saved sheet version to see if mutation is required
         // should pop a yes/no confirmation dialog in this event as formatting could be destructive
         // const sheet = SpreadsheetApp.getActiveSheet();
         // const mdFinder = sheet.getRange('1:1').createDeveloperMetadataFinder();
         // const version = mdFinder.withKey('version').find()[0].getValue();
-        resetVersionMetadata(sheet, version);
+        resetVersionMetadata(sheet);
 
         // calculate URL to nav user back to the Totals sheet
         const totalsSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('HODL Totals');
@@ -51,12 +43,12 @@ export function formatSheet(sheet: GoogleAppsScript.Spreadsheet.Sheet | null): G
         // leave ONE cell gap to prevent overwriting user provided value: subtotal of the Net Change column
         const headerRow1p4 = [`${desiredCurrency}`, 'Inflow', '', 'Outflow', '', 'Fair Mkt Value', '', '', 'Last Gain/Loss Calculation (FIFO Method)', '', ''];
         // leave TWO cell gaps to prevent overwriting user provided value: Date and Succeeded/Failed Status of the last gain/loss calculation
-        const headerRow1p5 = '';
+        const headerRow1p5 = 'Documentation';
         // NOTE: spaces are hard coded around header text that help autosizecolumns behave correctly
-        const headerRow2 = ['   Tx ✔   ', '    All Wallet & Accounts    ', '    Transaction ID    ', '   Description   ', '    Date & Time    ', '       Category       ', '    Net Change    ',
+        const headerRow2 = ['   Tx ✔   ', '      All Wallet & Accounts      ', '    Transaction ID    ', '   Description   ', '    Date & Time    ', '       Category       ', '    Net Change    ',
             '        Valuation Strategy        ', `   ${desiredCurrency} Acquired   `, '    Value (USD)    ', `   ${desiredCurrency} Disposed   `, '    Value (USD)    ',
             `   ${desiredCurrency} High   `, `     ${desiredCurrency} Low     `, `    ${desiredCurrency} Price    `,
-            '   Assigned Lot ID   ', '    Date Acquired    ', '   Status   ', '        Cost Basis        ', '    Gain (Loss)    ', '      Notes      '];
+            '    Lot Information    ', '    Date Acquired    ', '   Status   ', '        Cost Basis        ', '    Gain (Loss)    ', '       Tax Doc Link       '];
 
         sheet.getRange('A1:B1').setValues([headerRow1p1]);
         sheet.getRange('C1').setValue(coinTotalFormula);
@@ -81,9 +73,10 @@ export function formatSheet(sheet: GoogleAppsScript.Spreadsheet.Sheet | null): G
         sheet.getRange('T1').setFontWeight('normal').setBorder(false, false, false, true, false, false);
 
         // set conditional formatting rules on row 1 cells
-        setFormatSheetCFRules(sheet);
+        setCoinSheetCFRules(sheet);
 
         // merge 1st row cell headers
+        sheet.getRange('A1:U1').breakApart();
         sheet.getRange('I1:J1').merge();
         sheet.getRange('K1:L1').merge();
         sheet.getRange('M1:O1').merge();
@@ -162,8 +155,9 @@ export function formatSheet(sheet: GoogleAppsScript.Spreadsheet.Sheet | null): G
         // set calculated columns to be grayed background
         sheet.getRange('P3:T').setBackground('#EEEEEE');
 
-        // autosize columns' widths to fit content
-        sheet.autoResizeColumns(1, 21);
+        // autosize columns' widths to fit content, but ignore tx ID columns
+        sheet.autoResizeColumns(1, 2);
+        sheet.autoResizeColumns(4, 18);
         SpreadsheetApp.flush();
 
         return sheet;
@@ -171,26 +165,7 @@ export function formatSheet(sheet: GoogleAppsScript.Spreadsheet.Sheet | null): G
     return null;
 }
 
-/**
- * wrapper for removing all metadata from a row
- *
- */
-function resetVersionMetadata(sheet: GoogleAppsScript.Spreadsheet.Sheet | null, newVersion: string): void {
-    if (typeof ScriptApp === 'undefined') {
-        // no data table representation of this
-    } else if (sheet !== null) {
-        const sheetMetadata = sheet.getDeveloperMetadata();
-        const row1metadata = sheet.getRange('1:1').getDeveloperMetadata(); // can remove this once dev versions with version no longer present
-        const metadata = sheetMetadata.concat(row1metadata);
-        const matchingMetadata = metadata.filter(x => x.getKey() === 'version');
-        matchingMetadata.forEach(match => {
-            match.remove();
-        });
-        sheet.addDeveloperMetadata('version', newVersion);
-    }
-}
-
-function setFormatSheetCFRules(sheet: GoogleAppsScript.Spreadsheet.Sheet): void {
+function setCoinSheetCFRules(sheet: GoogleAppsScript.Spreadsheet.Sheet): void {
     // Color the cell that displays diff of wallet/account balance and sheet totals
     // to help users see if their sheet calculations are reasonably accurate
     const subtotalRange = sheet.getRange('G1');

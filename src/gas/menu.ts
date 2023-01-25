@@ -4,15 +4,21 @@
  */
 import resetTotalSheet from './totals';
 import { newCoinSheet } from './new-coin';
+import { newNFTSheet } from './new-nft';
 import { formatSheet } from './format';
-import { updateFMVFormulas } from './fmv';
-import { calculateCoinGainLoss } from './calculate';
+import { updateFMVFormulas } from './formulas-coin';
+import { updateNFTFormulas } from './formulas-nft';
+import { calculateCoinGainLoss, calculateNFTGainLossStatus } from './calculate';
+import { formatNFTSheet } from './format-nft';
+import { sheetContainsNFTData, sheetContainsCoinData } from './sheet';
 
 /* global GoogleAppsScript */
 /* global SpreadsheetApp */
+/* global Browser */
 /* global Logger */
 /* global HtmlService */
 /* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint no-unused-vars: ["error", { "varsIgnorePattern": "_$" }] */
 
 /**
  * A special function that runs when the this is installed as an addon
@@ -38,13 +44,16 @@ export function onOpen(e: GoogleAppsScript.Events.AppsScriptEvent): void {
     // menu.addItem('Setup HODL Totals', 'loadExample_')
 
     menu.addItem('Reset totals sheet', 'resetTotalSheet_')
-        .addItem('Track new coin...', 'newCoinSheet_')
-        .addItem('Insert example "pretendCOINs"', 'loadExample_')
+        .addSubMenu(ui.createMenu('Track new')
+            .addItem('Example "pretendCOINs"', 'loadExample_')
+            .addItem('Coin (FIFO method)', 'newCoinTrackedByFIFOMethod_')
+            .addItem('Coin (Specific ID method)', 'newCoinTrackedBySpecIDMethod_')
+            .addItem('NFTs (per Address)', 'newNFTSheet_'))
         .addSeparator()
-        .addItem('-- FOR THIS SHEET --', 'dummyMenuItem_')
-        .addItem('Format coin sheet', 'formatSheet_')
-        .addItem('Update FMV formulas', 'updateFMVFormulas_')
-        .addItem('Calculate gain/loss (FIFO method)', 'calculateCoinGainLoss_')
+        .addItem('-- ON THE ACTIVE SHEET --', 'dummyMenuItem_')
+        .addItem('Format columns', 'formatSheet_')
+        .addItem('Update formulas', 'updateFormulas_')
+        .addItem('Calculate gain/loss', 'calculateGainLoss_')
         .addSeparator()
         .addItem('About HODL Totals', 'showAboutDialog_')
         .addItem('Join our Discord server', 'openDiscordLink_')
@@ -56,7 +65,7 @@ export function onOpen(e: GoogleAppsScript.Events.AppsScriptEvent): void {
  * A function that does TODO
  *
  */
-export function showSheetActionsSidebar_(): void {
+function showSheetActionsSidebar_(): void {
     const sidebarUi = HtmlService.createHtmlOutputFromFile('assets/CoinSidebar')
         .setSandboxMode(HtmlService.SandboxMode.IFRAME)
         .setTitle('HODL Totals Debugging Tools');
@@ -68,7 +77,7 @@ export function showSheetActionsSidebar_(): void {
  * best I can do since Google Apps Script Menus don't support header text
  *
  */
-export function dummyMenuItem_(): null {
+function dummyMenuItem_(): null {
     return null;
 }
 
@@ -77,17 +86,36 @@ export function dummyMenuItem_(): null {
  *
  * @return the newly created sheet, for function chaining purposes.
  */
-export function resetTotalSheet_(): GoogleAppsScript.Spreadsheet.Sheet | null {
+function resetTotalSheet_(): GoogleAppsScript.Spreadsheet.Sheet | null {
     return resetTotalSheet();
 }
 
 /**
- * A function that adds columns and headers to the spreadsheet.
+ * A function that adds a FIFO-method coin tracking spreadsheet.
  *
  * @return the newly created sheet, for function chaining purposes.
  */
-export function newCoinSheet_(coinName?: string): GoogleAppsScript.Spreadsheet.Sheet | null {
+function newCoinTrackedByFIFOMethod_(coinName?: string): GoogleAppsScript.Spreadsheet.Sheet | null {
     return newCoinSheet(coinName);
+}
+
+/**
+ * A function that adds a SpecificID-method coin tracking spreadsheet.
+ *
+ * @return the newly created sheet, for function chaining purposes.
+ */
+function newCoinTrackedBySpecIDMethod_(): GoogleAppsScript.Spreadsheet.Sheet | null {
+    Browser.msgBox('Specific ID Tracking Not Supported', 'This capital gains calculation method is not yet supported. Is this something you think should be a top priority for us to add? If yes, please join our Discord and indicate your interest in the #general channel.', Browser.Buttons.OK);
+    return null;
+}
+
+/**
+ * A function that adds a sheet to track the NFTs held in a given address
+ *
+ * @return the newly created sheet, for function chaining purposes.
+ */
+function newNFTSheet_(address?: string): GoogleAppsScript.Spreadsheet.Sheet | null {
+    return newNFTSheet(address);
 }
 
 /**
@@ -95,27 +123,51 @@ export function newCoinSheet_(coinName?: string): GoogleAppsScript.Spreadsheet.S
  *
  * Assumption: Not configurable to pick Fiat Currency to use for all sheets, assuming USD since this is related to US Tax calc
  *
- * @return the newly created sheet, for function chaining purposes.
+ * @return the sheet that was formatted, for function chaining purposes.
  */
-export function formatSheet_(): GoogleAppsScript.Spreadsheet.Sheet | null {
-    return formatSheet(SpreadsheetApp.getActiveSpreadsheet().getActiveSheet());
+function formatSheet_(): GoogleAppsScript.Spreadsheet.Sheet {
+    const sheet: GoogleAppsScript.Spreadsheet.Sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+    if (sheetContainsNFTData(sheet)) {
+        formatNFTSheet(sheet);
+    } else if (sheetContainsCoinData(sheet)) {
+        formatSheet(sheet);
+    } else {
+        Browser.msgBox('Active Sheet Does Not Support Formatting', `The active sheet "${sheet.getName()}" does not look like a tracking sheet that can have its column formatting updated using this command.  HODL Totals can only format tracking sheets originally created using HODL Totals commands.`, Browser.Buttons.OK);
+    }
+    return sheet;
 }
 
 /**
- * A function that formats the FMV Value Rows of the active spreadsheet.
+ * A function that updates all of the formuala cells of the active spreadsheet.
  *
  * Assumption: Not configurable to pick Fiat Currency to use for all sheets, assuming USD since this is related to US Tax calc
  *
- * @return the newly created sheet, for function chaining purposes.
+ * @return the sheet that was updated, for function chaining purposes.
  */
-export function updateFMVFormulas_(): GoogleAppsScript.Spreadsheet.Sheet | null {
-    return updateFMVFormulas(SpreadsheetApp.getActiveSpreadsheet().getActiveSheet());
+function updateFormulas_(): GoogleAppsScript.Spreadsheet.Sheet | null {
+    const sheet: GoogleAppsScript.Spreadsheet.Sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+    if (sheetContainsCoinData(sheet)) {
+        updateFMVFormulas(sheet);
+    } else if (sheetContainsNFTData(sheet)) {
+        updateNFTFormulas(sheet);
+    } else {
+        Browser.msgBox('Active Sheet Does Not Support Updating Formulas', `The active sheet "${sheet.getName()}" does not look like a tracking sheet with Formulas that can be updated using this command. HODL Totals can only only update formulas on tracking sheets originally created using HODL Totals commands.`, Browser.Buttons.OK);
+    }
+    return sheet;
 }
 
 /**
  * Triggers the cost basis calculation
  *
  */
-export function calculateCoinGainLoss_(): GoogleAppsScript.Spreadsheet.Sheet | null {
-    return calculateCoinGainLoss(SpreadsheetApp.getActiveSpreadsheet().getActiveSheet());
+function calculateGainLoss_(): GoogleAppsScript.Spreadsheet.Sheet | null {
+    const sheet: GoogleAppsScript.Spreadsheet.Sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+    if (sheetContainsCoinData(sheet)) {
+        calculateCoinGainLoss(sheet);
+    } else if (sheetContainsNFTData(sheet)) {
+        calculateNFTGainLossStatus(sheet);
+    } else {
+        Browser.msgBox('Active Sheet Does Not Support Gain/Loss Calculation', `The active sheet "${sheet.getName()}" does not look like a tracking sheet that supports Gain/Loss Calculation. HODL Totals can only only calculate gains or losses on tracking sheets originally created using HODL Totals commands.`, Browser.Buttons.OK);
+    }
+    return sheet;
 }

@@ -7,10 +7,10 @@
 /* global SpreadsheetApp */
 
 import resetTotalSheet from './totals';
-import newCategorySheet from './categories';
+import { newCategorySheet } from './categories';
 import { formatSheet } from './format';
-import { newCoinSheet_ } from './menu';
-import { updateFMVFormulas } from './fmv';
+import { newCoinSheet } from './new-coin';
+import { updateFMVFormulas } from './formulas-coin';
 
 /**
  * Creates example coins with data showing how HODL Totals works
@@ -35,8 +35,8 @@ export function loadExample_(): GoogleAppsScript.Spreadsheet.Sheet | null {
         }
     }
 
-    const newSheet1 = newCoinSheet_('pretendCOIN1');
-    const newSheet2 = newCoinSheet_('pretendCOIN2');
+    const newSheet1 = newCoinSheet('pretendCOIN1');
+    const newSheet2 = newCoinSheet('pretendCOIN2');
     if (newSheet1 !== null) {
         coin1Example(newSheet1);
     }
@@ -65,10 +65,10 @@ function coin1Example(sheet: GoogleAppsScript.Spreadsheet.Sheet): void {
         ['FALSE', 'Coinbase Account', 'BBBB444445555CCC', 'coinbase.com Coinbase Earn pretendCOIN promotion', '2018-02-28 20:23:59', 'Promotion', '+1.0', 'Value Known', '1.00000000', '1', '', '', '0', '0', '0', '', '', '', '', '', ''],
         ['FALSE', 'Metamask Main Address', 'Ccccc6666667777ddddddd', 'Spent 1 pretendCOIN on a digital ticket to a concert in the metaverse, tx fee included', '2018-03-01 2:04:01', 'Spent', '-1.0', 'Value Known', '', '', '1.00000000', '5', '', '', '', '', '', '', '', '', ''],
         ['FALSE', 'Metamask Main Address', 'eeee-89898989-fffff', 'Offline purchase of 23 pretendCOIN from John Doe @ 34 USD/pretendCOIN', '2019-02-28 0:00:02', 'USD Deposit', '+23.0', 'Price Known', '23.00000000', '', '', '', '0', '0', '34', '', '', '', '', '', ''],
-        ['FALSE', 'Metamask Main Address', 'deadbeef42deadbeef69', 'pretendCOIN1, pretendCOIN2: Uniswap traded 2 pretendCOIN for 0.0025 pretendCOIN2', '2021-04-01 0:15:00', 'Traded', '-2.0', 'Avg Daily Price Variation', '', '', '2.00000000', '', '2.312002', '1.8222', '', '', '', '', '', '', ''],
+        ['FALSE', 'Metamask Main Address', 'deadbeef42deadbeef69', 'pretendCOIN1, pretendCOIN2: Uniswap traded 2 pretendCOIN for 0.0025 pretendCOIN2', '2021-04-01 0:15:00', 'Trade Outflow', '-2.0', 'Avg Daily Price Variation', '', '', '2.00000000', '', '2.312002', '1.8222', '', '', '', '', '', '', ''],
         ['FALSE', 'Metamask Main Address', '345sixSEVENeight9ten', 'Tx Fee to Transfer my Metamask balance to binance for cash out', '2021-04-01 12:00:05', 'Tx Fee', '-0.02', 'Value Known', '', '', '0.02000000', '', '', '', '', '', '', '', '', '', ''],
-        ['FALSE', 'Metamask Main Address', '345sixSEVENeight9ten', 'Transfer my Metamask balance to binance for cash out', '2021-04-01 12:00:05', 'Transfer', '-20.98', 'n/a', '', '', '', '', '', '', '', '', '', '', '', '', ''],
-        ['FALSE', 'Binance.us Account', '345sixSEVENeight9ten', 'Transfer my Metamask balance to binance for cash out', '2021-04-01 12:00:05', 'Transfer', '+20.98', 'n/a', '', '', '', '', '', '', '', '', '', '', '', '', ''],
+        ['FALSE', 'Metamask Main Address', '345sixSEVENeight9ten', 'Transfer my Metamask balance to binance for cash out', '2021-04-01 12:00:05', 'Transfer Out', '-20.98', 'n/a', '', '', '', '', '', '', '', '', '', '', '', '', ''],
+        ['FALSE', 'Binance.us Account', '345sixSEVENeight9ten', 'Transfer my Metamask balance to binance for cash out', '2021-04-01 12:00:05', 'Transfer In', '+20.98', 'n/a', '', '', '', '', '', '', '', '', '', '', '', '', ''],
         ['FALSE', 'Binance.us Account', 'IJijIJijIJijIJ3434334343', 'binance.us traded 20 pretendCOIN for USD', '2021-04-02 9:00:00', 'USD Withdrawal', '-20.0', 'Avg Daily Price Variation', '', '', '20.00000000', '', '=0.0003561*7088.25', '=0.0003561*6595.92', '', '', '', '', '', '', ''],
         ['FALSE', 'Metamask Main Address', 'onetwo3456seven-EightNine', 'unsolicited distribution of pretendCOIN from a total stranger sent to random addresses', '2022-05-31 10:12:12', 'Passive Airdrop', '+26.92', 'Avg Daily Price Variation', '26.92000000', '', '', '', '=0.0069319*9700.34/I12', '=0.0069319*9432.3/I12', '', '', '', '', '', '', ''],
     ];
@@ -95,9 +95,9 @@ function coin2Example(sheet: GoogleAppsScript.Spreadsheet.Sheet): void {
         ['FALSE', 'Coinbase Account', '8576309-yolo-8576309', 'Tx Fee for buying a pizza with pretendCOIN2', '2018-02-01 9:23:45', 'Tx Fee', '-0.05', 'Value Known', '0', '0', '0.05000000', '100.00', '', '', '', '', '', '', '', '', ''],
         ['FALSE', 'Coinbase Account', '77777rrre5re5re5re5re77777', 'Sold pretendCOIN2 for $601.11 USD on coinbase, fees included', '2018-03-21 17:20:22', 'USD Withdrawal', '-0.3', 'Value Known', '0', '0', '0.30000000', '601.11', '', '', '', '', '', '', '', '', ''],
         ['FALSE', 'Metamask Main Address', 'eeeeyyyyoorree5555bbbbdddaaaayyy', 'Distributed to everyone that filled out the gleam.io form last month', '2018-03-22 8:08:08', 'Active Airdrop', '+0.4', 'Value Known', '0.40000000', '400.00', '', '', '', '', '', '', '', '', '', '', ''],
-        ['FALSE', 'Coinbase Account', 'yyyyzzz-343434-525210', 'Transfer from Coinbase to Metamask', '2018-03-23 9:09:09', 'Transfer', '-0.4', 'Value Known', '', '', '', '', '', '', '', '', '', '', '', '', ''],
-        ['FALSE', 'Metamask Main Address', '1a2b3c4d5e6f7g8h9i10j11k12l13m14n15o16p', 'Transfer from Coinbase to Metamask', '2018-03-23 9:11:50', 'Transfer', '+0.4', 'Value Known', '', '', '', '', '', '', '', '', '', '', '', '', ''],
-        ['FALSE', 'Metamask Main Address', 'deadbeef42deadbeef69', 'pretendCOIN1, pretendCOIN2: Uniswap traded 2 pretendCOIN for 0.6 pretendCOIN2', '2021-04-01 0:15:00', 'Traded', '+0.6', 'Value Known', '0.60000000', '108.50', '', '', '', '', '', '', '', '', '', '', ''],
+        ['FALSE', 'Coinbase Account', 'yyyyzzz-343434-525210', 'Transfer from Coinbase to Metamask', '2018-03-23 9:09:09', 'Transfer Out', '-0.4', 'Value Known', '', '', '', '', '', '', '', '', '', '', '', '', ''],
+        ['FALSE', 'Metamask Main Address', '1a2b3c4d5e6f7g8h9i10j11k12l13m14n15o16p', 'Transfer from Coinbase to Metamask', '2018-03-23 9:11:50', 'Transfer In', '+0.4', 'Value Known', '', '', '', '', '', '', '', '', '', '', '', '', ''],
+        ['FALSE', 'Metamask Main Address', 'deadbeef42deadbeef69', 'pretendCOIN1, pretendCOIN2: Uniswap traded 2 pretendCOIN for 0.6 pretendCOIN2', '2021-04-01 0:15:00', 'Trade Inflow', '+0.6', 'Value Known', '0.60000000', '108.50', '', '', '', '', '', '', '', '', '', '', ''],
         ['FALSE', 'Metamask Main Address', 'e11it3hkr8zb3wr3maB2much4u2hnd13', 'Tx Fee for buying sweet NFT #4242', '2022-03-06 13:10:11', 'Tx Fee', '-0.05', 'Value Known', '0', '0', '0.05000000', '50.00', '', '', '', '', '', '', '', '', ''],
         ['FALSE', 'Metamask Main Address', 'e11it3hkr8zb3wr3maB2much4u2hnd13', 'Bought sweet NFT #4242', '2022-03-06 13:10:11', 'Sold for Goods', '-0.1', 'Value Known', '0', '0', '0.10000000', '100.00', '', '', '', '', '', '', '', '', ''],
         ['FALSE', 'Metamask Main Address', 'fu72fu72fu72fu72fu72fu72fu72', 'prentedCOIN2 Gift for my boo', '2022-03-07 10:00:00', 'Given Away', '-0.1', 'Value Known', '0', '0', '0.10000000', '200.00', '', '', '', '', '', '', '', '', ''],
@@ -133,7 +133,6 @@ function instructionData(): string[][] {
         ['FALSE', '', '', 'Use the Tx ✔ columnn to track your progress while updating/reconciling each transaction.', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
         ['FALSE', '', '', 'Reset the HODL Totals sheet at any time to refresh the summary of your holdings.', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
         ['FALSE', '', '', 'Enter your holdings on the HODL Totals sheet periodically to reconcile your records with reality.', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
-        ['FALSE', '', '', 'Use the notes column to record details about your wallet, address or account.', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
         ['FALSE', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
         ['FALSE', '', '', 'DETERMINE FAIR MARKET VALUE', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
         ['FALSE', '', '', 'Grab High/Lows from historical values tab on https://coinmarketcap.com', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
@@ -146,7 +145,7 @@ function instructionData(): string[][] {
         ['FALSE', '', '', 'The transactions must be sorted into chronological order before a calculation can run.', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
         ['FALSE', '', '', 'The status column provides useful information for each transaction.', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
         ['FALSE', '', '', 'If a sale includes short and long-term components, it is split.', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
-        ['FALSE', '', '', 'Use the notes column to store links to any other sheets that summarize the gain/loss', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '']
+        ['FALSE', '', '', 'Use the Tax Doc Link column to store links to any other sheets that list or summarize the gain/loss', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '']
     ];
     return instructionsData;
 }

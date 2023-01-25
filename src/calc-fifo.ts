@@ -1,10 +1,14 @@
+/**
+ * @NotOnlyCurrentDoc Limits the script to only accessing the current sheet.
+ *
+ */
 import { CompleteDataRow, CompleteDataRowAsStrings } from './types';
 
 /**
  * Using the FIFO method calculate short and long term gains from the data.
  *
  */
-export default function calculateFIFO(
+export function calculateFIFO(
     coinname: string,
     data: CompleteDataRow[],
     formulaData: CompleteDataRowAsStrings[], // TODO don't pass this in, find a better way for caller to track what rows got added
@@ -41,8 +45,7 @@ export default function calculateFIFO(
             data.push(['FALSE', '', '', '', '', '', 0, '', 0, 0, 0, 0, '', '', '', '', '', '', 0, 0, '']);
         }
         if (lots.length > 0) {
-            data[2][15] = 'Lot 1';
-            data[2][17] = '0% Sold';
+            data[2][15] = 'Lot 1 - 0% Sold';
         }
     }
 
@@ -82,8 +85,7 @@ export default function calculateFIFO(
             if ((sellCoinRemain <= lotCoinRemain) || (Math.abs(sellCoinRemain - lotCoinRemain) <= ONE_SATOSHI)) {
                 if (Math.abs(sellCoinRemain - lotCoinRemain) <= ONE_SATOSHI) {
                     // all of this lot was sold
-                    data[lotRow][15] = `Lot ${lot + 1}`;
-                    data[lotRow][17] = '100% Sold';
+                    data[lotRow][15] = `Lot ${lot + 1} - 100% Sold`;
 
                     // if there are more lots to process, advance the lot count before breaking out
                     if ((lotCnt + 1) < lots.length) {
@@ -95,8 +97,7 @@ export default function calculateFIFO(
                     lotCoinRemain -= sellCoinRemain;
                     const percentSold = 1 - (lotCoinRemain / lotCoin);
 
-                    data[lotRow][15] = `Lot ${lot + 1}`;
-                    data[lotRow][17] = `${(percentSold * 100).toFixed(0)}% Sold`;
+                    data[lotRow][15] = `Lot ${lot + 1} - ${(percentSold * 100).toFixed(0)}% Sold`;
                 }
 
                 // if sale more than 1 year and 1 day from purchase date mark as long-term gains
@@ -212,8 +213,7 @@ export default function calculateFIFO(
                 // subtract the lot amount from the remaining coin to be sold,
                 // and set up variables for the next lot, since this lot is completely used up
                 sellCoinRemain -= lotCoinRemain;
-                data[lotRow][15] = `Lot ${lot + 1}`;
-                data[lotRow][17] = '100% Sold';
+                data[lotRow][15] = `Lot ${lot + 1} - 100% Sold`;
                 lotCnt += 1;
                 if (lotCnt < lots.length) {
                     lotCoinRemain = lots[lotCnt][1];
@@ -232,7 +232,7 @@ export default function calculateFIFO(
  *
  * @return Date object corresponding to that string input.
  */
-function dateFromString(dateStr: string, incYear: number): Date {
+export function dateFromString(dateStr: string, incYear: number): Date {
     const year = Number(dateStr.substring(0, 4));
     const month = Number(dateStr.substring(5, 7));
     const day = Number(dateStr.substring(8, 10));

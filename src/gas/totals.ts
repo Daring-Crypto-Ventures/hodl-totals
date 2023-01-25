@@ -4,7 +4,7 @@
  * Create & manage categories which are used in individual coin sheets
  *
  */
-import { getCoinFromSheetName, getAdornedCoinFromSheetName } from './sheet';
+import { getCoinFromSheetName, getAdornedCoinFromSheetName, sheetContainsCoinData, sheetContainsNFTData } from './sheet';
 import { version } from '../version';
 
 /* global GoogleAppsScript */
@@ -46,15 +46,16 @@ export default function resetTotalSheet(): GoogleAppsScript.Spreadsheet.Sheet | 
         sheet.addDeveloperMetadata('version', version);
 
         // Initial set of categories provided out of the box
-        const header = ['       #       ', '      All Wallets & Accounts      ', '     Balance     ', '       Coin       ', '       on Date       ', '=CONCATENATE(COUNT(F2:F)," Coins")',
+        const header = ['       #       ', '      All Wallets & Accounts      ', '     Balance     ', '=CONCATENATE(COUNTIF(F2:F, ">0")," Coins")', '       on Date       ', '   Coin Total Reported   ',
             '      ↩ Sheet     ', '   Recorded Holdings   ', '       Off By       ', '    Last Calculation    ', '     Calc Status     ', '        Notes        '];
         sheet.getRange('A1:L1').setValues([header]).setFontWeight('bold').setHorizontalAlignment('center');
         sheet.getRange('A1:L1').setBackground('#DDDDEE');
+        sheet.setFrozenRows(1);
 
         // walk through all sheets in workbook to pick out the coin names & links
         const allSheets = SpreadsheetApp.getActiveSpreadsheet().getSheets();
         const ssUrl = SpreadsheetApp.getActiveSpreadsheet().getUrl();
-        const excludedSheetNames = ['HODL Totals', 'Categories'];
+        const excludedSheetNames = ['HODL Totals', 'Categories', 'NFT Categories'];
         let rowCount = 1;
         for (const coinSheet of allSheets) {
             // Stop iteration execution if the condition is meet.
@@ -63,41 +64,48 @@ export default function resetTotalSheet(): GoogleAppsScript.Spreadsheet.Sheet | 
                 const newCoinName = getCoinFromSheetName(coinSheet);
                 const newCoinNameAdorned = getAdornedCoinFromSheetName(coinSheet);
                 const newCoinSheetUrl = `${ssUrl}#gid=${coinSheet.getSheetId()}`;
-                rowCount += 1;
 
-                // pull out wallet names from each coins sheet, if they exist
-                const walletData: string[][] = coinSheet.getRange('B3:B').getValues().filter(String) as string[][];
-                const uniqueWallets: string[] = [];
-                walletData.forEach(wallet => {
-                    if (!uniqueWallets.includes(wallet[0])) {
-                        uniqueWallets.push(wallet[0]);
-                    }
-                });
-
-                if (uniqueWallets.length === 0) {
-                    uniqueWallets.push('Wallets/Accounts Not Set');
-                }
-
-                const data = [`${rowCount - 1}`, `${uniqueWallets?.[0]} (${newCoinName})`, '', newCoinNameAdorned, '', `=SUMIF($D$2:$D,$D${rowCount},$C$2:$C)`, `=HYPERLINK("${newCoinSheetUrl}","${newCoinName}")`,
-                    `=SUM(INDIRECT("'"&$D${rowCount}&"'!$G$3:G"))`, `=$H${rowCount}-$F${rowCount}`, `=INDIRECT("'"&$D${rowCount}&"'!$S$1")`, `=INDIRECT("'"&$D${rowCount}&"'!$T$1")`, ''];
-                sheet.appendRow(data);
-
-                // Account for secondary wallets/accounts for a given coin
-                if (uniqueWallets.length > 1) {
-                    // skip past the one we've already dealt with
-                    uniqueWallets.shift();
-
-                    // insert mostly empty rows to account for the other detected uniqueWallets holding that same coin
-                    uniqueWallets.forEach((wallet, index) => { // eslint-disable-line @typescript-eslint/no-loop-func
-                        const walletOnlydata = [`${rowCount + index}`, `${wallet} (${newCoinName})`, '', newCoinName, '', '', '', '', '', '', '', ''];
-                        sheet?.appendRow(walletOnlydata);
+                if (sheetContainsCoinData(coinSheet)) {
+                    // pull out wallet names from each coins sheet, if they exist
+                    const walletData: string[][] = coinSheet.getRange('B3:B').getValues().filter(String) as string[][];
+                    const uniqueWallets: string[] = [];
+                    walletData.forEach(wallet => {
+                        if (!uniqueWallets.includes(wallet[0])) {
+                            uniqueWallets.push(wallet[0]);
+                        }
                     });
 
-                    // merge across for the mostly empty rows, also prevents conditional formatting from being applied on these rows
-                    sheet.getRange(rowCount + 1, 6, uniqueWallets.length, 6).mergeAcross();
+                    if (uniqueWallets.length === 0) {
+                        uniqueWallets.push('Wallets/Accounts Not Set');
+                    }
 
-                    // update the rowcount for any secondary wallets added
-                    rowCount += uniqueWallets.length;
+                    rowCount += 1;
+                    const data = [`${rowCount - 1}`, `${uniqueWallets?.[0]} (${newCoinName})`, '', newCoinNameAdorned, '', `=SUMIF($D$2:$D,$D${rowCount},$C$2:$C)`, `=HYPERLINK("${newCoinSheetUrl}","${newCoinName}")`,
+                        `=SUM(INDIRECT("'"&$D${rowCount}&"'!$G$3:G"))`, `=$H${rowCount}-$F${rowCount}`, `=INDIRECT("'"&$D${rowCount}&"'!$S$1")`, `=INDIRECT("'"&$D${rowCount}&"'!$T$1")`, ''];
+                    sheet.appendRow(data);
+
+                    // Account for secondary wallets/accounts for a given coin
+                    if (uniqueWallets.length > 1) {
+                        // skip past the one we've already dealt with
+                        uniqueWallets.shift();
+
+                        // insert mostly empty rows to account for the other detected uniqueWallets holding that same coin
+                        uniqueWallets.forEach((wallet, index) => { // eslint-disable-line @typescript-eslint/no-loop-func
+                            const walletOnlydata = [`${rowCount + index}`, `${wallet} (${newCoinName})`, '', newCoinName, '', '', '', '', '', '', '', ''];
+                            sheet?.appendRow(walletOnlydata);
+                        });
+
+                        // merge across for the mostly empty rows, also prevents conditional formatting from being applied on these rows
+                        sheet.getRange(rowCount + 1, 6, uniqueWallets.length, 6).mergeAcross();
+
+                        // update the rowcount for any secondary wallets added
+                        rowCount += uniqueWallets.length;
+                    }
+                } else if (sheetContainsNFTData(coinSheet)) {
+                    rowCount += 1;
+                    const data = [`${rowCount - 1}`, `${newCoinName}`, '', newCoinNameAdorned, '', '', `=HYPERLINK("${newCoinSheetUrl}","${newCoinName}")`,
+                        `=INDIRECT("'"&$D${rowCount}&"'!$C$1")`, `=LEFT($H${rowCount})-LEFT($C${rowCount})`, `=INDIRECT("'"&$D${rowCount}&"'!$AE$1")`, `=INDIRECT("'"&$D${rowCount}&"'!$AF$1")`, ''];
+                    sheet.appendRow(data);
                 }
             }
         }
@@ -139,14 +147,16 @@ export default function resetTotalSheet(): GoogleAppsScript.Spreadsheet.Sheet | 
         // apply other formatting to the filled columns
         sheet.getRange('A2:A').setBackground('#EEEEEE');
         sheet.getRange('A2:A').setHorizontalAlignment('center');
+        sheet.getRange('C2:C').setHorizontalAlignment('right');
         sheet.getRange('D2:D').setBackground('#EEEEEE');
         sheet.getRange('F2:K').setBackground('#EEEEEE');
         sheet.getRange('F2:F').setNumberFormat('0.00000000').setFontColor(null).setFontStyle(null);
-        sheet.getRange('H2:I').setNumberFormat('+0.00000000;-0.00000000;0.00000000').setFontColor(null).setFontStyle(null);
+        sheet.getRange('H2:I').setNumberFormat('+0.00000000;-0.00000000;0.00000000').setFontColor(null).setFontStyle(null)
+            .setHorizontalAlignment('right');
 
         // autosize the columns' widths, add conditional formatting
         sheet.autoResizeColumns(1, 12);
-        setTotalsSheetCFRules(sheet, rowCount);
+        setTotalsSheetCFRules(sheet, rowCount - 1);
         SpreadsheetApp.flush();
 
         return sheet;

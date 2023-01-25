@@ -3,20 +3,20 @@
  *
  */
 
-import { newCategorySheet } from './categories';
-import { formatSheet } from './format';
+import { newNFTCategorySheet } from './categories';
+import { formatNFTSheet } from './format-nft';
 import { getCoinFromSheetName } from './sheet';
 
 /* global SpreadsheetApp */
 /* global GoogleAppsScript */
 
-export function showNewCoinPrompt(): string | null {
+export function showNewNFTAddrPrompt(): string | null {
     if (typeof ScriptApp !== 'undefined') {
         const ui = SpreadsheetApp.getUi();
 
         const result = ui.prompt(
-            'Track New Coin',
-            'Enter the coin\'s trading symbol ("BTC", "ETH", "XRP"):',
+            'Track NFTs',
+            'Enter the address or shortened address ("0xa1b2...y25z26", "Yourname.eth", etc). If your address holds NFTs on multiple networks consider appending a network name to the adddress ("0xe5d4... Polygon").',
             ui.ButtonSet.OK_CANCEL
         );
 
@@ -26,19 +26,19 @@ export function showNewCoinPrompt(): string | null {
         if (button === ui.Button.OK) {
             // show alerts and cancel the command if the user provided text has issues
             if (text === '') {
-                ui.alert('Invalid Coin Name', 'The new coin\'s trading symbol cannot be left blank.', ui.ButtonSet.OK);
+                ui.alert('Invalid Address', 'The address cannot be left blank.', ui.ButtonSet.OK);
                 return null;
             }
             if (/ *\([^)]*\) */g.test(text)) {
-                ui.alert('Invalid Coin Name', 'The new coin name cannot end with text in parenthesis.', ui.ButtonSet.OK);
+                ui.alert('Invalid Address', 'The address text cannot end with text in parenthesis.', ui.ButtonSet.OK);
                 return null;
             }
             if (/Copy of */g.test(text)) {
-                ui.alert('Invalid Coin Name', 'The new coin name cannot start with "Copy of ".', ui.ButtonSet.OK);
+                ui.alert('Invalid Address', 'The address cannot start with "Copy of ".', ui.ButtonSet.OK);
                 return null;
             }
             if (/ * [1234567890]+/g.test(text)) {
-                ui.alert('Invalid Coin Name', 'The new coin name cannot end with space followed by a number.', ui.ButtonSet.OK);
+                ui.alert('Invalid Address', 'The address cannot end with space followed by a number.', ui.ButtonSet.OK);
                 return null;
             }
             // walk through all sheets in workbook to compare suggested new coin name with existing sheet names
@@ -46,7 +46,7 @@ export function showNewCoinPrompt(): string | null {
             if (allSheets.every(sheet => text !== getCoinFromSheetName(sheet))) {
                 return text;
             }
-            ui.alert('Coin Name Conflict', `A sheet named ${text} already exists.`, ui.ButtonSet.OK);
+            ui.alert('Address Conflict', `A sheet named ${text} already exists in this workbook.`, ui.ButtonSet.OK);
             return null;
         }
         // if ((button === ui.Button.CANCEL) || (button === ui.Button.CLOSE))
@@ -59,29 +59,29 @@ export function showNewCoinPrompt(): string | null {
  *
  * @return the newly created sheet, for function chaining purposes.
  */
-export function newCoinSheet(coinName = ''): GoogleAppsScript.Spreadsheet.Sheet | null {
+export function newNFTSheet(address = ''): GoogleAppsScript.Spreadsheet.Sheet | null {
     if (typeof ScriptApp !== 'undefined') {
         // ask user what the name of the new currency will be
-        let newCoinName: string | null = null;
-        if (coinName === '') {
-            newCoinName = showNewCoinPrompt();
+        let newNFTAddress: string | null = null;
+        if (address === '') {
+            newNFTAddress = showNewNFTAddrPrompt();
         } else {
-            newCoinName = coinName;
+            newNFTAddress = address;
         }
 
         // indicates that the user canceled, so abort without making a new sheet
-        if (newCoinName === null) return null;
+        if (newNFTAddress === null) return null;
 
         // if no Categories sheet previously exists, create one
-        if (SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Categories') == null) {
-            newCategorySheet();
+        if (SpreadsheetApp.getActiveSpreadsheet().getSheetByName('NFT Categories') == null) {
+            newNFTCategorySheet();
         }
 
-        const newSheet = SpreadsheetApp.getActiveSpreadsheet().insertSheet(newCoinName);
+        const newSheet = SpreadsheetApp.getActiveSpreadsheet().insertSheet(`${newNFTAddress} NFTs`);
         SpreadsheetApp.setActiveSheet(newSheet);
-        newSheet.getRange('H1').setValue(newCoinName);
+        newSheet.getRange('B1').setValue(`${newNFTAddress}`);
 
-        return formatSheet(newSheet);
+        return formatNFTSheet(newSheet);
     }
     return null;
 }

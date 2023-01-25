@@ -1,6 +1,6 @@
 import { UnitTestWrapper, assert, assertCell, createTempSheet, fillInTempSheet, deleteTempSheet } from './utils.test';
 import { DataValidationRow, CompleteDataRow } from '../src/types';
-import { setFMVformulasOnSheet } from '../src/gas/fmv';
+import { setFMVformulasOnSheet } from '../src/gas/formulas-coin';
 import validate from '../src/validate';
 import getLastRowWithDataPresent from '../src/last-row';
 

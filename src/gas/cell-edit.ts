@@ -2,8 +2,8 @@
  * @NotOnlyCurrentDoc Limits the script to only accessing the current sheet.
  *
  */
-import { getCoinFromSheetName } from './sheet';
-import { setFMVStrategyOnRow } from './fmv';
+import { sheetContainsCoinData, sheetContainsNFTData } from './sheet';
+import { setFMVStrategyOnRow } from './formulas-coin';
 import { CompleteDataRow } from '../types';
 import getLastRowWithDataPresent from '../last-row';
 
@@ -15,10 +15,9 @@ import getLastRowWithDataPresent from '../last-row';
  */
 export default function onEdit(e: GoogleAppsScript.Events.SheetsOnEdit): void {
     const sheet = e.range.getSheet();
-    const currency = getCoinFromSheetName(sheet);
 
     // simple check to verify that onEdit actions only happen on coin tracking sheets
-    if ((sheet.getRange('H1').getValue() as string).trim() === currency) {
+    if (sheetContainsCoinData(sheet)) {
         const editedRow = e.range.getRow();
         // edit events triggered by users using the B1 dropdown
         if ((e.range.getColumn() === 2) && (editedRow === 1)) {
@@ -67,6 +66,18 @@ export default function onEdit(e: GoogleAppsScript.Events.SheetsOnEdit): void {
             const disposed = sheet.getRange(`K${editedRow}`).getValue() as string;
             setFMVStrategyOnRow(sheet, editedRow - 1, data, newStrategy, acquired, disposed, oldStrategy);
             SpreadsheetApp.flush();
+        }
+    } else if (sheetContainsNFTData(sheet)) {
+        const editedRow = e.range.getRow();
+        // edit events triggered by the Tx column
+        if ((e.range.getColumn() === 1) && (editedRow >= 3)) {
+            const lastRow = getLastRowWithDataPresent(sheet.getRange('F:F').getValues() as string[][]);
+            if (editedRow > lastRow) {
+                // create filter around all transactions
+                sheet.getFilter()?.remove();
+                sheet.getRange(`A2:AG${editedRow}`).createFilter();
+                SpreadsheetApp.flush();
+            }
         }
     }
 }

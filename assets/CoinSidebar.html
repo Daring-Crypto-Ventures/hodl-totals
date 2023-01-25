@@ -47,11 +47,12 @@
       const name = document.getElementById('wallet-name').value;
       google.script.run.scanWallet(name);
     }
-    */
+    
     function formatSheet() {
       // TODO figure out how to show Status when the command runs from this button
+      // underscored funcs like formatSheet_ are no longer exported need to call that code differently
       google.script.run.formatSheet_();
-    }
+    } */
 
     $(function() {
       poll();
@@ -131,9 +132,10 @@
   
   <body>
   <div class="column">
-    <p>Commands</p>
-    <input type="button" value="Apply Formatting" onclick="google.script.run.formatSheet()" />
-    <!-- Calculate oesn't work for some reason when called this way?
+    <!-- <p>Commands</p> -->
+    <!-- Formatting command doesn't show errors if something went wrong when called this way 
+    <input type="button" value="Apply Formatting" onclick="google.script.run.formatSheet()" /> -->
+    <!-- Calculate oesn't work for some reason when called this way
     <input type="button" value="Calculate (FIFO Method)" onclick="google.script.run.calculateFIFO()" /> -->
     <hr />
 
