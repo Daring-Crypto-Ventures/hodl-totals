@@ -20,9 +20,9 @@ export function showNewNFTAddrPrompt(): string | null {
             ui.ButtonSet.OK_CANCEL
         );
 
-        // Process the user's response.
+        // Process the user's response after removing leading/trailing spaces
         const button = result.getSelectedButton();
-        const text = result.getResponseText();
+        const text = result.getResponseText().trim();
         if (button === ui.Button.OK) {
             // show alerts and cancel the command if the user provided text has issues
             if (text === '') {

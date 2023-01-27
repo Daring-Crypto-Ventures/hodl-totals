@@ -44,8 +44,8 @@ export function getCoinFromSheetName(sheet: GoogleAppsScript.Spreadsheet.Sheet |
     if ((sheet !== null) && (typeof ScriptApp !== 'undefined')) {
         return sheet.getName()
             .replace(/ *\([^)]*\) */g, '')
-            .replace(/Copy of */g, '')
-            .replace(/ * [1234567890]+/g, '');
+            .replace(/^[Copy of]+ */g, '')
+            .replace(/ * [1234567890]+$/g, '');
     }
     return '';
 }
@@ -60,9 +60,9 @@ export function getAddressFromSheetName(sheet: GoogleAppsScript.Spreadsheet.Shee
     if ((sheet !== null) && (typeof ScriptApp !== 'undefined')) {
         return sheet.getName()
             .replace(/ *\([^)]*\) */g, '')
-            .replace(/Copy of */g, '')
-            .replace(/ * [1234567890]+/g, '')
-            .replace(/ * NFTs/g, '');
+            .replace(/^[Copy of]+ */g, '')
+            .replace(/ * [1234567890]+$/g, '')
+            .replace(/ * NFTs$/g, '');
     }
     return '';
 }
@@ -76,8 +76,8 @@ export function getAddressFromSheetName(sheet: GoogleAppsScript.Spreadsheet.Shee
 export function getAdornedCoinFromSheetName(sheet: GoogleAppsScript.Spreadsheet.Sheet | null): string {
     if ((sheet !== null) && (typeof ScriptApp !== 'undefined')) {
         return sheet.getName()
-            .replace(/Copy of */g, '')
-            .replace(/ * [1234567890]+/g, '');
+            .replace(/^[Copy of]+ */g, '')
+            .replace(/ * [1234567890]+$/g, '');
     }
     return '';
 }
