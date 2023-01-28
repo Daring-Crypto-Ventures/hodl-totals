@@ -156,7 +156,9 @@ export default function resetTotalSheet(): GoogleAppsScript.Spreadsheet.Sheet | 
 
         // autosize the columns' widths, add conditional formatting
         sheet.autoResizeColumns(1, 12);
-        setTotalsSheetCFRules(sheet, rowCount - 1);
+        if (rowCount > 1) {
+            setTotalsSheetCFRules(sheet, rowCount - 1);
+        }
         SpreadsheetApp.flush();
 
         return sheet;
