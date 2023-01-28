@@ -19,20 +19,15 @@ export default function openDiscordLink_(): void {
  * Open a URL in a new tab.
  */
 function openUrlFromGoogleSheet(url: string): void {
-    const html = HtmlService.createHtmlOutput(`${'<html><script>'
-      + 'window.close = function(){window.setTimeout(function(){google.script.host.close()},9)};'
-      + 'var a = document.createElement("a"); a.href="'}${url}"; a.target="_blank";`
-      + 'if(document.createEvent){'
-      + '  var event=document.createEvent("MouseEvents");'
-      + '  if(navigator.userAgent.toLowerCase().indexOf("firefox")>-1){window.document.body.append(a)}'
-      + '  event.initEvent("click",true,true); a.dispatchEvent(event);'
-      + '}else{ a.click() }'
-      + 'close();'
-      + '</script>'
-      // Offer URL as clickable link in case above code fails.
-      + `<body style="word-break:break-word;font-family:sans-serif;">Failed to open automatically. <a href="${url}" target="_blank" onclick="window.close()">Click here to proceed</a>.</body>`
-      + '<script>google.script.host.setHeight(40);google.script.host.setWidth(410)</script>'
+    // Credit for this regular expression: https://regex101.com/library/jN6kU2
+    const re = /^(?:https?:\/\/)?(?:[^@\/\n]+@)?(?:www\.)?([^:\/\n]+)/igm; // eslint-disable-line no-useless-escape
+    const hostname = re.exec(url)?.[1] ?? 'a';
+
+    const html = HtmlService.createHtmlOutput('<html>'
+      + '<body style="word-break:break-word;font-family:sans-serif;">'
+      + `<p><a href="${url}" target="_blank" onclick="window.close()">Click here to proceed</a> to</p><p>${url}</p></body>`
       + '</html>')
-        .setWidth(90).setHeight(1);
-    SpreadsheetApp.getUi().showModalDialog(html, 'Opening ...');
+        .setWidth(410).setHeight(80);
+
+    SpreadsheetApp.getUi().showModalDialog(html, `Open ${hostname}`);
 }

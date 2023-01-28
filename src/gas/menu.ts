@@ -56,8 +56,8 @@ export function onOpen(e: GoogleAppsScript.Events.AppsScriptEvent): void {
         .addItem('Calculate gain/loss', 'calculateGainLoss_')
         .addSeparator()
         .addItem('About HODL Totals', 'showAboutDialog_')
-        .addItem('Join our Discord server', 'openDiscordLink_')
-        .addItem('Show debug sidebar', 'showSheetActionsSidebar_');
+        .addItem('Join our Discord server', 'openDiscordLink_');
+    // .addItem('Show debug sidebar', 'showSheetActionsSidebar_');
     menu.addToUi();
 }
 
