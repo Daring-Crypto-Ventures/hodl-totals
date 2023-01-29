@@ -36,14 +36,19 @@ export function calculateCoinGainLoss(sheet: GoogleAppsScript.Spreadsheet.Sheet 
             const lastRow = getLastRowWithDataPresent(dateDisplayValues);
 
             // clear previously calculated values
-            Logger.log('Clearing previously calculated values and notes.');
             sheet.getRange('P3:T').setValue('');
             sheet.getRange('K3:K').setNote('');
 
             const lots = getOrderList(dateDisplayValues as [string][], lastRow, sheet.getRange('I:J').getValues() as [number, number][]);
             Logger.log(`Detected ${lots.length} purchases of ${sheet.getName().replace(/ *\([^)]*\) */g, '')}.`);
+            lots.forEach(lot => { // TODO remove this logging code once done fixing Split Row issues
+                Logger.log(`ACQ #${lot[0]} Acquired: ${lot[1]}  Value(USD): ${lot[2]}`);
+            });
             const sales = getOrderList(dateDisplayValues as [string][], lastRow, sheet.getRange('K:L').getValues() as [number, number][]);
             Logger.log(`Detected ${sales.length} sales of ${sheet.getName().replace(/ *\([^)]*\) */g, '')}.`);
+            sales.forEach(sale => { // TODO remove this logging code once done fixing Split Row issues
+                Logger.log(`DISP #${sale[0]} Disposed: ${sale[1]}  Value(USD): ${sale[2]}`);
+            });
 
             const annotations = calculateFIFO(coinName, data, formulaData, lots, sales);
 
@@ -65,7 +70,7 @@ export function calculateCoinGainLoss(sheet: GoogleAppsScript.Spreadsheet.Sheet 
 
             // iterate through annotations and add to the Sheet
             for (const annotation of annotations) {
-                sheet.getRange(`${annotation[0]}`).setNote(annotation[1]);
+                sheet.getRange(`E${annotation[0]}`).setNote(annotation[1]);
             }
 
             // Create tax status lookup table for categories from the Categories sheet
