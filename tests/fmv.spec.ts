@@ -126,7 +126,7 @@ export function test2FMV(): UnitTestWrapper {
                 disposedCol.forEach((row, rowIdx) => { disposedCol[rowIdx] = [...row]; });
                 disposedCol.forEach(row => row.splice(0, 6)); // remove leftmost date, category, net change, FMV strategy, inflow columns
                 disposedCol.forEach(row => row.splice(1, row.length - 1)); // remove all remaining columns to the right
-                // TODO - return annotations?  Or stop making annotations in the first place
+
                 setFMVformulasOnSheet(null, data, strategyCol, acquiredCol, disposedCol, lastRow);
                 assertCell(sheet, data as string[][], 2, 9, '=I3*O3', 'Test Application of Avg Daily Price Var Strategy : Row 3 Inflow Value(USD) : expected J3 -> =I3*O3 -> 0.23');
                 assertCell(sheet, data as string[][], 2, 14, '=AVERAGE(M3,N3)', 'Test Application of Avg Daily Price Var Strategy : Row 3 Price : expected O3 -> =AVERAGE(M3,N3) -> 2.195');
@@ -147,7 +147,7 @@ export function test2FMV(): UnitTestWrapper {
                 const strategyCol = sheet.getRange('H:H').getValues() as string[][];
                 const acquiredCol = sheet.getRange('I:I').getValues() as string[][];
                 const disposedCol = sheet.getRange('K:K').getValues() as string[][];
-                // TODO - return annotations?  Or stop making annotations in the first place
+
                 setFMVformulasOnSheet(sheet, null, strategyCol, acquiredCol, disposedCol, lastRow);
                 // these assertions aren't checked locally becasue they require cell formula calcs to happen
                 assertCell(sheet, data as string[][], 2, 9, '0.23', 'Test Application of Avg Daily Price Var Strategy : Row 3 Inflow Value(USD) : expected J3 -> =I3*O3 -> 0.23', 2);

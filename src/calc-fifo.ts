@@ -2,7 +2,7 @@
  * @NotOnlyCurrentDoc Limits the script to only accessing the current sheet.
  *
  */
-import { CompleteDataRow, CompleteDataRowAsStrings } from './types';
+import { CompleteDataRow } from './types';
 
 /**
  * Using the FIFO method calculate short and long term gains from the data.
@@ -11,10 +11,9 @@ import { CompleteDataRow, CompleteDataRowAsStrings } from './types';
 export function calculateFIFO(
     coinname: string,
     data: CompleteDataRow[],
-    formulaData: CompleteDataRowAsStrings[], // TODO don't pass this in, find a better way for caller to track what rows got added
     lots: [string, number, number, number][],
     sales: [string, number, number, number][]
-): [number, string][] {
+): [number, number, string][] {
     let shift: number; // Integer
     let lotCnt: number; // Integer
     let lotCoinRemain: number; // Double
@@ -25,7 +24,7 @@ export function calculateFIFO(
     let sellCoin: number; // Double
     let sellRecd: number; // Double
     let sellRow: number; // Integer
-    const annotations: [number, string][] = [];
+    const annotations: [number, number, string][] = [];
     const MILLIS_PER_DAY = 1000 * 60 * 60 * 24;
     const ONE_SATOSHI = 0.00000001;
 
@@ -170,18 +169,15 @@ export function calculateFIFO(
                         // Row numbers are based on the Google Sheet row which includes a +3 offset
                         const splitNoteText = `Split ${originalCoin.toFixed(8)} `
                             + `${coinname} disposition worth $${originalCost.toFixed(2)} into rows ${sellRow + shift + 1} and ${sellRow + shift + 2}.`;
-                        annotations.push([sellRow + shift + 1, splitNoteText]);
+                        annotations.push([sellRow + shift + 1, 5, splitNoteText]);
 
                         // shift to the next row to post the short-term split
                         shift += 1;
                         // create the new row for the short-term part of the term split
                         data.splice(sellRow + shift, 0, [...data[sellRow + shift - 1]]);
-                        formulaData.splice(sellRow + shift, 0, [...formulaData[sellRow + shift - 1]]);
 
-                        // TODO copy any attached FMV notes over from old row to new row also
-                        // TODO copy any FMV cell formatting over from old row to new row also
                         // Row numbers are based on the Google Sheet row which includes a +3 offset
-                        annotations.push([sellRow + shift + 1, splitNoteText]);
+                        annotations.push([sellRow + shift + 1, 5, splitNoteText]);
                         data[sellRow + shift][4] = originalDate as unknown as string; // TODO clean this TS mess up
                         data[sellRow + shift][6] = -originalCoin * (1 - splitFactor);
                         data[sellRow + shift][10] = originalCoin * (1 - splitFactor);

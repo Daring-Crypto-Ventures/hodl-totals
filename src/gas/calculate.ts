@@ -50,7 +50,35 @@ export function calculateCoinGainLoss(sheet: GoogleAppsScript.Spreadsheet.Sheet 
                 Logger.log(`DISP #${sale[0]} Disposed: ${sale[1]}  Value(USD): ${sale[2]}`);
             });
 
-            const annotations = calculateFIFO(coinName, data, formulaData, lots, sales);
+            const annotations = calculateFIFO(coinName, data, lots, sales);
+
+            // augment the formula array to account for split rows added to the data array by calculateFIFO
+            let firstRowOfTheSplit = true;
+            annotations.forEach(annotatedRow => {
+                if (annotatedRow?.[2]?.startsWith('Split')) {
+                    const splitRowIdx = annotatedRow?.[0] - 1; // convert 1-based row that Google Sheet expects into 0-based js data array
+                    const modifiedColumnsIdxs = [6, 10, 11]; // net change, outflow coin disposed, outflow coin USD value
+
+                    // if first row of split, create an extra row in the formula array so that its shape matches the data array shape
+                    if (firstRowOfTheSplit) {
+                        // copy formula data from the split row into the newly created row
+                        formulaData.splice(splitRowIdx + 1, 0, [...formulaData[splitRowIdx]]);
+                    }
+                    firstRowOfTheSplit = !firstRowOfTheSplit;
+
+                    // on split rows and the newly created rows, don't overwrite calculated values with formulas
+                    // splitRow formulas as Note on that cell so that the user data isnt lost
+                    modifiedColumnsIdxs.forEach(colIdx => {
+                        if (formulaData[splitRowIdx][colIdx] !== '') {
+                            annotations.push([splitRowIdx + 1, colIdx + 1, `Value used in place of formula:\n${formulaData[splitRowIdx][colIdx]}`]);
+                        }
+                        formulaData[splitRowIdx][colIdx] = '';
+                    });
+
+                    // TODO - copy any cell formatting (cell bkgnd color, text strikethru) over from old row to new row also
+                    // TODO - copy any other attached notes over from old row to new row also
+                }
+            });
 
             for (let i = 2; i < data.length; i++) {
                 // scan just the inflow & outflow data of the row we're about to write
@@ -68,10 +96,10 @@ export function calculateCoinGainLoss(sheet: GoogleAppsScript.Spreadsheet.Sheet 
             }
             SpreadsheetApp.flush();
 
-            // iterate through annotations and add to the Sheet
-            for (const annotation of annotations) {
-                sheet.getRange(`E${annotation[0]}`).setNote(annotation[1]);
-            }
+            // iterate through the annotations and add them as Notes to the sheet
+            annotations.forEach(annotation => {
+                sheet.getRange(annotation[0], annotation[1]).setNote(annotation[2]);
+            });
 
             // Create tax status lookup table for categories from the Categories sheet
             const categoriesSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Categories');
