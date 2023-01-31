@@ -63,6 +63,19 @@ export function calculateCoinGainLoss(sheet: GoogleAppsScript.Spreadsheet.Sheet 
                     if (firstRowOfTheSplit) {
                         // copy formula data from the split row into the newly created row
                         formulaData.splice(splitRowIdx + 1, 0, [...formulaData[splitRowIdx]]);
+
+                        const nonModifiedColumnsIdxs = [1, 2, 3, 4, 12, 13, 14, 20]; // wallets/accounts, tx id, descrip, date, High, Low, Price
+                        // for nonmodified cells, copy cell formatting (bkgnd color, text styling, number/date styling, attached notes) from old row to new row
+                        nonModifiedColumnsIdxs.forEach(colIdx => {
+                            // convert 0-based js data array into 1-based row that Google Sheet expects
+                            sheet.getRange(splitRowIdx + 2, colIdx + 1).setBackground(sheet.getRange(splitRowIdx + 1, colIdx + 1).getBackground());
+                            sheet.getRange(splitRowIdx + 2, colIdx + 1).setFontWeight(sheet.getRange(splitRowIdx + 1, colIdx + 1).getFontWeight());
+                            sheet.getRange(splitRowIdx + 2, colIdx + 1).setFontStyle(sheet.getRange(splitRowIdx + 1, colIdx + 1).getFontStyle());
+                            sheet.getRange(splitRowIdx + 2, colIdx + 1).setNumberFormat(sheet.getRange(splitRowIdx + 1, colIdx + 1).getNumberFormat());
+                            sheet.getRange(splitRowIdx + 2, colIdx + 1).setNote(sheet.getRange(splitRowIdx + 1, colIdx + 1).getNote());
+                        });
+                    } else {
+                        // TODO code to apply the Category and its formatting rules to the added row
                     }
                     firstRowOfTheSplit = !firstRowOfTheSplit;
 
@@ -70,13 +83,11 @@ export function calculateCoinGainLoss(sheet: GoogleAppsScript.Spreadsheet.Sheet 
                     // splitRow formulas as Note on that cell so that the user data isnt lost
                     modifiedColumnsIdxs.forEach(colIdx => {
                         if (formulaData[splitRowIdx][colIdx] !== '') {
+                            // convert 0-based js data array into 1-based row that Google Sheet expects
                             annotations.push([splitRowIdx + 1, colIdx + 1, `Value used in place of formula:\n${formulaData[splitRowIdx][colIdx]}`]);
                         }
                         formulaData[splitRowIdx][colIdx] = '';
                     });
-
-                    // TODO - copy any cell formatting (cell bkgnd color, text strikethru) over from old row to new row also
-                    // TODO - copy any other attached notes over from old row to new row also
                 }
             });
 
