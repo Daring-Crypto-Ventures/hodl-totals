@@ -7,6 +7,7 @@ import validateNFTSheet from './validate-nft';
 import { CompleteDataRow, CompleteDataRowAsStrings, LooselyTypedDataValidationRow } from '../types';
 import getLastRowWithDataPresent from '../last-row';
 import { calculateFIFO, dateFromString } from '../calc-fifo';
+import { setFMVStrategyOnRow } from './formulas-coin';
 import getOrderList from '../orders';
 import validate from '../validate';
 
@@ -75,7 +76,11 @@ export function calculateCoinGainLoss(sheet: GoogleAppsScript.Spreadsheet.Sheet 
                             sheet.getRange(splitRowIdx + 2, colIdx + 1).setNote(sheet.getRange(splitRowIdx + 1, colIdx + 1).getNote());
                         });
                     } else {
-                        // TODO code to apply the Category and its formatting rules to the added row
+                        // apply the Valuation Strategy and its formatting rules to the added row
+                        const acquired = sheet.getRange(splitRowIdx + 1, 9).getValue() as string;
+                        const disposed = sheet.getRange(splitRowIdx + 1, 11).getValue() as string;
+                        setFMVStrategyOnRow(sheet, splitRowIdx, data, data[splitRowIdx][7], acquired, disposed);
+                        SpreadsheetApp.flush();
                     }
                     firstRowOfTheSplit = !firstRowOfTheSplit;
 
