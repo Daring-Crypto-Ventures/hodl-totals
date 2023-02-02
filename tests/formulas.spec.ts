@@ -97,7 +97,7 @@ export function test2FMV(): UnitTestWrapper {
             ['FALSE', '', '', 'CryptoBridge traded for 99.8 VRSC @ 0.0000259 BTC-VRSC', '2019-02-15', 'Traded', +99.8, 'Avg Daily Price Variation', 99.8, 0, 0, 0, '=0.0000259*3647.8', '=0.0000259*3608.21', '', '', '', '', 0, 0, ''],
             ['FALSE', '', '', 'Trezor BTC Outgoing Transfer', '2019-06-02', 'Tx Fee', -0.00006253, 'Price Known', 0, 0, 0.00006253, 0, '', '', '8685.27', '', '', '', 0, 0, ''],
             ['FALSE', '', '', 'barterly traded 940 ARR for 1200 VRSC, 12.0001 VRSC fee', '2019-06-24', 'Tx Fee', -12.0001, 'Price Known', 0, 0, 12.0001, 0, '', '', '=0.00001916*10838.17', '', '', '', 0, 0, ''],
-            ['FALSE', '', '', 'binance.com traded for 51.19 KMD for 0.00627589 BTC', '2019-07-08', 'Traded', -51.19, 'Avg Daily Price Variation', 51.19, 0, 0, 0, '=0.00627589/51.19*12345.83', '=0.00627589/51.19*11393.37', '', '', '', '', 0, 0, ''],
+            ['FALSE', '', '', 'binance.com traded for 51.19 KMD for 0.00627589 BTC', '2019-07-08', 'Traded', +51.19, 'Avg Daily Price Variation', 51.19, 0, 0, 0, '=0.00627589/51.19*12345.83', '=0.00627589/51.19*11393.37', '', '', '', '', 0, 0, ''],
             ['FALSE', '', '', 'BTC recieved at Pretentious Party', '2019-10-04', 'Gift Received', +0.00491033, 'Value Known', 0.00491033, 46.02, 0, 0, '', '', '', '', '', '', 0, 0, '']
         ];
         const testRun = function (): void {

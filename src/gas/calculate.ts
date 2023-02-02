@@ -155,9 +155,8 @@ export function calculateCoinGainLoss(sheet: GoogleAppsScript.Spreadsheet.Sheet 
             Logger.log(`Last calculation succeeded ${now}`);
         } else {
             // notify the user of the data validation error
-            const msgPrefix = validationErrMsg.substring(0, validationErrMsg.indexOf(':'));
-            const msg = Utilities.formatString(validationErrMsg);
-            Browser.msgBox(msgPrefix, msg, Browser.Buttons.OK);
+            const msg = validationErrMsg.split(':');
+            Browser.msgBox(msg?.[0], msg?.[1], Browser.Buttons.OK);
 
             // record the failure in the sheet as well
             const now = Utilities.formatDate(new Date(), SpreadsheetApp.getActiveSpreadsheet().getSpreadsheetTimeZone(), 'yyyy-MM-dd HH:mm');

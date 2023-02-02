@@ -1,5 +1,5 @@
 // import { expect, test } from '@jest/globals';
-import { test1FMV, test2FMV } from '../../tests/fmv.spec';
+import { test1FMV, test2FMV } from '../../tests/formulas.spec';
 
 /* eslint-disable jest/valid-describe-callback */
 
