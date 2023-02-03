@@ -1,5 +1,10 @@
 // import { expect, test } from '@jest/globals';
-import { test1DataValidation, test2DataValidation, test3DataValidation } from '../tests/validate.spec';
+import {
+    test1DataValidation,
+    test2DataValidation,
+    test3DataValidation,
+    test4DataValidation
+} from '../tests/validate.spec';
 
 /* eslint-disable jest/valid-describe-callback */
 
@@ -11,3 +16,4 @@ import { test1DataValidation, test2DataValidation, test3DataValidation } from '.
 describe('Data Validation - Date Out of Order', test1DataValidation());
 describe('Data Validation - Coin Oversold', test2DataValidation());
 describe('Data Validation - Buy and Sell on Same Line', test3DataValidation());
+describe('Data Validation - Test for Improperly Formatted Date', test4DataValidation());

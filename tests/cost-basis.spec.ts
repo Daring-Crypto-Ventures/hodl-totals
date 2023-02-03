@@ -394,6 +394,48 @@ export function test7CostBasis(): UnitTestWrapper {
 }
 
 /**
+ * test8 for function calculateFIFO(sheet, data, lots, sales)
+ */
+export function test8CostBasis(): UnitTestWrapper {
+    return (): void => {
+        const coinName = 'CB_TEST8';
+        const sheet = createTempSheet(coinName);
+        const data: CompleteDataRow[] = [
+            ['FALSE', '', '', '', '', '', 0, '', 0, 0, 0, 0, '', '', '', '', '', '', 0, 0, ''],
+            ['FALSE', '', '', '', '', '', 0, '', 0, 0, 0, 0, '', '', '', '', '', '', 0, 0, ''],
+            ['FALSE', 'The Wallet', 'aaaa', 'My first block', '2009-01-03', 'Mining', +50, '', 50.0, 0.50, 0, 0, '', '', '', '', '', '', 0, 0, ''],
+            ['FALSE', 'The Wallet', 'bbbb', 'Tx Fee', '2021-04-04', 'Tx Fee', -0.00003998, '', 0, 0, 0.00003998, 2.33, '', '', '', '', '', '', 0, 0, ''],
+            ['FALSE', 'The Wallet', 'cccc', 'Time to prove I am Satoshi Nakamoto!', '2021-04-04', 'USD Withdrawal', -49.99996002, '', 0, 0, 49.99996002, 2908867.67, '', '', '', '', '', '', 0, 0, '']
+        ];
+
+        const testRun = function (round: number): void {
+            const annotations = callCalculateFIFO(sheet, coinName, data, round);
+
+            assertCell(sheet, data as string[][], 2, 15, 'Lot 1 - 100% Sold', `Round ${round} Test8 : Row 3 Lot ID : expected Lot 1`);
+            assertCell(sheet, data as string[][], 2, 18, '0.00', `Round ${round} Test8 : Row 3 Cost Basis : expected no cost basis`, 2);
+            assertCell(sheet, data as string[][], 2, 19, '0.00', `Round ${round} Test8 : Row 3 Gain(Loss) : expected no gain`, 2);
+            assertCell(sheet, data as string[][], 3, 15, 'Sold from Lot 1', `Round ${round} Test8 : Row 4 Lot ID : expected Sold from Lot 1`);
+            assertCell(sheet, data as string[][], 3, 16, '2009-01-03', `Round ${round} Test8 : Row 4 Date Acquired : expected 2009-01-03`);
+            assertCell(sheet, data as string[][], 3, 17, 'Long-term', `Round ${round} Test8 : Row 4 Status : expected long-term cost basis`);
+            assertCell(sheet, data as string[][], 3, 18, '0.00', `Round ${round} Test8 : Row 4 Cost Basis : expected 0.00 cost basis`, 2);
+            assertCell(sheet, data as string[][], 3, 19, '2.33', `Round ${round} Test8 : Row 4 Gain(Loss) : expected $2.33 gain`, 2);
+            assertCell(sheet, data as string[][], 4, 15, 'Sold from Lot 1', `Round ${round} Test8 : Row 5 Lot ID : expected Sold from Lot 1`);
+            assertCell(sheet, data as string[][], 4, 16, '2009-01-03', `Round ${round} Test8 : Row 5 Date Acquired : expected 2009-01-03`);
+            assertCell(sheet, data as string[][], 4, 17, 'Long-term', `Round ${round} Test8 : Row 5 Status : expected long-term cost basis`);
+            assertCell(sheet, data as string[][], 4, 18, '0.50', `Round ${round} Test8 : Row 5 Cost Basis : expected 1000 cost basis`, 2);
+            assertCell(sheet, data as string[][], 4, 19, '2908867.17', `Round ${round} Test8 : Row 5 Gain(Loss) : expected $2,908,867.17 gain`, 2);
+            assert(annotations.length, 0, `Round ${round} Test8 : Annotations : expected no annotations`);
+        };
+
+        fillInTempSheet(sheet, data as string[][]);
+        testRun(1);
+        testRun(2);
+
+        deleteTempSheet(sheet);
+    };
+}
+
+/**
  * Used for Local testing of the FIFO Calculation function outside of the spreadsheet context
  *
  */

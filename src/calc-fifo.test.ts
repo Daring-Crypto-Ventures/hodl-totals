@@ -6,7 +6,8 @@ import {
     test4CostBasis,
     test5CostBasis,
     test6CostBasis,
-    test7CostBasis
+    test7CostBasis,
+    test8CostBasis
 } from '../tests/cost-basis.spec';
 
 /* eslint-disable jest/valid-describe-callback */
@@ -23,3 +24,4 @@ describe('Cost Basis - No Sale (Two Rounds)', test4CostBasis());
 describe('Cost Basis - Example Dataset (One Round)', test5CostBasis());
 describe('Cost Basis - Real Data with Term Split (One Round)', test6CostBasis());
 describe('Cost Basis - Simple Calc with all coins sold (Two Round)', test7CostBasis());
+describe('Cost Basis - Example Dataset with Extreme Values (One Round)', test8CostBasis());

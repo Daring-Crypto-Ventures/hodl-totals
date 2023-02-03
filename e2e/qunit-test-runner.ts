@@ -1,4 +1,10 @@
-import { test1DataValidation, test2DataValidation, test3DataValidation } from '../tests/validate.spec';
+import {
+    test1DataValidation,
+    test2DataValidation,
+    test3DataValidation,
+    test4DataValidation
+} from '../tests/validate.spec';
+
 import {
     test1CostBasis,
     test2CostBasis,
@@ -6,9 +12,10 @@ import {
     test4CostBasis,
     test5CostBasis,
     test6CostBasis,
-    test7CostBasis
+    test7CostBasis,
+    test8CostBasis
 } from '../tests/cost-basis.spec';
-import { test1FMV, test2FMV } from '../tests/fmv.spec';
+import { test1FMV, test2FMV } from '../tests/formulas.spec';
 import { version } from '../src/version';
 
 /**
@@ -37,6 +44,8 @@ function testValidationFunctions(): void {
     QUnit.test('Data Validation - Coin Oversold', test2DataValidation());
     // @ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
     QUnit.test('Data Validation - Buy and Sell on Same Line', test3DataValidation());
+    // @ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
+    QUnit.test('Data Validation - Test for Improperly Formatted Date', test4DataValidation());
 }
 
 /**
@@ -58,6 +67,8 @@ function testCostBasisFunctions(): void {
     QUnit.test('Cost Basis - Real Data with Term Split (Two Rounds)', test6CostBasis());
     // @ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
     QUnit.test('Cost Basis - Simple Calc with all coins sold (Two Round)', test7CostBasis());
+    // @ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
+    QUnit.test('Cost Basis - Example Dataset with Extreme Values (One Round)', test8CostBasis());
 }
 
 /**

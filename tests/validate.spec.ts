@@ -102,3 +102,35 @@ export function test3DataValidation(): UnitTestWrapper {
         deleteTempSheet(sheet);
     };
 }
+
+/**
+ * test4 for function validate(sheet)
+ */
+export function test4DataValidation(): UnitTestWrapper {
+    return (): void => {
+        const coinName = 'VAL_TEST4';
+        const sheet = createTempSheet(coinName);
+        const initialData: DataValidationRow[] = [
+            ['', '', 0, '', 0, 0, 0, 0],
+            ['', '', 0, '', 0, 0, 0, 0],
+            ['01-03-2009', '', +50, '', 50.0, 0.50, 0, 0],
+            ['04-04-2021', '', -0.00003998, '', 0, 0, 0.00003998, 2.33],
+            ['04-04-2021', '', -49.99996002, '', 0, 0, 49.99996002, 2908867.67]];
+
+        const testRun = function (): void {
+            let result = '';
+            if (typeof ScriptApp === 'undefined') {
+                result = validate(initialData);
+            } else if (sheet !== null) {
+                // QUnit unit test
+                result = validate(sheet.getRange('E:L').getValues() as LooselyTypedDataValidationRow[]);
+            }
+            assert((result === ''), false, 'Test for Improperly Formatted Date : Validation Error : expected validation to fail');
+        };
+
+        fillInTempSheet(sheet, initialData as string[][]);
+        testRun();
+
+        deleteTempSheet(sheet);
+    };
+}
