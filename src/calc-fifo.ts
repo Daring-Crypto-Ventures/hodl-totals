@@ -228,7 +228,7 @@ export function calculateFIFO(
  *
  * @return Date object corresponding to that string input.
  */
-export function dateFromString(dateStr: string, incYear: number): Date {
+export function dateFromString(dateStr: string, incYear = 0): Date {
     const year = Number(dateStr.substring(0, 4));
     const month = Number(dateStr.substring(5, 7));
     const day = Number(dateStr.substring(8, 10));

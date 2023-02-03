@@ -1,5 +1,6 @@
 import { LooselyTypedDataValidationRow } from './types';
 import getLastRowWithDataPresent from './last-row';
+import { dateFromString } from './calc-fifo';
 
 /**
  * Spreadsheet satisifes some specific data validation rules which are PREREQs for FIFO calculation
@@ -10,10 +11,23 @@ import getLastRowWithDataPresent from './last-row';
 export default function validate(dateToLotAndSaleValues: LooselyTypedDataValidationRow[]): string {
     const lastRow = getLastRowWithDataPresent(dateToLotAndSaleValues as string[][]);
     let coinCheck = 0;
-    let lastDate = dateToLotAndSaleValues[2][0];
 
-    // ensure dates are in chronological order sorted from past to present
+    // ensure dates are valid and listed in chronological order sorted from past to present
+    const now = new Date();
+    const oldestPossibleDate = dateFromString('2009-01-03'); // date of the bitcoin genesis block
+    let lastDate = dateToLotAndSaleValues[2][0];
     for (let row = 2; row < lastRow; row++) {
+        let date: Date;
+        if (typeof ScriptApp !== 'undefined') {
+            date = dateToLotAndSaleValues[row][0] as unknown as Date;
+        } else {
+            date = dateFromString(dateToLotAndSaleValues[row][0]);
+        }
+        if ((date < oldestPossibleDate) || (date > now)) {
+            return `Data Validation Error: Date is too old or too new on row ${row + 1}.`;
+        }
+        // TODO use dateFromString() which is how caclulate FIFO uses it and this fails?
+        // return `Data Validation Error: Improperly formatted date on row ${row + 1}.`;
         if (dateToLotAndSaleValues[row][0] >= lastDate) {
             lastDate = dateToLotAndSaleValues[row][0];
         } else {

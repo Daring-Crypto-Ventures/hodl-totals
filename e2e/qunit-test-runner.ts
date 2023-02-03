@@ -45,7 +45,7 @@ function testValidationFunctions(): void {
     // @ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
     QUnit.test('Data Validation - Buy and Sell on Same Line', test3DataValidation());
     // @ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
-    QUnit.test('Data Validation - Test for Improperly Formatted Date', test4DataValidation());
+    QUnit.test('Data Validation - Test for Out of Range Date', test4DataValidation());
 }
 
 /**

@@ -113,9 +113,9 @@ export function test4DataValidation(): UnitTestWrapper {
         const initialData: DataValidationRow[] = [
             ['', '', 0, '', 0, 0, 0, 0],
             ['', '', 0, '', 0, 0, 0, 0],
-            ['01-03-2009', '', +50, '', 50.0, 0.50, 0, 0],
-            ['04-04-2021', '', -0.00003998, '', 0, 0, 0.00003998, 2.33],
-            ['04-04-2021', '', -49.99996002, '', 0, 0, 49.99996002, 2908867.67]];
+            ['2009-01-02', '', +50, '', 50.0, 0.50, 0, 0],
+            ['2021-04-04', '', -0.00003998, '', 0, 0, 0.00003998, 2.33],
+            ['2021-04-04', '', -49.99996002, '', 0, 0, 49.99996002, 2908867.67]];
 
         const testRun = function (): void {
             let result = '';
@@ -125,7 +125,7 @@ export function test4DataValidation(): UnitTestWrapper {
                 // QUnit unit test
                 result = validate(sheet.getRange('E:L').getValues() as LooselyTypedDataValidationRow[]);
             }
-            assert((result === ''), false, 'Test for Improperly Formatted Date : Validation Error : expected validation to fail');
+            assert((result === ''), false, 'Test for Out of Range Date : Validation Error : expected validation to fail');
         };
 
         fillInTempSheet(sheet, initialData as string[][]);
