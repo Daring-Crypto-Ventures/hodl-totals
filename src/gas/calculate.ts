@@ -32,7 +32,7 @@ export function calculateCoinGainLoss(sheet: GoogleAppsScript.Spreadsheet.Sheet 
 
         if (validationErrMsg === '') {
             const data = sheet.getRange('A:U').getValues() as CompleteDataRow[];
-            const formulaData = sheet.getRange('A:U').getFormulas() as CompleteDataRowAsStrings[];
+            const formulaData = sheet.getRange('A:U').getFormulasR1C1() as CompleteDataRowAsStrings[];
             const dateDisplayValues = sheet.getRange('E:E').getDisplayValues();
             const lastRow = getLastRowWithDataPresent(dateDisplayValues);
             const dateValues = sheet.getRange('E:E').getValues();
