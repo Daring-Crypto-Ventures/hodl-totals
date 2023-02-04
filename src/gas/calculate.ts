@@ -6,7 +6,7 @@ import { getCoinFromSheetName } from './sheet';
 import validateNFTSheet from './validate-nft';
 import { CompleteDataRow, CompleteDataRowAsStrings, LooselyTypedDataValidationRow } from '../types';
 import getLastRowWithDataPresent from '../last-row';
-import { calculateFIFO, dateFromString } from '../calc-fifo';
+import { calculateFIFO, datePlusNYears, dateStrFromDate } from '../calc-fifo';
 import { setFMVStrategyOnRow } from './formulas-coin';
 import getOrderList from '../orders';
 import validate from '../validate';
@@ -35,21 +35,17 @@ export function calculateCoinGainLoss(sheet: GoogleAppsScript.Spreadsheet.Sheet 
             const formulaData = sheet.getRange('A:U').getFormulas() as CompleteDataRowAsStrings[];
             const dateDisplayValues = sheet.getRange('E:E').getDisplayValues();
             const lastRow = getLastRowWithDataPresent(dateDisplayValues);
+            const dateValues = sheet.getRange('E:E').getValues();
 
             // clear previously calculated values
             sheet.getRange('P3:T').setValue('');
             sheet.getRange('K3:K').setNote('');
 
-            const lots = getOrderList(dateDisplayValues as [string][], lastRow, sheet.getRange('I:J').getValues() as [number, number][]);
+            const lots = getOrderList(dateValues as [Date][], lastRow, sheet.getRange('I:J').getValues() as [number, number][]);
             Logger.log(`Detected ${lots.length} purchases of ${sheet.getName().replace(/ *\([^)]*\) */g, '')}.`);
-            lots.forEach(lot => { // TODO remove this logging code once done fixing Split Row issues
-                Logger.log(`ACQ #${lot[0]} Acquired: ${lot[1]}  Value(USD): ${lot[2]}`);
-            });
-            const sales = getOrderList(dateDisplayValues as [string][], lastRow, sheet.getRange('K:L').getValues() as [number, number][]);
+
+            const sales = getOrderList(dateValues as [Date][], lastRow, sheet.getRange('K:L').getValues() as [number, number][]);
             Logger.log(`Detected ${sales.length} sales of ${sheet.getName().replace(/ *\([^)]*\) */g, '')}.`);
-            sales.forEach(sale => { // TODO remove this logging code once done fixing Split Row issues
-                Logger.log(`DISP #${sale[0]} Disposed: ${sale[1]}  Value(USD): ${sale[2]}`);
-            });
 
             const annotations = calculateFIFO(coinName, data, lots, sales);
 
@@ -139,9 +135,9 @@ export function calculateCoinGainLoss(sheet: GoogleAppsScript.Spreadsheet.Sheet 
                         return false; // stop iterating thru categories list if found not taxable status
                     }
                     if (taxableStatus.startsWith('Taxable') && !(txLotInfo.startsWith('Sold'))) {
-                        sheet.getRange(`Q${i + 1}`).setValue(sheet.getRange(`E${i + 1}`).getDisplayValue().substring(0, 10));
+                        sheet.getRange(`Q${i + 1}`).setValue(dateStrFromDate(sheet.getRange(`E${i + 1}`).getValue() as Date));
                         sheet.getRange(`R${i + 1}`).setValue('Taxable');
-                        sheet.getRange(`T${i + 1}`).setValue(sheet.getRange(`J${i + 1}`).getDisplayValue());
+                        sheet.getRange(`T${i + 1}`).setValue(sheet.getRange(`J${i + 1}`).getValue());
                         return false; // stop iterating thru categories list if found taxable status
                     }
                     return true; // continue iterating thru categories list looking for a match
@@ -205,7 +201,7 @@ export function calculateNFTGainLossStatus(sheet: GoogleAppsScript.Spreadsheet.S
             // walk through all rows and fill in Status
             for (let i = 3; i <= lastRow; i++) {
                 // Set Status on Tx In
-                const acquisitionDateString = sheet.getRange(`F${i}`).getDisplayValue();
+                const acquisitionDateString = sheet.getRange(`F${i}`).getValue() as Date;
 
                 // Check to see if row's Tx In category is Taxable or Not Taxable thing, list that and move on
                 const txInCategory = sheet.getRange(`G${i}`).getValue() as string;
@@ -223,12 +219,12 @@ export function calculateNFTGainLossStatus(sheet: GoogleAppsScript.Spreadsheet.S
                 });
 
                 // Set status on Tx Out
-                const dispositionDateString = sheet.getRange(`V${i}`).getDisplayValue();
-                if (dispositionDateString === '') {
+                const dispositionValue = sheet.getRange(`V${i}`).getValue() as string;
+                if (dispositionValue === '') {
                     sheet.getRange(`AF${i}`).setValue('Unsold');
                 } else {
-                    const dispositionDate = dateFromString(dispositionDateString, 0);
-                    const oneYrAfterAcquisitionDate = dateFromString(acquisitionDateString, 1);
+                    const dispositionDate = dispositionValue as unknown as Date;
+                    const oneYrAfterAcquisitionDate = datePlusNYears(acquisitionDateString, 1);
 
                     // Check to see if row's Tx Out category is a Not Taxable thing, if yes set as such and move on
                     const txOutCategory = sheet.getRange(`U${i}`).getValue() as string;

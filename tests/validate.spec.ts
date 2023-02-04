@@ -25,7 +25,7 @@ export function test1DataValidation(): UnitTestWrapper {
                 result = validate(initialData);
             } else if (sheet !== null) {
                 // QUnit unit test
-                result = validate(sheet.getRange('E:L').getValues() as LooselyTypedDataValidationRow[]);
+                result = validate(sheet.getRange('A:H').getValues() as LooselyTypedDataValidationRow[]);
             }
             assert((result === ''), false, 'Test for Date Out of Order Validation : Validation Error : expected validation to fail');
         };
@@ -59,7 +59,7 @@ export function test2DataValidation(): UnitTestWrapper {
                 result = validate(initialData);
             } else if (sheet !== null) {
                 // QUnit unit test
-                result = validate(sheet.getRange('E:L').getValues() as LooselyTypedDataValidationRow[]);
+                result = validate(sheet.getRange('A:H').getValues() as LooselyTypedDataValidationRow[]);
             }
             assert((result === ''), false, 'Test for Coin Oversold Condition : Validation Error : expected validation to fail');
         };
@@ -91,7 +91,7 @@ export function test3DataValidation(): UnitTestWrapper {
                 result = validate(initialData);
             } else if (sheet !== null) {
                 // QUnit unit test
-                result = validate(sheet.getRange('E:L').getValues() as LooselyTypedDataValidationRow[]);
+                result = validate(sheet.getRange('A:H').getValues() as LooselyTypedDataValidationRow[]);
             }
             assert((result === ''), false, 'Test for Buy and Sell on Same Line : Validation Error : expected validation to fail');
         };
@@ -123,7 +123,7 @@ export function test4DataValidation(): UnitTestWrapper {
                 result = validate(initialData);
             } else if (sheet !== null) {
                 // QUnit unit test
-                result = validate(sheet.getRange('E:L').getValues() as LooselyTypedDataValidationRow[]);
+                result = validate(sheet.getRange('A:H').getValues() as LooselyTypedDataValidationRow[]);
             }
             assert((result === ''), false, 'Test for Out of Range Date : Validation Error : expected validation to fail');
         };

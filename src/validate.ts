@@ -14,22 +14,26 @@ export default function validate(dateToLotAndSaleValues: LooselyTypedDataValidat
 
     // ensure dates are valid and listed in chronological order sorted from past to present
     const now = new Date();
-    const oldestPossibleDate = dateFromString('2009-01-03'); // date of the bitcoin genesis block
-    let lastDate = dateToLotAndSaleValues[2][0];
+    const oldestPossibleDate = new Date(2009, 0, 3); // date of the bitcoin genesis block (month is 0-based in js)
+    let lastDate: Date;
+    if (dateToLotAndSaleValues[2][0] instanceof Date) {
+        lastDate = dateToLotAndSaleValues[2][0];
+    } else {
+        lastDate = dateFromString(dateToLotAndSaleValues[2][0]);
+    }
+
     for (let row = 2; row < lastRow; row++) {
         let date: Date;
-        if (typeof ScriptApp !== 'undefined') {
-            date = dateToLotAndSaleValues[row][0] as unknown as Date;
+        if (dateToLotAndSaleValues[row][0] instanceof Date) {
+            date = dateToLotAndSaleValues[row][0] as Date;
         } else {
-            date = dateFromString(dateToLotAndSaleValues[row][0]);
+            date = dateFromString(dateToLotAndSaleValues[row][0] as string);
         }
-        if ((date < oldestPossibleDate) || (date > now)) {
+        if ((date.getTime() < oldestPossibleDate.getTime()) || (date.getTime() > now.getTime())) {
             return `Data Validation Error: Date is too old or too new on row ${row + 1}.`;
         }
-        // TODO use dateFromString() which is how caclulate FIFO uses it and this fails?
-        // return `Data Validation Error: Improperly formatted date on row ${row + 1}.`;
-        if (dateToLotAndSaleValues[row][0] >= lastDate) {
-            lastDate = dateToLotAndSaleValues[row][0];
+        if (date.getTime() >= lastDate.getTime()) {
+            lastDate = date;
         } else {
             return `Data Validation Error: Date out of order in row ${row + 1}.`;
         }

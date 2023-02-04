@@ -5,7 +5,7 @@
 
 // types used for data validation
 export type DataValidationRow = [
-    string, // E: Date & Time (string: yyyy-mm-dd h:mm:ss)
+    Date | string, // E: Date & Time (string: yyyy-mm-dd h:mm:ss)
     string, // F: Category (dropdown)
     number, // G: Net Change
     string, // H: Valuation Strategy (dropdown)
@@ -15,7 +15,7 @@ export type DataValidationRow = [
     number, // L: Value (USD)
 ];
 export type LooselyTypedDataValidationRow = [
-    string, // E: Date & Time (string: yyyy-mm-dd h:mm:ss)
+    Date | string, // E: Date & Time (string: yyyy-mm-dd h:mm:ss)
     string, // F: Category (dropdown)
     number, // G: Net Change
     string, // H: Valuation Strategy (dropdown)

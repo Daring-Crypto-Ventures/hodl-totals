@@ -11,8 +11,8 @@ import { CompleteDataRow } from './types';
 export function calculateFIFO(
     coinname: string,
     data: CompleteDataRow[],
-    lots: [string, number, number, number][],
-    sales: [string, number, number, number][]
+    lots: [Date, number, number, number][],
+    sales: [Date, number, number, number][]
 ): [number, number, string][] {
     let shift: number; // Integer
     let lotCnt: number; // Integer
@@ -60,7 +60,7 @@ export function calculateFIFO(
         splitFactor = 0; // ratio of totalCoin to sellCoin
         totalCoin = 0; // running total of coins for basis
         totalCost = 0; // running total of dollar cost for basis
-        sellDate = dateFromString(sale[0], 0);
+        sellDate = sale[0];
         sellCoin = sale[1];
         sellCoinRemain = sale[1];
         sellRecd = sale[2];
@@ -77,7 +77,7 @@ export function calculateFIFO(
             const lotRow = lots[lot][3];
 
             // mark 1 year from the lotDate, to use in gains calculations later
-            const thisTerm = dateFromString(lots[lot][0], 1);
+            const thisTerm = datePlusNYears(lots[lot][0], 1);
 
             // if the remaining coin to sell is less than what is in the lot,
             // calculate and post the cost basis and the gain or loss
@@ -130,7 +130,7 @@ export function calculateFIFO(
 
                 // mark 1 year from the look-ahead lotDate
                 if ((lot + 1) < lots.length) {
-                    nextTerm = dateFromString(lots[lot + 1][0], 1);
+                    nextTerm = datePlusNYears(lots[lot + 1][0], 1);
                 } else {
                     nextTerm = sellDate; // no look-ahead date, so no term-split, fall thru the next case
                 }
@@ -237,6 +237,34 @@ export function dateFromString(dateStr: string, incYear = 0): Date {
 }
 
 /**
+ * Helper function add years to a Date object
+ *
+ * @param dateStr is a yyyy-mm-dd formatted string
+ * @param incYear will increment the year value by specified amount
+ *
+ * @return Date object corresponding to that string input.
+ */
+export function datePlusNYears(dateObj: Date, incYear: number): Date {
+    const newDate = new Date(dateObj);
+    newDate.setFullYear(dateObj.getFullYear() + incYear);
+    return newDate;
+}
+
+/**
+ * Helper function to return a string given a Date object
+ *
+ * @param dateStr is a yyyy-mm-dd formatted string
+ *
+ * @return Date object corresponding to that string input.
+ */
+export function dateStrFromDate(dateObj: Date): string {
+    const getYear = dateObj.toLocaleString('default', { year: 'numeric' });
+    const getMonth = dateObj.toLocaleString('default', { month: '2-digit' });
+    const getDay = dateObj.toLocaleString('default', { day: '2-digit' });
+    return `${getYear}-${getMonth}-${getDay}`;
+}
+
+/**
 * Helper function to create text telling the user which lots were sold
 *
 * @return string
@@ -252,8 +280,8 @@ function soldLotsString(lotIdStart: number, lotIdEnd: number): string {
 *
 * @return string
 */
-function soldLotDatesString(lotIdStartDate: string, lotIdEndDate: string): string {
+function soldLotDatesString(lotIdStartDate: Date, lotIdEndDate: Date): string {
     // denote the date range of the lots that were sold
-    const fromStr = (lotIdStartDate === lotIdEndDate) ? '' : `${lotIdStartDate.substring(0, 10)} to `;
-    return `${fromStr}${lotIdEndDate.substring(0, 10)}`;
+    const fromStr = (lotIdStartDate.getTime() === lotIdEndDate.getTime()) ? '' : `${dateStrFromDate(lotIdStartDate)} to `;
+    return `${fromStr}${dateStrFromDate(lotIdEndDate)}`;
 }

@@ -15,7 +15,7 @@ import getLastRowWithDataPresent from '../last-row';
  */
 export function updateFMVFormulas(sheet: GoogleAppsScript.Spreadsheet.Sheet | null): GoogleAppsScript.Spreadsheet.Sheet | null {
     if ((sheet !== null) && (typeof ScriptApp !== 'undefined')) {
-        const lastRow = getLastRowWithDataPresent(sheet.getRange('E:E').getValues() as string[][]);
+        const lastRow = getLastRowWithDataPresent(sheet.getRange('E:E').getDisplayValues());
 
         // code split out into its own function from fromat() because it can take awhile to run
         const strategyCol = sheet.getRange('H:H').getValues() as string[][];

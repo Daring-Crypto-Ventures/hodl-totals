@@ -1,6 +1,6 @@
 import { UnitTestWrapper, assert, assertCell, createTempSheet, fillInTempSheet, deleteTempSheet } from './utils.test';
 import { DataValidationRow, CompleteDataRow } from '../src/types';
-import { calculateFIFO } from '../src/calc-fifo';
+import { calculateFIFO, dateFromString } from '../src/calc-fifo';
 import getOrderList from '../src/orders';
 import validate from '../src/validate';
 import getLastRowWithDataPresent from '../src/last-row';
@@ -452,6 +452,7 @@ function callCalculateFIFO(sheet: GoogleAppsScript.Spreadsheet.Sheet | null, coi
         assert((validate(validationData as unknown as DataValidationRow[]) === ''), true, `Round ${round} Data validated`);
         const dateDisplayValues = validationData.map(row => [row[0], '']); // empty str makes this a 2D array of strings for getLastRowWithDataPresent()
         const lastRow = getLastRowWithDataPresent(dateDisplayValues);
+        const dateValues = validationData.map(row => [dateFromString(row[0]), '']);
 
         // clone the data array, and trim down to data needed for cost basis calc
         const lotData = [...validationData];
@@ -465,16 +466,17 @@ function callCalculateFIFO(sheet: GoogleAppsScript.Spreadsheet.Sheet | null, coi
         salesData.forEach(row => row.splice(2, row.length - 2)); // remove all remaining columns to the right
 
         // do the cost basis calc
-        const lots = getOrderList(dateDisplayValues as [string][], lastRow, lotData as unknown as [number, number][]);
-        const sales = getOrderList(dateDisplayValues as [string][], lastRow, salesData as unknown as [number, number][]);
+        const lots = getOrderList(dateValues as unknown as [Date][], lastRow, lotData as unknown as [number, number][]);
+        const sales = getOrderList(dateValues as unknown as [Date][], lastRow, salesData as unknown as [number, number][]);
         annotations = calculateFIFO(coinName, data, lots, sales);
     } else if (sheet !== null) {
         // QUnit unit test
         assert((validate(sheet.getRange('E:L').getValues() as DataValidationRow[]) === ''), true, `Round ${round} Data validated`);
         const dateDisplayValues = sheet.getRange('E:E').getDisplayValues();
         const lastRow = getLastRowWithDataPresent(dateDisplayValues);
-        const lots = getOrderList(dateDisplayValues as [string][], lastRow, sheet.getRange('I:J').getValues() as [number, number][]);
-        const sales = getOrderList(dateDisplayValues as [string][], lastRow, sheet.getRange('K:L').getValues() as [number, number][]);
+        const dateValues = sheet.getRange('E:E').getValues();
+        const lots = getOrderList(dateValues as [Date][], lastRow, sheet.getRange('I:J').getValues() as [number, number][]);
+        const sales = getOrderList(dateValues as [Date][], lastRow, sheet.getRange('K:L').getValues() as [number, number][]);
 
         annotations = calculateFIFO(coinName, data, lots, sales);
         fillInTempSheet(sheet, data as string[][]);

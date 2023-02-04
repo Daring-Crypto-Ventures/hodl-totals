@@ -3,14 +3,14 @@
  *
  * @return lots 2D array of {date, amt coin, price}
  */
-export default function getOrderList(dateDisplayValues: [string][], lastRow: number, coinAndPriceData: [number, number][]): [string, number, number, number][] {
-    const orderList: [string, number, number, number][] = [];
+export default function getOrderList(dateDisplayValues: [Date][], lastRow: number, coinAndPriceData: [number, number][]): [Date, number, number, number][] {
+    const orderList: [Date, number, number, number][] = [];
     let order = 0;
 
     // compact the data into a contiguous array
     for (let row = 2; row < lastRow; row++) {
         if (coinAndPriceData[row][0] > 0) {
-            orderList[order] = new Array(4) as [string, number, number, number];
+            orderList[order] = new Array(4) as [Date, number, number, number];
             orderList[order][0] = dateDisplayValues[row][0]; // date of order
             orderList[order][1] = coinAndPriceData[row][0]; // amount of coin bought or sold
             orderList[order][2] = coinAndPriceData[row][1]; // purchase price or sale price
