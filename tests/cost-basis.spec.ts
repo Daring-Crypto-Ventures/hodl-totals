@@ -449,18 +449,20 @@ function callCalculateFIFO(sheet: GoogleAppsScript.Spreadsheet.Sheet | null, coi
         validationData.forEach(row => row.splice(15, row.length - 15)); // remove rightmost calculation columns and summarized in column
         validationData.forEach(row => row.splice(0, 4)); // remove leftmost Tx ✔, wallets, Tx ID and description columns
 
-        assert((validate(validationData as unknown as DataValidationRow[]) === ''), true, `Round ${round} Data validated`);
-        const dateDisplayValues = validationData.map(row => [row[0], '']); // empty str makes this a 2D array of strings for getLastRowWithDataPresent()
-        const lastRow = getLastRowWithDataPresent(dateDisplayValues);
-        const dateValues = validationData.map(row => [dateFromString(row[0]), '']);
+        const lotData = [...validationData]; // clone the data for cost basis calcs before removing the header
+        const salesData = [...validationData];
+        validationData.splice(0, 2); // remove the empty 2-row header
 
-        // clone the data array, and trim down to data needed for cost basis calc
-        const lotData = [...validationData];
+        assert((validate(validationData as unknown as DataValidationRow[]) === ''), true, `Round ${round} Data validated`);
+
+        // trim down to data needed for cost basis calc
+        const dateDisplayValues = lotData.map(row => [row[0], '']); // empty str makes this a 2D array of strings for getLastRowWithDataPresent()
+        const lastRow = getLastRowWithDataPresent(dateDisplayValues);
+        const dateValues = lotData.map(row => [dateFromString(row[0]), '']);
         lotData.forEach((row, rowIdx) => { lotData[rowIdx] = [...row]; });
         lotData.forEach(row => row.splice(6, 2)); // split out and remove sales
         lotData.forEach(row => row.splice(0, 4)); // remove leftmost date, category, FMV strategy and net change columns from lots
         lotData.forEach(row => row.splice(2, row.length - 2)); // remove all remaining columns to the right
-        const salesData = [...validationData];
         salesData.forEach((row, rowIdx) => { salesData[rowIdx] = [...row]; });
         salesData.forEach(row => row.splice(0, 6)); // split out and remove date, category, FMV strategy, net change and lot columns
         salesData.forEach(row => row.splice(2, row.length - 2)); // remove all remaining columns to the right
@@ -471,12 +473,12 @@ function callCalculateFIFO(sheet: GoogleAppsScript.Spreadsheet.Sheet | null, coi
         annotations = calculateFIFO(coinName, data, lots, sales);
     } else if (sheet !== null) {
         // QUnit unit test
-        assert((validate(sheet.getRange('E:L').getValues() as DataValidationRow[]) === ''), true, `Round ${round} Data validated`);
         const dateDisplayValues = sheet.getRange('E:E').getDisplayValues();
         const lastRow = getLastRowWithDataPresent(dateDisplayValues);
-        const dateValues = sheet.getRange('E:E').getValues();
-        const lots = getOrderList(dateValues as [Date][], lastRow, sheet.getRange('I:J').getValues() as [number, number][]);
-        const sales = getOrderList(dateValues as [Date][], lastRow, sheet.getRange('K:L').getValues() as [number, number][]);
+        assert((validate(sheet.getRange(`E3:L${lastRow}`).getValues() as DataValidationRow[]) === ''), true, `Round ${round} Data validated`);
+        const dateValues = sheet.getRange('E:E').getValues(); // TODO use `E3:E${lastRow}` instead
+        const lots = getOrderList(dateValues as [Date][], lastRow, sheet.getRange('I:J').getValues() as [number, number][]); // TODO use `I3:J${lastRow}` instead
+        const sales = getOrderList(dateValues as [Date][], lastRow, sheet.getRange('K:L').getValues() as [number, number][]); // TODO use `K3:L${lastRow}` instead
 
         annotations = calculateFIFO(coinName, data, lots, sales);
         fillInTempSheet(sheet, data as string[][]);

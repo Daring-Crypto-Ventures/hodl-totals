@@ -25,26 +25,27 @@ import validate from '../validate';
 export function calculateCoinGainLoss(sheet: GoogleAppsScript.Spreadsheet.Sheet | null): GoogleAppsScript.Spreadsheet.Sheet | null {
     if ((sheet !== null) && (typeof ScriptApp !== 'undefined')) {
         const coinName = getCoinFromSheetName(sheet);
+        const dateDisplayValues = sheet.getRange('E:E').getDisplayValues();
+        const lastRow = getLastRowWithDataPresent(dateDisplayValues);
 
         // sanity check the data in the sheet. only proceed if data is good
         Logger.log('Validating the data before starting calculations.');
-        const validationErrMsg = validate(sheet.getRange('E:L').getValues() as LooselyTypedDataValidationRow[]);
+        const dateNotes = sheet.getRange(`E3:E${lastRow}`).getNotes().map(d => d[0]);
+        const validationErrMsg = validate(sheet.getRange(`E3:L${lastRow}`).getValues() as LooselyTypedDataValidationRow[], dateNotes);
 
         if (validationErrMsg === '') {
-            const data = sheet.getRange('A:U').getValues() as CompleteDataRow[];
-            const formulaData = sheet.getRange('A:U').getFormulasR1C1() as CompleteDataRowAsStrings[];
-            const dateDisplayValues = sheet.getRange('E:E').getDisplayValues();
-            const lastRow = getLastRowWithDataPresent(dateDisplayValues);
-            const dateValues = sheet.getRange('E:E').getValues();
+            const data = sheet.getRange('A:U').getValues() as CompleteDataRow[]; // TODO use `A3:U${lastRow}` instead
+            const formulaData = sheet.getRange('A:U').getFormulasR1C1() as CompleteDataRowAsStrings[]; // TODO use `A3:U${lastRow}` instead
+            const dateValues = sheet.getRange('E:E').getValues(); // TODO use `E3:E${lastRow}` instead
 
             // clear previously calculated values
-            sheet.getRange('P3:T').setValue('');
-            sheet.getRange('K3:K').setNote('');
+            sheet.getRange('P3:T').setValue(''); // TODO use `P3:T${lastRow}` instead
+            sheet.getRange('K3:K').setNote(''); // TODO use `K3:K${lastRow}` instead
 
-            const lots = getOrderList(dateValues as [Date][], lastRow, sheet.getRange('I:J').getValues() as [number, number][]);
+            const lots = getOrderList(dateValues as [Date][], lastRow, sheet.getRange('I:J').getValues() as [number, number][]); // TODO use `I3:J${lastRow}` instead
             Logger.log(`Detected ${lots.length} purchases of ${sheet.getName().replace(/ *\([^)]*\) */g, '')}.`);
 
-            const sales = getOrderList(dateValues as [Date][], lastRow, sheet.getRange('K:L').getValues() as [number, number][]);
+            const sales = getOrderList(dateValues as [Date][], lastRow, sheet.getRange('K:L').getValues() as [number, number][]); // TODO use `K3:L${lastRow}` instead
             Logger.log(`Detected ${sales.length} sales of ${sheet.getName().replace(/ *\([^)]*\) */g, '')}.`);
 
             const annotations = calculateFIFO(coinName, data, lots, sales);
@@ -92,7 +93,7 @@ export function calculateCoinGainLoss(sheet: GoogleAppsScript.Spreadsheet.Sheet 
                 }
             });
 
-            for (let i = 2; i < data.length; i++) {
+            for (let i = 2; i < data.length; i++) { // TODO skip header and switch to forEach loop
                 // scan just the inflow & outflow data of the row we're about to write
                 // avoid writing zeroes to previously empty cells (but write zeros to the Calculated columns)
                 // avoid overwriting any formulas used to calculate the values
@@ -122,9 +123,9 @@ export function calculateCoinGainLoss(sheet: GoogleAppsScript.Spreadsheet.Sheet 
 
             // iterate thru the new sheet contents to set Taxable or Not Taxable Status if not previously set
             const newLastRow = getLastRowWithDataPresent(sheet.getRange('E:E').getValues() as string[][]);
-            const txCategoryCol = sheet.getRange(`F1:F${newLastRow}`).getValues() as string[][];
-            const txLotInfoCol = sheet.getRange(`P1:P${newLastRow}`).getValues() as string[][];
-            for (let i = 2; i < newLastRow; i++) {
+            const txCategoryCol = sheet.getRange(`F1:F${newLastRow}`).getValues() as string[][]; // TODO use `F3:F${lastRow}` instead
+            const txLotInfoCol = sheet.getRange(`P1:P${newLastRow}`).getValues() as string[][]; // TODO use `P3:P${lastRow}` instead
+            for (let i = 2; i < newLastRow; i++) { // TODO switch to forEach()
                 // Check the row's Tx category's Taxable status, append that and move on
                 const txCategory = txCategoryCol[i][0];
                 const txLotInfo = txLotInfoCol[i][0];

@@ -1,6 +1,7 @@
 import { UnitTestWrapper, assert, createTempSheet, fillInTempSheet, deleteTempSheet } from './utils.test';
 import { DataValidationRow, LooselyTypedDataValidationRow } from '../src/types';
 import validate from '../src/validate';
+import getLastRowWithDataPresent from '../src/last-row';
 
 /**
  * test1 for validate()
@@ -22,10 +23,13 @@ export function test1DataValidation(): UnitTestWrapper {
             let result = '';
             if (typeof ScriptApp === 'undefined') {
                 // jest unit test
+                initialData.splice(0, 2); // remove the empty 2-row header
                 result = validate(initialData);
             } else if (sheet !== null) {
                 // QUnit unit test
-                result = validate(sheet.getRange('A:H').getValues() as LooselyTypedDataValidationRow[]);
+                const dateDisplayValues = sheet.getRange('E:E').getDisplayValues();
+                const lastRow = getLastRowWithDataPresent(dateDisplayValues);
+                result = validate(sheet.getRange(`A3:H${lastRow}`).getValues() as LooselyTypedDataValidationRow[]);
             }
             assert((result === ''), false, 'Test for Date Out of Order Validation : Validation Error : expected validation to fail');
         };
@@ -56,10 +60,13 @@ export function test2DataValidation(): UnitTestWrapper {
             let result = '';
             if (typeof ScriptApp === 'undefined') {
                 // jest unit test
+                initialData.splice(0, 2); // remove the empty 2-row header
                 result = validate(initialData);
             } else if (sheet !== null) {
                 // QUnit unit test
-                result = validate(sheet.getRange('A:H').getValues() as LooselyTypedDataValidationRow[]);
+                const dateDisplayValues = sheet.getRange('E:E').getDisplayValues();
+                const lastRow = getLastRowWithDataPresent(dateDisplayValues);
+                result = validate(sheet.getRange(`A3:H${lastRow}`).getValues() as LooselyTypedDataValidationRow[]);
             }
             assert((result === ''), false, 'Test for Coin Oversold Condition : Validation Error : expected validation to fail');
         };
@@ -88,10 +95,13 @@ export function test3DataValidation(): UnitTestWrapper {
         const testRun = function (): void {
             let result = '';
             if (typeof ScriptApp === 'undefined') {
+                initialData.splice(0, 2); // remove the empty 2-row header
                 result = validate(initialData);
             } else if (sheet !== null) {
                 // QUnit unit test
-                result = validate(sheet.getRange('A:H').getValues() as LooselyTypedDataValidationRow[]);
+                const dateDisplayValues = sheet.getRange('E:E').getDisplayValues();
+                const lastRow = getLastRowWithDataPresent(dateDisplayValues);
+                result = validate(sheet.getRange(`A3:H${lastRow}`).getValues() as LooselyTypedDataValidationRow[]);
             }
             assert((result === ''), false, 'Test for Buy and Sell on Same Line : Validation Error : expected validation to fail');
         };
@@ -120,10 +130,13 @@ export function test4DataValidation(): UnitTestWrapper {
         const testRun = function (): void {
             let result = '';
             if (typeof ScriptApp === 'undefined') {
+                initialData.splice(0, 2); // remove the empty 2-row header
                 result = validate(initialData);
             } else if (sheet !== null) {
                 // QUnit unit test
-                result = validate(sheet.getRange('A:H').getValues() as LooselyTypedDataValidationRow[]);
+                const dateDisplayValues = sheet.getRange('E:E').getDisplayValues();
+                const lastRow = getLastRowWithDataPresent(dateDisplayValues);
+                result = validate(sheet.getRange(`A3:H${lastRow}`).getValues() as LooselyTypedDataValidationRow[]);
             }
             assert((result === ''), false, 'Test for Out of Range Date : Validation Error : expected validation to fail');
         };
