@@ -1,6 +1,8 @@
 import { LooselyTypedDataValidationRow } from './types';
 import { dateFromString } from './calc-fifo';
 
+/* global SpreadsheetApp */
+
 /**
  * Spreadsheet satisifes some specific data validation rules which are PREREQs for FIFO calculation
  *
@@ -15,6 +17,7 @@ export default function validate(dateToLotAndSaleValues: LooselyTypedDataValidat
     // 2) ensure dates are valid and listed in chronological order sorted from past to present
     // 3) look for previous Split Row events and offer the user a choice on how to proceed
     let latestDate: Date;
+    let firstRowOfTheSplit = true;
     if (dateToLotAndSaleValues[0][0] instanceof Date) {
         latestDate = dateToLotAndSaleValues[0][0];
     } else {
@@ -39,9 +42,24 @@ export default function validate(dateToLotAndSaleValues: LooselyTypedDataValidat
             return `Data Validation Error: Date out of order in row ${rowIdx + 3}.`;
         }
         if (note?.startsWith('Split')) {
-            // TODO prompt the user
-            // to ether Proceed (User agrees no edits happened before split), Unsplit the rows and Proceed, or Cancel
-            return `TEMPORARY: Detected previous Short-Term, Long-Term split at row ${rowIdx + 3}`;
+            if (typeof ScriptApp !== 'undefined') {
+                if (firstRowOfTheSplit) {
+                    // to ether Proceed (User agrees no edits happened before split), Unsplit the rows and Proceed, or Cancel
+                    const ui = SpreadsheetApp.getUi();
+                    const response = ui.alert('Previous Transaction Split Detected',
+                        `Have you modified data or added new data prior to the previous transaction split at row ${rowIdx + 3}?`,
+                        ui.ButtonSet.YES_NO_CANCEL);
+                    if (response === ui.Button.YES) {
+                        return `Calculation Canceled: Recombine the transactions on row ${rowIdx + 3} and ${rowIdx + 4} before attempting to calculate gains/losses.`;
+                    }
+                    if (response !== ui.Button.NO) {
+                        // user pressed Cancel or close button
+                        return 'Calculation Canceled: Operation canceled by the user.';
+                    }
+                }
+                // toggle flag so that the user isn't prompted for the second row of each split
+                firstRowOfTheSplit = !firstRowOfTheSplit;
+            }
         }
         return ''; // no error message
     }
