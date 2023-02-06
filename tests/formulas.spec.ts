@@ -33,36 +33,25 @@ export function test1FMV(): UnitTestWrapper {
                 validationData.forEach((row, rowIdx) => { validationData[rowIdx] = [...row]; });
                 validationData.forEach(row => row.splice(15, row.length - 15)); // remove rightmost calculation columns and summarized in column
                 validationData.forEach(row => row.splice(0, 4)); // remove leftmost Tx ✔, wallets, Tx ID and description columns
-
-                const strategyCol = [...validationData]; // clone the data to use for FMV checks later
-                const acquiredCol = [...validationData];
-                const disposedCol = [...validationData];
                 validationData.splice(0, 2); // remove the empty 2-row header
 
                 assert((validate(validationData as unknown as DataValidationRow[]) === ''), true, `Round ${round} Data validated`);
 
-                const dateDisplayValues = strategyCol.map(row => [row[0], '']); // empty str makes this a 2D array of strings for getLastRowWithDataPresent()
-                const lastRow = getLastRowWithDataPresent(dateDisplayValues);
-                strategyCol.forEach((row, rowIdx) => { strategyCol[rowIdx] = [...row]; });
-                strategyCol.forEach(row => row.splice(0, 3)); // remove leftmost date, category, net change columns
-                strategyCol.forEach(row => row.splice(1, row.length - 1)); // remove all remaining columns to the right
-                acquiredCol.forEach((row, rowIdx) => { acquiredCol[rowIdx] = [...row]; });
-                acquiredCol.forEach(row => row.splice(0, 4)); // remove leftmost date, category, net change, FMV strategy columns
-                acquiredCol.forEach(row => row.splice(1, row.length - 1)); // remove all remaining columns to the right
-                disposedCol.forEach((row, rowIdx) => { disposedCol[rowIdx] = [...row]; });
-                disposedCol.forEach(row => row.splice(0, 6)); // remove leftmost date, category, net change, FMV strategy, inflow columns
-                disposedCol.forEach(row => row.splice(1, row.length - 1)); // remove all remaining columns to the right
-                setFMVformulasOnSheet(null, data, strategyCol as string[][], acquiredCol as string[][], disposedCol as string[][], lastRow);
+                const strategyCol = data.map(d => d[7]); // extract the strategy data as a 1D array
+                const acquiredCol = data.map(d => d[8]); // extract the acquired coin amounts as a 1D array
+                const disposedCol = data.map(d => d[10]); // extract the disposed coin amounts as a 1D array
+
+                setFMVformulasOnSheet(null, data, strategyCol, acquiredCol, disposedCol);
             } else if (sheet !== null) {
                 // QUnit unit test
                 const dateDisplayValues = sheet.getRange('E:E').getDisplayValues();
                 const lastRow = getLastRowWithDataPresent(dateDisplayValues);
                 assert((validate(sheet.getRange(`E3:L${lastRow}`).getValues() as DataValidationRow[]) === ''), true, `Round ${round} Data validated`);
 
-                const strategyCol = sheet.getRange('H:H').getValues() as string[][]; // TODO use `H3:H${lastRow}` instead
-                const acquiredCol = sheet.getRange('I:I').getValues() as string[][]; // TODO use `I3:I${lastRow}` instead
-                const disposedCol = sheet.getRange('K:K').getValues() as string[][]; // TODO use `K3:K${lastRow}` instead
-                setFMVformulasOnSheet(sheet, null, strategyCol, acquiredCol, disposedCol, lastRow);
+                const strategyCol = sheet.getRange(`H1:H${lastRow}`).getDisplayValues().map(d => d[0]);
+                const acquiredCol = sheet.getRange(`I1:I${lastRow}`).getValues().map(d => d[0] as number);
+                const disposedCol = sheet.getRange(`K1:K${lastRow}`).getValues().map(d => d[0] as number);
+                setFMVformulasOnSheet(sheet, null, strategyCol, acquiredCol, disposedCol);
                 // these assertions aren't checked locally becasue they require cell formula calcs to happen
                 assertCell(sheet, data as string[][], 2, 9, '1.05', 'Test for Fiat Cost calculated from FMV data : Row 3 Inflow Value(USD) : expected fiat cost calc from FMV average', 2);
                 assertCell(sheet, data as string[][], 2, 14, '1.05', 'Test for FMV average formula inserted : Row 3 Price : expected FMV calc averaged from supplied high/low prices', 2);
@@ -110,27 +99,15 @@ export function test2FMV(): UnitTestWrapper {
                 validationData.forEach((row, rowIdx) => { validationData[rowIdx] = [...row]; });
                 validationData.forEach(row => row.splice(15, row.length - 15)); // remove rightmost calculation columns and summarized in column
                 validationData.forEach(row => row.splice(0, 4)); // remove leftmost Tx ✔, wallets, Tx ID and description columns
-
-                const strategyCol = [...validationData]; // clone the data to use for FMV checks later
-                const acquiredCol = [...validationData];
-                const disposedCol = [...validationData];
                 validationData.splice(0, 2); // remove the empty 2-row header
 
                 assert((validate(validationData as unknown as DataValidationRow[]) === ''), true, 'Data validated');
 
-                const dateDisplayValues = strategyCol.map(row => [row[0], '']); // empty str makes this a 2D array of strings for getLastRowWithDataPresent()
-                const lastRow = getLastRowWithDataPresent(dateDisplayValues);
-                strategyCol.forEach((row, rowIdx) => { strategyCol[rowIdx] = [...row]; });
-                strategyCol.forEach(row => row.splice(0, 3)); // remove leftmost date, category, net change columns
-                strategyCol.forEach(row => row.splice(1, row.length - 1)); // remove all remaining columns to the right
-                acquiredCol.forEach((row, rowIdx) => { acquiredCol[rowIdx] = [...row]; });
-                acquiredCol.forEach(row => row.splice(0, 4)); // remove leftmost date, category, net change, FMV strategy columns
-                acquiredCol.forEach(row => row.splice(1, row.length - 1)); // remove all remaining columns to the right
-                disposedCol.forEach((row, rowIdx) => { disposedCol[rowIdx] = [...row]; });
-                disposedCol.forEach(row => row.splice(0, 6)); // remove leftmost date, category, net change, FMV strategy, inflow columns
-                disposedCol.forEach(row => row.splice(1, row.length - 1)); // remove all remaining columns to the right
+                const strategyCol = data.map(d => d[7]); // extract the strategy data as a 1D array
+                const acquiredCol = data.map(d => d[8]); // extract the acquired coin amounts as a 1D array
+                const disposedCol = data.map(d => d[10]); // extract the disposed coin amounts as a 1D array
 
-                setFMVformulasOnSheet(null, data, strategyCol as string[][], acquiredCol as string[][], disposedCol as string[][], lastRow);
+                setFMVformulasOnSheet(null, data, strategyCol, acquiredCol, disposedCol);
                 assertCell(sheet, data as string[][], 2, 9, '=I3*O3', 'Test Application of Avg Daily Price Var Strategy : Row 3 Inflow Value(USD) : expected J3 -> =I3*O3 -> 0.23');
                 assertCell(sheet, data as string[][], 2, 14, '=AVERAGE(M3,N3)', 'Test Application of Avg Daily Price Var Strategy : Row 3 Price : expected O3 -> =AVERAGE(M3,N3) -> 2.195');
                 assertCell(sheet, data as string[][], 3, 9, '=I4*O4', 'Test Application of Avg Daily Price Var Strategy : Row 4 Inflow Value(USD) : expected J4 -> =I4*O4 -> 9.38');
@@ -146,13 +123,14 @@ export function test2FMV(): UnitTestWrapper {
                 // QUnit unit test
                 const dateDisplayValues = sheet.getRange('E:E').getDisplayValues();
                 const lastRow = getLastRowWithDataPresent(dateDisplayValues);
+
                 assert((validate(sheet.getRange(`E3:L${lastRow}`).getValues() as DataValidationRow[]) === ''), true, 'Data validated');
 
-                const strategyCol = sheet.getRange('H:H').getValues() as string[][]; // TODO use `H3:H${lastRow}` instead
-                const acquiredCol = sheet.getRange('I:I').getValues() as string[][]; // TODO use `I3:I${lastRow}` instead
-                const disposedCol = sheet.getRange('K:K').getValues() as string[][]; // TODO use `K3:K${lastRow}` instead
+                const strategyCol = sheet.getRange(`H1:H${lastRow}`).getDisplayValues().map(d => d[0]);
+                const acquiredCol = sheet.getRange(`I1:I${lastRow}`).getValues().map(d => d[0] as number);
+                const disposedCol = sheet.getRange(`K1:K${lastRow}`).getValues().map(d => d[0] as number);
 
-                setFMVformulasOnSheet(sheet, null, strategyCol, acquiredCol, disposedCol, lastRow);
+                setFMVformulasOnSheet(sheet, null, strategyCol, acquiredCol, disposedCol);
                 // these assertions aren't checked locally becasue they require cell formula calcs to happen
                 assertCell(sheet, data as string[][], 2, 9, '0.23', 'Test Application of Avg Daily Price Var Strategy : Row 3 Inflow Value(USD) : expected J3 -> =I3*O3 -> 0.23', 2);
                 assertCell(sheet, data as string[][], 2, 14, '2.195', 'Test Application of Avg Daily Price Var Strategy : Row 3 Price : expected O3 -> =AVERAGE(M3,N3) -> 2.195', 3);

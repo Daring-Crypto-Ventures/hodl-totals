@@ -21,15 +21,16 @@ export default function onEdit(e: GoogleAppsScript.Events.SheetsOnEdit): void {
         const editedRow = e.range.getRow();
         // edit events triggered by users using the B1 dropdown
         if ((e.range.getColumn() === 2) && (editedRow === 1)) {
-            const walletSelectedData = sheet.getRange('B1').getValue() as string;
+            const walletSelectedData = sheet.getRange('B1').getDisplayValue();
             const walletSelected = walletSelectedData.replace(/ *\([^)]*\) */g, '');
+            const lastRow = getLastRowWithDataPresent(sheet.getRange('E:E').getDisplayValues());
 
             // if user selected anything besides All Wallets & Accounts, filter to that
             if (walletSelected.trim() !== 'All Wallets & Accounts') {
                 // Because setVisibleValues() only works for pivot tables, as noted here
                 // https://developers.google.com/apps-script/reference/spreadsheet/filter-criteria-builder#setVisibleValues(String)
                 // will need to create a filter to hide all values not matching the user's dropdown selection
-                const walletData: string[][] = sheet.getRange('B3:B').getValues().filter(String) as string[][];
+                const walletData = sheet.getRange(`B3:B${lastRow}`).getValues().filter(String) as string[][];
                 const walletList = walletData.map(wallet => wallet[0]);
                 const walletsToHide = walletList.filter(wallet => wallet !== walletSelected);
                 const filtercriteria = SpreadsheetApp.newFilterCriteria()
@@ -38,7 +39,6 @@ export default function onEdit(e: GoogleAppsScript.Events.SheetsOnEdit): void {
                 sheet.getFilter()?.setColumnFilterCriteria(2, filtercriteria);
             } else {
                 // faster to remove filter and re-add then clear the column filter with removeColumnFilterCriteria()
-                const lastRow = getLastRowWithDataPresent(sheet.getRange('E:E').getValues() as string[][]);
                 sheet.getFilter()?.remove();
                 sheet.getRange(`A2:U${lastRow}`).createFilter();
             }
@@ -48,7 +48,7 @@ export default function onEdit(e: GoogleAppsScript.Events.SheetsOnEdit): void {
         }
         // edit events triggered by the Tx column
         if ((e.range.getColumn() === 1) && (editedRow >= 3)) {
-            const lastRow = getLastRowWithDataPresent(sheet.getRange('E:E').getValues() as string[][]);
+            const lastRow = getLastRowWithDataPresent(sheet.getRange('E:E').getDisplayValues());
             if (editedRow > lastRow) {
                 // create filter around all transactions
                 sheet.getFilter()?.remove();
@@ -58,12 +58,13 @@ export default function onEdit(e: GoogleAppsScript.Events.SheetsOnEdit): void {
         }
         // edit events triggered by the FMV Strategy column
         if ((e.range.getColumn() === 8) && (editedRow >= 3)) {
+            const lastRow = getLastRowWithDataPresent(sheet.getRange('E:E').getDisplayValues());
             // update the FMV columns
             const newStrategy = e.value;
             const oldStrategy = e.oldValue;
-            const data = sheet.getRange('A:U').getValues() as CompleteDataRow[];
-            const acquired = sheet.getRange(`I${editedRow}`).getValue() as string;
-            const disposed = sheet.getRange(`K${editedRow}`).getValue() as string;
+            const data = sheet.getRange(`A3:U${lastRow}`).getValues() as CompleteDataRow[]; // TODO should only get the edited row
+            const acquired = sheet.getRange(`I${editedRow}`).getValue() as number;
+            const disposed = sheet.getRange(`K${editedRow}`).getValue() as number;
             setFMVStrategyOnRow(sheet, editedRow - 1, data, newStrategy, acquired, disposed, oldStrategy);
             SpreadsheetApp.flush();
         }
@@ -71,7 +72,7 @@ export default function onEdit(e: GoogleAppsScript.Events.SheetsOnEdit): void {
         const editedRow = e.range.getRow();
         // edit events triggered by the Tx column
         if ((e.range.getColumn() === 1) && (editedRow >= 3)) {
-            const lastRow = getLastRowWithDataPresent(sheet.getRange('F:F').getValues() as string[][]);
+            const lastRow = getLastRowWithDataPresent(sheet.getRange('F:F').getDisplayValues());
             if (editedRow > lastRow) {
                 // create filter around all transactions
                 sheet.getFilter()?.remove();

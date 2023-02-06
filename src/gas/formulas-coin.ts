@@ -18,10 +18,10 @@ export function updateFMVFormulas(sheet: GoogleAppsScript.Spreadsheet.Sheet | nu
         const lastRow = getLastRowWithDataPresent(sheet.getRange('E:E').getDisplayValues());
 
         // code split out into its own function from fromat() because it can take awhile to run
-        const strategyCol = sheet.getRange('H:H').getValues() as string[][];
-        const acquiredCol = sheet.getRange('I:I').getValues() as string[][];
-        const disposedCol = sheet.getRange('K:K').getValues() as string[][];
-        setFMVformulasOnSheet(sheet, null, strategyCol, acquiredCol, disposedCol, lastRow);
+        const strategyCol = sheet.getRange(`H3:H${lastRow}`).getDisplayValues().map(d => d[0]);
+        const acquiredCol = sheet.getRange(`I3:I${lastRow}`).getValues().map(d => d[0] as number);
+        const disposedCol = sheet.getRange(`K3:K${lastRow}`).getValues().map(d => d[0] as number);
+        setFMVformulasOnSheet(sheet, null, strategyCol, acquiredCol, disposedCol);
         return sheet;
     }
     return null;
@@ -30,14 +30,13 @@ export function updateFMVFormulas(sheet: GoogleAppsScript.Spreadsheet.Sheet | nu
 export function setFMVformulasOnSheet(
     sheet: GoogleAppsScript.Spreadsheet.Sheet | null,
     data: CompleteDataRow[] | null,
-    strategyCol: string[][],
-    acquiredCol: string[][],
-    disposedCol: string[][],
-    lastRow: number
+    strategyCol: string[],
+    acquiredCol: number[],
+    disposedCol: number[]
 ): void {
-    for (let row = 2; row < lastRow; row++) {
-        setFMVStrategyOnRow(sheet, row, data, strategyCol[row][0], acquiredCol[row][0], disposedCol[row][0]);
-    }
+    strategyCol.forEach((row, rowIdx) => {
+        setFMVStrategyOnRow(sheet, rowIdx, data, row, acquiredCol[rowIdx], disposedCol[rowIdx]);
+    });
 }
 
 export function setFMVStrategyOnRow(
@@ -45,8 +44,8 @@ export function setFMVStrategyOnRow(
     row: number,
     data: CompleteDataRow[] | null,
     strategy: string,
-    acquired: string,
-    disposed: string,
+    acquired: number,
+    disposed: number,
     oldStrategy?: string
 ): void {
     const errorValues = ['#NULL!', '#DIV/0!', '#VALUE!', '#REF!', '#NAME?', '#NUM!', '#N/A', '#ERROR!'];
@@ -84,13 +83,13 @@ export function setFMVStrategyOnRow(
 }
 
 function setFormulasInAcquiredDisposedCells(
-    acquired: string,
+    acquired: number,
     oldStrategy: string | undefined,
     sheet: GoogleAppsScript.Spreadsheet.Sheet | null,
     data: CompleteDataRow[] | null,
     row: number,
     errorValues: string[],
-    disposed: string
+    disposed: number
 ): void {
     if (acquired) {
         if ((typeof oldStrategy !== 'undefined') && (oldStrategy === 'Value Known')) {
