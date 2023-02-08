@@ -18,9 +18,9 @@ export function updateFMVFormulas(sheet: GoogleAppsScript.Spreadsheet.Sheet | nu
         const lastRow = getLastRowWithDataPresent(sheet.getRange('E:E').getDisplayValues());
 
         // code split out into its own function from fromat() because it can take awhile to run
-        const strategyCol = sheet.getRange(`H3:H${lastRow}`).getDisplayValues().map(d => d[0]);
-        const acquiredCol = sheet.getRange(`I3:I${lastRow}`).getValues().map(d => d[0] as number);
-        const disposedCol = sheet.getRange(`K3:K${lastRow}`).getValues().map(d => d[0] as number);
+        const strategyCol = sheet.getRange(`H1:H${lastRow}`).getDisplayValues().map(d => d[0]);
+        const acquiredCol = sheet.getRange(`I1:I${lastRow}`).getValues().map(d => d[0] as number);
+        const disposedCol = sheet.getRange(`K1:K${lastRow}`).getValues().map(d => d[0] as number);
         setFMVformulasOnSheet(sheet, null, strategyCol, acquiredCol, disposedCol);
         return sheet;
     }
