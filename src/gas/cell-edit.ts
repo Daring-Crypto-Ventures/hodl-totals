@@ -4,7 +4,6 @@
  */
 import { sheetContainsCoinData, sheetContainsNFTData } from './sheet';
 import { setFMVStrategyOnRow } from './formulas-coin';
-import { CompleteDataRow } from '../types';
 import getLastRowWithDataPresent from '../last-row';
 
 /* global GoogleAppsScript */
@@ -58,14 +57,12 @@ export default function onEdit(e: GoogleAppsScript.Events.SheetsOnEdit): void {
         }
         // edit events triggered by the FMV Strategy column
         if ((e.range.getColumn() === 8) && (editedRow >= 3)) {
-            const lastRow = getLastRowWithDataPresent(sheet.getRange('E:E').getDisplayValues());
             // update the FMV columns
             const newStrategy = e.value;
             const oldStrategy = e.oldValue;
-            const data = sheet.getRange(`A3:U${lastRow}`).getValues() as CompleteDataRow[]; // TODO should only get the edited row
             const acquired = sheet.getRange(`I${editedRow}`).getValue() as number;
             const disposed = sheet.getRange(`K${editedRow}`).getValue() as number;
-            setFMVStrategyOnRow(sheet, editedRow - 1, data, newStrategy, acquired, disposed, oldStrategy);
+            setFMVStrategyOnRow(sheet, editedRow - 1, null, newStrategy, acquired, disposed, oldStrategy);
             SpreadsheetApp.flush();
         }
     } else if (sheetContainsNFTData(sheet)) {
