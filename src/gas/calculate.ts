@@ -98,14 +98,14 @@ export function calculateCoinGainLoss(sheet: GoogleAppsScript.Spreadsheet.Sheet 
             // avoid overwriting any formulas used to calculate the values
             data.forEach((row, rowIdx) => {
                 if (rowIdx > 1) { // Skip past the header rows
-                    for (let j = 0; j < 21; j++) {
-                        if ((j < 15) && (Number(row[j]) === 0)) {
-                            row[j] = '';
+                    row.forEach((cell, colIdx) => {
+                        if ((colIdx < 15) && (Number(cell) === 0)) {
+                            row[colIdx] = '';
                         }
-                        if (formulaData[rowIdx][j] !== '') {
-                            row[j] = formulaData[rowIdx][j];
+                        if (formulaData[rowIdx][colIdx] !== '') {
+                            row[colIdx] = formulaData[rowIdx][colIdx];
                         }
-                    }
+                    });
                 }
             });
 
@@ -282,14 +282,14 @@ export function calculateNFTGainLossStatus(sheet: GoogleAppsScript.Spreadsheet.S
             // avoid overwriting any formulas used to calculate the values
             data.forEach((row, rowIdx) => {
                 if (rowIdx > 1) { // Skip past the header rows
-                    for (let j = 0; j < 33; j++) {
-                        if (((j < 13) || ((j > 15) && (j < 28))) && (Number(row[j]) === 0)) {
-                            row[j] = '';
+                    row.forEach((cell, colIdx) => {
+                        if (((colIdx < 13) || ((colIdx > 15) && (colIdx < 28))) && (Number(cell) === 0)) {
+                            row[colIdx] = '';
                         }
-                        if (formulaData[rowIdx][j] !== '') {
-                            row[j] = formulaData[rowIdx][j];
+                        if (formulaData[rowIdx][colIdx] !== '') {
+                            row[colIdx] = formulaData[rowIdx][colIdx];
                         }
-                    }
+                    });
                 }
             });
 
