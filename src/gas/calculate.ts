@@ -6,7 +6,7 @@ import { getCoinFromSheetName } from './sheet';
 import validateNFTSheet from './validate-nft';
 import { CompleteDataRow, CompleteDataRowAsStrings, LooselyTypedDataValidationRow } from '../types';
 import getLastRowWithDataPresent from '../last-row';
-import { calculateFIFO, datePlusNYears, dateStrFromDate } from '../calc-fifo';
+import { calculateFIFO, datePlusNYears } from '../calc-fifo';
 import { setFMVStrategyOnRow } from './formulas-coin';
 import getOrderList from '../orders';
 import validate from '../validate';
@@ -106,46 +106,26 @@ export function calculateCoinGainLoss(sheet: GoogleAppsScript.Spreadsheet.Sheet 
                             row[j] = formulaData[rowIdx][j];
                         }
                     }
+                }
+            });
+
+            // Create tax status lookup table for categories from the Categories sheet
+            const txCategoryRows = getTxCategoryData();
+
+            // Make another pass on data array to augment it with Taxable or Not Taxable Statuses
+            updateTaxableStatusAndAcqDates(data, txCategoryRows);
+
+            // Apply all the batched up edits to the sheet
+            data.forEach((row, rowIdx) => {
+                if (rowIdx > 1) { // Skip past the header rows
                     sheet.getRange(rowIdx + 1, 1, 1, row.length).setValues([row]);
                 }
             });
             SpreadsheetApp.flush();
 
-            // iterate through the annotations and add them as Notes to the sheet
+            // Iterate through the annotations and add them as Notes to the sheet
             annotations.forEach(annotation => {
                 sheet.getRange(annotation[0], annotation[1]).setNote(annotation[2]);
-            });
-
-            // Create tax status lookup table for categories from the Categories sheet
-            const categoriesSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Categories');
-            let txCategoryRows: string[][] = [];
-            if (categoriesSheet !== null) {
-                txCategoryRows = categoriesSheet.getRange('A2:C35').getDisplayValues();
-            }
-
-            // iterate thru the new sheet contents to set Taxable or Not Taxable Status if not previously set
-            const newLastRow = getLastRowWithDataPresent(sheet.getRange('E:E').getDisplayValues());
-            const txCategoryCol = sheet.getRange(`F3:F${newLastRow}`).getDisplayValues().map(d => d[0]);
-            const txLotInfoCol = sheet.getRange(`P3:P${newLastRow}`).getDisplayValues().map(d => d[0]);
-
-            txLotInfoCol.forEach((row, rowIdx) => {
-                // Check the row's Tx category's Taxable status, append that and move on
-                const txLotInfo = row;
-                const txCategory = txCategoryCol[rowIdx];
-                txCategoryRows.every(categoryRow => {
-                    const taxableStatus = (categoryRow?.[0] === txCategory) ? categoryRow?.[2] : '';
-                    if (taxableStatus.startsWith('Not Taxable')) {
-                        sheet.getRange(`R${rowIdx + 3}`).setValue('Not Taxable');
-                        return false; // stop iterating thru categories list if found not taxable status
-                    }
-                    if (taxableStatus.startsWith('Taxable') && !(txLotInfo.startsWith('Sold'))) {
-                        sheet.getRange(`Q${rowIdx + 3}`).setValue(dateStrFromDate(sheet.getRange(`E${rowIdx + 3}`).getValue() as Date));
-                        sheet.getRange(`R${rowIdx + 3}`).setValue('Taxable');
-                        sheet.getRange(`T${rowIdx + 3}`).setValue(sheet.getRange(`J${rowIdx + 3}`).getValue());
-                        return false; // stop iterating thru categories list if found taxable status
-                    }
-                    return true; // continue iterating thru categories list looking for a match
-                });
             });
 
             // output the current date and time as the time last completed
@@ -167,6 +147,38 @@ export function calculateCoinGainLoss(sheet: GoogleAppsScript.Spreadsheet.Sheet 
         return sheet;
     }
     return null;
+}
+
+function updateTaxableStatusAndAcqDates(data: CompleteDataRow[], txCategoryRows: string[][]): void {
+    const txCategoryCol = data.map(d => d[5]); // extract the Category column as a 1D string array
+    const txLotInfoCol = data.map(d => d[15]); // extract the Lot Info column as a 1D string array
+    txLotInfoCol.forEach((txLotInfo, rowIdx) => {
+        // Check the row's Tx category's Taxable status, append that and move on
+        const txCategory = txCategoryCol[rowIdx];
+        txCategoryRows.every(categoryRow => {
+            const taxableStatus = (categoryRow?.[0] === txCategory) ? categoryRow?.[2] : '';
+            if (taxableStatus.startsWith('Not Taxable')) {
+                data[rowIdx][17] = 'Not Taxable';
+                return false; // stop iterating thru categories list if found status
+            }
+            if (taxableStatus.startsWith('Taxable') && !(txLotInfo.startsWith('Sold'))) {
+                data[rowIdx][16] = data[rowIdx][4]; // copy tx's Date & Time into Acquired Date
+                data[rowIdx][17] = 'Taxable';
+                data[rowIdx][19] = data[rowIdx][9]; // copy tx inflow value into Gain(Loss)
+                return false; // stop iterating thru categories list if found taxable status
+            }
+            return true;
+        });
+    });
+}
+
+function getTxCategoryData(): string[][] {
+    const categoriesSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Categories');
+    let txCategoryRows: string[][] = [];
+    if (categoriesSheet !== null) {
+        txCategoryRows = categoriesSheet.getRange('A2:C35').getDisplayValues();
+    }
+    return txCategoryRows;
 }
 
 /**
