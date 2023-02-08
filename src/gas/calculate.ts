@@ -4,9 +4,9 @@
  */
 import { getCoinFromSheetName } from './sheet';
 import validateNFTSheet from './validate-nft';
-import { CompleteDataRow, CompleteDataRowAsStrings, LooselyTypedDataValidationRow } from '../types';
+import { CompleteDataRow, CompleteDataRowAsStrings, CompleteNFTDataRow, LooselyTypedDataValidationRow } from '../types';
 import getLastRowWithDataPresent from '../last-row';
-import { calculateFIFO, datePlusNYears } from '../calc-fifo';
+import { calculateFIFO, dateFromString, datePlusNYears } from '../calc-fifo';
 import { setFMVStrategyOnRow } from './formulas-coin';
 import getOrderList from '../orders';
 import validate from '../validate';
@@ -196,7 +196,9 @@ export function calculateNFTGainLossStatus(sheet: GoogleAppsScript.Spreadsheet.S
             const MILLIS_PER_DAY = 1000 * 60 * 60 * 24;
             const lastTxInRow = getLastRowWithDataPresent(sheet.getRange('F:F').getDisplayValues());
             const lastTxOutRow = getLastRowWithDataPresent(sheet.getRange('V:V').getDisplayValues());
-            const lastRow = lastTxInRow > lastTxOutRow ? lastTxInRow : lastTxOutRow;
+            const lastRow = (lastTxInRow) > lastTxOutRow ? lastTxInRow : lastTxOutRow;
+            const data = sheet.getRange(`A1:AG${lastRow}`).getValues() as CompleteNFTDataRow[];
+            const formulaData = sheet.getRange(`A1:AG${lastRow}`).getFormulasR1C1() as CompleteDataRowAsStrings[];
 
             // Create tax status lookup table for categories from the Categories sheet
             const nftCategoriesSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('NFT Categories');
@@ -211,62 +213,93 @@ export function calculateNFTGainLossStatus(sheet: GoogleAppsScript.Spreadsheet.S
             sheet.getRange('P3:P').setValue('');
             sheet.getRange('AF3:AF').setValue('');
 
-            // TODO performance fix for this section: calculate arrays for txInStatus and txOutStatus
-            // and then call setValues in twice given each array; much more performant operation
-
             // walk through all rows and fill in Status
-            for (let i = 3; i <= lastRow; i++) {
-                // Set Status on Tx In
-                const acquisitionDateString = sheet.getRange(`F${i}`).getValue() as Date;
-
-                // Check to see if row's Tx In category is Taxable or Not Taxable thing, list that and move on
-                const txInCategory = sheet.getRange(`G${i}`).getValue() as string;
-                txInCategoryRows.every(categoryRow => {
-                    const taxableStatus = (categoryRow?.[0] === txInCategory) ? categoryRow?.[2] : '';
-                    if (taxableStatus.startsWith('Not Taxable')) {
-                        sheet.getRange(`P${i}`).setValue('Not Taxable');
-                        return false; // stop iterating thru categories list if found a taxable/not taxable status
-                    }
-                    if (taxableStatus.startsWith('Taxable')) {
-                        sheet.getRange(`P${i}`).setValue('Taxable');
-                        return false; // stop iterating thru categories list if found a taxable/not taxable status
-                    }
-                    return true; // continue iterating thru categories list looking for a match
-                });
-
-                // Set status on Tx Out
-                const dispositionValue = sheet.getRange(`V${i}`).getValue() as string;
-                if (dispositionValue === '') {
-                    sheet.getRange(`AF${i}`).setValue('Unsold');
-                } else {
-                    const dispositionDate = dispositionValue as unknown as Date;
-                    const oneYrAfterAcquisitionDate = datePlusNYears(acquisitionDateString, 1);
-
-                    // Check to see if row's Tx Out category is a Not Taxable thing, if yes set as such and move on
-                    const txOutCategory = sheet.getRange(`U${i}`).getValue() as string;
-                    let txOutIsTaxable = true;
-                    txOutCategoryRows.every(categoryRow => {
-                        const taxableStatus = (categoryRow?.[0] === txOutCategory) ? categoryRow?.[2] : '';
+            data.forEach((row, rowIdx) => {
+                if (rowIdx > 1) { // Skip past the header rows
+                    // Check to see if row's Tx In category is Taxable or Not Taxable thing, list that and move on
+                    const txInCategory = row[6]; // Inflow Category
+                    txInCategoryRows.every(categoryRow => {
+                        const taxableStatus = (categoryRow?.[0] === txInCategory) ? categoryRow?.[2] : '';
                         if (taxableStatus.startsWith('Not Taxable')) {
-                            sheet.getRange(`AF${i}`).setValue('Not Taxable');
-                            txOutIsTaxable = false;
-                            return false; // stop iterating thru categories list if found not taxable status
+                            row[15] = 'Not Taxable'; // In Tx Status
+                            return false; // stop iterating
                         }
                         if (taxableStatus.startsWith('Taxable')) {
-                            return false; // stop iterating thru categories list if found taxable status
+                            row[15] = 'Taxable'; // In Tx Status
+                            return false; // stop iterating
                         }
                         return true; // continue iterating thru categories list looking for a match
                     });
 
-                    if (txOutIsTaxable) {
-                        if ((dispositionDate.getTime() - oneYrAfterAcquisitionDate.getTime()) / MILLIS_PER_DAY > 0) {
-                            sheet.getRange(`AF${i}`).setValue('Long-term');
+                    // Check to see if row's Tx Out was sold and if so determine its status
+                    let acqDate: Date;
+                    if (row[5] instanceof Date) {
+                        acqDate = row[5]; // In Tx's Date & Time
+                    } else {
+                        acqDate = dateFromString(row[5]); // In Tx's Date & Time
+                    }
+                    const dispValue = row[21]; // Out Tx's Date & Time
+                    if (dispValue === '') {
+                        row[31] = 'Unsold'; // Out Tx Status
+                    } else {
+                        let dispDate: Date;
+                        if (row[21] instanceof Date) {
+                            dispDate = row[21]; // Out Tx's Date & Time
                         } else {
-                            sheet.getRange(`AF${i}`).setValue('Short-term');
+                            dispDate = dateFromString(row[21]); // Out Tx's Date & Time
+                        }
+                        const oneYrAfterAcqDate = datePlusNYears(acqDate, 1);
+
+                        // If row's Tx Out category is a Not Taxable thing, if yes set as such and move on
+                        const txOutCategory = row[20];
+                        let txOutIsTaxable = true;
+                        txOutCategoryRows.every(categoryRow => {
+                            const taxableStatus = (categoryRow?.[0] === txOutCategory) ? categoryRow?.[2] : '';
+                            if (taxableStatus.startsWith('Not Taxable')) {
+                                row[31] = 'Not Taxable'; // Out Tx Status
+                                txOutIsTaxable = false;
+                                return false; // stop iterating
+                            }
+                            if (taxableStatus.startsWith('Taxable')) {
+                                return false; // stop iterating
+                            }
+                            return true; // continue iterating thru categories list looking for a match
+                        });
+
+                        if (txOutIsTaxable) {
+                            if ((dispDate.getTime() - oneYrAfterAcqDate.getTime()) / MILLIS_PER_DAY > 0) {
+                                row[31] = 'Long-term'; // Out Tx Status
+                            } else {
+                                row[31] = 'Short-term'; // Out Tx Status
+                            }
                         }
                     }
                 }
-            }
+            });
+
+            // scan just the inflow & outflow data of the row we're about to write
+            // avoid writing zeroes to previously empty cells (but write zeros to the Calculated columns)
+            // avoid overwriting any formulas used to calculate the values
+            data.forEach((row, rowIdx) => {
+                if (rowIdx > 1) { // Skip past the header rows
+                    for (let j = 0; j < 33; j++) {
+                        if (((j < 13) || ((j > 15) && (j < 28))) && (Number(row[j]) === 0)) {
+                            row[j] = '';
+                        }
+                        if (formulaData[rowIdx][j] !== '') {
+                            row[j] = formulaData[rowIdx][j];
+                        }
+                    }
+                }
+            });
+
+            // Apply all the batched up edits to the sheet
+            data.forEach((row, rowIdx) => {
+                if (rowIdx > 1) { // Skip past the header rows
+                    sheet.getRange(rowIdx + 1, 1, 1, row.length).setValues([row]);
+                }
+            });
+            SpreadsheetApp.flush();
 
             const now = Utilities.formatDate(new Date(), SpreadsheetApp.getActiveSpreadsheet().getSpreadsheetTimeZone(), 'yyyy-MM-dd HH:mm');
             sheet.getRange('AE1').setValue(`${now}`);
