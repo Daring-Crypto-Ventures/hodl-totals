@@ -30,7 +30,9 @@ export function test1FMV(): UnitTestWrapper {
                 // jest unit test
                 // clone the data array, and trim down to data needed for validation
                 const validationData = [...data];
-                validationData.forEach((row, rowIdx) => { validationData[rowIdx] = [...row]; });
+                validationData.forEach((row, rowIdx) => {
+                    validationData[rowIdx] = [...row];
+                });
                 validationData.forEach(row => row.splice(15, row.length - 15)); // remove rightmost calculation columns and summarized in column
                 validationData.forEach(row => row.splice(0, 4)); // remove leftmost Tx ✔, wallets, Tx ID and description columns
                 validationData.splice(0, 2); // remove the empty 2-row header
@@ -96,7 +98,9 @@ export function test2FMV(): UnitTestWrapper {
                 // jest unit test
                 // clone the data array, and trim down to data needed for validation
                 const validationData = [...data];
-                validationData.forEach((row, rowIdx) => { validationData[rowIdx] = [...row]; });
+                validationData.forEach((row, rowIdx) => {
+                    validationData[rowIdx] = [...row];
+                });
                 validationData.forEach(row => row.splice(15, row.length - 15)); // remove rightmost calculation columns and summarized in column
                 validationData.forEach(row => row.splice(0, 4)); // remove leftmost Tx ✔, wallets, Tx ID and description columns
                 validationData.splice(0, 2); // remove the empty 2-row header

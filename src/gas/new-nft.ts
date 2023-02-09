@@ -70,7 +70,9 @@ export function newNFTSheet(address = ''): GoogleAppsScript.Spreadsheet.Sheet | 
         }
 
         // indicates that the user canceled, so abort without making a new sheet
-        if (newNFTAddress === null) return null;
+        if (newNFTAddress === null) {
+            return null;
+        }
 
         // if no Categories sheet previously exists, create one
         if (SpreadsheetApp.getActiveSpreadsheet().getSheetByName('NFT Categories') == null) {

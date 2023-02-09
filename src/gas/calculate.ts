@@ -54,7 +54,7 @@ export function calculateCoinGainLoss(sheet: GoogleAppsScript.Spreadsheet.Sheet 
             let firstRowOfTheSplit = true;
             annotations.forEach(annotatedRow => {
                 if (annotatedRow?.[2]?.startsWith('Split')) {
-                    const splitRowIdx = annotatedRow?.[0] - 1; // convert 1-based row that Google Sheet expects into 0-based js data array
+                    const splitRowIdx = (annotatedRow?.[0] ?? 1) - 1; // convert 1-based row that Google Sheet expects into 0-based js data array
                     const modifiedColumnsIdxs = [6, 10, 11]; // net change, outflow coin disposed, outflow coin USD value
 
                     // if first row of split, create an extra row in the formula array so that its shape matches the data array shape

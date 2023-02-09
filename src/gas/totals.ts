@@ -34,7 +34,9 @@ export default function resetTotalSheet(): GoogleAppsScript.Spreadsheet.Sheet | 
                 Browser.msgBox('', msg, Browser.Buttons.OK);
                 return null;
             }
-            prevUserData = prevWallets.map((item, index) => { return [item?.[0], prevBalances[index]?.[0], prevOnDates[index]?.[0], prevNotes[index]?.[0]] as [string, string, string, string]; });
+            prevUserData = prevWallets.map((item, index) => {
+                return [item?.[0], prevBalances[index]?.[0], prevOnDates[index]?.[0], prevNotes[index]?.[0]] as [string, string, string, string];
+            });
             sheet.clear();
             sheet.getFilter()?.remove();
             sheet.getDeveloperMetadata().forEach(x => x.remove());

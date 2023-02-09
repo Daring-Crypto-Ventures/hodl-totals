@@ -116,13 +116,19 @@ export function test3CostBasis(): UnitTestWrapper {
                 const splitNotePart1 = annotations?.shift() ?? '';
                 assert(splitNotePart1?.[0], 5, 'Round 1 Test3 : Hint Anchor point on row 5');
                 assert(splitNotePart1?.[1], 5, 'Round 1 Test3 : Hint Anchor point on date column');
-                assert(splitNotePart1?.[2]?.replace(/ *\([^)]*\) */g, ' '), `Split 2.00000000 ${coinName} disposition worth $4000.00 into rows 5 and 6.`,
-                    `Round ${round} Test3 : Row 5 Date Note : expected split into rows 5 and 6`);
+                assert(
+                    splitNotePart1?.[2]?.replace(/ *\([^)]*\) */g, ' '),
+                    `Split 2.00000000 ${coinName} disposition worth $4000.00 into rows 5 and 6.`,
+                    `Round ${round} Test3 : Row 5 Date Note : expected split into rows 5 and 6`
+                );
                 const splitNotePart2 = annotations?.shift() ?? '';
                 assert(splitNotePart2?.[0], 6, 'Round 1 Test3 : Hint Anchor point on row 6');
                 assert(splitNotePart1?.[1], 5, 'Round 1 Test3 : Hint Anchor point on date column');
-                assert(splitNotePart2?.[2]?.replace(/ *\([^)]*\) */g, ' '), `Split 2.00000000 ${coinName} disposition worth $4000.00 into rows 5 and 6.`,
-                    `Round ${round} Test3 : Row 6 Date Note : expected split into rows 5 and 6`);
+                assert(
+                    splitNotePart2?.[2]?.replace(/ *\([^)]*\) */g, ' '),
+                    `Split 2.00000000 ${coinName} disposition worth $4000.00 into rows 5 and 6.`,
+                    `Round ${round} Test3 : Row 6 Date Note : expected split into rows 5 and 6`
+                );
             }
         };
 
@@ -237,13 +243,19 @@ export function test5CostBasis(): UnitTestWrapper {
                 const splitNotePart1 = annotations?.shift() ?? '';
                 assert(splitNotePart1?.[0], 6, `Round ${round} Test5 : Hint Anchor point on row 6`);
                 assert(splitNotePart1?.[1], 5, `Round ${round} Test5 : Hint Anchor point on date column`);
-                assert(splitNotePart1?.[2]?.replace(/ *\([^)]*\) */g, ' '), `Split 0.40000000 ${coinName} disposition worth $8000.00 into rows 6 and 7.`,
-                    `Round ${round} Test5 : Row 6 Date Note : expected split into rows 6 and 7`);
+                assert(
+                    splitNotePart1?.[2]?.replace(/ *\([^)]*\) */g, ' '),
+                    `Split 0.40000000 ${coinName} disposition worth $8000.00 into rows 6 and 7.`,
+                    `Round ${round} Test5 : Row 6 Date Note : expected split into rows 6 and 7`
+                );
                 const splitNotePart2 = annotations?.shift() ?? '';
                 assert(splitNotePart2?.[0], 7, `Round ${round} Test5 : Hint Anchor point on row 7`);
                 assert(splitNotePart1?.[1], 5, `Round ${round} Test5 : Hint Anchor point on date column`);
-                assert(splitNotePart2?.[2]?.replace(/ *\([^)]*\) */g, ' '), `Split 0.40000000 ${coinName} disposition worth $8000.00 into rows 6 and 7.`,
-                    `Round ${round} Test5 : Row 7 Date Note : expected split into rows 6 and 7`);
+                assert(
+                    splitNotePart2?.[2]?.replace(/ *\([^)]*\) */g, ' '),
+                    `Split 0.40000000 ${coinName} disposition worth $8000.00 into rows 6 and 7.`,
+                    `Round ${round} Test5 : Row 7 Date Note : expected split into rows 6 and 7`
+                );
             }
         };
 
@@ -325,13 +337,19 @@ export function test6CostBasis(): UnitTestWrapper {
                 const splitNotePart1 = annotations?.shift() ?? '';
                 assert(splitNotePart1?.[0], 28, `Round ${round} Test6 : Hint Anchor point on row 28`);
                 assert(splitNotePart1?.[1], 5, `Round ${round} Test6 : Hint Anchor point on date column`);
-                assert(splitNotePart1?.[2]?.replace(/ *\([^)]*\) */g, ' '), `Split 829.14000000 ${coinName} disposition worth $151.26 into rows 28 and 29.`,
-                    `Round ${round} Test6 : Row 28 Date Note : expected split into rows 28 and 29`);
+                assert(
+                    splitNotePart1?.[2]?.replace(/ *\([^)]*\) */g, ' '),
+                    `Split 829.14000000 ${coinName} disposition worth $151.26 into rows 28 and 29.`,
+                    `Round ${round} Test6 : Row 28 Date Note : expected split into rows 28 and 29`
+                );
                 const splitNotePart2 = annotations?.shift() ?? '';
                 assert(splitNotePart2?.[0], 29, `Round ${round} Test6 : Hint Anchor point on row 29`);
                 assert(splitNotePart1?.[1], 5, `Round ${round} Test6 : Hint Anchor point on date column`);
-                assert(splitNotePart2?.[2]?.replace(/ *\([^)]*\) */g, ' '), `Split 829.14000000 ${coinName} disposition worth $151.26 into rows 28 and 29.`,
-                    `Round ${round} Test6 : Row 29 Date Note : expected split into rows 28 and 29`);
+                assert(
+                    splitNotePart2?.[2]?.replace(/ *\([^)]*\) */g, ' '),
+                    `Split 829.14000000 ${coinName} disposition worth $151.26 into rows 28 and 29.`,
+                    `Round ${round} Test6 : Row 29 Date Note : expected split into rows 28 and 29`
+                );
             }
         };
 
@@ -445,7 +463,9 @@ function callCalculateFIFO(sheet: GoogleAppsScript.Spreadsheet.Sheet | null, coi
         // jest unit test
         // clone the data array, and trim down to data needed for validation
         const validationData = [...data];
-        validationData.forEach((row, rowIdx) => { validationData[rowIdx] = [...row]; });
+        validationData.forEach((row, rowIdx) => {
+            validationData[rowIdx] = [...row];
+        });
         validationData.forEach(row => row.splice(15, row.length - 15)); // remove rightmost calculation columns and summarized in column
         validationData.forEach(row => row.splice(0, 4)); // remove leftmost Tx ✔, wallets, Tx ID and description columns
         validationData.splice(0, 2); // remove the empty 2-row header
@@ -474,6 +494,13 @@ function callCalculateFIFO(sheet: GoogleAppsScript.Spreadsheet.Sheet | null, coi
         fillInTempSheet(sheet, data as string[][]);
         // TODO also apply annotations to the sheet and have QUnit tests check them from the sheet API
     }
-    annotations.sort((e1, e2) => { if (e1[0] < e2[0]) { return -1; } if (e1[0] > e2[0]) { return 1; } return 0; });
+    annotations.sort((e1, e2) => {
+        if (e1[0] < e2[0]) {
+            return -1;
+        } if (e1[0] > e2[0]) {
+            return 1;
+        }
+        return 0;
+    });
     return annotations;
 }

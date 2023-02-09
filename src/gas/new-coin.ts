@@ -70,7 +70,9 @@ export function newCoinSheet(coinName = ''): GoogleAppsScript.Spreadsheet.Sheet 
         }
 
         // indicates that the user canceled, so abort without making a new sheet
-        if (newCoinName === null) return null;
+        if (newCoinName === null) {
+            return null;
+        }
 
         // if no Categories sheet previously exists, create one
         if (SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Categories') == null) {

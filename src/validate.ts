@@ -46,9 +46,11 @@ export default function validate(dateToLotAndSaleValues: LooselyTypedDataValidat
                 if (firstRowOfTheSplit) {
                     // to ether Proceed (User agrees no edits happened before split), Unsplit the rows and Proceed, or Cancel
                     const ui = SpreadsheetApp.getUi();
-                    const response = ui.alert('Previous Transaction Split Detected',
+                    const response = ui.alert(
+                        'Previous Transaction Split Detected',
                         `Have you modified data or added new data prior to the previous transaction split at row ${rowIdx + 3}?`,
-                        ui.ButtonSet.YES_NO_CANCEL);
+                        ui.ButtonSet.YES_NO_CANCEL
+                    );
                     if (response === ui.Button.YES) {
                         return `Calculation Canceled: Recombine the transactions on row ${rowIdx + 3} and ${rowIdx + 4} before attempting to calculate gains/losses.`;
                     }

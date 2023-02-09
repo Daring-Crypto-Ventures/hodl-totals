@@ -40,9 +40,11 @@ export function assert(value: boolean | number | string, expected: boolean | num
 export function assertCell(
     sheet: GoogleAppsScript.Spreadsheet.Sheet | null,
     dataTable: string[][],
-    rowIdx: number, colIdx: number,
+    rowIdx: number,
+    colIdx: number,
     expected: boolean | number | string,
-    detail = '', digitsAfterDecimal = 0
+    detail = '',
+    digitsAfterDecimal = 0
 ): void {
     if (typeof ScriptApp === 'undefined') {
         // jest unit test
