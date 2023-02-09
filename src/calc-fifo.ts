@@ -118,7 +118,7 @@ export function calculateFIFO(
                     data[sellRow + shift][8] = 0;
                     data[sellRow + shift][9] = 0;
                     data[sellRow + shift][15] = soldLotsString(stLotCnt, lot);
-                    data[sellRow + shift][16] = soldLotDatesString(lots[stLotCnt][0], lots[lot][0]);
+                    data[sellRow + shift][16] = soldLotDatesString(lots[lot][0]);
                     data[sellRow + shift][18] = costBasis;
                     data[sellRow + shift][19] = gainLoss;
                 }
@@ -158,7 +158,7 @@ export function calculateFIFO(
                     data[sellRow + shift][10] = originalCoin * splitFactor;
                     data[sellRow + shift][11] = originalCost * splitFactor;
                     data[sellRow + shift][15] = soldLotsString(stLotCnt, lot);
-                    data[sellRow + shift][16] = soldLotDatesString(lots[stLotCnt][0], lots[lot][0]);
+                    data[sellRow + shift][16] = soldLotDatesString(lots[lot][0]);
                     data[sellRow + shift][17] = 'Long-term';
                     data[sellRow + shift][18] = costBasis;
                     data[sellRow + shift][19] = gainLoss;
@@ -253,9 +253,9 @@ export function datePlusNYears(dateObj: Date, incYear: number): Date {
 /**
  * Helper function to return a string given a Date object
  *
- * @param dateStr is a yyyy-mm-dd formatted string
+ * @param dateObj the Date object to be translated into a new string
  *
- * @return Date object corresponding to that string input.
+ * @return th new yyyy-mm-dd formatted string
  */
 export function dateStrFromDate(dateObj: Date): string {
     const getYear = dateObj.toLocaleString('default', { year: 'numeric' });
@@ -280,8 +280,7 @@ function soldLotsString(lotIdStart: number, lotIdEnd: number): string {
 *
 * @return string
 */
-function soldLotDatesString(lotIdStartDate: Date, lotIdEndDate: Date): string {
-    // denote the date range of the lots that were sold
-    const fromStr = (lotIdStartDate.getTime() === lotIdEndDate.getTime()) ? '' : `${dateStrFromDate(lotIdStartDate)} to `;
-    return `${fromStr}${dateStrFromDate(lotIdEndDate)}`;
+function soldLotDatesString(lotIdEndDate: Date): string {
+    // denote the latest date in the date range of the lots that were sold
+    return `${dateStrFromDate(lotIdEndDate)}`;
 }

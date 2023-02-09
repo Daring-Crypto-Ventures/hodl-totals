@@ -6,7 +6,7 @@ import { getCoinFromSheetName } from './sheet';
 import validateNFTSheet from './validate-nft';
 import { CompleteDataRow, CompleteDataRowAsStrings, CompleteNFTDataRow, LooselyTypedDataValidationRow } from '../types';
 import getLastRowWithDataPresent from '../last-row';
-import { calculateFIFO, dateFromString, datePlusNYears } from '../calc-fifo';
+import { calculateFIFO, dateFromString, datePlusNYears, dateStrFromDate } from '../calc-fifo';
 import { setFMVStrategyOnRow } from './formulas-coin';
 import getOrderList from '../orders';
 import validate from '../validate';
@@ -93,6 +93,12 @@ export function calculateCoinGainLoss(sheet: GoogleAppsScript.Spreadsheet.Sheet 
                 }
             });
 
+            // Create tax status lookup table for categories from the Categories sheet
+            const txCategoryRows = getTxCategoryData();
+
+            // Make another pass on data array to augment it with Taxable or Not Taxable Statuses
+            updateTaxableStatusAndAcqDates(data, txCategoryRows);
+
             // scan just the inflow & outflow data of the row we're about to write
             // avoid writing zeroes to previously empty cells (but write zeros to the Calculated columns)
             // avoid overwriting any formulas used to calculate the values
@@ -108,12 +114,6 @@ export function calculateCoinGainLoss(sheet: GoogleAppsScript.Spreadsheet.Sheet 
                     });
                 }
             });
-
-            // Create tax status lookup table for categories from the Categories sheet
-            const txCategoryRows = getTxCategoryData();
-
-            // Make another pass on data array to augment it with Taxable or Not Taxable Statuses
-            updateTaxableStatusAndAcqDates(data, txCategoryRows);
 
             // Apply all the batched up edits to the sheet
             data.forEach((row, rowIdx) => {
@@ -162,9 +162,9 @@ function updateTaxableStatusAndAcqDates(data: CompleteDataRow[], txCategoryRows:
                 return false; // stop iterating thru categories list if found status
             }
             if (taxableStatus.startsWith('Taxable') && !(txLotInfo.startsWith('Sold'))) {
-                data[rowIdx][16] = data[rowIdx][4]; // copy tx's Date & Time into Acquired Date
-                data[rowIdx][17] = 'Taxable';
-                data[rowIdx][19] = data[rowIdx][9]; // copy tx inflow value into Gain(Loss)
+                data[rowIdx][16] = dateStrFromDate(data[rowIdx][4] as unknown as Date); // formatted Date & Time to Acquired Date
+                data[rowIdx][17] = 'Taxable'; // Status
+                data[rowIdx][19] = data[rowIdx][9]; // Inflow Value to Gain(Loss)
                 return false; // stop iterating thru categories list if found taxable status
             }
             return true;

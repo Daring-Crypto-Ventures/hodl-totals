@@ -48,7 +48,7 @@ export function formatSheet(sheet: GoogleAppsScript.Spreadsheet.Sheet | null): G
         const headerRow2 = ['   Tx ✔   ', '      All Wallet & Accounts      ', '    Transaction ID    ', '   Description   ', '    Date & Time    ', '       Category       ', '    Net Change    ',
             '        Valuation Strategy        ', `   ${desiredCurrency} Acquired   `, '    Value (USD)    ', `   ${desiredCurrency} Disposed   `, '    Value (USD)    ',
             `   ${desiredCurrency} High   `, `     ${desiredCurrency} Low     `, `    ${desiredCurrency} Price    `,
-            '    Lot Information    ', '    Date Acquired    ', '   Status   ', '        Cost Basis        ', '    Gain (Loss)    ', '       Tax Doc Link       '];
+            '    Lot Information    ', '    Latest Acquired Date    ', '   Status   ', '        Cost Basis        ', '    Gain (Loss)    ', '       Tax Doc Link       '];
 
         sheet.getRange('A1:B1').setValues([headerRow1p1]);
         sheet.getRange('C1').setValue(coinTotalFormula);
