@@ -1,6 +1,6 @@
 # HODL Totals [![Node.js CI](https://github.com/dogracer/hodl-totals/actions/workflows/node.js.yml/badge.svg)](https://github.com/dogracer/hodl-totals/actions/workflows/node.js.yml) [![Coverage Status](https://coveralls.io/repos/github/dogracer/hodl-totals/badge.svg?branch=main)](https://coveralls.io/github/dogracer/hodl-totals) [![Discord](https://img.shields.io/discord/798419587749642240)](https://discord.gg/TWuA9DzZth) [![MIT license](https://img.shields.io/badge/License-MIT-blue.svg)](https://lbesson.mit-license.org/) [![clasp](https://img.shields.io/badge/built%20with-clasp-4285f4.svg)](https://github.com/google/clasp) [![made-for-VSCode](https://img.shields.io/badge/Made%20for-VSCode-1f425f.svg)](https://code.visualstudio.com/)
 
-Your crypto data is yours to keep; I built this so that you could own your data and manage the data in a convienent way without a need to send your coin data to anyone else.
+Your crypto data is yours to keep; I built this so that you could own your data and manage the data in a convenient way without the need to send your coin data to anyone else.
 
 These Google Apps Scripts will add menu commands to Google Sheets that will help you track cost basis and long-term or short-term treatment for your cryptocurrency trades. 
 
@@ -73,13 +73,13 @@ Installation options can be found in the #💻setup channel within the [HODL Tot
 ## Changelog
 - 02-07-23 (v1.0.2) Fixed all known major bugs and performance issues.
 - 01-24-23 (v1.0.2) Added NFT Tracking sheets. Updated Coin Tracking sheets to be consistent with handling NFTs. Changed calculated Tax Status on all tracking sheets to reflect Taxable or Not Taxable per user configuration in the Category sheets.
-- 01-02-23 (v1.0.1) Added HODL Totals portfolio page with support for multiple wallets/addresses/accounts. Includes features to help users reconcile each coin sheet with each wallet/address/account that holds some amount of that coin. Streamlined the menu commands based on user feedback. Now using metadata to version each generated sheet, useful for upgrades down the line. Added a debug pane to investigate the metadata stored on each sheet. And made a round of bug fixes and improvements to error messages throughout. Now exclutively tested and supported on Node.js 16.x LTS.
+- 01-02-23 (v1.0.1) Added HODL Totals portfolio page with support for multiple wallets/addresses/accounts. Includes features to help users reconcile each coin sheet with each wallet/address/account that holds some amount of that coin. Streamlined the menu commands based on user feedback. Now using metadata to version each generated sheet, useful for upgrades down the line. Added a debug pane to investigate the metadata stored on each sheet. And made a round of bug fixes and improvements to error messages throughout. Now exclusively tested and supported on Node.js 16.x LTS.
 - 07-16-22 - Added support for Node.js 16.x LTS.
 - 08-22-21 - Added a dropdown column to explicitly specify the Fair Market Value calculation strategy.
-- 06-03-21 - Ported JS to TypeScript. Tests runs locally, can be debugged using Node.js as well as on Google Servers as Google Apps Script. Code coverage stats published on [coveralls.io](https://coveralls.io/github/dogracer/hodl-totals). Integreated npm script commands for common tasks. Added Continuous Integration, code analysis, and dependabot.
+- 06-03-21 - Ported JS to TypeScript. Tests runs locally, can be debugged using Node.js as well as on Google Servers as Google Apps Script. Code coverage stats published on [coveralls.io](https://coveralls.io/github/dogracer/hodl-totals). Integrated npm script commands for common tasks. Added Continuous Integration, code analysis, and dependabot.
 - 04-25-21 - Links out to Policies + Discord. Fixed a wave of Apply Formatting bugs, halfway through my Blocker list for submission to the Google Marketplace.
-- 01-23-21 - Addressed a laundry list of cleanup issues, in preparation for inital submission to the Google Marketplace.
-- 11-29-20 - Addressed Signficant performance issues for > 1000 purchase transactions (long running script may not finish executing before Google times out the job)
+- 01-23-21 - Addressed a laundry list of cleanup issues, in preparation for initial submission to the Google Marketplace.
+- 11-29-20 - Addressed Significant performance issues for > 1000 purchase transactions (long running script may not finish executing before Google times out the job)
 - 08-31-20 - Ported logic from alanhett's VBScript Macros to Google Apps Script for FIFO cost basis calc.
 
 ### Disclaimer
