@@ -11,6 +11,7 @@ import { updateNFTFormulas } from './formulas-nft';
 import { calculateCoinGainLoss, calculateNFTGainLossStatus } from './calculate';
 import { formatNFTSheet } from './format-nft';
 import { sheetContainsNFTData, sheetContainsCoinData } from './sheet';
+import { showWelcomeDialog_ } from './dialogs';
 
 /* global GoogleAppsScript */
 /* global SpreadsheetApp */
@@ -40,9 +41,21 @@ export function onOpen(e: GoogleAppsScript.Events.AppsScriptEvent): void {
     const ui = SpreadsheetApp.getUi();
     const menu = ui.createAddonMenu(); // createsMenu('HODL Totals')
 
-    // TODO 0 on first launch only have one command
-    // menu.addItem('Setup HODL Totals', 'loadExample_')
+    //  on first launch only have one command
+    if (SpreadsheetApp.getActiveSpreadsheet().getSheetByName('HODL Totals') === null) {
+        menu.addItem('Let\'s Get Started', 'freshLaunch_');
+        menu.addToUi();
+    } else {
+        setupFullMenu(ui, menu);
+    }
+}
 
+/**
+ * Install the full set of menu commands
+ *
+ * @param menu
+ */
+function setupFullMenu(ui: GoogleAppsScript.Base.Ui, menu: GoogleAppsScript.Base.Menu): void {
     menu.addItem('Reset totals sheet', 'resetTotalSheet_')
         .addSubMenu(ui.createMenu('Track new')
             .addItem('Example "pretendCOINs"', 'loadExample_')
@@ -55,17 +68,36 @@ export function onOpen(e: GoogleAppsScript.Events.AppsScriptEvent): void {
         .addItem('Update formulas', 'updateFormulas_')
         .addItem('Calculate gain/loss', 'calculateGainLoss_')
         .addSeparator()
-        .addItem('About HODL Totals', 'showAboutDialog_')
-        .addItem('Join our Discord server', 'openDiscordLink_');
+        .addItem('Getting Started', 'showWelcomeDialog_')
+        .addItem('Join our Discord server', 'openDiscordLink_')
+        .addItem('About HODL Totals', 'showAboutDialog_');
     // .addItem('Show debug sidebar', 'showSheetActionsSidebar_');
     menu.addToUi();
+}
+
+/**
+ * Called only if the sheets are not yet set up
+ *
+ * @param e
+ */
+export function freshLaunch_(e: GoogleAppsScript.Events.AppsScriptEvent): void {
+    Logger.log(`freshLaunch_ called with AuthMode: ${e?.authMode}`);
+
+    const ui = SpreadsheetApp.getUi();
+
+    // Show some getting started guidance if detected a fresh workbook
+    showWelcomeDialog_();
+
+    // after dismissing that, go ahead and expose all HODL Totals commands
+    const menu = ui.createAddonMenu();
+    setupFullMenu(ui, menu);
 }
 
 /**
  * A function that does TODO
  *
  */
-function showSheetActionsSidebar_(): void {
+export function showSheetActionsSidebar_(): void {
     const sidebarUi = HtmlService.createHtmlOutputFromFile('assets/CoinSidebar')
         .setSandboxMode(HtmlService.SandboxMode.IFRAME)
         .setTitle('HODL Totals Debugging Tools');
@@ -77,7 +109,7 @@ function showSheetActionsSidebar_(): void {
  * best I can do since Google Apps Script Menus don't support header text
  *
  */
-function dummyMenuItem_(): null {
+export function dummyMenuItem_(): null {
     return null;
 }
 
@@ -86,7 +118,7 @@ function dummyMenuItem_(): null {
  *
  * @return the newly created sheet, for function chaining purposes.
  */
-function resetTotalSheet_(): GoogleAppsScript.Spreadsheet.Sheet | null {
+export function resetTotalSheet_(): GoogleAppsScript.Spreadsheet.Sheet | null {
     return resetTotalSheet();
 }
 
@@ -95,7 +127,7 @@ function resetTotalSheet_(): GoogleAppsScript.Spreadsheet.Sheet | null {
  *
  * @return the newly created sheet, for function chaining purposes.
  */
-function newCoinTrackedByFIFOMethod_(coinName?: string): GoogleAppsScript.Spreadsheet.Sheet | null {
+export function newCoinTrackedByFIFOMethod_(coinName?: string): GoogleAppsScript.Spreadsheet.Sheet | null {
     return newCoinSheet(coinName);
 }
 
@@ -104,7 +136,7 @@ function newCoinTrackedByFIFOMethod_(coinName?: string): GoogleAppsScript.Spread
  *
  * @return the newly created sheet, for function chaining purposes.
  */
-function newCoinTrackedBySpecIDMethod_(): GoogleAppsScript.Spreadsheet.Sheet | null {
+export function newCoinTrackedBySpecIDMethod_(): GoogleAppsScript.Spreadsheet.Sheet | null {
     Browser.msgBox('Specific ID Tracking Not Supported', 'This capital gains calculation method is not yet supported. Is this something you think should be a top priority for us to add? If yes, please join our Discord and indicate your interest in the #general channel.', Browser.Buttons.OK);
     return null;
 }
@@ -114,7 +146,7 @@ function newCoinTrackedBySpecIDMethod_(): GoogleAppsScript.Spreadsheet.Sheet | n
  *
  * @return the newly created sheet, for function chaining purposes.
  */
-function newNFTSheet_(address?: string): GoogleAppsScript.Spreadsheet.Sheet | null {
+export function newNFTSheet_(address?: string): GoogleAppsScript.Spreadsheet.Sheet | null {
     return newNFTSheet(address);
 }
 
@@ -125,7 +157,7 @@ function newNFTSheet_(address?: string): GoogleAppsScript.Spreadsheet.Sheet | nu
  *
  * @return the sheet that was formatted, for function chaining purposes.
  */
-function formatSheet_(): GoogleAppsScript.Spreadsheet.Sheet {
+export function formatSheet_(): GoogleAppsScript.Spreadsheet.Sheet {
     const sheet: GoogleAppsScript.Spreadsheet.Sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
     if (sheetContainsNFTData(sheet)) {
         formatNFTSheet(sheet);
@@ -144,7 +176,7 @@ function formatSheet_(): GoogleAppsScript.Spreadsheet.Sheet {
  *
  * @return the sheet that was updated, for function chaining purposes.
  */
-function updateFormulas_(): GoogleAppsScript.Spreadsheet.Sheet | null {
+export function updateFormulas_(): GoogleAppsScript.Spreadsheet.Sheet | null {
     const sheet: GoogleAppsScript.Spreadsheet.Sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
     if (sheetContainsCoinData(sheet)) {
         updateFMVFormulas(sheet);
@@ -160,7 +192,7 @@ function updateFormulas_(): GoogleAppsScript.Spreadsheet.Sheet | null {
  * Triggers the cost basis calculation
  *
  */
-function calculateGainLoss_(): GoogleAppsScript.Spreadsheet.Sheet | null {
+export function calculateGainLoss_(): GoogleAppsScript.Spreadsheet.Sheet | null {
     const sheet: GoogleAppsScript.Spreadsheet.Sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
     if (sheetContainsCoinData(sheet)) {
         calculateCoinGainLoss(sheet);

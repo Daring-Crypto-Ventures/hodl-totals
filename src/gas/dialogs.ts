@@ -9,11 +9,20 @@ import { version } from '../version';
 /* global SpreadsheetApp */
 /* global HtmlService */
 
-export default function showAboutDialog_(): void {
+export function showAboutDialog_(): void {
     if (typeof ScriptApp !== 'undefined') {
         const html = HtmlService.createHtmlOutputFromFile('assets/About')
             .setWidth(540)
             .setHeight(300);
         SpreadsheetApp.getUi().showModalDialog(html, `About HODL Totals ${version}`);
+    }
+}
+
+export function showWelcomeDialog_(): void {
+    if (typeof ScriptApp !== 'undefined') {
+        const html = HtmlService.createHtmlOutputFromFile('assets/Welcome')
+            .setWidth(1200)
+            .setHeight(400);
+        SpreadsheetApp.getUi().showModalDialog(html, 'Welcome to HODL Totals');
     }
 }

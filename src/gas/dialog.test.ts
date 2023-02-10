@@ -1,6 +1,6 @@
 // import { expect, test } from '@jest/globals';
 import { UnitTestWrapper } from '../../tests/utils.test';
-import showAboutDialog_ from './about';
+import { showAboutDialog_ } from './dialogs';
 
 /* eslint-disable jest/valid-describe-callback */
 

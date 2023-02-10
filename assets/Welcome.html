@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons1.css">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+  * {
+  box-sizing: border-box;
+  }
+
+  .row {
+  display: flex;
+  }
+  
+  .columnOne {
+  flex: 5 4 0;
+  padding: 10px;
+  }
+
+  .columnTwo {
+  flex: 4 4 0;
+  padding: 10px;
+  }
+  </style>
+  <script>
+    /* function loadExample() {
+      google.script.run.loadExample_();
+    } */
+    function resetTotalSheet() {
+      google.script.run.resetTotalSheet_();
+    }
+  </script>
+  </head>
+  <body>
+    <div class="row">
+      <div class="columnOne">
+        <h2>The Basics</h2>
+        <ul>
+        <li>Do not enter data into the gray columns of any HODL Totals sheet. This content is always calculated.</li>
+        <li>Enter coin inflows as positive numbers in the Net Change column.</li>
+        <li>Enter coin outflows as negative numbers in the Net Change column.</li>
+        <li>If some amount of coin entered your control, also enter that coin amount in the Acquired column.</li>
+        <li>If some amount of coin left your control, also enter that coin amount in the Disposed column.</li>
+        <li>If you know the USD value of the coin amount, set the Valuation Strategy to 'Value Known' and record this in the neighboring Value(USD) column.</li>
+        <li>When transfering between addresses you control, set Category to 'Transfer', Valuation Strategy to 'n/a'.</li>
+        </ul>
+        <h2>Verify the Accuracy of Your Sheets</h2>
+        <ul>
+        <li>For each transaction, provide wallet/account information and transaction IDs.</li>
+        <li>Use the Tx ✔ columnn to track your progress while updating/reconciling each transaction.</li>
+        <li>Reset the HODL Totals sheet at any time to refresh the summary of your holdings.</li>
+        <li>Enter your holdings on the HODL Totals sheet periodically to reconcile your records with reality.</li>
+        </ul>
+      </div>
+      <div class="columnTwo">
+        <h2>Determine Fair Market Value</h2>
+        <ul>
+        <li>Grab High/Lows from historical values tab on <a href="https://coinmarketcap.com">https://coinmarketcap.com</a>.</li>
+        <li>If USD amount paid to receive the coin is known, enter in the Fiat Value column and set strategy to 'Value Known'.</li>
+        <li>If USD amount received for the coin is known, enter the in the Fiat Value column and set strategy to 'Value Known'.</li>
+        <li>If USD purchase/sale price per coin is known, enter in the FMV Price column and set strategy to 'Price Known'.</li>
+        <li>High/Low cells can contain formulas that translate sales of coin to BTC, to USD.</li>
+        </ul>
+        <h2>Calculate Your Gain/Loss</h2>
+        <ul>
+        <li>The transactions must be sorted into chronological order before a calculation can run.</li>
+        <li>The status column provides useful information for each transaction.</li>
+        <li>If a sale includes short and long-term components, it is split.</li>
+        <li>Use the Tax Doc Link column to store links to any other sheets that list or summarize the gain/loss.</li>
+        </ul>
+      </div>
+    </div>
+  <div class="bottom">
+  <!-- <input type="button" value="Start with Sample Data" onclick="google.script.run.withSuccessHandler(google.script.host.close).loadExample()" /> -->
+  <input type="button" value="Create New Totals Sheet" onclick="google.script.run.withSuccessHandler(google.script.host.close).resetTotalSheet()" />
+  <input type="button" value="Close" onclick="google.script.host.close()" />
+  </div>
+</body>
+</html>
