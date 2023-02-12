@@ -79,6 +79,37 @@
     transform:translateX(0%);
     opacity:1;
   }
+  .button__text {
+    padding: 0 8px;
+    transition: all 0.2s;
+  }
+  .button--loading .button__text {
+    visibility: hidden;
+    opacity: 0;
+  }
+  .button--loading::after {
+    content: "";
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    top: 0;
+    left: 70px;
+    right: 0;
+    bottom: 0;
+    margin-top: 2px;
+    border: 4px solid transparent;
+    border-top-color: #ffffff;
+    border-radius: 50%;
+    animation: button-loading-spinner 1s ease infinite;
+  }
+  @keyframes button-loading-spinner {
+    from {
+      transform: rotate(0turn);
+    }
+    to {
+      transform: rotate(1turn);
+    }
+  }
   </style>
   <script>
     /* function loadExample() {
@@ -144,7 +175,9 @@
     </div>
     <div class="bottom">
       <!-- <input type="button" value="Start with Sample Data" onclick="google.script.run.withSuccessHandler(google.script.host.close).loadExample()" /> -->
-      <input type="button" value="Create New Totals Sheet" onclick="google.script.run.withSuccessHandler(google.script.host.close).resetTotalSheet()" />
+      <button class="button action" onclick="this.disabled=true;this.classList.toggle('button--loading');google.script.run.withSuccessHandler(google.script.host.close).resetTotalSheet()">
+        <span class="button__text">Create a Fresh Totals Sheet</span>
+      </button>
       <input type="button" value="Close" onclick="google.script.host.close()" />
     </div>
   </body>
