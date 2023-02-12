@@ -72,8 +72,8 @@ export default function resetTotalSheet(): GoogleAppsScript.Spreadsheet.Sheet | 
                     const walletData: string[][] = coinSheet.getRange('B3:B').getValues().filter(String) as string[][];
                     const uniqueWallets: string[] = [];
                     walletData.forEach(wallet => {
-                        if (!uniqueWallets.includes(wallet[0])) {
-                            uniqueWallets.push(wallet[0]);
+                        if (!uniqueWallets.includes(wallet[0].trim())) {
+                            uniqueWallets.push(wallet[0].trim());
                         }
                     });
 
@@ -93,12 +93,12 @@ export default function resetTotalSheet(): GoogleAppsScript.Spreadsheet.Sheet | 
 
                         // insert mostly empty rows to account for the other detected uniqueWallets holding that same coin
                         uniqueWallets.forEach((wallet, index) => { // eslint-disable-line @typescript-eslint/no-loop-func
-                            const walletOnlydata = [`${rowCount + index}`, `${wallet} (${newCoinName})`, '', newCoinName, '', '', '', '', '', '', '', ''];
+                            const walletOnlydata = [`${rowCount + index}`, `${wallet} (${newCoinName})`, '', newCoinName, '', `Included in ${newCoinName} coin total`, '', '', '', '', '', ''];
                             sheet?.appendRow(walletOnlydata);
                         });
 
                         // merge across for the mostly empty rows, also prevents conditional formatting from being applied on these rows
-                        sheet.getRange(rowCount + 1, 6, uniqueWallets.length, 6).mergeAcross();
+                        sheet.getRange(rowCount + 1, 6, uniqueWallets.length, 6).mergeAcross().setHorizontalAlignment('center');
 
                         // update the rowcount for any secondary wallets added
                         rowCount += uniqueWallets.length;
