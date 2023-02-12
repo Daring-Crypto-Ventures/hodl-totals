@@ -11,7 +11,7 @@ import { updateNFTFormulas } from './formulas-nft';
 import { calculateCoinGainLoss, calculateNFTGainLossStatus } from './calculate';
 import { formatNFTSheet } from './format-nft';
 import { sheetContainsNFTData, sheetContainsCoinData } from './sheet';
-import { showWelcomeDialog_ } from './dialogs';
+import { showInstructionsDialog_ } from './dialogs';
 
 /* global GoogleAppsScript */
 /* global SpreadsheetApp */
@@ -68,7 +68,7 @@ function setupFullMenu(ui: GoogleAppsScript.Base.Ui, menu: GoogleAppsScript.Base
         .addItem('Update formulas', 'updateFormulas_')
         .addItem('Calculate gain/loss', 'calculateGainLoss_')
         .addSeparator()
-        .addItem('View instructions', 'showWelcomeDialog_')
+        .addItem('View instructions', 'showInstructionsDialog_')
         .addItem('Join our Discord server', 'openDiscordLink_')
         .addItem('About HODL Totals', 'showAboutDialog_');
     // .addItem('Show debug sidebar', 'showSheetActionsSidebar_');
@@ -86,7 +86,7 @@ export function freshLaunch_(e: GoogleAppsScript.Events.AppsScriptEvent): void {
     const ui = SpreadsheetApp.getUi();
 
     // Show some getting started guidance if detected a fresh workbook
-    showWelcomeDialog_();
+    showInstructionsDialog_();
 
     // after dismissing that, go ahead and expose all HODL Totals commands
     const menu = ui.createAddonMenu();

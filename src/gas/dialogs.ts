@@ -18,9 +18,9 @@ export function showAboutDialog_(): void {
     }
 }
 
-export function showWelcomeDialog_(): void {
+export function showInstructionsDialog_(): void {
     if (typeof ScriptApp !== 'undefined') {
-        const html = HtmlService.createHtmlOutputFromFile('assets/Welcome')
+        const html = HtmlService.createHtmlOutputFromFile('assets/Instructions')
             .setWidth(850)
             .setHeight(360);
         SpreadsheetApp.getUi().showModalDialog(html, 'HODL Totals Instructions');
