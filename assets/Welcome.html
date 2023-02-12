@@ -6,21 +6,78 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
   * {
-  box-sizing: border-box;
+    padding:0;
+    margin:0;
+    position:relative;
+    box-sizing:border-box;
   }
-
-  .row {
-  display: flex;
+  body, html {
+    height:100%;
+    min-height:100%;
+    overflow-x:hidden;
   }
-  
-  .columnOne {
-  flex: 5 4 0;
-  padding: 10px;
+  p {
+    margin-bottom:1em;
   }
-
-  .columnTwo {
-  flex: 4 4 0;
-  padding: 10px;
+  label {
+    float:left;
+    display:block;
+    padding:10px 20px;
+    font-weight:700;
+    cursor:pointer;
+    z-index:+2;
+    background:#2b3cbc;
+    color:#fff;
+    transition:all .5s ease-in-out;
+  }
+  input[type="radio"] {
+    display:none;
+  }
+  input[type="radio"]:checked + label {
+    background:#fff;
+    color:#2b3cbc;
+  }
+  .tab-list {
+    display:block;
+    padding:0;
+    margin:0;
+    width:100%;
+    overflow:hidden;
+    height:150px;
+  }
+  .tab-list:before {
+    content:"";
+    display:block;
+    height:0;
+    clear:both;
+  }
+  .tab-content-area {
+    display:inline-block;
+    width:100%;
+    padding-top:20px;
+    transform:translateX(-150%);
+    transition:all 300ms cubic-bezier(0, 0, .40, 1);
+    opacity:0;
+    top:0px;
+    position:absolute;
+    height:150px;
+    perspective:1000;
+  }
+  #opentab1:checked ~ .tab-list .tab1 {
+    transform:translateX(0%);
+    opacity:1;
+  }
+  #opentab2:checked ~ .tab-list .tab2 {
+    transform:translateX(0%);
+    opacity:1;
+  }
+  #opentab3:checked ~ .tab-list .tab3 {
+    transform:translateX(0%);
+    opacity:1;
+  }
+  #opentab4:checked ~ .tab-list .tab4 {
+    transform:translateX(0%);
+    opacity:1;
   }
   </style>
   <script>
@@ -33,48 +90,62 @@
   </script>
   </head>
   <body>
-    <div class="row">
-      <div class="columnOne">
-        <h2>The Basics</h2>
-        <ul>
-        <li>Do not enter data into the gray columns of any HODL Totals sheet. This content is always calculated.</li>
-        <li>Enter coin inflows as positive numbers in the Net Change column.</li>
-        <li>Enter coin outflows as negative numbers in the Net Change column.</li>
-        <li>If some amount of coin entered your control, also enter that coin amount in the Acquired column.</li>
-        <li>If some amount of coin left your control, also enter that coin amount in the Disposed column.</li>
-        <li>If you know the USD value of the coin amount, set the Valuation Strategy to 'Value Known' and record this in the neighboring Value(USD) column.</li>
-        <li>When transfering between addresses you control, set Category to 'Transfer', Valuation Strategy to 'n/a'.</li>
-        </ul>
-        <h2>Verify the Accuracy of Your Sheets</h2>
-        <ul>
-        <li>For each transaction, provide wallet/account information and transaction IDs.</li>
-        <li>Use the Tx ✔ columnn to track your progress while updating/reconciling each transaction.</li>
-        <li>Reset the HODL Totals sheet at any time to refresh the summary of your holdings.</li>
-        <li>Enter your holdings on the HODL Totals sheet periodically to reconcile your records with reality.</li>
-        </ul>
-      </div>
-      <div class="columnTwo">
-        <h2>Determine Fair Market Value</h2>
-        <ul>
-        <li>Grab High/Lows from historical values tab on <a href="https://coinmarketcap.com" target="_blank">https://coinmarketcap.com</a>.</li>
-        <li>If USD amount paid to receive the coin is known, enter in the Fiat Value column and set strategy to 'Value Known'.</li>
-        <li>If USD amount received for the coin is known, enter the in the Fiat Value column and set strategy to 'Value Known'.</li>
-        <li>If USD purchase/sale price per coin is known, enter in the FMV Price column and set strategy to 'Price Known'.</li>
-        <li>High/Low cells can contain formulas that translate sales of coin to BTC, to USD.</li>
-        </ul>
-        <h2>Calculate Your Gain/Loss</h2>
-        <ul>
-        <li>The transactions must be sorted into chronological order before a calculation can run.</li>
-        <li>The status column provides useful information for each transaction.</li>
-        <li>If a sale includes short and long-term components, it is split.</li>
-        <li>Use the Tax Doc Link column to store links to any other sheets that list or summarize the gain/loss.</li>
-        </ul>
-      </div>
+    <div>
+      <p><b>HODL Totals</b> is a do-it-yourself coin and NFT tracking system based on Google Sheets. Follow the steps below to gather your transaction data into a consistent format, 
+        reconcile the sheet data with your holdings and then calculate your gains and losses.</p>
+      <p>These sheets are intended to be sufficent as an audit trail to back up your US crypto tax filing. Use this data to generate an Income Report and a 1099 Data Report (for Form 8453).</p>
+      <input id="opentab1" type="radio" name="modaltabs" checked="checked"/>
+      <label for="opentab1">1. The Basics</label>
+      <input id="opentab2" type="radio" name="modaltabs" />
+      <label for="opentab2">2. Verify the Accuracy of Your Sheets</label>
+      <input id="opentab3" type="radio" name="modaltabs" />
+      <label for="opentab3">3. Determine Fair Market Value</label>
+      <input id="opentab4" type="radio" name="modaltabs" />
+      <label for="opentab4">4. Calculate Your Gain/Loss</label>
+      <ul class="tab-list">
+        <li class="tab-content-area tab1">
+          <ul>
+            <li>Do not enter data into the gray columns of any HODL Totals sheet. This content is always calculated.</li>
+            <li>Enter coin inflows as positive numbers in the Net Change column.</li>
+            <li>Enter coin outflows as negative numbers in the Net Change column.</li>
+            <li>If some amount of coin entered your control, also enter that coin amount in the Acquired column.</li>
+            <li>If some amount of coin left your control, also enter that coin amount in the Disposed column.</li>
+            <li>If you know the USD value of the coin amount, set the Valuation Strategy to 'Value Known' and record this in the neighboring Value(USD) column.</li>
+            <li>When transferring between addresses you control, set Category to 'Transfer', Valuation Strategy to 'n/a'.</li>
+          </ul>
+        </li>
+        <li class="tab-content-area tab2">
+          <ul>
+            <li>For each transaction, provide wallet/account information and transaction IDs.</li>
+            <li>Use the Tx ✔ columnn to track your progress while updating/reconciling each transaction.</li>
+            <li>Reset the HODL Totals sheet at any time to refresh the summary of your holdings.</li>
+            <li>Enter your holdings on the HODL Totals sheet periodically to reconcile your records with reality.</li>
+          </ul>
+        </li>
+        <li class="tab-content-area tab3">
+          <ul>
+            <li>Grab High/Lows from historical values tab on <a href="https://coinmarketcap.com" target="_blank">https://coinmarketcap.com</a>.</li>
+            <li>If USD amount paid to receive the coin is known, enter in the Inflow Value(USD) column and set strategy to 'Value Known'.</li>
+            <li>If USD amount received for the coin is known, enter the in the Outflow Value(USD) column and set strategy to 'Value Known'.</li>
+            <li>If USD purchase/sale price per coin is known, enter in the Fair Mkt Value Price column and set strategy to 'Price Known'.</li>
+            <li>Enter data for Fair Mkt Value High/Low, set the 'Avg Daily Price Variation' strategy to track value of coins with very low trading volumes.</li>
+          </ul>
+        </li>
+        <li class="tab-content-area tab4">
+          <ul>
+            <li>Transactions must be sorted into chronological order before a calculation can run -- simply sort the Date & Time header from A→Z.</li>
+            <li>The status column provides useful information for each transaction.</li>
+            <li>Taxable or Not Taxable status gets assigned based on the categories you configure -- edit hidden Category sheets to customize.</li>
+            <li>When disposing short-term and long-term coin lots in a single transaction row, the transaction gets split into two rows.</li>
+            <li>Use the Tax Doc Link column to store links to any other sheets that list or summarize the gain/loss.</li>
+          </ul>
+        </li>
+      </ul>
     </div>
-  <div class="bottom">
-  <!-- <input type="button" value="Start with Sample Data" onclick="google.script.run.withSuccessHandler(google.script.host.close).loadExample()" /> -->
-  <input type="button" value="Create New Totals Sheet" onclick="google.script.run.withSuccessHandler(google.script.host.close).resetTotalSheet()" />
-  <input type="button" value="Close" onclick="google.script.host.close()" />
-  </div>
-</body>
+    <div class="bottom">
+      <!-- <input type="button" value="Start with Sample Data" onclick="google.script.run.withSuccessHandler(google.script.host.close).loadExample()" /> -->
+      <input type="button" value="Create New Totals Sheet" onclick="google.script.run.withSuccessHandler(google.script.host.close).resetTotalSheet()" />
+      <input type="button" value="Close" onclick="google.script.host.close()" />
+    </div>
+  </body>
 </html>

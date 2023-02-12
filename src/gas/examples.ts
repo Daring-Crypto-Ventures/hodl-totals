@@ -72,7 +72,6 @@ function coin1Example(sheet: GoogleAppsScript.Spreadsheet.Sheet): void {
         ['FALSE', 'Binance.us Account', 'IJijIJijIJijIJ3434334343', 'binance.us traded 20 pretendCOIN for USD', '2021-04-02 9:00:00', 'USD Withdrawal', '-20.0', 'Avg Daily Price Variation', '', '', '20.00000000', '', '=0.0003561*7088.25', '=0.0003561*6595.92', '', '', '', '', '', '', ''],
         ['FALSE', 'Metamask Main Address', 'onetwo3456seven-EightNine', 'unsolicited distribution of pretendCOIN from a total stranger sent to random addresses', '2022-05-31 10:12:12', 'Passive Airdrop', '+26.92', 'Avg Daily Price Variation', '26.92000000', '', '', '', '=0.0069319*9700.34/I12', '=0.0069319*9432.3/I12', '', '', '', '', '', '', ''],
     ];
-    initialData.push(...instructionData());
 
     for (let i = 0; i < initialData.length; i++) {
         sheet.getRange(`A${i + 3}:U${i + 3}`).setValues([initialData[i]]);
@@ -102,7 +101,6 @@ function coin2Example(sheet: GoogleAppsScript.Spreadsheet.Sheet): void {
         ['FALSE', 'Metamask Main Address', 'e11it3hkr8zb3wr3maB2much4u2hnd13', 'Bought sweet NFT #4242', '2022-03-06 13:10:11', 'Sold for Goods', '-0.1', 'Value Known', '0', '0', '0.10000000', '100.00', '', '', '', '', '', '', '', '', ''],
         ['FALSE', 'Metamask Main Address', 'fu72fu72fu72fu72fu72fu72fu72', 'prentedCOIN2 Gift for my boo', '2022-03-07 10:00:00', 'Given Away', '-0.1', 'Value Known', '0', '0', '0.10000000', '200.00', '', '', '', '', '', '', '', '', ''],
     ];
-    initialData.push(...instructionData());
 
     for (let i = 0; i < initialData.length; i++) {
         sheet.getRange(`A${i + 3}:U${i + 3}`).setValues([initialData[i]]);
@@ -110,42 +108,4 @@ function coin2Example(sheet: GoogleAppsScript.Spreadsheet.Sheet): void {
 
     updateFMVFormulas(sheet);
     // calculateCoinGainLoss(sheet);
-}
-
-/**
- * Instructions to tack onto the bottom of all example coins
- *
- */
-function instructionData(): string[][] {
-    const instructionsData: string[][] = [
-        ['FALSE', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
-        ['FALSE', '', '', 'THE BASICS', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
-        ['FALSE', '', '', 'Do not enter data into the gray columns of any HODL Totals sheet. This content is always calculated.', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
-        ['FALSE', '', '', 'Enter coin inflows as positive numbers in the Net Change column.', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
-        ['FALSE', '', '', 'Enter coin outflows as negative numbers in the Net Change column.', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
-        ['FALSE', '', '', 'If some amount of coin entered your control, also enter that coin amount in the Acquired column.', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
-        ['FALSE', '', '', 'If some amount of coin left your control, also enter that coin amount in the Disposed column.', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
-        ['FALSE', '', '', 'If you know the USD value of the coin amount, set the Valuation Strategy to \'Value Known\' and record this in the neighboring Value(USD) column.', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
-        ['FALSE', '', '', 'If the transaction is a transfer between addresses you control, set the Category to \'Transfer\', Valuation Strategy to \'n/a\'.', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
-        ['FALSE', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
-        ['FALSE', '', '', 'VERIFY THE ACCURACY OF YOUR SHEETS', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
-        ['FALSE', '', '', 'For each transaction, provide wallet/account information and transaction IDs.', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
-        ['FALSE', '', '', 'Use the Tx ✔ columnn to track your progress while updating/reconciling each transaction.', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
-        ['FALSE', '', '', 'Reset the HODL Totals sheet at any time to refresh the summary of your holdings.', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
-        ['FALSE', '', '', 'Enter your holdings on the HODL Totals sheet periodically to reconcile your records with reality.', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
-        ['FALSE', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
-        ['FALSE', '', '', 'DETERMINE FAIR MARKET VALUE', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
-        ['FALSE', '', '', 'Grab High/Lows from historical values tab on https://coinmarketcap.com', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
-        ['FALSE', '', '', 'If USD amount paid to receive the coin is known, enter in the Fiat Value column and set strategy to \'Value Known\'', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
-        ['FALSE', '', '', 'If USD amount received for the coin is known, enter the in the Fiat Value column and set strategy to \'Value Known\'', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
-        ['FALSE', '', '', 'If USD purchase/sale price per coin is known, enter in the FMV Price column and set strategy to \'Price Known\'', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
-        ['FALSE', '', '', 'High/Low cells can contain formulas that translate sales of coin to BTC, to USD.', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
-        ['FALSE', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
-        ['FALSE', '', '', 'CACULATE YOUR GAIN/LOSS', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
-        ['FALSE', '', '', 'The transactions must be sorted into chronological order before a calculation can run.', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
-        ['FALSE', '', '', 'The status column provides useful information for each transaction.', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
-        ['FALSE', '', '', 'If a sale includes short and long-term components, it is split.', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
-        ['FALSE', '', '', 'Use the Tax Doc Link column to store links to any other sheets that list or summarize the gain/loss', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '']
-    ];
-    return instructionsData;
 }

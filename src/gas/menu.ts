@@ -68,7 +68,7 @@ function setupFullMenu(ui: GoogleAppsScript.Base.Ui, menu: GoogleAppsScript.Base
         .addItem('Update formulas', 'updateFormulas_')
         .addItem('Calculate gain/loss', 'calculateGainLoss_')
         .addSeparator()
-        .addItem('Getting Started', 'showWelcomeDialog_')
+        .addItem('View instructions', 'showWelcomeDialog_')
         .addItem('Join our Discord server', 'openDiscordLink_')
         .addItem('About HODL Totals', 'showAboutDialog_');
     // .addItem('Show debug sidebar', 'showSheetActionsSidebar_');
