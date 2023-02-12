@@ -23,9 +23,6 @@ export function loadExample(): GoogleAppsScript.Spreadsheet.Sheet | null {
         newCategorySheet();
     }
 
-    // first reset totals sheet to populate the correct wallets
-    resetTotalSheet();
-
     // delete any pre-existing pretendCOIN example sheets
     if (typeof ScriptApp !== 'undefined') {
         const sheet1 = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('pretendCOIN1');
@@ -47,7 +44,7 @@ export function loadExample(): GoogleAppsScript.Spreadsheet.Sheet | null {
         coin2Example(newSheet2);
     }
 
-    // update reset totals sheet to account for the newly added pretendCoin wallets
+    // reset totals sheet to account for the newly added pretendCoin wallets
     resetTotalSheet();
 
     // format coin sheets after reseting the Totals sheet to make reconciliation dropdowns correct

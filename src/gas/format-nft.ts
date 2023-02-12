@@ -17,7 +17,6 @@ export function formatNFTSheet(sheet: GoogleAppsScript.Spreadsheet.Sheet | null)
     if ((sheet !== null) && (typeof ScriptApp !== 'undefined')) {
         // Code to check the previously saved sheet version to see if mutation is required
         // should pop a yes/no confirmation dialog in this event as formatting could be destructive
-        // const sheet = SpreadsheetApp.getActiveSheet();
         // const mdFinder = sheet.getRange('1:1').createDeveloperMetadataFinder();
         // const version = mdFinder.withKey('version').find()[0].getValue();
         resetVersionMetadata(sheet);
@@ -173,7 +172,7 @@ function setNFTSheetCFRules(sheet: GoogleAppsScript.Spreadsheet.Sheet): void {
     const calcStatusRange = sheet.getRange('AF1');
 
     // extract the conditional rules set on all other cells on this sheet
-    const rules = SpreadsheetApp.getActiveSheet().getConditionalFormatRules();
+    const rules = sheet.getConditionalFormatRules();
     const newRules = [] as GoogleAppsScript.Spreadsheet.ConditionalFormatRule [];
     for (const rule of rules) {
         const ruleRange = rule.getRanges()?.[0].getA1Notation();

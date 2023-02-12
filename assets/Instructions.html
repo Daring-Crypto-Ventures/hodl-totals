@@ -200,10 +200,10 @@
       </ul>
     </div>
     <div class="bottom">
-      <button class="button share" onclick="this.disabled=true;this.classList.toggle('button--loading');google.script.run.withSuccessHandler(google.script.host.close).loadExample()">
+      <button id="exampleButton" class="button share" onclick="this.disabled=true;document.getElementById('resetButton').disabled=true;this.classList.toggle('button--loading');google.script.run.withSuccessHandler(google.script.host.close).loadExample()">
         <span class="button__text">Start with Pretend Transactions</span>
       </button>
-      <button class="button action" onclick="this.disabled=true;this.classList.toggle('button--loading');google.script.run.withSuccessHandler(google.script.host.close).resetTotalSheet()">
+      <button id="resetButton" class="button action" onclick="this.disabled=true;document.getElementById('exampleButton').disabled=true;this.classList.toggle('button--loading');google.script.run.withSuccessHandler(google.script.host.close).resetTotalSheet()">
         <span class="button__text">Create/Refresh the Totals Sheet</span>
       </button>
       <button class="button" onclick="google.script.host.close()">
