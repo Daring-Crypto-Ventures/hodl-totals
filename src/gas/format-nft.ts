@@ -38,10 +38,10 @@ export function formatNFTSheet(sheet: GoogleAppsScript.Spreadsheet.Sheet | null)
         // NOTE: spaces are hard coded around header text that help autosizecolumns behave correctly
         const headerRow2 = ['      In Tx ✔      ', '    Collection    ', '     NFT ID     ', '    NFT In Tx(s)    ', '   NFT In Description   ', '    Date & Time    ',
             '       Inflow Category       ', '    Acq Price    ', '    Acq Price (USD)    ', '    Tx Fees    ', '    Tx Fees (USD)    ', '    Cost Basis Adj   ',
-            '    Cost Basis Adj (USD)    ', '    Cost Basis    ', '    Cost Basis (USD)    ', '    In Tx Status    ', '      In Tx Tax Doc Link      ',
+            '    Cost Basis Adj (USD)    ', '    Cost Basis    ', '    Cost Basis (USD)    ', '    Inflow Status    ', '      Inflow Tax Doc Link      ',
             '  Out Tx ✔  ', '    NFT Out Tx(s)    ', '   NFT Out Description   ', '       Outflow Category       ', '    Date & Time    ',
             '    Sale Price    ', '    Sale Price (USD)    ', '    Tx Fees    ', '    Tx Fees (USD)    ', '    Selling Fees   ', '    Selling Fees (USD)    ',
-            '    Proceeds    ', '    Proceeds (USD)    ', '     Gain (Loss)     ', '       Out Tx Status       ', '      Out Tx Tax Doc Link      '];
+            '    Proceeds    ', '    Proceeds (USD)    ', '     Gain (Loss)     ', '       Outflow Status       ', '      Outflow Tax Doc Link      '];
 
         sheet.getRange('A1').setValue(headerRow1p1);
         sheet.getRange('C1').setValue(coinTotalFormula);

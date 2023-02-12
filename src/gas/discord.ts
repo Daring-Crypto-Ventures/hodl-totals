@@ -8,6 +8,12 @@
 /* global SpreadsheetApp */
 /* global HtmlService */
 
+/**
+ * Opens up a new tab in the browser, in such a way that something happens even if a popup blocker is engaged.
+ *
+ * Appended with underscore as this is a utility function that can only be called from other server scripts
+ *
+ */
 export default function openDiscordLink_(): void {
     // Invite link to the HODL Totals Discord that never expires
     if (typeof ScriptApp !== 'undefined') {

@@ -12,6 +12,7 @@ import { calculateCoinGainLoss, calculateNFTGainLossStatus } from './calculate';
 import { formatNFTSheet } from './format-nft';
 import { sheetContainsNFTData, sheetContainsCoinData } from './sheet';
 import { showInstructionsDialog_ } from './dialogs';
+import { loadExample } from './examples';
 
 /* global GoogleAppsScript */
 /* global SpreadsheetApp */
@@ -43,7 +44,7 @@ export function onOpen(e: GoogleAppsScript.Events.AppsScriptEvent): void {
 
     //  on first launch only have one command
     if (SpreadsheetApp.getActiveSpreadsheet().getSheetByName('HODL Totals') === null) {
-        menu.addItem('Let\'s Get Started', 'freshLaunch_');
+        menu.addItem('Get started with HODL Totals', 'freshLaunch_');
         menu.addToUi();
     } else {
         setupFullMenu(ui, menu);
@@ -76,7 +77,7 @@ function setupFullMenu(ui: GoogleAppsScript.Base.Ui, menu: GoogleAppsScript.Base
 }
 
 /**
- * Called only if the sheets are not yet set up
+ * Appended with underscore as this is a utility function that can only be called from other server scripts
  *
  * @param e
  */
@@ -96,6 +97,8 @@ export function freshLaunch_(e: GoogleAppsScript.Events.AppsScriptEvent): void {
 /**
  * A function that does TODO
  *
+ * Appended with underscore as this is a utility function that can only be called from other server scripts
+ *
  */
 export function showSheetActionsSidebar_(): void {
     const sidebarUi = HtmlService.createHtmlOutputFromFile('assets/CoinSidebar')
@@ -108,6 +111,8 @@ export function showSheetActionsSidebar_(): void {
  * A no-op function that is required to show a dummy Menu Item
  * best I can do since Google Apps Script Menus don't support header text
  *
+ * Appended with underscore as this is a utility function that can only be called from other server scripts
+ *
  */
 export function dummyMenuItem_(): null {
     return null;
@@ -115,6 +120,19 @@ export function dummyMenuItem_(): null {
 
 /**
  * A function that deletes, repopulates & formats the Totals page based on the coin sheets that already exist.
+ *
+ * Appended with underscore as this is a utility function that can only be called from other server scripts
+ *
+ * @return the newly created sheet, for function chaining purposes.
+ */
+export function loadExample_(): GoogleAppsScript.Spreadsheet.Sheet | null {
+    return loadExample();
+}
+
+/**
+ * A function that deletes, repopulates & formats the Totals page based on the coin sheets that already exist.
+ *
+ * Appended with underscore as this is a utility function that can only be called from other server scripts
  *
  * @return the newly created sheet, for function chaining purposes.
  */
@@ -125,6 +143,8 @@ export function resetTotalSheet_(): GoogleAppsScript.Spreadsheet.Sheet | null {
 /**
  * A function that adds a FIFO-method coin tracking spreadsheet.
  *
+ * Appended with underscore as this is a utility function that can only be called from other server scripts
+ *
  * @return the newly created sheet, for function chaining purposes.
  */
 export function newCoinTrackedByFIFOMethod_(coinName?: string): GoogleAppsScript.Spreadsheet.Sheet | null {
@@ -133,6 +153,8 @@ export function newCoinTrackedByFIFOMethod_(coinName?: string): GoogleAppsScript
 
 /**
  * A function that adds a SpecificID-method coin tracking spreadsheet.
+ *
+ * Appended with underscore as this is a utility function that can only be called from other server scripts
  *
  * @return the newly created sheet, for function chaining purposes.
  */
@@ -144,6 +166,8 @@ export function newCoinTrackedBySpecIDMethod_(): GoogleAppsScript.Spreadsheet.Sh
 /**
  * A function that adds a sheet to track the NFTs held in a given address
  *
+ * Appended with underscore as this is a utility function that can only be called from other server scripts
+ *
  * @return the newly created sheet, for function chaining purposes.
  */
 export function newNFTSheet_(address?: string): GoogleAppsScript.Spreadsheet.Sheet | null {
@@ -152,8 +176,9 @@ export function newNFTSheet_(address?: string): GoogleAppsScript.Spreadsheet.She
 
 /**
  * A function that formats the columns and headers of the active spreadsheet.
- *
  * Assumption: Not configurable to pick Fiat Currency to use for all sheets, assuming USD since this is related to US Tax calc
+ *
+ * Appended with underscore as this is a utility function that can only be called from other server scripts
  *
  * @return the sheet that was formatted, for function chaining purposes.
  */
@@ -171,8 +196,9 @@ export function formatSheet_(): GoogleAppsScript.Spreadsheet.Sheet {
 
 /**
  * A function that updates all of the formuala cells of the active spreadsheet.
- *
  * Assumption: Not configurable to pick Fiat Currency to use for all sheets, assuming USD since this is related to US Tax calc
+ *
+ * Appended with underscore as this is a utility function that can only be called from other server scripts
  *
  * @return the sheet that was updated, for function chaining purposes.
  */
@@ -189,7 +215,9 @@ export function updateFormulas_(): GoogleAppsScript.Spreadsheet.Sheet | null {
 }
 
 /**
- * Triggers the cost basis calculation
+ * Triggers a cost basis calculation
+ *
+ * Appended with underscore as this is a utility function that can only be called from other server scripts
  *
  */
 export function calculateGainLoss_(): GoogleAppsScript.Spreadsheet.Sheet | null {

@@ -17,11 +17,14 @@ import { updateFMVFormulas } from './formulas-coin';
  *
  * @return the first of the two sheets that are created
  */
-export function loadExample_(): GoogleAppsScript.Spreadsheet.Sheet | null {
+export function loadExample(): GoogleAppsScript.Spreadsheet.Sheet | null {
     // if no Categories sheet previously exists, create one
     if ((typeof ScriptApp !== 'undefined') && (SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Categories') == null)) {
         newCategorySheet();
     }
+
+    // first reset totals sheet to populate the correct wallets
+    resetTotalSheet();
 
     // delete any pre-existing pretendCOIN example sheets
     if (typeof ScriptApp !== 'undefined') {
@@ -44,7 +47,7 @@ export function loadExample_(): GoogleAppsScript.Spreadsheet.Sheet | null {
         coin2Example(newSheet2);
     }
 
-    // first reset totals sheet to populate the correct wallets
+    // update reset totals sheet to account for the newly added pretendCoin wallets
     resetTotalSheet();
 
     // format coin sheets after reseting the Totals sheet to make reconciliation dropdowns correct

@@ -9,6 +9,12 @@ import { version } from '../version';
 /* global SpreadsheetApp */
 /* global HtmlService */
 
+/**
+ * Opens up a custom HTML-based dialog with information about HODL Totals
+ *
+ * Appended with underscore as this is a utility function that can only be called from other server scripts
+ *
+ */
 export function showAboutDialog_(): void {
     if (typeof ScriptApp !== 'undefined') {
         const html = HtmlService.createHtmlOutputFromFile('assets/About')
@@ -18,11 +24,17 @@ export function showAboutDialog_(): void {
     }
 }
 
+/**
+ * Opens up a custom HTML-based dialog with instructions on how to use HODL Totals
+ *
+ * Appended with underscore as this is a utility function that can only be called from other server scripts
+ *
+ */
 export function showInstructionsDialog_(): void {
     if (typeof ScriptApp !== 'undefined') {
         const html = HtmlService.createHtmlOutputFromFile('assets/Instructions')
-            .setWidth(850)
-            .setHeight(360);
+            .setWidth(860)
+            .setHeight(380);
         SpreadsheetApp.getUi().showModalDialog(html, 'HODL Totals Instructions');
     }
 }

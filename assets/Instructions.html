@@ -6,7 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
   * {
-    padding:0;
     margin:0;
     position:relative;
     box-sizing:border-box;
@@ -16,8 +15,14 @@
     min-height:100%;
     overflow-x:hidden;
   }
+  .block {
+    height:195px;
+  }
   p {
     margin-bottom:1em;
+  }
+  ul {
+    list-style-type: inherit;
   }
   label {
     float:left;
@@ -29,6 +34,9 @@
     background:#2b3cbc;
     color:#fff;
     transition:all .5s ease-in-out;
+    border-style: solid;
+    border-width: 1px;
+    border-bottom: 1px;
   }
   input[type="radio"] {
     display:none;
@@ -43,7 +51,11 @@
     margin:0;
     width:100%;
     overflow:hidden;
-    height:150px;
+    height:100%;
+    border-style: solid;
+    border-top: 0px;
+    border-color: #2b3cbc;
+    border-width: 1px;
   }
   .tab-list:before {
     content:"";
@@ -60,7 +72,7 @@
     opacity:0;
     top:0px;
     position:absolute;
-    height:150px;
+    height:195px;
     perspective:1000;
   }
   #opentab1:checked ~ .tab-list .tab1 {
@@ -79,6 +91,10 @@
     transform:translateX(0%);
     opacity:1;
   }
+  #opentab5:checked ~ .tab-list .tab5 {
+    transform:translateX(0%);
+    opacity:1;
+  }
   .button__text {
     padding: 0 8px;
     transition: all 0.2s;
@@ -93,7 +109,7 @@
     width: 14px;
     height: 14px;
     top: 0;
-    left: 70px;
+    left: 80px;
     right: 0;
     bottom: 0;
     margin-top: 2px;
@@ -111,74 +127,88 @@
     }
   }
   </style>
-  <script>
-    /* function loadExample() {
-      google.script.run.loadExample_();
-    } */
-    function resetTotalSheet() {
-      google.script.run.resetTotalSheet_();
-    }
-  </script>
   </head>
   <body>
-    <div>
+    <div class="block">
       <p><b>HODL Totals</b> is a do-it-yourself coin and NFT tracking system based on Google Sheets. Follow the steps below to gather your transaction data into a consistent format, 
         reconcile the sheet data with your holdings and then calculate your gains and losses.</p>
-      <p>These sheets are intended to be sufficent as an audit trail to back up your US crypto tax filing. Use this data to generate an Income Report and a 1099 Data Report (for Form 8453).</p>
+      <p>These sheets are intended to be sufficient as an audit trail to back up your US crypto tax filing. This data can be used to generate yearly Income Reports and a 1099 Data Reports (for Form 8453).</p>
       <input id="opentab1" type="radio" name="modaltabs" checked="checked"/>
-      <label for="opentab1">1. The Basics</label>
+      <label for="opentab1">1. Coin Tracking</label>
       <input id="opentab2" type="radio" name="modaltabs" />
-      <label for="opentab2">2. Verify the Accuracy of Your Sheets</label>
+      <label for="opentab2">2. NFT Tracking</label>
       <input id="opentab3" type="radio" name="modaltabs" />
-      <label for="opentab3">3. Determine Fair Market Value</label>
+      <label for="opentab3">3. Verify Data Accuracy</label>
       <input id="opentab4" type="radio" name="modaltabs" />
-      <label for="opentab4">4. Calculate Your Gain/Loss</label>
+      <label for="opentab4">4. Assign Fair Market Value</label>
+      <input id="opentab5" type="radio" name="modaltabs" />
+      <label for="opentab5">5. Calculate Gain/Loss</label>
       <ul class="tab-list">
         <li class="tab-content-area tab1">
           <ul>
-            <li>Do not enter data into the gray columns of any HODL Totals sheet. This content is always calculated.</li>
-            <li>Enter coin inflows as positive numbers in the Net Change column.</li>
-            <li>Enter coin outflows as negative numbers in the Net Change column.</li>
-            <li>If some amount of coin entered your control, also enter that coin amount in the Acquired column.</li>
-            <li>If some amount of coin left your control, also enter that coin amount in the Disposed column.</li>
-            <li>If you know the USD value of the coin amount, set the Valuation Strategy to 'Value Known' and record this in the neighboring Value(USD) column.</li>
-            <li>When transferring between addresses you control, set Category to 'Transfer', Valuation Strategy to 'n/a'.</li>
+            <li><b>Do not enter data into the gray columns</b> of any HODL Totals sheet. This content is always calculated for you.</li>
+            <li>Each transaction for a given coin should have a unique row in that coin's tracking sheet.</li>
+            <li>Enter coin inflows as positive numbers in the <b>Net Change</b> column.</li>
+            <li>Enter coin outflows as negative numbers in the <b>Net Change</b> column.</li>
+            <li>If some amount of coin entered your control, enter that coin amount in the <b>Acquired</b> column.</li>
+            <li>If some amount of coin left your control, enter that coin amount in the <b>Disposed</b> column.</li>
+            <li>If you know the value of the coin amount at the time of the transaction, set the <b>Valuation Strategy</b> to <b>Value Known</b><br />
+                and record the US Dollar value of that amount in the neighboring <b>Value (USD)</b> column.</li>
+            <li>When transferring coins between addresses you control, set <b>Category</b> to <b>Transfer In/Out</b> and <b>Strategy</b> to <b>n/a</b>.</li>
           </ul>
         </li>
         <li class="tab-content-area tab2">
           <ul>
-            <li>For each transaction, provide wallet/account information and transaction IDs.</li>
-            <li>Use the Tx ✔ columnn to track your progress while updating/reconciling each transaction.</li>
-            <li>Reset the HODL Totals sheet at any time to refresh the summary of your holdings.</li>
-            <li>Enter your holdings on the HODL Totals sheet periodically to reconcile your records with reality.</li>
+            <li>Non-Fungible Tokens are tracked via the specific ID method. That's what makes then non-fungible.</li>
+            <li>Each NFT tracking sheet corresponds to an address that can hold many NFTs over time.</li>
+            <li>Create a unique row for each NFT you interact with, adding name and identification information in the frozen columns.</li>
+            <li><b>NFT Inflow</b> information is recorded on the left side of each row, including many details that could span many transactions.</li>
+            <li><b>NFT Outflow</b> information is recorded on the right side of each row, including many details that could span many transactions.</li>
+            <li>Each <b>NFT Outflow</b> must match up with an <b>NFT Inflow</b> on the same row.</li>
+            <li>Track each NFT's cost basis accurately by accounting for the USD value of all crypto transactions involving each NFT</br>
+                by copying the USD values from your coin sheets and pasting them into the NFT sheet's <b>(USD)</b> columns.</li>
+            <li>For NFT sheets, the <b>Calculate gain/loss</b> command assigns tax treatments to both the <b>Inflow Status</b> and <b>Outflow Status</b> columns.</li>
           </ul>
         </li>
         <li class="tab-content-area tab3">
           <ul>
-            <li>Grab High/Lows from historical values tab on <a href="https://coinmarketcap.com" target="_blank">https://coinmarketcap.com</a>.</li>
-            <li>If USD amount paid to receive the coin is known, enter in the Inflow Value(USD) column and set strategy to 'Value Known'.</li>
-            <li>If USD amount received for the coin is known, enter the in the Outflow Value(USD) column and set strategy to 'Value Known'.</li>
-            <li>If USD purchase/sale price per coin is known, enter in the Fair Mkt Value Price column and set strategy to 'Price Known'.</li>
-            <li>Enter data for Fair Mkt Value High/Low, set the 'Avg Daily Price Variation' strategy to track value of coins with very low trading volumes.</li>
+            <li>For each transaction, provide <b>Wallet/Account</b> information and a <b>Transaction ID</b> if possible.</li>
+            <li>Use the <b>Tx ✔</b> column to track your progress while updating or reconciling your transactions.</li>
+            <li>Reset the <b>HODL Totals</b> sheet at any time to refresh a summary of your holdings across all coins and NFTs.</li>
+            <li>Enter your holdings on the <b>HODL Totals</b> sheet periodically to reconcile your records with reality.</li>
           </ul>
         </li>
         <li class="tab-content-area tab4">
           <ul>
-            <li>Transactions must be sorted into chronological order before a calculation can run -- simply sort the Date & Time header from A→Z.</li>
-            <li>The status column provides useful information for each transaction.</li>
-            <li>Taxable or Not Taxable status gets assigned based on the categories you configure -- edit hidden Category sheets to customize.</li>
-            <li>When disposing short-term and long-term coin lots in a single transaction row, the transaction gets split into two rows.</li>
-            <li>Use the Tax Doc Link column to store links to any other sheets that list or summarize the gain/loss.</li>
+            <li>If the USD amount paid to receive the coin inflow is known, enter in the <b>Inflow Value (USD)</b> column and set strategy to <b>Value Known</b>.</li>
+            <li>If the USD amount received for the coin outflow is known, enter in the <b>Outflow Value (USD)</b> column and set strategy to <b>Value Known</b>.</li>
+            <li>If the coin price in USD at the time of the transaction is known, enter in the <b>Fair Mkt Value Price</b> column and set strategy to <b>Price Known</b>.</li>
+            <li>Enter data for <b>Coin Highs/Lows</b> and set strategy to <b>Avg Daily Price Variation</b> to track value of coins with very low trading volume and<br />
+                copy/paste <b>Coin High/Low</b> data from the historical values listed on <a href="https://coinmarketcap.com" target="_blank">https://coinmarketcap.com</a> for that coin.</li>
+          </ul>
+        </li>
+        <li class="tab-content-area tab5">
+          <ul>
+            <li>Transactions must be in chronological order before a calculation will succeed; do this by sorting the <b>Date & Time</b> column into A→Z order.</li>
+            <li>The calculated <b>Status</b> column will provide useful taxation information for each transaction.</li>
+            <li><b>Taxable</b> or <b>Not Taxable</b> status will be assigned based on the categories you configure. Edit the hidden <b>Category sheets</b> to customize them.</li>
+            <li>If a coin transaction requires spending some coin amounts held for more than a year and some coin amounts held less than a year, then<br />
+                the transaction will get split into two rows: one tracking the <b>Long-term Gain/Loss</b> and the other tracking the <b>Short-term Gain/Loss</b>.</li>
+            <li>Use the <b>Tax Doc Link</b> column to store links to other sheets or yearly tax reports that list each transaction's taxable gain or loss.</li>
           </ul>
         </li>
       </ul>
     </div>
     <div class="bottom">
-      <!-- <input type="button" value="Start with Sample Data" onclick="google.script.run.withSuccessHandler(google.script.host.close).loadExample()" /> -->
-      <button class="button action" onclick="this.disabled=true;this.classList.toggle('button--loading');google.script.run.withSuccessHandler(google.script.host.close).resetTotalSheet()">
-        <span class="button__text">Create a Fresh Totals Sheet</span>
+      <button class="button share" onclick="this.disabled=true;this.classList.toggle('button--loading');google.script.run.withSuccessHandler(google.script.host.close).loadExample()">
+        <span class="button__text">Start with Pretend Transactions</span>
       </button>
-      <input type="button" value="Close" onclick="google.script.host.close()" />
+      <button class="button action" onclick="this.disabled=true;this.classList.toggle('button--loading');google.script.run.withSuccessHandler(google.script.host.close).resetTotalSheet()">
+        <span class="button__text">Create/Refresh the Totals Sheet</span>
+      </button>
+      <button class="button" onclick="google.script.host.close()">
+        <span class="button__text">Close</span>
+      </button>
     </div>
   </body>
 </html>

@@ -144,7 +144,7 @@ export function formatSheet(sheet: GoogleAppsScript.Spreadsheet.Sheet | null): G
         const allWallets = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('HODL Totals')?.getRange('B:B').getValues()
             .filter(String) as string[][];
         const matchingWalletsList: string[] = [];
-        allWallets.forEach(walletData => {
+        allWallets?.forEach(walletData => {
             const walletName = walletData[0];
             if (walletName.endsWith(` (${desiredCurrency})`) || (walletName.trim() === 'All Wallets & Accounts')) {
                 matchingWalletsList.push(walletName);

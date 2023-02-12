@@ -1,6 +1,6 @@
 // import { expect, test } from '@jest/globals';
 import { UnitTestWrapper } from '../../tests/utils.test';
-import { loadExample_ } from './examples';
+import { loadExample } from './examples';
 
 /* eslint-disable jest/valid-describe-callback */
 
@@ -15,7 +15,7 @@ function testExamples(): UnitTestWrapper {
         if (typeof ScriptApp === 'undefined') {
             // jest unit test
             it('Test example 2 fails during local execution', () => {
-                expect(loadExample_()).toBe(null);
+                expect(loadExample()).toBe(null);
             });
         }
     };
