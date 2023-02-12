@@ -12,7 +12,6 @@ import { calculateCoinGainLoss, calculateNFTGainLossStatus } from './calculate';
 import { formatNFTSheet } from './format-nft';
 import { sheetContainsNFTData, sheetContainsCoinData } from './sheet';
 import { showInstructionsDialog_ } from './dialogs';
-import { loadExample } from './examples';
 
 /* global GoogleAppsScript */
 /* global SpreadsheetApp */
@@ -59,7 +58,6 @@ export function onOpen(e: GoogleAppsScript.Events.AppsScriptEvent): void {
 function setupFullMenu(ui: GoogleAppsScript.Base.Ui, menu: GoogleAppsScript.Base.Menu): void {
     menu.addItem('Reset totals sheet', 'resetTotalSheet_')
         .addSubMenu(ui.createMenu('Track new')
-            .addItem('Example "pretendCOINs"', 'loadExample_')
             .addItem('Coin (FIFO method)', 'newCoinTrackedByFIFOMethod_')
             .addItem('Coin (Specific ID method)', 'newCoinTrackedBySpecIDMethod_')
             .addItem('NFTs (per Address)', 'newNFTSheet_'))
@@ -69,7 +67,7 @@ function setupFullMenu(ui: GoogleAppsScript.Base.Ui, menu: GoogleAppsScript.Base
         .addItem('Update formulas', 'updateFormulas_')
         .addItem('Calculate gain/loss', 'calculateGainLoss_')
         .addSeparator()
-        .addItem('View instructions', 'showInstructionsDialog_')
+        .addItem('View instructions to get started', 'showInstructionsDialog_')
         .addItem('Join our Discord server', 'openDiscordLink_')
         .addItem('About HODL Totals', 'showAboutDialog_');
     // .addItem('Show debug sidebar', 'showSheetActionsSidebar_');
@@ -116,17 +114,6 @@ export function showSheetActionsSidebar_(): void {
  */
 export function dummyMenuItem_(): null {
     return null;
-}
-
-/**
- * A function that deletes, repopulates & formats the Totals page based on the coin sheets that already exist.
- *
- * Appended with underscore as this is a utility function that can only be called from other server scripts
- *
- * @return the newly created sheet, for function chaining purposes.
- */
-export function loadExample_(): GoogleAppsScript.Spreadsheet.Sheet | null {
-    return loadExample();
 }
 
 /**

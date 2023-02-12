@@ -74,7 +74,7 @@ export function newNFTSheet(address = ''): GoogleAppsScript.Spreadsheet.Sheet | 
             return null;
         }
 
-        // if no Categories sheet previously exists, create one
+        // if no NFT Categories sheet previously exists, create one
         if (SpreadsheetApp.getActiveSpreadsheet().getSheetByName('NFT Categories') == null) {
             newNFTCategorySheet();
         }
