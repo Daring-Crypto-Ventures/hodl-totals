@@ -24,7 +24,7 @@ export function loadExample(): GoogleAppsScript.Spreadsheet.Sheet | null {
     if (typeof ScriptApp !== 'undefined') {
         const sheet1 = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('pretendCOIN1');
         const sheet2 = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('pretendCOIN2');
-        const sheet3 = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Metamask NFTs');
+        const sheet3 = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('pretendMetamask NFTs');
         if (sheet1 != null) {
             SpreadsheetApp.getActiveSpreadsheet().deleteSheet(sheet1);
         }
@@ -38,7 +38,7 @@ export function loadExample(): GoogleAppsScript.Spreadsheet.Sheet | null {
 
     const newSheet1 = newCoinSheet('pretendCOIN1');
     const newSheet2 = newCoinSheet('pretendCOIN2');
-    const newSheet3 = newNFTSheet('Metamask');
+    const newSheet3 = newNFTSheet('pretendMetamask');
     if (newSheet1 !== null) {
         coin1Example(newSheet1);
     }
@@ -69,16 +69,20 @@ function coin1Example(sheet: GoogleAppsScript.Spreadsheet.Sheet): void {
     const initialData: string[][] = [
         ['FALSE', 'Coinbase Account', '321432-babbcd-00435', 'Crypto given to me at SXSW by a friendly entrepenuer', '2017-03-15 0:00:00', 'Gift Received', '+0.2', 'Value Known', '0.20000000', '200.00', '', '', '', '', '', '', '', '', '', '', ''],
         ['FALSE', 'Coinbase Account', '88811-eee-pl33z', 'Purchased at coinbase for $600, fees included', '2018-02-01 0:00:48', 'USD Deposit', '+0.6', 'Value Known', '0.60000000', '600.00', '', '', '', '', '', '', '', '', '', '', ''],
-        ['FALSE', 'Coinbase Account', '8576309-yolo-8576309', 'Bought a pizza with pretendCOIN2', '2018-02-01 9:23:45', 'Spent', '-0.05', 'Value Known', '0', '0', '0.05000000', '100.00', '', '', '', '', '', '', '', '', ''],
-        ['FALSE', 'Coinbase Account', '8576309-yolo-8576309', 'Tx Fee for buying a pizza with pretendCOIN2', '2018-02-01 9:23:45', 'Tx Fee', '-0.05', 'Value Known', '0', '0', '0.05000000', '100.00', '', '', '', '', '', '', '', '', ''],
-        ['FALSE', 'Coinbase Account', '77777rrre5re5re5re5re77777', 'Sold pretendCOIN2 for $601.11 USD on coinbase, fees included', '2018-03-21 17:20:22', 'USD Withdrawal', '-0.3', 'Value Known', '0', '0', '0.30000000', '601.11', '', '', '', '', '', '', '', '', ''],
+        ['FALSE', 'Coinbase Account', '8576309-yolo-8576309', 'Bought a pizza with pretendCOIN1', '2018-02-01 9:23:45', 'Spent', '-0.05', 'Value Known', '0', '0', '0.05000000', '100.00', '', '', '', '', '', '', '', '', ''],
+        ['FALSE', 'Coinbase Account', '8576309-yolo-8576309', 'Tx Fee for buying a pizza with pretendCOIN1', '2018-02-01 9:23:45', 'Tx Fee', '-0.05', 'Value Known', '0', '0', '0.05000000', '100.00', '', '', '', '', '', '', '', '', ''],
+        ['FALSE', 'Coinbase Account', '77777rrre5re5re5re5re77777', 'Sold pretendCOIN1 for $601.11 USD on coinbase, fees included', '2018-03-21 17:20:22', 'USD Withdrawal', '-0.3', 'Value Known', '0', '0', '0.30000000', '601.11', '', '', '', '', '', '', '', '', ''],
         ['FALSE', 'Metamask', 'eeeeyyyyoorree5555bbbbdddaaaayyy', 'Distributed to everyone that filled out the gleam.io form last month', '2018-03-22 8:08:08', 'Active Airdrop', '+0.4', 'Value Known', '0.40000000', '400.00', '', '', '', '', '', '', '', '', '', '', ''],
         ['FALSE', 'Coinbase Account', 'yyyyzzz-343434-525210', 'Transfer from Coinbase to Metamask', '2018-03-23 9:09:09', 'Transfer Out', '-0.4', 'Value Known', '', '', '', '', '', '', '', '', '', '', '', '', ''],
         ['FALSE', 'Metamask', '1a2b3c4d5e6f7g8h9i10j11k12l13m14n15o16p', 'Transfer from Coinbase to Metamask', '2018-03-23 9:11:50', 'Transfer In', '+0.4', 'Value Known', '', '', '', '', '', '', '', '', '', '', '', '', ''],
-        ['FALSE', 'Metamask', 'deadbeef42deadbeef69', 'pretendCOIN1, pretendCOIN2: Uniswap traded 2 pretendCOIN1 for 0.6 pretendCOIN2', '2021-04-01 0:15:00', 'Trade Inflow', '+0.6', 'Value Known', '0.60000000', '108.50', '', '', '', '', '', '', '', '', '', '', ''],
-        ['FALSE', 'Metamask', 'e11it3hkr8zb3wr3maB2much4u2hnd13', 'Tx Fee for buying sweet NFT #4242', '2022-03-06 13:10:11', 'Tx Fee', '-0.05', 'Value Known', '0', '0', '0.05000000', '50.00', '', '', '', '', '', '', '', '', ''],
-        ['FALSE', 'Metamask', 'e11it3hkr8zb3wr3maB2much4u2hnd13', 'Bought sweet NFT #4242', '2022-03-06 13:10:11', 'Sold for Goods', '-0.1', 'Value Known', '0', '0', '0.10000000', '100.00', '', '', '', '', '', '', '', '', ''],
-        ['FALSE', 'Metamask', 'fu72fu72fu72fu72fu72fu72fu72', 'prentedCOIN2 Gift for my boo', '2022-03-07 10:00:00', 'Given Away', '-0.1', 'Value Known', '0', '0', '0.10000000', '200.00', '', '', '', '', '', '', '', '', ''],
+        ['FALSE', 'Metamask', 'deadbeef42deadbeef69', 'pretendCOIN2, pretendCOIN1: Uniswap traded 2 pretendCOIN2 for 0.6 pretendCOIN1', '2021-04-01 0:15:00', 'Trade Inflow', '+0.6', 'Value Known', '0.60000000', '108.50', '', '', '', '', '', '', '', '', '', '', ''],
+        ['FALSE', 'Metamask', 'e11it3hkr8zb3wr3maB2much4u2hnd13', 'Tx Fee for buying Sweet NFT #4242', '2022-03-06 13:10:11', 'Tx Fee', '-0.05', 'Value Known', '0', '0', '0.05000000', '50.00', '', '', '', '', '', '', '', '', ''],
+        ['FALSE', 'Metamask', 'e11it3hkr8zb3wr3maB2much4u2hnd13', 'Minted Sweet NFT #4242', '2022-03-06 13:10:11', 'Sold for Goods', '-0.1', 'Value Known', '0', '0', '0.10000000', '100.00', '', '', '', '', '', '', '', '', ''],
+        ['FALSE', 'Metamask', 'fu72fu72fu72fu72fu72fu72fu72', 'prentedCOIN1 Gift for my boo', '2022-03-07 10:00:00', 'Given Away', '-0.1', 'Value Known', '0', '0', '0.10000000', '200.00', '', '', '', '', '', '', '', '', ''],
+        ['FALSE', 'Metamask', '33op3ns33brkns33sal34pr0f1t', 'Tx Fee for listing Sweet NFT #4242 on opensea for 1.0 pretendCoin1', '2022-03-08 10:00:00', 'Tx Fee', '-0.04', 'Value Known', '0', '0', '0.04000000', '35.00', '', '', '', '', '', '', '', '', ''],
+        ['FALSE', 'Metamask', '1w1nn1ngb1dd3rg0trekt2day', 'Sold Sweet NFT #4242 on opensea for 10x profit', '2022-04-14 13:13:13', 'NFT Sales Inflow', '+0.91250000', 'Value Known', '0.91250000', '1277.50', '', '', '', '', '', '', '', '', '', '', ''],
+        ['FALSE', 'Metamask', '4sureNvrkn0w102qu1tWen0nt0p', 'Tx Fee for buying Sweet NFT #6969', '2022-05-01 23:32:20', 'Tx Fee', '-0.03', 'Value Known', '', '', '0.03000000', '50.00', '', '', '', '', '', '', '', '', ''],
+        ['FALSE', 'Metamask', '4sureNvrkn0w102qu1tWen0nt0p', 'Bought Sweet NFT #6969 on opensea', '2022-05-01 23:32:20', 'Sold for Goods', '-0.5', 'Value Known', '', '', '0.5', '800.00', '', '', '', '', '', '', '', '', '']
     ];
     initialData.push(...instructionData());
 
@@ -100,14 +104,14 @@ function coin2Example(sheet: GoogleAppsScript.Spreadsheet.Sheet): void {
     const initialData: string[][] = [
         ['FALSE', 'Metamask', 'aaa1112222333bbb', 'Distributed on project launch day to people who performed the requested actions on twitter', '2015-12-01 15:20:10', 'Active Airdrop', '+1.0', 'Avg Daily Price Variation', '1.00000000', '', '', '', '1.111100', '0.992222', '', '', '', '', '', '', ''],
         ['FALSE', 'Coinbase Account', 'BBBB444445555CCC', 'coinbase.com Coinbase Earn pretendCOIN promotion', '2018-02-28 20:23:59', 'Promotion', '+1.0', 'Value Known', '1.00000000', '1', '', '', '0', '0', '0', '', '', '', '', '', ''],
-        ['FALSE', 'Metamask', 'Ccccc6666667777ddddddd', 'Spent 1 pretendCOIN on a digital ticket to a concert in the metaverse, tx fee included', '2018-03-01 2:04:01', 'Spent', '-1.0', 'Value Known', '', '', '1.00000000', '5', '', '', '', '', '', '', '', '', ''],
-        ['FALSE', 'Metamask', 'eeee-89898989-fffff', 'Offline purchase of 23 pretendCOIN from John Doe @ 34 USD/pretendCOIN', '2019-02-28 0:00:02', 'USD Deposit', '+23.0', 'Price Known', '23.00000000', '', '', '', '0', '0', '34', '', '', '', '', '', ''],
-        ['FALSE', 'Metamask', 'deadbeef42deadbeef69', 'pretendCOIN1, pretendCOIN2: Uniswap traded 2 pretendCOIN for 0.0025 pretendCOIN2', '2021-04-01 0:15:00', 'Trade Outflow', '-2.0', 'Avg Daily Price Variation', '', '', '2.00000000', '', '2.312002', '1.8222', '', '', '', '', '', '', ''],
+        ['FALSE', 'Metamask', 'Ccccc6666667777ddddddd', 'Spent 1 pretendCOIN2 on a digital ticket to a concert in the metaverse, tx fee included', '2018-03-01 2:04:01', 'Spent', '-1.0', 'Value Known', '', '', '1.00000000', '5', '', '', '', '', '', '', '', '', ''],
+        ['FALSE', 'Metamask', 'eeee-89898989-fffff', 'Offline purchase of 23 pretendCOIN2 from John Doe @ 34 USD/pretendCOIN2', '2019-02-28 0:00:02', 'USD Deposit', '+23.0', 'Price Known', '23.00000000', '', '', '', '0', '0', '34', '', '', '', '', '', ''],
+        ['FALSE', 'Metamask', 'deadbeef42deadbeef69', 'pretendCOIN2, pretendCOIN1: Uniswap traded 2 pretendCOIN2 for 0.6 pretendCOIN1', '2021-04-01 0:15:00', 'Trade Outflow', '-2.0', 'Avg Daily Price Variation', '', '', '2.00000000', '', '2.312002', '1.8222', '', '', '', '', '', '', ''],
         ['FALSE', 'Metamask', '345sixSEVENeight9ten', 'Tx Fee to Transfer my Metamask balance to binance for cash out', '2021-04-01 12:00:05', 'Tx Fee', '-0.02', 'Value Known', '', '', '0.02000000', '', '', '', '', '', '', '', '', '', ''],
         ['FALSE', 'Metamask', '345sixSEVENeight9ten', 'Transfer my Metamask balance to binance for cash out', '2021-04-01 12:00:05', 'Transfer Out', '-20.98', 'n/a', '', '', '', '', '', '', '', '', '', '', '', '', ''],
         ['FALSE', 'Binance.us Account', '345sixSEVENeight9ten', 'Transfer my Metamask balance to binance for cash out', '2021-04-01 12:00:05', 'Transfer In', '+20.98', 'n/a', '', '', '', '', '', '', '', '', '', '', '', '', ''],
-        ['FALSE', 'Binance.us Account', 'IJijIJijIJijIJ3434334343', 'binance.us traded 20 pretendCOIN for USD', '2021-04-02 9:00:00', 'USD Withdrawal', '-20.0', 'Avg Daily Price Variation', '', '', '20.00000000', '', '=0.0003561*7088.25', '=0.0003561*6595.92', '', '', '', '', '', '', ''],
-        ['FALSE', 'Metamask', 'onetwo3456seven-EightNine', 'unsolicited distribution of pretendCOIN from a total stranger sent to random addresses', '2022-05-31 10:12:12', 'Passive Airdrop', '+26.92', 'Avg Daily Price Variation', '26.92000000', '', '', '', '=0.0069319*9700.34/I12', '=0.0069319*9432.3/I12', '', '', '', '', '', '', ''],
+        ['FALSE', 'Binance.us Account', 'IJijIJijIJijIJ3434334343', 'binance.us traded 20 pretendCOIN2 for USD', '2021-04-02 9:00:00', 'USD Withdrawal', '-20.0', 'Avg Daily Price Variation', '', '', '20.00000000', '', '=0.0003561*7088.25', '=0.0003561*6595.92', '', '', '', '', '', '', ''],
+        ['FALSE', 'Metamask', 'onetwo3456seven-EightNine', 'unsolicited distribution of pretendCOIN2 from a total stranger sent to random addresses', '2022-05-31 10:12:12', 'Passive Airdrop', '+26.92', 'Avg Daily Price Variation', '26.92000000', '', '', '', '=0.0069319*9700.34/I12', '=0.0069319*9432.3/I12', '', '', '', '', '', '', ''],
     ];
     initialData.push(...instructionData());
 
@@ -152,8 +156,8 @@ function instructionData(): string[][] {
 function nftExample(sheet: GoogleAppsScript.Spreadsheet.Sheet): void {
     // sample data set
     const initialData: string[][] = [
-        ['FALSE', 'Sweet NFT', '4242', 'e11it3hkr8zb3wr3maB2much4u2hnd13', 'Bought sweet NFT #4242', '2022-03-06 13:10:11', 'Purchased (Fixed Price)', '0.1', '100.00', '0.05', '50.00', '0', '0', '', '', '', '', 'FALSE', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '']
-        // ['FALSE', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', 'FALSE', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '']
+        ['FALSE', 'Sweet NFT', '4242', 'e11it3hkr8zb3wr3maB2much4u2hnd13', 'Minted Sweet NFT #4242', '2022-03-06 13:10:11', 'Mint', '0.1', '100.00', '0.05', '50.00', '0', '0', '', '', '', '', 'FALSE', '33op3ns33brkns33sal34pr0f1t, 1w1nn1ngb1dd3rg0trekt2day', 'Sold on opensea for 10x profit', 'Sold for Crypto', '2022-04-14 13:13:13', '1.0', '1400.00', '0', '0', '0.0875', '122.50', '', '', '', '', ''],
+        ['FALSE', 'Sweet NFT', '6969', '4sureNvrkn0w102qu1tWen0nt0p', 'Bought NFT #6969 on opensea', '2022-05-01 23:32:20', 'Purchased (Fixed Price)', '0.5', '800.00', '0.03', '50', '0', '0', '', '', '', '', 'FALSE', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '']
     ];
 
     for (let i = 0; i < initialData.length; i++) {
