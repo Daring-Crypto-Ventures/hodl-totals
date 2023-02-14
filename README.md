@@ -71,6 +71,7 @@ Installation options can be found in the #💻setup channel within the [HODL Tot
 - Publish changes to your google sheet [using clasp](https://developers.google.com/apps-script/guides/clasp) from the command line
 
 ## Changelog
+- 02-14-23 (v1.0.2) Added getting started guide, NFT example and general hardening of the code.
 - 02-07-23 (v1.0.2) Fixed all known major bugs and performance issues.
 - 01-24-23 (v1.0.2) Added NFT Tracking sheets. Updated Coin Tracking sheets to be consistent with handling NFTs. Changed calculated Tax Status on all tracking sheets to reflect Taxable or Not Taxable per user configuration in the Category sheets.
 - 01-02-23 (v1.0.1) Added HODL Totals portfolio page with support for multiple wallets/addresses/accounts. Includes features to help users reconcile each coin sheet with each wallet/address/account that holds some amount of that coin. Streamlined the menu commands based on user feedback. Now using metadata to version each generated sheet, useful for upgrades down the line. Added a debug pane to investigate the metadata stored on each sheet. And made a round of bug fixes and improvements to error messages throughout. Now exclusively tested and supported on Node.js 16.x LTS.
