@@ -25,17 +25,17 @@ export default function resetTotalSheet(): GoogleAppsScript.Spreadsheet.Sheet | 
         let prevUserData: [string, string, string, string][] = [['', '', '', '']];
         if (sheet != null) {
             // save off any user entered data before clearing the sheet
-            const prevWallets = sheet.getRange('B2:B').getValues().filter(String) as string[][];
-            const prevBalances = sheet.getRange('C2:C').getValues() as string[][];
-            const prevOnDates = sheet.getRange('E2:E').getValues() as string[][];
-            const prevNotes = sheet.getRange('L2:L').getValues() as string[][];
+            const prevWallets = sheet.getRange('B2:B').getValues().map(d => (d[0] as string).trim()).filter(String);
+            const prevBalances = sheet.getRange('C2:C').getValues().map(d => d[0] as string);
+            const prevOnDates = sheet.getRange('E2:E').getValues().map(d => d[0] as string);
+            const prevNotes = sheet.getRange('L2:L').getValues().map(d => d[0] as string);
             if ((prevWallets.length > prevBalances.length) || (prevWallets.length > prevOnDates.length) || (prevWallets.length > prevNotes.length)) {
                 const msg = Utilities.formatString('User-provided data in HODL Totals not formatted as expected. Aborting to prevent losing user data.');
                 Browser.msgBox('', msg, Browser.Buttons.OK);
                 return null;
             }
             prevUserData = prevWallets.map((item, index) => {
-                return [item?.[0], prevBalances[index]?.[0], prevOnDates[index]?.[0], prevNotes[index]?.[0]] as [string, string, string, string];
+                return [item, prevBalances[index], prevOnDates[index], prevNotes[index]] as [string, string, string, string];
             });
             sheet.clear();
             sheet.getFilter()?.remove();
