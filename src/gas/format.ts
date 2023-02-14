@@ -7,161 +7,185 @@ import getLastRowWithDataPresent from '../last-row';
 
 /* global GoogleAppsScript */
 /* global SpreadsheetApp */
+/* global Logger */
+/* global LockService */
 
 /**
  * A function that formats the columns and headers of the active spreadsheet.
- *
- * Assumption: Not configurable to pick Fiat Currency to use for all sheets, assuming USD since this is related to US Tax calc
  *
  * @return the newly created sheet, for function chaining purposes.
  */
 export function formatSheet(sheet: GoogleAppsScript.Spreadsheet.Sheet | null): GoogleAppsScript.Spreadsheet.Sheet | null {
     if ((sheet !== null) && (typeof ScriptApp !== 'undefined')) {
-        const desiredCurrency = getCoinFromSheetName(sheet);
-
-        // Code to check the previously saved sheet version to see if mutation is required
-        // should pop a yes/no confirmation dialog in this event as formatting could be destructive
-        // const mdFinder = sheet.getRange('1:1').createDeveloperMetadataFinder();
-        // const version = mdFinder.withKey('version').find()[0].getValue();
-        resetVersionMetadata(sheet);
-
-        // calculate URL to nav user back to the Totals sheet
-        const totalsSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('HODL Totals');
-        let totalsSheetUrl = '';
-        if (totalsSheet != null) {
-            const ssUrl = SpreadsheetApp.getActiveSpreadsheet().getUrl();
-            totalsSheetUrl = `${ssUrl}#gid=${totalsSheet.getSheetId()}`;
-        }
-
-        // populate the sheet header
-        const headerRow1p1 = [`=HYPERLINK("${totalsSheetUrl}"," ↩ Totals ")`, 'All Wallets & Accounts'];
-        const coinTotalFormula = '=INDIRECT("\'HODL Totals\'!$"&IF(ISNA(MATCH($B$1,\'HODL Totals\'!$B$2:B, 0)),"F$"&IFNA(MATCH(LEFT(TRIM($I$2),FIND(" ",TRIM($I$2))-1),\'HODL Totals\'!$D$2:$D,0),0)+1,"C$"&MATCH($B$1,\'HODL Totals\'!$B$2:B, 0)+1))';
-        const headerRow1p2 = `${desiredCurrency} balance on `;
-        const onDateFormula = '=INDIRECT("\'HODL Totals\'!$"&IF(ISNA(MATCH($B$1,\'HODL Totals\'!$B$2:B, 0)),"E$"&IFNA(MATCH(LEFT(TRIM($I$2),FIND(" ",TRIM($I$2))-1),\'HODL Totals\'!$D$2:$D,0),0)+1,"E$"&MATCH($B$1,\'HODL Totals\'!$B$2:B, 0)+1))';
-        const headerRow1p3 = 'was off by';
-        // leave ONE cell gap to prevent overwriting user provided value: subtotal of the Net Change column
-        const headerRow1p4 = [`${desiredCurrency}`, 'Inflow', '', 'Outflow', '', 'Fair Mkt Value', '', '', 'Last Gain/Loss Calculation (FIFO Method)', '', ''];
-        // leave TWO cell gaps to prevent overwriting user provided value: Date and Succeeded/Failed Status of the last gain/loss calculation
-        const headerRow1p5 = 'Documentation';
-        // NOTE: spaces are hard coded around header text that help autosizecolumns behave correctly
-        const headerRow2 = ['   Tx ✔   ', '      All Wallet & Accounts      ', '    Transaction ID    ', '   Description   ', '    Date & Time    ', '       Category       ', '    Net Change    ',
-            '        Valuation Strategy        ', `   ${desiredCurrency} Acquired   `, '    Value (USD)    ', `   ${desiredCurrency} Disposed   `, '    Value (USD)    ',
-            `   ${desiredCurrency} High   `, `     ${desiredCurrency} Low     `, `    ${desiredCurrency} Price    `,
-            '    Lot Information    ', '    Latest Acquired Date    ', '   Status   ', '        Cost Basis        ', '    Gain (Loss)    ', '       Tax Doc Link       '];
-
-        sheet.getRange('A1:B1').setValues([headerRow1p1]);
-        sheet.getRange('C1').setValue(coinTotalFormula);
-        sheet.getRange('D1').setValue(headerRow1p2);
-        sheet.getRange('E1').setValue(onDateFormula);
-        sheet.getRange('F1').setValue(headerRow1p3);
-        sheet.getRange('H1:R1').setValues([headerRow1p4]);
-        sheet.getRange('U1').setValue(headerRow1p5);
-        sheet.getRange('A2:U2').setValues([headerRow2]);
-        sheet.getRange('A1:U2').setFontWeight('bold').setHorizontalAlignment('center');
-
-        // see if any row data exists beyond the header we just added
-        const lastRow = getLastRowWithDataPresent(sheet.getRange('E:E').getValues() as string[][]);
-
-        // set up row 1 cells for reconcilation
-        sheet.getRange('B1:H1').setBorder(false, true, false, true, false, false);
-        sheet.getRange('G1').setValue('=$C$1-SUBTOTAL(109,$G$3:G)').setNumberFormat('0.000');
-        sheet.getRange('H1').setHorizontalAlignment('left');
-
-        // add borders to demarcate the row 1 headers into logical groups
-        sheet.getRange('M1:O1').setBorder(false, true, false, true, false, false);
-        sheet.getRange('T1').setFontWeight('normal').setBorder(false, false, false, true, false, false);
-
-        // set conditional formatting rules on row 1 cells
-        setCoinSheetCFRules(sheet);
-
-        // merge 1st row cell headers
-        sheet.getRange('A1:U1').breakApart();
-        sheet.getRange('I1:J1').merge();
-        sheet.getRange('K1:L1').merge();
-        sheet.getRange('M1:O1').merge();
-        sheet.getRange('P1:R1').merge();
-
-        // color background and freeze the header rows
-        sheet.getRange('A1:U1').setBackground('#DDDDEE');
-        sheet.getRange('A2:U2').setBackground('#EEEEEE');
-        sheet.setFrozenRows(2);
-
-        // set numeric formats as described here: https://developers.google.com/sheets/api/guides/formats
-        sheet.getRange('A3:A').setHorizontalAlignment('center').insertCheckboxes();
-        sheet.getRange('B3:B').setFontColor('#424250').setFontStyle('italic').setHorizontalAlignment('center');
-        sheet.getRange('C3:C').setFontColor(null).setFontStyle(null).setHorizontalAlignment('left');
-        sheet.getRange('D3:D').setFontColor('#424250').setFontStyle('italic').setHorizontalAlignment('left');
-        sheet.getRange('E3:E').setNumberFormat('yyyy-mm-dd h:mm:ss').setFontColor(null).setFontStyle(null)
-            .setFontFamily('Arial')
-            .setFontSize(10)
-            .setHorizontalAlignment('center');
-        sheet.getRange('F3:F').setFontColor('#424250').setFontStyle('italic').setHorizontalAlignment('center');
-        sheet.getRange('G3:G').setNumberFormat('+0.00000000;-0.00000000;0.00000000').setFontColor(null).setFontStyle(null)
-            .setFontFamily('Calibri')
-            .setFontSize(11);
-        sheet.getRange('H3:H').setFontColor('#424250').setFontStyle('italic').setHorizontalAlignment('center');
-
-        // set COIN cols {COIN Acquired, COIN Disposed} visible numeric persicion to have 8 satoshis showing by default
-        // set FIAT cols {Fiat Value Inflow, Fiat Value Outflow, Cost Basis, Gain(Loss)} type to be a Currency type
-        sheet.getRange('I3:I').setNumberFormat('0.00000000').setFontColor(null).setFontStyle(null)
-            .setFontFamily('Calibri')
-            .setFontSize(11);
-        sheet.getRange('J3:J').setNumberFormat('$#,##0.00;$(#,##0.00)').setFontColor(null).setFontStyle(null)
-            .setFontFamily('Calibri')
-            .setFontSize(11);
-        sheet.getRange('K3:K').setNumberFormat('0.00000000').setFontColor(null).setFontStyle(null)
-            .setFontFamily('Calibri')
-            .setFontSize(11);
-        sheet.getRange('L3:L').setNumberFormat('$#,##0.00;$(#,##0.00)').setFontColor(null).setFontStyle(null)
-            .setFontFamily('Calibri')
-            .setFontSize(11);
-        sheet.getRange('S3:T').setNumberFormat('$#,##0.00;$(#,##0.00)').setFontColor(null).setFontStyle(null)
-            .setFontFamily('Calibri')
-            .setFontSize(11);
-        sheet.getRange('U3:U').setFontColor(null).setFontStyle(null).setHorizontalAlignment('center');
-
-        // create filter around all transactions
-        sheet.getFilter()?.remove();
-        sheet.getRange(`A2:U${lastRow}`).createFilter();
-
-        // set cols {COIN High, Low, Price} to be formatted into USD value but to 6 decimal places
-        sheet.getRange('M3:O').setNumberFormat('$#,######0.000000;$(#,######0.000000)').setFontColor(null).setFontStyle(null)
-            .setHorizontalAlignment('right')
-            .setFontFamily('Calibri')
-            .setFontSize(11);
-
-        // set col styles for {Lot IDs}, {Date Acquired} and {Status}
-        sheet.getRange('P3:R').setFontColor('#424250').setHorizontalAlignment('center');
-
-        // Prevent the user from entering bad inputs in the first place which removes
-        // the need to check data in the validate() function during a calculation
-        setValidationRules(sheet);
-
-        // lookup allowed categories from the "Categories sheet" to avoid hard-coding them
-        const categoriesList = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Categories')?.getRange('A2:A35').getValues() as unknown as string[];
-        // lookup matching wallet entries from the totals sheet to show in the reconciliation header
-        const allWallets = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('HODL Totals')?.getRange('B:B').getValues()
-            .filter(String) as string[][];
-        const matchingWalletsList: string[] = [];
-        allWallets?.forEach(walletData => {
-            const walletName = walletData[0];
-            if (walletName.endsWith(` (${desiredCurrency})`) || (walletName.trim() === 'All Wallets & Accounts')) {
-                matchingWalletsList.push(walletName);
+        try {
+            const lock = LockService.getDocumentLock();
+            if (lock?.tryLock(1200000)) { // spend no more than 120 sec trying to get the lock
+                actuallyFormatCoinSheet(sheet);
+                SpreadsheetApp.flush();
+                lock.releaseLock();
+            } else {
+                Logger.log('formatSheet could not obtain lock.');
             }
-        });
-        setDropdownOptions(sheet, categoriesList, matchingWalletsList);
-
-        // set calculated columns to be grayed background
-        sheet.getRange('P3:T').setBackground('#EEEEEE');
-
-        // autosize columns' widths to fit content, but ignore tx ID columns
-        sheet.autoResizeColumns(1, 2);
-        sheet.autoResizeColumns(4, 18);
-        SpreadsheetApp.flush();
-
+        } catch (exc: unknown) {
+            if (exc instanceof Error) {
+                Logger.log(`formatSheet Exception - ${exc.message}`);
+            }
+        }
         return sheet;
     }
     return null;
+}
+
+/**
+ * Private function that does the work of formatSheet()
+ * Assumption: can only be invoked within the context of a Google Sheet
+ * Assumption: secure a Lock before calling this function
+ *
+ * @param sheet Google Sheet that has been verified to be a coin sheet
+ *
+ * @return the newly created sheet, for function chaining purposes.
+ */
+function actuallyFormatCoinSheet(sheet: GoogleAppsScript.Spreadsheet.Sheet): void {
+    const desiredCurrency = getCoinFromSheetName(sheet);
+
+    // Code to check the previously saved sheet version to see if mutation is required
+    // should pop a yes/no confirmation dialog in this event as formatting could be destructive
+    // const mdFinder = sheet.getRange('1:1').createDeveloperMetadataFinder();
+    // const version = mdFinder.withKey('version').find()[0].getValue();
+    resetVersionMetadata(sheet);
+
+    // calculate URL to nav user back to the Totals sheet
+    const totalsSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('HODL Totals');
+    let totalsSheetUrl = '';
+    if (totalsSheet != null) {
+        const ssUrl = SpreadsheetApp.getActiveSpreadsheet().getUrl();
+        totalsSheetUrl = `${ssUrl}#gid=${totalsSheet.getSheetId()}`;
+    }
+
+    // populate the sheet header
+    const headerRow1p1 = [`=HYPERLINK("${totalsSheetUrl}"," ↩ Totals ")`, 'All Wallets & Accounts'];
+    const coinTotalFormula = '=INDIRECT("\'HODL Totals\'!$"&IF(ISNA(MATCH($B$1,\'HODL Totals\'!$B$2:B, 0)),"F$"&IFNA(MATCH(LEFT(TRIM($I$2),FIND(" ",TRIM($I$2))-1),\'HODL Totals\'!$D$2:$D,0),0)+1,"C$"&MATCH($B$1,\'HODL Totals\'!$B$2:B, 0)+1))';
+    const headerRow1p2 = `${desiredCurrency} balance on `;
+    const onDateFormula = '=INDIRECT("\'HODL Totals\'!$"&IF(ISNA(MATCH($B$1,\'HODL Totals\'!$B$2:B, 0)),"E$"&IFNA(MATCH(LEFT(TRIM($I$2),FIND(" ",TRIM($I$2))-1),\'HODL Totals\'!$D$2:$D,0),0)+1,"E$"&MATCH($B$1,\'HODL Totals\'!$B$2:B, 0)+1))';
+    const headerRow1p3 = 'was off by';
+    // leave ONE cell gap to prevent overwriting user provided value: subtotal of the Net Change column
+    const headerRow1p4 = [`${desiredCurrency}`, 'Inflow', '', 'Outflow', '', 'Fair Mkt Value', '', '', 'Last Gain/Loss Calculation (FIFO Method)', '', ''];
+    // leave TWO cell gaps to prevent overwriting user provided value: Date and Succeeded/Failed Status of the last gain/loss calculation
+    const headerRow1p5 = 'Documentation';
+    // NOTE: spaces are hard coded around header text that help autosizecolumns behave correctly
+    const headerRow2 = ['   Tx ✔   ', '      All Wallet & Accounts      ', '    Transaction ID    ', '   Description   ', '    Date & Time    ', '       Category       ', '    Net Change    ',
+        '        Valuation Strategy        ', `   ${desiredCurrency} Acquired   `, '    Value (USD)    ', `   ${desiredCurrency} Disposed   `, '    Value (USD)    ',
+        `   ${desiredCurrency} High   `, `     ${desiredCurrency} Low     `, `    ${desiredCurrency} Price    `,
+        '    Lot Information    ', '    Latest Acquired Date    ', '   Status   ', '        Cost Basis        ', '    Gain (Loss)    ', '       Tax Doc Link       '];
+
+    sheet.getRange('A1:B1').setValues([headerRow1p1]);
+    sheet.getRange('C1').setValue(coinTotalFormula);
+    sheet.getRange('D1').setValue(headerRow1p2);
+    sheet.getRange('E1').setValue(onDateFormula);
+    sheet.getRange('F1').setValue(headerRow1p3);
+    sheet.getRange('H1:R1').setValues([headerRow1p4]);
+    sheet.getRange('U1').setValue(headerRow1p5);
+    sheet.getRange('A2:U2').setValues([headerRow2]);
+    sheet.getRange('A1:U2').setFontWeight('bold').setHorizontalAlignment('center');
+
+    // see if any row data exists beyond the header we just added
+    const lastRow = getLastRowWithDataPresent(sheet.getRange('E:E').getValues() as string[][]);
+
+    // set up row 1 cells for reconcilation
+    sheet.getRange('B1:H1').setBorder(false, true, false, true, false, false);
+    sheet.getRange('G1').setValue('=$C$1-SUBTOTAL(109,$G$3:G)').setNumberFormat('0.000');
+    sheet.getRange('H1').setHorizontalAlignment('left');
+
+    // add borders to demarcate the row 1 headers into logical groups
+    sheet.getRange('M1:O1').setBorder(false, true, false, true, false, false);
+    sheet.getRange('T1').setFontWeight('normal').setBorder(false, false, false, true, false, false);
+
+    // set conditional formatting rules on row 1 cells
+    setCoinSheetCFRules(sheet);
+
+    // merge 1st row cell headers
+    sheet.getRange('A1:U1').breakApart();
+    sheet.getRange('I1:J1').merge();
+    sheet.getRange('K1:L1').merge();
+    sheet.getRange('M1:O1').merge();
+    sheet.getRange('P1:R1').merge();
+
+    // color background and freeze the header rows
+    sheet.getRange('A1:U1').setBackground('#DDDDEE');
+    sheet.getRange('A2:U2').setBackground('#EEEEEE');
+    sheet.setFrozenRows(2);
+
+    // set numeric formats as described here: https://developers.google.com/sheets/api/guides/formats
+    sheet.getRange('A3:A').setHorizontalAlignment('center').insertCheckboxes();
+    sheet.getRange('B3:B').setFontColor('#424250').setFontStyle('italic').setHorizontalAlignment('center');
+    sheet.getRange('C3:C').setFontColor(null).setFontStyle(null).setHorizontalAlignment('left');
+    sheet.getRange('D3:D').setFontColor('#424250').setFontStyle('italic').setHorizontalAlignment('left');
+    sheet.getRange('E3:E').setNumberFormat('yyyy-mm-dd h:mm:ss').setFontColor(null).setFontStyle(null)
+        .setFontFamily('Arial')
+        .setFontSize(10)
+        .setHorizontalAlignment('center');
+    sheet.getRange('F3:F').setFontColor('#424250').setFontStyle('italic').setHorizontalAlignment('center');
+    sheet.getRange('G3:G').setNumberFormat('+0.00000000;-0.00000000;0.00000000').setFontColor(null).setFontStyle(null)
+        .setFontFamily('Calibri')
+        .setFontSize(11);
+    sheet.getRange('H3:H').setFontColor('#424250').setFontStyle('italic').setHorizontalAlignment('center');
+
+    // set COIN cols {COIN Acquired, COIN Disposed} visible numeric persicion to have 8 satoshis showing by default
+    // set FIAT cols {Fiat Value Inflow, Fiat Value Outflow, Cost Basis, Gain(Loss)} type to be a Currency type
+    sheet.getRange('I3:I').setNumberFormat('0.00000000').setFontColor(null).setFontStyle(null)
+        .setFontFamily('Calibri')
+        .setFontSize(11);
+    sheet.getRange('J3:J').setNumberFormat('$#,##0.00;$(#,##0.00)').setFontColor(null).setFontStyle(null)
+        .setFontFamily('Calibri')
+        .setFontSize(11);
+    sheet.getRange('K3:K').setNumberFormat('0.00000000').setFontColor(null).setFontStyle(null)
+        .setFontFamily('Calibri')
+        .setFontSize(11);
+    sheet.getRange('L3:L').setNumberFormat('$#,##0.00;$(#,##0.00)').setFontColor(null).setFontStyle(null)
+        .setFontFamily('Calibri')
+        .setFontSize(11);
+    sheet.getRange('S3:T').setNumberFormat('$#,##0.00;$(#,##0.00)').setFontColor(null).setFontStyle(null)
+        .setFontFamily('Calibri')
+        .setFontSize(11);
+    sheet.getRange('U3:U').setFontColor(null).setFontStyle(null).setHorizontalAlignment('center');
+
+    // create filter around all transactions
+    sheet.getFilter()?.remove();
+    sheet.getRange(`A2:U${lastRow}`).createFilter();
+
+    // set cols {COIN High, Low, Price} to be formatted into USD value but to 6 decimal places
+    sheet.getRange('M3:O').setNumberFormat('$#,######0.000000;$(#,######0.000000)').setFontColor(null).setFontStyle(null)
+        .setHorizontalAlignment('right')
+        .setFontFamily('Calibri')
+        .setFontSize(11);
+
+    // set col styles for {Lot IDs}, {Date Acquired} and {Status}
+    sheet.getRange('P3:R').setFontColor('#424250').setHorizontalAlignment('center');
+
+    // Prevent the user from entering bad inputs in the first place which removes
+    // the need to check data in the validate() function during a calculation
+    setValidationRules(sheet);
+
+    // lookup allowed categories from the "Categories sheet" to avoid hard-coding them
+    const categoriesList = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Categories')?.getRange('A2:A35').getValues() as unknown as string[];
+    // lookup matching wallet entries from the totals sheet to show in the reconciliation header
+    const allWallets = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('HODL Totals')?.getRange('B:B').getValues()
+        .filter(String) as string[][];
+    const matchingWalletsList: string[] = [];
+    allWallets?.forEach(walletData => {
+        const walletName = walletData[0];
+        if (walletName.endsWith(` (${desiredCurrency})`) || (walletName.trim() === 'All Wallets & Accounts')) {
+            matchingWalletsList.push(walletName);
+        }
+    });
+    setDropdownOptions(sheet, categoriesList, matchingWalletsList);
+
+    // set calculated columns to be grayed background
+    sheet.getRange('P3:T').setBackground('#EEEEEE');
+
+    // autosize columns' widths to fit content, but ignore tx ID columns
+    sheet.autoResizeColumns(1, 2);
+    sheet.autoResizeColumns(4, 18);
 }
 
 function setCoinSheetCFRules(sheet: GoogleAppsScript.Spreadsheet.Sheet): void {

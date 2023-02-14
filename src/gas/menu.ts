@@ -8,7 +8,8 @@ import { newNFTSheet } from './new-nft';
 import { formatSheet } from './format';
 import { updateFMVFormulas } from './formulas-coin';
 import { updateNFTFormulas } from './formulas-nft';
-import { calculateCoinGainLoss, calculateNFTGainLossStatus } from './calculate';
+import { calculateCoinGainLoss } from './calculate';
+import { calculateNFTGainLossStatus } from './calculate-nft';
 import { formatNFTSheet } from './format-nft';
 import { sheetContainsNFTData, sheetContainsCoinData } from './sheet';
 import { showInstructionsDialog_ } from './dialogs';
@@ -79,9 +80,7 @@ function setupFullMenu(ui: GoogleAppsScript.Base.Ui, menu: GoogleAppsScript.Base
  *
  * @param e
  */
-export function freshLaunch_(e: GoogleAppsScript.Events.AppsScriptEvent): void {
-    Logger.log(`freshLaunch_ called with AuthMode: ${e?.authMode}`);
-
+export function freshLaunch_(): void {
     const ui = SpreadsheetApp.getUi();
 
     // Show some getting started guidance if detected a fresh workbook

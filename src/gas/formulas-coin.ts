@@ -6,22 +6,39 @@ import { CompleteDataRow } from '../types';
 import getLastRowWithDataPresent from '../last-row';
 
 /* global GoogleAppsScript */
+/* global SpreadsheetApp */
+/* global Logger */
+/* global LockService */
 
 /**
- * iterate through the rows in the sheet to
- * set Cost Fiat Received based on other cells in the sheet
+ * Iterate through the rows in the sheet to set USD Value based on FMV data in the sheet
+ *
+ * @param sheet Google Sheet that has been verified to be a coin sheet
  *
  * @return the newly created sheet, for function chaining purposes.
  */
 export function updateFMVFormulas(sheet: GoogleAppsScript.Spreadsheet.Sheet | null): GoogleAppsScript.Spreadsheet.Sheet | null {
     if ((sheet !== null) && (typeof ScriptApp !== 'undefined')) {
-        const lastRow = getLastRowWithDataPresent(sheet.getRange('E:E').getDisplayValues());
+        try {
+            const lock = LockService.getDocumentLock();
+            if (lock?.tryLock(1200000)) { // spend no more than 120 sec trying to get the lock
+                const lastRow = getLastRowWithDataPresent(sheet.getRange('E:E').getDisplayValues());
 
-        // code split out into its own function from fromat() because it can take awhile to run
-        const strategyCol = sheet.getRange(`H1:H${lastRow}`).getDisplayValues().map(d => d[0]);
-        const acquiredCol = sheet.getRange(`I1:I${lastRow}`).getValues().map(d => d[0] as number);
-        const disposedCol = sheet.getRange(`K1:K${lastRow}`).getValues().map(d => d[0] as number);
-        setFMVformulasOnSheet(sheet, null, strategyCol, acquiredCol, disposedCol);
+                // code split out into its own function from fromat() because it can take awhile to run
+                const strategyCol = sheet.getRange(`H1:H${lastRow}`).getDisplayValues().map(d => d[0]);
+                const acquiredCol = sheet.getRange(`I1:I${lastRow}`).getValues().map(d => d[0] as number);
+                const disposedCol = sheet.getRange(`K1:K${lastRow}`).getValues().map(d => d[0] as number);
+                setFMVformulasOnSheet(sheet, null, strategyCol, acquiredCol, disposedCol);
+                SpreadsheetApp.flush();
+                lock.releaseLock();
+            } else {
+                Logger.log('updateFMVFormulas could not obtain lock.');
+            }
+        } catch (exc: unknown) {
+            if (exc instanceof Error) {
+                Logger.log(`updateFMVFormulas Exception - ${exc.message}`);
+            }
+        }
         return sheet;
     }
     return null;
