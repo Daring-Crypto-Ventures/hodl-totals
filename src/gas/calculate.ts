@@ -10,6 +10,7 @@ import { calculateFIFO, dateFromString, datePlusNYears, dateStrFromDate } from '
 import { setFMVStrategyOnRow } from './formulas-coin';
 import getOrderList from '../orders';
 import validate from '../validate';
+import { newCategorySheet, newNFTCategorySheet } from './categories';
 
 /* global GoogleAppsScript */
 /* global SpreadsheetApp */
@@ -27,6 +28,11 @@ export function calculateCoinGainLoss(sheet: GoogleAppsScript.Spreadsheet.Sheet 
         const coinName = getCoinFromSheetName(sheet);
         const dateDisplayValues = sheet.getRange('E:E').getDisplayValues();
         const lastRow = getLastRowWithDataPresent(dateDisplayValues);
+
+        // if no Categories sheet previously exists, create one
+        if (SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Categories') == null) {
+            newCategorySheet();
+        }
 
         // sanity check the data in the sheet. only proceed if data is good
         Logger.log('Validating the data before starting calculations.');
@@ -161,6 +167,10 @@ function updateTaxableStatusAndAcqDates(data: CompleteDataRow[], txCategoryRows:
                 data[rowIdx][17] = 'Not Taxable';
                 return false; // stop iterating thru categories list if found status
             }
+            if (taxableStatus.startsWith('Already Taxed')) {
+                data[rowIdx][17] = 'Already Taxed';
+                return false; // stop iterating thru categories list if found status
+            }
             if (taxableStatus.startsWith('Taxable') && !(txLotInfo.startsWith('Sold'))) {
                 data[rowIdx][16] = dateStrFromDate(data[rowIdx][4] as unknown as Date); // formatted Date & Time to Acquired Date
                 data[rowIdx][17] = 'Taxable'; // Status
@@ -188,6 +198,11 @@ function getTxCategoryData(): string[][] {
  */
 export function calculateNFTGainLossStatus(sheet: GoogleAppsScript.Spreadsheet.Sheet | null): GoogleAppsScript.Spreadsheet.Sheet | null {
     if ((sheet !== null) && (typeof ScriptApp !== 'undefined')) {
+        // if no Categories sheet previously exists, create one
+        if (SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Categories') == null) {
+            newNFTCategorySheet();
+        }
+
         // sanity check the data in the sheet. only proceed if data is good
         Logger.log('Validating the NFT data before starting calculation.');
         const validationErrMsg = validateNFTSheet(sheet);
@@ -224,6 +239,10 @@ export function calculateNFTGainLossStatus(sheet: GoogleAppsScript.Spreadsheet.S
                             row[15] = 'Not Taxable'; // In Tx Status
                             return false; // stop iterating
                         }
+                        if (taxableStatus.startsWith('Already Taxed')) {
+                            row[15] = 'Already Taxed'; // In Tx Status
+                            return false; // stop iterating
+                        }
                         if (taxableStatus.startsWith('Taxable')) {
                             row[15] = 'Taxable'; // In Tx Status
                             return false; // stop iterating
@@ -257,6 +276,11 @@ export function calculateNFTGainLossStatus(sheet: GoogleAppsScript.Spreadsheet.S
                             const taxableStatus = (categoryRow?.[0] === txOutCategory) ? categoryRow?.[2] : '';
                             if (taxableStatus.startsWith('Not Taxable')) {
                                 row[31] = 'Not Taxable'; // Out Tx Status
+                                txOutIsTaxable = false;
+                                return false; // stop iterating
+                            }
+                            if (taxableStatus.startsWith('Already Taxed')) {
+                                row[31] = 'Already Taxed'; // Out Tx Status
                                 txOutIsTaxable = false;
                                 return false; // stop iterating
                             }
