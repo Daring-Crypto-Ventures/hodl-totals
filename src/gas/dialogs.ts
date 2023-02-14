@@ -35,6 +35,6 @@ export function showInstructionsDialog_(): void {
         const html = HtmlService.createHtmlOutputFromFile('assets/Instructions')
             .setWidth(860)
             .setHeight(380);
-        SpreadsheetApp.getUi().showModalDialog(html, 'HODL Totals Instructions');
+        SpreadsheetApp.getUi().showModalDialog(html, 'HODL Totals Getting Started Guide');
     }
 }
