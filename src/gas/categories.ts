@@ -1,9 +1,3 @@
-/**
- * @NotOnlyCurrentDoc Limits the script to only accessing the current sheet.
- *
- * Create & manage categories which are used in individual coin sheets
- *
- */
 import { version } from '../version';
 
 /* global GoogleAppsScript */

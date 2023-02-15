@@ -1,8 +1,3 @@
-/**
- * @NotOnlyCurrentDoc Limits the script to only accessing the current sheet.
- *
- */
-
 import { newNFTCategorySheet } from './categories';
 import { formatNFTSheet } from './format-nft';
 import { getCoinFromSheetName } from './sheet';

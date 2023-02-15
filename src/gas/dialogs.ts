@@ -1,9 +1,3 @@
-/**
- * @NotOnlyCurrentDoc Limits the script to only accessing the current sheet.
- *
- * About dialog that shows information about where these tools came from.
- *
- */
 import { version } from '../version';
 
 /* global SpreadsheetApp */

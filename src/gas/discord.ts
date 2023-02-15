@@ -1,10 +1,3 @@
-/**
- * @NotOnlyCurrentDoc Limits the script to only accessing the current sheet.
- *
- * Open a URL to get user to join the HODL Totals Discord server without requiring additional user interaction
- *
- */
-
 /* global SpreadsheetApp */
 /* global HtmlService */
 

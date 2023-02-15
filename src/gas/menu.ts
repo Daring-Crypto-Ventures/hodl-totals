@@ -1,7 +1,3 @@
-/**
- * @NotOnlyCurrentDoc Limits the script to only accessing the current sheet.
- *
- */
 import resetTotalSheet from './totals';
 import { newCoinSheet } from './new-coin';
 import { newNFTSheet } from './new-nft';

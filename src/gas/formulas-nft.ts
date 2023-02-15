@@ -1,7 +1,3 @@
-/**
- * @NotOnlyCurrentDoc Limits the script to only accessing the current sheet.
- *
- */
 import getLastRowWithDataPresent from '../last-row';
 
 /* global GoogleAppsScript */

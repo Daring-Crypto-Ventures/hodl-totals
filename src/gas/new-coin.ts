@@ -1,8 +1,3 @@
-/**
- * @NotOnlyCurrentDoc Limits the script to only accessing the current sheet.
- *
- */
-
 import { newCategorySheet } from './categories';
 import { formatSheet } from './format';
 import { getCoinFromSheetName } from './sheet';

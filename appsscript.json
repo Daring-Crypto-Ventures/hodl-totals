@@ -12,6 +12,6 @@
     "executeAs": "USER_ACCESSING"
   },
   "exceptionLogging": "STACKDRIVER",
-  "oauthScopes": ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/script.container.ui"],
+  "oauthScopes": ["https://www.googleapis.com/auth/spreadsheets.currentonly", "https://www.googleapis.com/auth/script.container.ui"],
   "runtimeVersion": "V8"
 }

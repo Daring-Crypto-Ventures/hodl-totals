@@ -1,8 +1,3 @@
-/**
- * @NotOnlyCurrentDoc Limits the script to only accessing the current sheet.
- *
- */
-
 /* global GoogleAppsScript */
 /* global SpreadsheetApp */
 

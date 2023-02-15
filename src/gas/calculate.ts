@@ -1,7 +1,3 @@
-/**
- * @NotOnlyCurrentDoc Limits the script to only accessing the current sheet.
- *
- */
 import { getCoinFromSheetName } from './sheet';
 import { CompleteDataRow, CompleteDataRowAsStrings, LooselyTypedDataValidationRow } from '../types';
 import getLastRowWithDataPresent from '../last-row';
