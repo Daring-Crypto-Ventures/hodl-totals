@@ -7,6 +7,24 @@
   background: #0a1674 !important;
 }
 
+#header nav {
+  background: initial !important;
+}
+
+@media print, screen and (max-width: 480px) {
+  #header nav ul li a {
+    padding: 4px 4px !important;
+  }
+  nav {
+    display: initial !important;
+  }
+}
+
+html, body {
+  min-width: 360px;
+  width: 100%;
+}
+
 .site-masthead {
   display: block;
   margin-left: auto;
