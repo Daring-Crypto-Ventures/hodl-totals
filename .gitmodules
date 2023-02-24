@@ -1,0 +1,3 @@
+[submodule "docs/DCV-policy"]
+	path = docs/DCV-policy
+	url = https://github.com/dogracer/DCV-policy
