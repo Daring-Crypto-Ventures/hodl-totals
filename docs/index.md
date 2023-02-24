@@ -15,12 +15,15 @@ Our approach is not to give people another service to hire, but rather teach peo
 "Just wanted to say thank you for this tool. It worked well for me!"
                      - ACBLu, 02/09/2022
 
-"It took a lot of work since this was my first year - but I'm going to now do this quarterly and will be much less of a headache for the following years. Thanks for putting this together and providing it for free."
+"It took a lot of work since this was my first year - but 
+I'm going to now do this quarterly and will be much less of a headache for the 
+following years. Thanks for putting this together and providing it for free."
                     - cejennings5, 02/25/2022
 
-"Hey, just found this and its exactly what I was looking for. I already had all my transactions in a excel but doing FIFO by hand would have taken too long, this one saves me hours."
+"Hey, just found this and its exactly what I was looking for. 
+I already had all my transactions in a excel but doing FIFO by hand 
+would have taken too long, this saves me hours."
                     - Trinity, 08/20/2022
-
 ```                                              
 
 We believe in solutions grounded in the open internet, with code that is open source and available under the [MIT License](https://github.com/dogracer/hodl-totals/blob/main/LICENSE). Unlike the software used by many other crypto service companies, our source code is public so you can download and take a look at the code to see how it works.
