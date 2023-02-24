@@ -4,7 +4,28 @@
 @import "{{ site.theme }}";
 
 #header, body {
-  background: #0a1674 !important;
+  background: #0a1674;
+}
+
+#header nav {
+  background: initial;
+}
+
+@media print, screen and (max-width: 480px) {
+  #header {
+    height: initial;
+  }
+  #header nav ul li a {
+    padding: 4px 4px;
+  }
+  nav {
+    display: initial;
+  }
+}
+
+html, body {
+  min-width: 360px;
+  width: 100%;
 }
 
 .site-masthead {
