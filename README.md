@@ -2,7 +2,7 @@
 
 Your crypto data is yours to keep; I built this so that you could own your data and manage the data in a convenient way without the need to send your coin data to anyone else.
 
-These Google Apps Scripts will add menu commands to Google Sheets that will help you track cost basis and long-term or short-term treatment for your cryptocurrency trades. 
+These Google Apps™ scripts will add menu commands to Google Sheets™ that will help you track cost basis and long-term or short-term treatment for your cryptocurrency trades. 
 
 It uses the first-in, first-out (FIFO) cost method, which is commonly used for tax compliance.
 
@@ -77,11 +77,11 @@ Installation options can be found in the #💻setup channel within the [HODL Tot
 - 01-02-23 (v1.0.1) Added HODL Totals portfolio page with support for multiple wallets/addresses/accounts. Includes features to help users reconcile each coin sheet with each wallet/address/account that holds some amount of that coin. Streamlined the menu commands based on user feedback. Now using metadata to version each generated sheet, useful for upgrades down the line. Added a debug pane to investigate the metadata stored on each sheet. And made a round of bug fixes and improvements to error messages throughout. Now exclusively tested and supported on Node.js 16.x LTS.
 - 07-16-22 - Added support for Node.js 16.x LTS.
 - 08-22-21 - Added a dropdown column to explicitly specify the Fair Market Value calculation strategy.
-- 06-03-21 - Ported JS to TypeScript. Tests runs locally, can be debugged using Node.js as well as on Google Servers as Google Apps Script. Code coverage stats published on [coveralls.io](https://coveralls.io/github/dogracer/hodl-totals). Integrated npm script commands for common tasks. Added Continuous Integration, code analysis, and dependabot.
+- 06-03-21 - Ported JS to TypeScript. Tests runs locally, can be debugged using Node.js as well as on Google Servers as Google Apps™ scripts. Code coverage stats published on [coveralls.io](https://coveralls.io/github/dogracer/hodl-totals). Integrated npm script commands for common tasks. Added Continuous Integration, code analysis, and dependabot.
 - 04-25-21 - Links out to Policies + Discord. Fixed a wave of Apply Formatting bugs, halfway through my Blocker list for submission to the Google Marketplace.
 - 01-23-21 - Addressed a laundry list of cleanup issues, in preparation for initial submission to the Google Marketplace.
 - 11-29-20 - Addressed Significant performance issues for > 1000 purchase transactions (long running script may not finish executing before Google times out the job)
-- 08-31-20 - Ported logic from alanhett's VBScript Macros to Google Apps Script for FIFO cost basis calc.
+- 08-31-20 - Ported logic from alanhett's VBScript Macros to Google Apps™ scripts for FIFO cost basis calc.
 
 ### Disclaimer
 

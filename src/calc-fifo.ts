@@ -162,7 +162,7 @@ export function calculateFIFO(
                     // Don't create note/new row if there is negligable value left in the short-term part
                     // likely caused by rounding errors repeating the cost basis calc on the same sheet
                     if (originalCoin * (1 - splitFactor) >= ONE_SATOSHI) {
-                        // Row numbers are based on the Google Sheet row which includes a +3 offset
+                        // Row numbers are based on the sheet row which includes a +3 offset
                         const splitNoteText = `Split ${originalCoin.toFixed(8)} `
                             + `${coinname} disposition worth $${originalCost.toFixed(2)} into rows ${sellRow + shift + 1} and ${sellRow + shift + 2}.`;
                         annotations.push([sellRow + shift + 1, 5, splitNoteText]);
@@ -172,7 +172,7 @@ export function calculateFIFO(
                         // create the new row for the short-term part of the term split
                         data.splice(sellRow + shift, 0, [...data[sellRow + shift - 1]]);
 
-                        // Row numbers are based on the Google Sheet row which includes a +3 offset
+                        // Row numbers are based on the sheet row which includes a +3 offset
                         annotations.push([sellRow + shift + 1, 5, splitNoteText]);
                         data[sellRow + shift][4] = originalDate as unknown as string; // TODO clean this TS mess up
                         data[sellRow + shift][6] = -originalCoin * (1 - splitFactor);

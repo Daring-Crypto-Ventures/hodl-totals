@@ -34,10 +34,10 @@ export function formatSheet(sheet: GoogleAppsScript.Spreadsheet.Sheet | null): G
 
 /**
  * Private function that does the work of formatSheet()
- * Assumption: can only be invoked within the context of a Google Sheet
+ * Assumption: can only be invoked within the context of a sheet
  * Assumption: secure a Lock before calling this function
  *
- * @param sheet Google Sheet that has been verified to be a coin sheet
+ * @param sheet sheet that has been verified to be a coin sheet
  *
  * @return the newly created sheet, for function chaining purposes.
  */

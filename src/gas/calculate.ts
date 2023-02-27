@@ -42,10 +42,10 @@ export function calculateCoinGainLoss(sheet: GoogleAppsScript.Spreadsheet.Sheet 
 
 /**
  * Private function that does the work of calculateCoinGainLoss()
- * Assumption: can only be invoked within the context of a Google Sheet
+ * Assumption: can only be invoked within the context of a sheet
  * Assumption: secure a Lock before calling this function
  *
- * @param sheet Google Sheet that has been verified to be a coin sheet
+ * @param sheet sheet that has been verified to be a coin sheet
  *
  * @return the newly created sheet, for function chaining purposes.
  */
@@ -84,7 +84,7 @@ function actuallyCalculateCoinGainLoss(sheet: GoogleAppsScript.Spreadsheet.Sheet
         let firstRowOfTheSplit = true;
         annotations.forEach(annotatedRow => {
             if (annotatedRow?.[2]?.startsWith('Split')) {
-                const splitRowIdx = (annotatedRow?.[0] ?? 1) - 1; // convert 1-based row that Google Sheet expects into 0-based js data array
+                const splitRowIdx = (annotatedRow?.[0] ?? 1) - 1; // convert 1-based row that the sheet API expects into 0-based js data array
                 const modifiedColumnsIdxs = [6, 10, 11]; // net change, outflow coin disposed, outflow coin USD value
 
                 // if first row of split, create an extra row in the formula array so that its shape matches the data array shape
@@ -95,7 +95,7 @@ function actuallyCalculateCoinGainLoss(sheet: GoogleAppsScript.Spreadsheet.Sheet
                     const nonModifiedColumnsIdxs = [1, 2, 3, 4, 12, 13, 14, 20]; // wallets/accounts, tx id, descrip, date, High, Low, Price
                     // for nonmodified cells, copy cell formatting (bkgnd color, text styling, number/date styling, attached notes) from old row to new row
                     nonModifiedColumnsIdxs.forEach(colIdx => {
-                        // convert 0-based js data array into 1-based row that Google Sheet expects
+                        // convert 0-based js data array into 1-based row that the sheet API expects
                         sheet.getRange(splitRowIdx + 2, colIdx + 1).setBackground(sheet.getRange(splitRowIdx + 1, colIdx + 1).getBackground());
                         sheet.getRange(splitRowIdx + 2, colIdx + 1).setFontWeight(sheet.getRange(splitRowIdx + 1, colIdx + 1).getFontWeight());
                         sheet.getRange(splitRowIdx + 2, colIdx + 1).setFontStyle(sheet.getRange(splitRowIdx + 1, colIdx + 1).getFontStyle());
@@ -115,7 +115,7 @@ function actuallyCalculateCoinGainLoss(sheet: GoogleAppsScript.Spreadsheet.Sheet
                 // splitRow formulas as Note on that cell so that the user data isnt lost
                 modifiedColumnsIdxs.forEach(colIdx => {
                     if (formulaData[splitRowIdx][colIdx] !== '') {
-                        // convert 0-based js data array into 1-based row that Google Sheet expects
+                        // convert 0-based js data array into 1-based row that the sheet API expects
                         annotations.push([splitRowIdx + 1, colIdx + 1, `Value used in place of formula:\n${formulaData[splitRowIdx][colIdx]}`]);
                     }
                     formulaData[splitRowIdx][colIdx] = '';

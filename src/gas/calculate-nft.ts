@@ -39,10 +39,10 @@ export function calculateNFTGainLossStatus(sheet: GoogleAppsScript.Spreadsheet.S
 
 /**
  * Private function that does the work of calculateNFTGainLossStatus()
- * Assumption: can only be invoked within the context of a Google Sheet
+ * Assumption: can only be invoked within the context of a sheet
  * Assumption: secure a Lock before calling this function
  *
- * @param sheet Google Sheet that has been verified to be an NFT sheet
+ * @param sheet sheet that has been verified to be an NFT sheet
  *
  * @return the newly created sheet, for function chaining purposes.
  */

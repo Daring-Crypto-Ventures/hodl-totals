@@ -14,7 +14,7 @@ function testFormatNFT(): UnitTestWrapper {
     return (): void => {
         if (typeof ScriptApp === 'undefined') {
             // jest unit test
-            it('Expecting Google Sheet formatting to fail during local execution', () => {
+            it('Expecting Google Sheets™ API formatting to fail during local execution', () => {
                 expect(formatNFTSheet(null)).toBe(null);
             });
         }

@@ -1,7 +1,7 @@
 {
   "name": "hodl-totals",
   "version": "1.0.2",
-  "description": "Collection of various cryptocurrency tracking tools and scripts for Google Sheets.",
+  "description": "Collection of various cryptocurrency tracking tools and scripts for Google Sheets™.",
   "main": "index.js",
   "scripts": {
     "compile": "genversion --es6 --semi src/version.ts && replace-in-file \"export const\" \"const\" src/version.ts && replace-in-file \";\" \"; export { version };\" src/version.ts && rollup -c",

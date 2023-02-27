@@ -102,7 +102,7 @@ export function showSheetActionsSidebar_(): void {
 
 /**
  * A no-op function that is required to show a dummy Menu Item
- * best I can do since Google Apps Script Menus don't support header text
+ * best I can do since the menu API doesn't support header text
  *
  * Appended with underscore as this is a utility function that can only be called from other server scripts
  *

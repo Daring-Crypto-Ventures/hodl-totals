@@ -9,7 +9,7 @@ import getLastRowWithDataPresent from '../last-row';
 /**
  * Iterate through the rows in the sheet to set USD Value based on FMV data in the sheet
  *
- * @param sheet Google Sheet that has been verified to be a coin sheet
+ * @param sheet sheet that has been verified to be a coin sheet
  *
  * @return the newly created sheet, for function chaining purposes.
  */

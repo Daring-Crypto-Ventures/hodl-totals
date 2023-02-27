@@ -38,7 +38,7 @@ export default function resetTotalSheet(): GoogleAppsScript.Spreadsheet.Sheet | 
 
 /**
  * Private function that does the work of resetTotalSheet()
- * Assumption: can only be invoked within the context of a Google Sheet
+ * Assumption: can only be invoked within the context of a sheet
  * Assumption: secure a Lock before calling this function
  *
  * @return the newly created sheet, for function chaining purposes.
