@@ -71,6 +71,7 @@ Installation options can be found in the #💻setup channel within the [HODL Tot
 - Publish changes to your google sheet [using clasp](https://developers.google.com/apps-script/guides/clasp) from the command line
 
 ## Changelog
+- 02-28-23 (v2.0.0) Meet Google branding/marks guidelines and address issue with menu items not appearing for the add-on evaluator at Google.
 - 02-14-23 (v1.0.2) Added getting started guide, NFT example and general hardening of the code.
 - 02-07-23 (v1.0.2) Fixed all known major bugs and performance issues.
 - 01-24-23 (v1.0.2) Added NFT Tracking sheets. Updated Coin Tracking sheets to be consistent with handling NFTs. Changed calculated Tax Status on all tracking sheets to reflect Taxable or Not Taxable per user configuration in the Category sheets.
