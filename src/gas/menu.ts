@@ -11,6 +11,7 @@ import { sheetContainsNFTData, sheetContainsCoinData } from './sheet';
 import { showInstructionsDialog_ } from './dialogs';
 
 /* global GoogleAppsScript */
+/* global ScriptApp */
 /* global SpreadsheetApp */
 /* global Browser */
 /* global Logger */
@@ -38,8 +39,8 @@ export function onOpen(e: GoogleAppsScript.Events.AppsScriptEvent): void {
     const ui = SpreadsheetApp.getUi();
     const menu = ui.createAddonMenu(); // createsMenu('HODL Totals')
 
-    //  on first launch only have one command
-    if (SpreadsheetApp.getActiveSpreadsheet().getSheetByName('HODL Totals') === null) {
+    //  on first launch only have one command (works with all authorization modes)
+    if ((e && e.authMode === ScriptApp.AuthMode.NONE) || (SpreadsheetApp.getActiveSpreadsheet().getSheetByName('HODL Totals') === null)) {
         menu.addItem('Get started with HODL Totals', 'freshLaunch_');
         menu.addToUi();
     } else {
