@@ -3,12 +3,26 @@
 
 @import "{{ site.theme }}";
 
-#header, body {
+body {
   background: #0a1674;
+}
+
+#header {
+  background: #ffffff;
+  height: 100px;
 }
 
 #header nav {
   background: initial;
+}
+
+#header nav ul li a {
+  color: #5d910b;
+  padding: 4px 4px;
+  background: #ffffff;
+  background-color: #ffffff;
+  box-shadow: none;
+  border: none;
 }
 
 @media print, screen and (max-width: 480px) {
