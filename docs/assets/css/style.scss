@@ -25,6 +25,12 @@ body {
   border: none;
 }
 
+#header nav ul li a:hover {
+    border: none;
+    box-shadow: none;
+    background: white;
+}
+
 @media print, screen and (max-width: 480px) {
   #header {
     height: initial;
