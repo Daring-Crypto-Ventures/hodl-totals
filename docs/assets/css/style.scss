@@ -38,16 +38,19 @@ body {
   #header nav ul li a {
     padding: 0px;
   }
-  li.downloads {
-    visibility: collapse;
-  }
   nav {
     display: initial;
   }
 }
 
+@media print, screen and (max-width: 640px) {
+  li.downloads {
+    visibility: collapse;
+  }
+}
+
 html, body {
-  min-width: 640px;
+  min-width: 520px;
   width: 100%;
 }
 
