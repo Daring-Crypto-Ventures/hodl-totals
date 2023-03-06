@@ -36,7 +36,10 @@ body {
     height: initial;
   }
   #header nav ul li a {
-    padding: 4px 4px;
+    padding: 0px;
+  }
+  li.downloads {
+    visibility: collapse;
   }
   nav {
     display: initial;
@@ -44,7 +47,7 @@ body {
 }
 
 html, body {
-  min-width: 360px;
+  min-width: 640px;
   width: 100%;
 }
 
