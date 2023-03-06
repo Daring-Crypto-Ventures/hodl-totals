@@ -26,12 +26,10 @@
               <img alt="Google Workspace Marketplace badge" alt-text="Get it from the Google Workspace Marketplace" src="https://workspace.google.com/static/img/marketplace/en/gwmBadge.svg?" style="height: 68px">
               </a>
             </li>
-            <li class="downloads"><a href="{{ site.github.repository_url }}">View On GitHub</a></li>
-            {% if site.show_downloads %}
-              <li class="downloads"><a href="{{ site.github.zip_url }}">ZIP</a></li>
-              <li class="downloads"><a href="{{ site.github.tar_url }}">TAR</a></li>
-              <li class="title">DOWNLOADS</li>
-            {% endif %}
+            <li class="downloads">
+              <a href="{{ site.github.repository_url }}" id="github-stats-badge">GitHub</a>
+              <script src="https://swharden.github.io/repo-badge/badge.js" defer></script>
+            </li>
           </ul>
         </nav>
       </div><!-- end header -->
