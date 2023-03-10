@@ -56,10 +56,9 @@ If you interact with NFTs in addition to crypto coins, you're in luck. There's a
 Big into De-FI? That's also covered. If it can be done on chain, it can be tracked in these sheets!
 
 ## The Roadmap
-1. Wait for Google to approve Google Workspace™ Marketplace store item.
-2. Launch HODL Totals v1 at [this SXSW 2023 Workshop](https://schedule.sxsw.com/2023/events/PP127906).
-3. Gather and respond to user feedback.
-4. Work through the [backlog](https://trello.com/b/5E0bbIr2/hodl-totals).
+1. Launch HODL Totals at [this SXSW 2023 Workshop](https://schedule.sxsw.com/2023/events/PP127906).
+2. Gather and respond to user feedback.
+3. Work through the [backlog](https://trello.com/b/5E0bbIr2/hodl-totals).
 
 ## Support
 Stop by our discord for a chat: [Join the HODL Totals discord](https://discord.com/invite/TWuA9DzZth)
