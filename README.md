@@ -41,7 +41,11 @@ Installation options can be found in the #💻setup channel within the [HODL Tot
 >
 > `clasp create "<desired sheet name>"` and then select Sheet as doc type to create
 >
-> `clasp open` and then navigate in browser to the overview page, click link under Project Details>Container to access your sheet
+> `clasp open` and then navigate in browser to the overview page
+> 
+> `clasp push` to upload the code you synced locally from this repo up to the Apps Script editor associated with your new sheet
+>
+> Navigate back to the sheet, refresh your browser and you will see a new hodl-totals pull right menu; Commands run from this menu will execute your copy of the code
 
 📝 Additional steps to enable End-to-End integration tests to run on your copy of the code, using your Google account on your sheet
 
