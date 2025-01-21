@@ -37,7 +37,7 @@ QUnit.helpers(this);
  * Tests for column validation, coin insanities and row formatting issues.
  *
  */
-function testValidationFunctions(): void {
+function testValidationFunctions() {
     // @ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
     QUnit.test('Data Validation - Date Out of Order', test1DataValidation());
     // @ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
@@ -52,7 +52,7 @@ function testValidationFunctions(): void {
  * Tests for Cost Basis columns, cacluations, term-splitting and formatting.
  *
  */
-function testCostBasisFunctions(): void {
+function testCostBasisFunctions() {
     // @ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
     QUnit.test('Cost Basis - Simple Partial Short-Term Sale (Two Rounds)', test1CostBasis());
     // @ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
