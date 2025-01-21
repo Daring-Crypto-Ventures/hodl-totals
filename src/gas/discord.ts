@@ -7,7 +7,7 @@
  * Appended with underscore as this is a utility function that can only be called from other server scripts
  *
  */
-export default function openDiscordLink_(): void {
+export default function openDiscordLink(): void {
     // Invite link to the HODL Totals Discord that never expires
     if (typeof ScriptApp !== 'undefined') {
         openUrlFromGoogleSheet('https://discord.gg/TWuA9DzZth');
