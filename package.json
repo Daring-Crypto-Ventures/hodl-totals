@@ -2,7 +2,6 @@
   "name": "hodl-totals",
   "version": "2.0.1",
   "description": "Collection of various cryptocurrency tracking tools and scripts for Google Sheets™.",
-  "main": "index.js",
   "scripts": {
     "clean": "rm -rf dist",
     "compile": "genversion --es6 --semi src/version.ts && replace-in-file \"export const\" \"const\" src/version.ts && replace-in-file \";\" \"; export { version };\" src/version.ts && rollup -c && npm run manifest",
@@ -15,8 +14,6 @@
     "test": "npm run test:unit && npm run test:e2e",
     "deploy": "clasp push",
     "build": "npm run clean && npm run lint && npm run compile",
-    "start": "npm run compile && node --experimental-specifier-resolution=node dist/index.mjs",
-    "debug": "npm run compile && node --experimental-specifier-resolution=node --inspect dist/index.mjs",
     "postinstall": "replace-in-file \"declare var console\" \"//declare var console\" node_modules/@types/google-apps-script/google-apps-script.base.d.ts"
   },
   "keywords": [
