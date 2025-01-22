@@ -39,7 +39,9 @@ Installation options can be found in the #💻setup channel within the [HODL Tot
 > 
 > `clasp login` and then grant access in the browser window that opens
 >
-> `clasp create "<desired sheet name>"` and then select Sheet as doc type to create
+> `clasp create "<desired sheet name>" --type sheets`  
+>
+> `clasp push`  
 >
 > `clasp open` and then navigate in browser to the overview page
 > 
