@@ -33,7 +33,7 @@ export default function validate(dateToLotAndSaleValues: LooselyTypedDataValidat
         } else {
             date = dateFromString(row[0]);
         }
-        
+
         const inputTimeLocal = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
         if ((date.getTime() < oldestPossibleDate.getTime()) || (inputTimeLocal.getTime() > now.getTime())) {
             return `Data Validation Error: Date is too old or too new on row ${rowIdx + 3}.`;
