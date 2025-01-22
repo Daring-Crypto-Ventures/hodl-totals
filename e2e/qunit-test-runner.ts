@@ -87,7 +87,7 @@ function testFairMktValueFunctions() {
  * Web app callback that will execute the QUnit tests and return test results in the browser
  *
  */
-function doGet(request) {
+export function doGet(request) {
     const suiteTitle = `v${version} HODL Totals E2E Test Suite`;
     // @ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
     QUnit.urlParams(request.parameter);

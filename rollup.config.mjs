@@ -155,13 +155,13 @@ export default [
     {
         input: [
             'src/gas/menu.ts'
-            // 'e2e/qunit-test-runner.ts' // should not include QUnit tests in the build for production builds
         ],
         output: [
             {
                 dir: 'dist',
                 format: 'esm',
             }],
+        context: "this",
         plugins: [
             disableEntryPointTreeShaking(),
             nodeResolve(),

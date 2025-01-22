@@ -12,6 +12,9 @@ import { showInstructionsDialog, showAboutDialog } from './dialogs';
 import { loadExample } from './examples';
 import openDiscordLink from './discord';
 
+// NOTE: should not include QUnit tests in the build for production builds
+import { doGet } from '../../e2e/qunit-test-runner';
+
 /* global GoogleAppsScript */
 /* global ScriptApp */
 /* global SpreadsheetApp */
@@ -126,6 +129,16 @@ export function openDiscordLink_(): void {
 
 export function showAboutDialog_(): void {
     showAboutDialog();
+}
+
+/**
+ * Not intended to be called; function causes unit tests for HODL Totals
+ * to be included in the rollup bundle.
+ */
+export function runUnitTests_(): void {
+    if (typeof (doGet) !== 'undefined') {
+        doGet({});
+    }
 }
 
 /**
