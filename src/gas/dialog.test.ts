@@ -1,6 +1,6 @@
 // import { expect, test } from '@jest/globals';
 import { UnitTestWrapper } from '../../tests/utils.test';
-import { showAboutDialog_ } from './dialogs';
+import { showAboutDialog } from './dialogs';
 
 /* eslint-disable jest/valid-describe-callback */
 
@@ -15,7 +15,7 @@ function testAbout(): UnitTestWrapper {
         if (typeof ScriptApp === 'undefined') {
             // jest unit test
             it('Test about dialog fails during local execution', () => {
-                const mock = jest.fn(showAboutDialog_);
+                const mock = jest.fn(showAboutDialog);
                 mock();
                 expect(mock).toHaveReturned();
             });

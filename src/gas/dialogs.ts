@@ -9,9 +9,9 @@ import { version } from '../version';
  * Appended with underscore as this is a utility function that can only be called from other server scripts
  *
  */
-export function showAboutDialog_(): void {
+export function showAboutDialog(): void {
     if (typeof ScriptApp !== 'undefined') {
-        const html = HtmlService.createHtmlOutputFromFile('assets/About')
+        const html = HtmlService.createHtmlOutputFromFile('About')
             .setWidth(540)
             .setHeight(300);
         SpreadsheetApp.getUi().showModalDialog(html, `About HODL Totals ${version}`);
@@ -24,9 +24,9 @@ export function showAboutDialog_(): void {
  * Appended with underscore as this is a utility function that can only be called from other server scripts
  *
  */
-export function showInstructionsDialog_(): void {
+export function showInstructionsDialog(): void {
     if (typeof ScriptApp !== 'undefined') {
-        const html = HtmlService.createHtmlOutputFromFile('assets/Instructions')
+        const html = HtmlService.createHtmlOutputFromFile('Instructions')
             .setWidth(860)
             .setHeight(380);
         SpreadsheetApp.getUi().showModalDialog(html, 'HODL Totals Getting Started Guide');

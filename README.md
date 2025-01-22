@@ -39,19 +39,20 @@ Installation options can be found in the #💻setup channel within the [HODL Tot
 > 
 > `clasp login` and then grant access in the browser window that opens
 >
-> `clasp create "<desired sheet name>"` and then select Sheet as doc type to create
+> `clasp create "<desired sheet name>" --type sheets`  
 >
-> `clasp open` and then navigate in browser to the overview page, click link under Project Details>Container to access your sheet
+> `clasp open` and then navigate in browser to the overview page
+> 
+> `npm run build` to build the code into a single js file and html asset dependencies in the ./dist folder
+>
+> `npm run deploy` to upload the code in the ./dist folder up to the Apps Script editor associated with your new sheet
+>
+> Navigate back to the sheet, refresh your browser and you will see a new hodl-totals pull right menu; Commands run from this menu will execute your copy of the code
 
 📝 Additional steps to enable End-to-End integration tests to run on your copy of the code, using your Google account on your sheet
 
 <!--
-> Due to clasp breaking support for symbol export/import across  ES6-like-module boundaries
-> https://github.com/grant/ts2gas/issues/26#issuecomment-1003428178
-> Must freeze at the version of clasp that last worked v2.3.2
-> This leads to a bunch of npm security vulernability alerts at npm install time
->
-> If could upgrade to latest, then could use the --deploymentID flag and make E2E tests more seamless and not require a manual keypress to select deployment, by appending
+> Since upgrading to latest clasp, could use the --deploymentID flag and make E2E tests more seamless and not require a manual keypress to select deployment, by appending
 > `--deploymentId AKfycbw0a1U_xiXP-nvYfDG6lHJSyCafrGeJkIPrzMmFMSk`
 > to package.json's test:e2e cmd
 >
@@ -60,14 +61,14 @@ Installation options can be found in the #💻setup channel within the [HODL Tot
 > `code package.json` to edit package.json locally, paste deploymentID over the test:e2e cmd's deployment ID
 > 
 --> 
-> `npm run test:e2e` to run the E2E test suite -- or simply `npm test` to run both local and E2E test suites
+> run `npm test` to execute both local unit tests and E2E test suites
 
 ## Development Environment
 
-- Windows 10 PC with WSL2 (Ubuntu 20.04.1 LTS)
-- Node.js LTS version (16.x)
-- Visual Studio Code on Windows 10, and its WSL2 integration for editing code stored in WSL
-- GitHub CLI commands via the WSL2 Linux terminal
+- Ubuntu 24.04.1 LTS
+- Node.js LTS version (23.6.0)
+- Visual Studio Code
+- GitHub CLI commands
 - Publish changes to your google sheet [using clasp](https://developers.google.com/apps-script/guides/clasp) from the command line
 
 ## Changelog
