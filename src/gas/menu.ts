@@ -8,7 +8,12 @@ import { calculateCoinGainLoss } from './calculate';
 import { calculateNFTGainLossStatus } from './calculate-nft';
 import { formatNFTSheet } from './format-nft';
 import { sheetContainsNFTData, sheetContainsCoinData } from './sheet';
-import { showInstructionsDialog_ } from './dialogs';
+import { showInstructionsDialog, showAboutDialog } from './dialogs';
+import { loadExample } from './examples';
+import openDiscordLink from './discord';
+
+// NOTE: should not include QUnit tests in the build for production builds
+import { doGet } from '../../e2e/qunit-test-runner';
 
 /* global GoogleAppsScript */
 /* global ScriptApp */
@@ -81,7 +86,7 @@ export function freshLaunch_(): void {
     const ui = SpreadsheetApp.getUi();
 
     // Show some getting started guidance if detected a fresh workbook
-    showInstructionsDialog_();
+    showInstructionsDialog();
 
     // after dismissing that, go ahead and expose all HODL Totals commands
     const menu = ui.createAddonMenu();
@@ -95,7 +100,7 @@ export function freshLaunch_(): void {
  *
  */
 export function showSheetActionsSidebar_(): void {
-    const sidebarUi = HtmlService.createHtmlOutputFromFile('assets/CoinSidebar')
+    const sidebarUi = HtmlService.createHtmlOutputFromFile('CoinSidebar')
         .setSandboxMode(HtmlService.SandboxMode.IFRAME)
         .setTitle('HODL Totals Debugging Tools');
     SpreadsheetApp.getUi().showSidebar(sidebarUi);
@@ -110,6 +115,30 @@ export function showSheetActionsSidebar_(): void {
  */
 export function dummyMenuItem_(): null {
     return null;
+}
+
+export function showInstructionsDialog_(): void {
+    if (typeof loadExample !== 'undefined') {
+        showInstructionsDialog();
+    }
+}
+
+export function openDiscordLink_(): void {
+    openDiscordLink();
+}
+
+export function showAboutDialog_(): void {
+    showAboutDialog();
+}
+
+/**
+ * Not intended to be called; function causes unit tests for HODL Totals
+ * to be included in the rollup bundle.
+ */
+export function runUnitTests_(): void {
+    if (typeof (doGet) !== 'undefined') {
+        doGet({});
+    }
 }
 
 /**
