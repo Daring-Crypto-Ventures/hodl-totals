@@ -170,7 +170,7 @@ export function calculateFIFO(
                         // shift to the next row to post the short-term split
                         shift += 1;
                         // create the new row for the short-term part of the term split
-                        data.splice(sellRow + shift, 0, [...data[sellRow + shift - 1]]);
+                        data.splice(sellRow + shift, 0, [...data[sellRow + shift - 1]] as CompleteDataRow);
 
                         // Row numbers are based on the sheet row which includes a +3 offset
                         annotations.push([sellRow + shift + 1, 5, splitNoteText]);

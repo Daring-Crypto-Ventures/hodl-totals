@@ -22,7 +22,7 @@ export function formatNFTSheet(sheet: GoogleAppsScript.Spreadsheet.Sheet | null)
             } else {
                 Logger.log('formatNFTSheet could not obtain lock.');
             }
-        } catch (exc: unknown) {
+        } catch (exc) {
             if (exc instanceof Error) {
                 Logger.log(`formatNFTSheet Exception - ${exc.message}`);
             }

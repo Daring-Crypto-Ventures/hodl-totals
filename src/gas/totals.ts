@@ -26,7 +26,7 @@ export default function resetTotalSheet(): GoogleAppsScript.Spreadsheet.Sheet | 
             } else {
                 Logger.log('resetTotalsSheet could not obtain lock.');
             }
-        } catch (exc: unknown) {
+        } catch (exc) {
             if (exc instanceof Error) {
                 Logger.log(`resetTotalsSheet Exception - ${exc.message}`);
             }

@@ -22,7 +22,7 @@ export function formatSheet(sheet: GoogleAppsScript.Spreadsheet.Sheet | null): G
             } else {
                 Logger.log('formatSheet could not obtain lock.');
             }
-        } catch (exc: unknown) {
+        } catch (exc) {
             if (exc instanceof Error) {
                 Logger.log(`formatSheet Exception - ${exc.message}`);
             }

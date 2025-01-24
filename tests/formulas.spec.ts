@@ -31,7 +31,7 @@ export function test1FMV(): UnitTestWrapper {
                 // clone the data array, and trim down to data needed for validation
                 const validationData = [...data];
                 validationData.forEach((row, rowIdx) => {
-                    validationData[rowIdx] = [...row];
+                    validationData[rowIdx] = [...row] as CompleteDataRow;
                 });
                 validationData.forEach(row => row.splice(15, row.length - 15)); // remove rightmost calculation columns and summarized in column
                 validationData.forEach(row => row.splice(0, 4)); // remove leftmost Tx ✔, wallets, Tx ID and description columns
@@ -99,6 +99,9 @@ export function test2FMV(): UnitTestWrapper {
                 // clone the data array, and trim down to data needed for validation
                 const validationData = [...data];
                 validationData.forEach((row, rowIdx) => {
+                    // TS v3.8.2 error on the array argument on following line is a TS bug fixed in TS v4.4.2 and later
+                    // eslint-disable-next-line @typescript-eslint/prefer-ts-expect-error, @typescript-eslint/ban-ts-comment
+                    // @ts-ignore current GAS environment is stuck on TS v3.8.2
                     validationData[rowIdx] = [...row];
                 });
                 validationData.forEach(row => row.splice(15, row.length - 15)); // remove rightmost calculation columns and summarized in column

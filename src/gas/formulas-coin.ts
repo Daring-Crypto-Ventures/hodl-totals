@@ -30,7 +30,7 @@ export function updateFMVFormulas(sheet: GoogleAppsScript.Spreadsheet.Sheet | nu
             } else {
                 Logger.log('updateFMVFormulas could not obtain lock.');
             }
-        } catch (exc: unknown) {
+        } catch (exc) {
             if (exc instanceof Error) {
                 Logger.log(`updateFMVFormulas Exception - ${exc.message}`);
             }

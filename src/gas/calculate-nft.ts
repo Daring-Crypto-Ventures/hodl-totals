@@ -27,7 +27,7 @@ export function calculateNFTGainLossStatus(sheet: GoogleAppsScript.Spreadsheet.S
             } else {
                 Logger.log('calculateNFTGainLossStatus could not obtain lock.');
             }
-        } catch (exc: unknown) {
+        } catch (exc) {
             if (exc instanceof Error) {
                 Logger.log(`calculateNFTGainLossStatus Exception - ${exc.message}`);
             }

@@ -30,7 +30,8 @@ import { version } from '../src/version';
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 
-// @ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
+// documented here: https://script.google.com/macros/library/d/13agWuzcPH32W4JJvOqOEYqeNHGihS63P2V-a-Vxz-c9WPIzZYBvIhs3m/4?authuser=0
+// @ts-ignore Cannot find property QUnit.helpers as no type declarations exist for the GAS-supported QUnit library
 QUnit.helpers(this);
 
 /**
@@ -38,13 +39,9 @@ QUnit.helpers(this);
  *
  */
 function testValidationFunctions() {
-    // @ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
     QUnit.test('Data Validation - Date Out of Order', test1DataValidation());
-    // @ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
     QUnit.test('Data Validation - Coin Oversold', test2DataValidation());
-    // @ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
     QUnit.test('Data Validation - Buy and Sell on Same Line', test3DataValidation());
-    // @ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
     QUnit.test('Data Validation - Test for Out of Range Date', test4DataValidation());
 }
 
@@ -53,21 +50,13 @@ function testValidationFunctions() {
  *
  */
 function testCostBasisFunctions() {
-    // @ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
     QUnit.test('Cost Basis - Simple Partial Short-Term Sale (Two Rounds)', test1CostBasis());
-    // @ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
     QUnit.test('Cost Basis - Simple Whole Long-Term Sale (Two Rounds)', test2CostBasis());
-    // @ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
     QUnit.test('Cost Basis - Simple Term Split (Two Rounds)', test3CostBasis());
-    // @ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
     QUnit.test('Cost Basis - No Sale (Two Rounds)', test4CostBasis());
-    // @ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
     QUnit.test('Cost Basis - Example Dataset (Two Rounds)', test5CostBasis());
-    // @ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
     QUnit.test('Cost Basis - Real Data with Term Split (Two Rounds)', test6CostBasis());
-    // @ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
     QUnit.test('Cost Basis - Simple Calc with all coins sold (Two Round)', test7CostBasis());
-    // @ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
     QUnit.test('Cost Basis - Example Dataset with Extreme Values (One Round)', test8CostBasis());
 }
 
@@ -77,9 +66,7 @@ function testCostBasisFunctions() {
  */
 
 function testFairMktValueFunctions() {
-    // @ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
     QUnit.test('Fair Market Value - Example Dataset', test1FMV());
-    // @ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
     QUnit.test('Fair Market Value - Strategies', test2FMV());
 }
 
@@ -89,13 +76,16 @@ function testFairMktValueFunctions() {
  */
 export function doGet(request) {
     const suiteTitle = `v${version} HODL Totals E2E Test Suite`;
-    // @ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
+    // documented here: https://script.google.com/macros/library/d/13agWuzcPH32W4JJvOqOEYqeNHGihS63P2V-a-Vxz-c9WPIzZYBvIhs3m/4?authuser=0
+    // @ts-ignore Cannot find property QUnit.urlParams as no type declarations exist for the GAS-supported QUnit library
     QUnit.urlParams(request.parameter);
-    // @ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
+    // documented here: https://script.google.com/macros/library/d/13agWuzcPH32W4JJvOqOEYqeNHGihS63P2V-a-Vxz-c9WPIzZYBvIhs3m/4?authuser=0
+    // @ts-ignore Cannot find property QUnit.config as no type declarations exist for the GAS-supported QUnit library
     QUnit.config({ title: suiteTitle });
     Logger.log(`Running ${suiteTitle}...`);
 
-    // @ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
+    // documented here: https://script.google.com/macros/library/d/13agWuzcPH32W4JJvOqOEYqeNHGihS63P2V-a-Vxz-c9WPIzZYBvIhs3m/4?authuser=0
+    // @ts-ignore Cannot find property QUnit.load as no type declarations exist for the GAS-supported QUnit library
     QUnit.load(() => {
         try {
             const lock = LockService.getUserLock();
@@ -114,7 +104,6 @@ export function doGet(request) {
         }
 
         // log test results to the stackdriver logs
-        // @ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
         QUnit.testDone(details => {
             const result = {
                 'Module name': details.module,
@@ -123,10 +112,7 @@ export function doGet(request) {
                     Total: details.total,
                     Passed: details.passed,
                     Failed: details.failed
-                },
-                Skipped: details.skipped,
-                Todo: details.todo,
-                Runtime: details.runtime
+                }
             };
             // only log the most critical info to keep the stackdriver log short
             Logger.log(`${result['Test name']}\n${result.Assertions.Passed} passed, ${result.Assertions.Failed} failed, out of ${result.Assertions.Total} assertion(s).`);
@@ -137,6 +123,7 @@ export function doGet(request) {
 
     Logger.log('Test Suite Completed');
 
-    // @ts-expect-error Cannot find name QUnit as no type declarations exist for this library, name is present when loaded in GAS
+    // documented here: https://script.google.com/macros/library/d/13agWuzcPH32W4JJvOqOEYqeNHGihS63P2V-a-Vxz-c9WPIzZYBvIhs3m/4?authuser=0
+    // @ts-ignore Cannot find property QUnit.getHtml as no type declarations exist for the GAS-supported QUnit library
     return QUnit.getHtml();
 }

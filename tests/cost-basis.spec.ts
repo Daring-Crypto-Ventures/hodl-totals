@@ -464,7 +464,7 @@ function callCalculateFIFO(sheet: GoogleAppsScript.Spreadsheet.Sheet | null, coi
         // clone the data array, and trim down to data needed for validation
         const validationData = [...data];
         validationData.forEach((row, rowIdx) => {
-            validationData[rowIdx] = [...row];
+            validationData[rowIdx] = [...row] as CompleteDataRow;
         });
         validationData.forEach(row => row.splice(15, row.length - 15)); // remove rightmost calculation columns and summarized in column
         validationData.forEach(row => row.splice(0, 4)); // remove leftmost Tx ✔, wallets, Tx ID and description columns

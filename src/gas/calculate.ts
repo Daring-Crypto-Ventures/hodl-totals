@@ -30,7 +30,7 @@ export function calculateCoinGainLoss(sheet: GoogleAppsScript.Spreadsheet.Sheet 
             } else {
                 Logger.log('calculateCoinGainLoss could not obtain lock.');
             }
-        } catch (exc: unknown) {
+        } catch (exc) {
             if (exc instanceof Error) {
                 Logger.log(`calculateCoinGainLoss Exception - ${exc.message}`);
             }

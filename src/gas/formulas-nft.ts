@@ -21,7 +21,7 @@ export function updateNFTFormulas(sheet: GoogleAppsScript.Spreadsheet.Sheet | nu
             } else {
                 Logger.log('updateNFTFormulas could not obtain lock.');
             }
-        } catch (exc: unknown) {
+        } catch (exc) {
             if (exc instanceof Error) {
                 Logger.log(`updateNFTFormulas Exception - ${exc.message}`);
             }
