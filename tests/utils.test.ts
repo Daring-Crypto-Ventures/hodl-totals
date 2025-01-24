@@ -28,7 +28,6 @@ export function assert(value: boolean | number | string, expected: boolean | num
         });
     } else {
         // QUnit unit test
-        // @ts-expect-error Cannot find QUnit assertions as no type declarations exist for this library, names are present when loaded in GAS
         strictEqual(value, expected, detail);
     }
 }
@@ -58,10 +57,8 @@ export function assertCell(
     } else if (sheet !== null) {
         // QUnit unit test
         if (digitsAfterDecimal !== 0) {
-            // @ts-expect-error Cannot find QUnit assertions as no type declarations exist for this library, names are present when loaded in GAS
             strictEqual(Number(sheet.getRange(rowIdx + 1, colIdx + 1).getValue()).toFixed(digitsAfterDecimal), expected, detail);
         } else {
-            // @ts-expect-error Cannot find QUnit assertions as no type declarations exist for this library, names are present when loaded in GAS
             strictEqual(sheet.getRange(rowIdx + 1, colIdx + 1).getDisplayValue(), expected, detail);
         }
     }
