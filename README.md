@@ -49,19 +49,19 @@ Installation options can be found in the #💻setup channel within the [HODL Tot
 >
 > Navigate back to the sheet, refresh your browser and you will see a new hodl-totals pull right menu; Commands run from this menu will execute your copy of the code
 
-📝 Additional steps to enable End-to-End integration tests to run on your copy of the code, using your Google account on your sheet
+📝 Additional steps to run tests on your local copy of the code
 
-<!--
-> Since upgrading to latest clasp, could use the --deploymentID flag and make E2E tests more seamless and not require a manual keypress to select deployment, by appending
-> `--deploymentId AKfycbw0a1U_xiXP-nvYfDG6lHJSyCafrGeJkIPrzMmFMSk`
-> to package.json's test:e2e cmd
+> `npm run test:unit` to run unit tests locally. This only tests parts of HODL Totals that are not coupled to the Google Sheets API.
 >
-> `clasp open` and then navigate in browser, click Deploy dropdwn, select Test Deployment, copy deployment ID out of the webapp URL
+> To enable true End-to-End testing, you will need to set up a webapp test deployment so that tests can run in the browser on a real sheet. Navigate to your sheet, and open up the Apps Script editor from the menubar at *Extensions > Apps Script*.
 >
-> `code package.json` to edit package.json locally, paste deploymentID over the test:e2e cmd's deployment ID
-> 
---> 
-> run `npm test` to execute both local unit tests and E2E test suites
+> Once the Apps Script editor loads, find the large blue Deploy dropdown in the upper right. Use this button to make a new Test Deployment.  Set the type of the new Test Deployment be "Web app". From this dialog copy the "Head Deployment ID" value to your clipboard before dismissing the dialog with the Done button. Back on your local command line, use one of the following commands and paste in that Head Deployment ID value as indicated:
+>
+> `npm run test:e2e -- --deploymentID <paste your Head Deployment ID here>` to execute the E2E tests
+>
+> `npm test -- -- --deploymentID <paste your Head Deployment ID here>` to execute both local tests and E2E tests in sequence
+>
+> After running one of these commands, you will get a new browser window/tab opened up that takes a while to load. After a few minutes delay, this page will populate with a pass/fail summary of the E2E test execution.
 
 ## Development Environment
 
