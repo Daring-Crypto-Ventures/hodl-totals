@@ -2,106 +2,47 @@
 // Extensions beyond the basic QUnit API found only in the GAS Library, documentation copied from:
 // https://script.google.com/macros/library/d/13agWuzcPH32W4JJvOqOEYqeNHGihS63P2V-a-Vxz-c9WPIzZYBvIhs3m/4?authuser=0
 
+/* eslint-disable @typescript-eslint/naming-convention */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/ban-types */
+
 interface DoneCallbackObject {
-    /**
-     * The number of failed assertions
-     */
-    failed: number;
-
-    /**
-     * The number of passed assertions
-     */
-    passed: number;
-
-    /**
-     * The total number of assertions
-     */
-    total: number;
-
-    /**
-     * The time in milliseconds it took tests to run from start to finish.
-     */
-    runtime: number;
+    failed: number; // The number of failed assertions
+    passed: number; // The number of passed assertions
+    total: number; // The total number of assertions
+    runtime: number; // The time in milliseconds it took tests to run from start to finish.
 }
 
 interface LogCallbackObject {
-    /**
-     * The boolean result of an assertion, true means passed, false means failed.
-     */
-    result: boolean;
-
-    /**
-     * One side of a comparision assertion. Can be undefined when ok() is used.
-     */
-    actual: Object;
-
-    /**
-     * One side of a comparision assertion. Can be undefined when ok() is used.
-     */
-    expected: Object;
-
-    /**
-     * A string description provided by the assertion.
-     */
-    message: string;
+    result: boolean; // The boolean result of an assertion, true means passed, false means failed.
+    actual: Object; // One side of a comparision assertion. Can be undefined when ok() is used.
+    expected: Object; // One side of a comparision assertion. Can be undefined when ok() is used.
+    message: string; // A string description provided by the assertion.
 }
 
 interface ModuleStartCallbackObject {
-    /**
-     * Name of the next module to run
-     */
-    name: string;
+    name: string; // Name of the next module to run
+    module: string; // Name of the current module
 }
 
 interface ModuleDoneCallbackObject {
-    /**
-     * Name of this module
-     */
-    name: string;
-
-    /**
-     * The number of failed assertions
-     */
-    failed: number;
-
-    /**
-     * The number of passed assertions
-     */
-    passed: number;
-
-    /**
-     * The total number of assertions
-     */
-    total: number;
+    name: string; // Name of this module
+    failed: number; // The number of failed assertions
+    passed: number; // The number of passed assertions
+    total: number; // The total number of assertions
 }
 
 interface TestDoneCallbackObject {
-    /**
-     * TName of the next test to run
-     */
-    name: string;
-
-    /**
-     * The number of failed assertions
-     */
-    failed: number;
-
-    /**
-     * The number of passed assertions
-     */
-    passed: number;
-
-    /**
-     * The total number of assertions
-     */
-    total: number;
+    name: string; // Name of the next test to run
+    module: string; // Name of the current module
+    failed: number; // The number of failed assertions
+    passed: number; // The number of passed assertions
+    total: number; // The total number of assertions
 }
 
 interface TestStartCallbackObject {
-    /**
-     * Name of the next test to run
-     */
-    name: string;
+    name: string; // Name of the next test to run
+    module: string; // Name of the current module
 }
 
 interface URLConfigItem {
@@ -375,6 +316,17 @@ interface QUnitStatic extends QUnitAssert {
     asyncTest(name: string, expected: number, test: (assert: QUnitAssert) => any): any;
 
     /**
+     * Add an asynchronous test to run. The test must include a call to start().
+     *
+     * For testing asynchronous code, asyncTest will automatically stop the test runner
+     * and wait for your code to call start() to continue.
+     *
+     * @param name Title of unit being tested
+     * @param test Function to close over assertions
+     */
+    asyncTest(name: string, test: (assert: QUnitAssert) => any): any;
+
+    /**
      * Group related tests under a single label.
      *
      * All tests that occur after a call to module() will be grouped into that module.
@@ -406,6 +358,12 @@ interface QUnitStatic extends QUnitAssert {
     test(title: string, expected: number, test: (assert: QUnitAssert) => any): any;
 
     /**
+     * @param title Title of unit being tested
+     * @param test Function to close over assertions
+     */
+    test(title: string, test: (assert: QUnitAssert) => any): any;
+
+    /**
      * https://github.com/jquery/qunit/blob/master/qunit/qunit.js#L1568
      */
     equiv(a: any, b: any): any;
@@ -431,37 +389,37 @@ interface QUnitGASConfig {
 
 // Useful for testing internals of QUnitGAS itself
 interface QUnitGASInternals {
-    init: any;
-    reset: any;
-    registerLoggingCallback: any;
-    push: any;
-    pushFailure: any;
-    extend: any;
-    is: any;
-    objectType: any;
-    url: any;
-    id: any;
-    addEvent: any;
-    triggerEvent: any;
-    assert: any;
-    ok: any;
-    equal: any;
-    notEqual: any;
-    deepEqual: any;
-    notDeepEqual: any;
-    strictEqual: any;
-    notStrictEqual: any;
-    propEqual: any;
-    notPropEqual: any;
-    throws: any;
-    raises: any;
-    equals: any;
-    same: any;
-    equiv: any;
-    jsDump: any;
-    diff: any;
-    htmlCollection: any;
-    internals: any;
+    init: unknown;
+    reset: unknown;
+    registerLoggingCallback: unknown;
+    push: unknown;
+    pushFailure: unknown;
+    extend: unknown;
+    is: unknown;
+    objectType: unknown;
+    url: unknown;
+    id: unknown;
+    addEvent: unknown;
+    triggerEvent: unknown;
+    assert: unknown;
+    ok: unknown;
+    equal: unknown;
+    notEqual: unknown;
+    deepEqual: unknown;
+    notDeepEqual: unknown;
+    strictEqual: unknown;
+    notStrictEqual: unknown;
+    propEqual: unknown;
+    notPropEqual: unknown;
+    throws: unknown;
+    raises: unknown;
+    equals: unknown;
+    same: unknown;
+    equiv: unknown;
+    jsDump: unknown;
+    diff: unknown;
+    htmlCollection: unknown;
+    internals: unknown;
 }
 
 interface QUnitGAS extends QUnitStatic {
