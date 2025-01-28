@@ -42,7 +42,6 @@
     "@types/google-apps-script": "^1.0.91",
     "@types/google.script.client-side": "^0.1.1",
     "@types/jest": "^27.4.1",
-    "@types/qunit": "^1.16.37",
     "@typescript-eslint/eslint-plugin": "~5.62.0",
     "@typescript-eslint/parser": "~5.62.0",
     "@web/rollup-plugin-html": "^1.11.0",

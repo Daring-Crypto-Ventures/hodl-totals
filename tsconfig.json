@@ -4,6 +4,10 @@
         "module": "ES2020",
         "outDir": "./dist",
         "rootDirs": ["./src", "/tests"],
+        "typeRoots": [
+            "./types",
+            "./node_modules/@types"
+        ],
         "moduleResolution": "node",
         "allowSyntheticDefaultImports": true,
         "noEmitOnError": true,

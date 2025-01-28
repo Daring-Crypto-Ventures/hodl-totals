@@ -1,10 +1,10 @@
+/// <reference path="../types/qunit.d.ts" />
 import {
     test1DataValidation,
     test2DataValidation,
     test3DataValidation,
     test4DataValidation
 } from '../tests/validate.spec';
-
 import {
     test1CostBasis,
     test2CostBasis,
@@ -25,14 +25,12 @@ import { version } from '../src/version';
  *
  * Default browser will open to a test results page is displayed.
  */
-/* global QUnit, Logger, LockService */
+/* global Logger, LockService */
 /* eslint no-undef: 1 */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 
-// documented here: https://script.google.com/macros/library/d/13agWuzcPH32W4JJvOqOEYqeNHGihS63P2V-a-Vxz-c9WPIzZYBvIhs3m/4?authuser=0
-// @ts-ignore Cannot find property QUnit.helpers as no type declarations exist for the GAS-supported QUnit library
-QUnit.helpers(this);
+QUnit.helpers(this as unknown as Object);
 
 /**
  * Tests for column validation, coin insanities and row formatting issues.
@@ -76,16 +74,10 @@ function testFairMktValueFunctions() {
  */
 export function doGet(request) {
     const suiteTitle = `v${version} HODL Totals E2E Test Suite`;
-    // documented here: https://script.google.com/macros/library/d/13agWuzcPH32W4JJvOqOEYqeNHGihS63P2V-a-Vxz-c9WPIzZYBvIhs3m/4?authuser=0
-    // @ts-ignore Cannot find property QUnit.urlParams as no type declarations exist for the GAS-supported QUnit library
     QUnit.urlParams(request.parameter);
-    // documented here: https://script.google.com/macros/library/d/13agWuzcPH32W4JJvOqOEYqeNHGihS63P2V-a-Vxz-c9WPIzZYBvIhs3m/4?authuser=0
-    // @ts-ignore Cannot find property QUnit.config as no type declarations exist for the GAS-supported QUnit library
     QUnit.config({ title: suiteTitle });
     Logger.log(`Running ${suiteTitle}...`);
 
-    // documented here: https://script.google.com/macros/library/d/13agWuzcPH32W4JJvOqOEYqeNHGihS63P2V-a-Vxz-c9WPIzZYBvIhs3m/4?authuser=0
-    // @ts-ignore Cannot find property QUnit.load as no type declarations exist for the GAS-supported QUnit library
     QUnit.load(() => {
         try {
             const lock = LockService.getUserLock();
@@ -123,7 +115,5 @@ export function doGet(request) {
 
     Logger.log('Test Suite Completed');
 
-    // documented here: https://script.google.com/macros/library/d/13agWuzcPH32W4JJvOqOEYqeNHGihS63P2V-a-Vxz-c9WPIzZYBvIhs3m/4?authuser=0
-    // @ts-ignore Cannot find property QUnit.getHtml as no type declarations exist for the GAS-supported QUnit library
     return QUnit.getHtml();
 }
