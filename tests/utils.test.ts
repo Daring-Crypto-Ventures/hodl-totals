@@ -1,5 +1,4 @@
 // import { expect, test } from '@jest/globals';
-// import { strictEqual } from 'qunitjs' (v1.12.0-pre)
 
 /* global strictEqual */
 /* global GoogleAppsScript */

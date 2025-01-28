@@ -379,6 +379,125 @@ interface QUnitStatic extends QUnitAssert {
     reset(): any;
 }
 
+/* ASSERT */
+
+/**
+ * A deep recursive comparison assertion, working on primitive types, arrays, objects,
+ * regular expressions, dates and functions.
+ *
+ * The deepEqual() assertion can be used just like equal() when comparing the value of
+ * objects, such that { key: value } is equal to { key: value }. For non-scalar values,
+ * identity will be disregarded by deepEqual.
+ *
+ * @param actual Object or Expression being tested
+ * @param expected Known comparison value
+ * @param message A short description of the assertion
+ */
+declare function deepEqual(actual: any, expected: any, message?: string): any;
+
+/**
+ * A non-strict comparison assertion, roughly equivalent to JUnit assertEquals.
+ *
+ * The equal assertion uses the simple comparison operator (==) to compare the actual
+ * and expected arguments. When they are equal, the assertion passes: any; otherwise, it fails.
+ * When it fails, both actual and expected values are displayed in the test result,
+ * in addition to a given message.
+ *
+ * @param actual Expression being tested
+ * @param expected Known comparison value
+ * @param message A short description of the assertion
+ */
+declare function equal(actual: any, expected: any, message?: string): any;
+
+/**
+ * An inverted deep recursive comparison assertion, working on primitive types,
+ * arrays, objects, regular expressions, dates and functions.
+ *
+ * The notDeepEqual() assertion can be used just like equal() when comparing the
+ * value of objects, such that { key: value } is equal to { key: value }. For non-scalar
+ * values, identity will be disregarded by notDeepEqual.
+ *
+ * @param actual Object or Expression being tested
+ * @param expected Known comparison value
+ * @param message A short description of the assertion
+ */
+declare function notDeepEqual(actual: any, expected: any, message?: string): any;
+
+/**
+ * A non-strict comparison assertion, checking for inequality.
+ *
+ * The notEqual assertion uses the simple inverted comparison operator (!=) to compare
+ * the actual and expected arguments. When they aren't equal, the assertion passes;
+ * otherwise, it fails. When it fails, both actual and expected values are displayed
+ * in the test result, in addition to a given message.
+ *
+ * @param actual Expression being tested
+ * @param expected Known comparison value
+ * @param message A short description of the assertion
+ */
+declare function notEqual(actual: any, expected: any, message?: string): any;
+
+/**
+ * A non-strict comparison assertion, checking for inequality.
+ *
+ * The notStrictEqual assertion uses the strict inverted comparison operator (!==)
+ * to compare the actual and expected arguments. When they aren't equal, the assertion
+ * passes; otherwise, it fails. When it fails, both actual and expected values are
+ * displayed in the test result, in addition to a given message.
+ *
+ * @param actual Expression being tested
+ * @param expected Known comparison value
+ * @param message A short description of the assertion
+ */
+declare function notStrictEqual(actual: any, expected: any, message?: string): any;
+
+/**
+ * A boolean assertion, equivalent to CommonJS’s assert.ok() and JUnit’s assertTrue().
+ * Passes if the first argument is truthy.
+ *
+ * The most basic assertion in QUnit, ok() requires just one argument. If the argument
+ * evaluates to true, the assertion passes; otherwise, it fails. If a second message
+ * argument is provided, it will be displayed in place of the result.
+ *
+ * @param state Expression being tested
+ * @param message A short description of the assertion
+ */
+declare function ok(state: any, message?: string): any;
+
+/**
+ * A strict type and value comparison assertion.
+ *
+ * The strictEqual() assertion provides the most rigid comparison of type and value with
+ * the strict equality operator (===)
+ *
+ * @param actual Expression being tested
+ * @param expected Known comparison value
+ * @param message A short description of the assertion
+ */
+declare function strictEqual(actual: any, expected: any, message?: string): any;
+
+/**
+ * Assertion to test if a callback throws an exception when run.
+ *
+ * When testing code that is expected to throw an exception based on a specific set of
+ * circumstances, use throws() to catch the error object for testing and comparison.
+ *
+ * @param block Function to execute
+ * @param expected Error Object to compare
+ * @param message A short description of the assertion
+ */
+declare function throws(block: () => any, expected: any, message?: string): any;
+
+declare function notPropEqual(actual: any, expected: any, message?: string): any;
+
+declare function propEqual(actual: any, expected: any, message?: string): any;
+
+// https://github.com/jquery/qunit/blob/master/qunit/qunit.js#L1568
+declare function equiv(a: any, b: any): any;
+
+// https://github.com/jquery/qunit/blob/master/qunit/qunit.js#L661
+declare let raises: any;
+
 // Configuration object and function, unique to QUnitGAS
 interface QUnitGASConfig {
     title: string;
