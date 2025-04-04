@@ -37,7 +37,7 @@
     "@rollup/plugin-commonjs": "^28.0.2",
     "@rollup/plugin-node-resolve": "^16.0.0",
     "@rollup/plugin-typescript": "^11.1.2",
-    "@types/babel__core": "7.1.18",
+    "@types/babel__core": "7.20.5",
     "@types/babel__traverse": "7.14.2",
     "@types/google-apps-script": "^1.0.91",
     "@types/google.script.client-side": "^0.1.1",
